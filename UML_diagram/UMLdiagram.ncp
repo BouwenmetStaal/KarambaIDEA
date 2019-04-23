@@ -1,0 +1,655 @@
+<Project>
+  <Name>UMLdiagram</Name>
+  <ProjectItem type="NClass.DiagramEditor.ClassDiagram.Diagram" assembly="NClass.DiagramEditor, Version=2.4.1823.0, Culture=neutral, PublicKeyToken=null">
+    <Name>Untitled</Name>
+    <Language>CSharp</Language>
+    <Entities>
+      <Entity type="Class">
+        <Name>Project</Name>
+        <Access>Public</Access>
+        <Location left="142" top="10" />
+        <Size width="262" height="297" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">public string ProjectName</Member>
+        <Member type="Field">AnalysisMethod weldEvaluationMethod</Member>
+        <Member type="Field">List&lt;Hierarchy&gt; Hierarchy</Member>
+        <Member type="Field">List&lt;ElementRAZ&gt; ElementRAZs</Member>
+        <Member type="Field">List&lt;Joint&gt; Joints</Member>
+        <Member type="Field">List&lt;LoadCase&gt; LoadCases</Member>
+        <Member type="Method">public double WeldVolume()</Member>
+        <Member type="Method">public double WeldVolumeFullStrengthMethod()</Member>
+        <Member type="Method">public void EvaluateWelds()</Member>
+        <Member type="Method">public void CreateJoints()</Member>
+        <Member type="Method">public static void CalculateSawingCuts()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Element</Name>
+        <Access>Public</Access>
+        <Location left="622" top="249" />
+        <Size width="244" height="338" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">public Project project</Member>
+        <Member type="Field">public int id</Member>
+        <Member type="Field">public int numberInHierarchy</Member>
+        <Member type="Field">public Line Line</Member>
+        <Member type="Field">public Crosssection crosssection</Member>
+        <Member type="Field">public string groupname</Member>
+        <Member type="Field">public int totalSawingCuts</Member>
+        <Member type="Field">public SawingCut startCut</Member>
+        <Member type="Field">public SawingCut endCut</Member>
+        <Member type="Method">public string BeginThroatsElement()</Member>
+        <Member type="Method">public string EndThroatsElement()</Member>
+        <Member type="Method">public string BeginPlatesElement()</Member>
+        <Member type="Method">public string EndPlatesElement()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Point</Name>
+        <Access>Public</Access>
+        <Location left="363" top="1103" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">public Double X</Member>
+        <Member type="Field">public Double Y</Member>
+        <Member type="Field">public Double Z</Member>
+        <Member type="Method">public static bool ArePointsEqual()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Line</Name>
+        <Access>Public</Access>
+        <Location left="474" top="668" />
+        <Size width="291" height="295" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">public int id</Member>
+        <Member type="Field">public Point StartPoint</Member>
+        <Member type="Field">public Point EndPoint</Member>
+        <Member type="Field">public Vector vector</Member>
+        <Member type="Field">public Vector unitvector</Member>
+        <Member type="Property">public Vector vector { get; }</Member>
+        <Member type="Method">public static Line TranslateLineWithVector()</Member>
+        <Member type="Method">public static Line FlipLineIfPointNotEqualtoStartPoint()</Member>
+        <Member type="Method">public static int ShouldEccentricityBeAssumedPOSorNEG()</Member>
+        <Member type="Method">public static Line FlipLine()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Joint</Name>
+        <Access>Public</Access>
+        <Location left="1478" top="260" />
+        <Size width="255" height="349" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">public Project project</Member>
+        <Member type="Field">public int Id</Member>
+        <Member type="Field">public CentralNodeOfJoint centralNodeOfJoint</Member>
+        <Member type="Field">public double maxGlobalEccentricity</Member>
+        <Member type="Field">public List&lt;int&gt; BeamIds</Member>
+        <Member type="Field">public bool IsWarrenEccentricityJoint</Member>
+        <Member type="Field">public Vector bearingMemberUnitvector</Member>
+        <Member type="Field">public List&lt;AttachedMember&gt; attachedMembers</Member>
+        <Member type="Field">public IdeaConnection ideaConnection</Member>
+        <Member type="Field">public bool IsContinues</Member>
+        <Member type="Field">public double weldVolume</Member>
+        <Member type="Field">public string Name</Member>
+        <Member type="Method">public void CalculateWelds()</Member>
+        <Member type="Method">public double CalculateWeldVolume()</Member>
+        <Member type="Method">public static void CalculateWeldThroatsFullStrength()</Member>
+        <Member type="Method">public static void CalculateWeldThroatsDirectional()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Hierarchy</Name>
+        <Access>Public</Access>
+        <Location left="1046" top="78" />
+        <Size width="162" height="143" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">int numberInHierarchy</Member>
+        <Member type="Field">string groupname</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>LoadCase</Name>
+        <Access>Public</Access>
+        <Location left="142" top="388" />
+        <Size width="254" height="128" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">public Project project</Member>
+        <Member type="Field">public int Id</Member>
+        <Member type="Field">public List&lt;LoadsPerlinRAZ&gt; loadsperlineRAZs</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>LoadsPerLine</Name>
+        <Access>Public</Access>
+        <Location left="142" top="599" />
+        <Size width="262" height="148" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">public ElementRAZ elementRAZ</Member>
+        <Member type="Field">public LoadsRAZ StartLoads</Member>
+        <Member type="Field">public LoadsRAZ EndLoads</Member>
+        <Member type="Field">public LoadCase loadCase</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Loads</Name>
+        <Access>Public</Access>
+        <Location left="142" top="821" />
+        <Size width="162" height="196" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">public double N</Member>
+        <Member type="Field">public Double Vz</Member>
+        <Member type="Field">public double My</Member>
+        <Member type="Field">public double Vy</Member>
+        <Member type="Field">public double Mz</Member>
+        <Member type="Field">public double Mt</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>ConnectingMember</Name>
+        <Access>Public</Access>
+        <Location left="1607" top="870" />
+        <Size width="232" height="332" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">public double localEccentricty</Member>
+        <Member type="Field">public Weld flangeWeld</Member>
+        <Member type="Field">public Weld webWeld</Member>
+        <Member type="Field">public double angleWithBear</Member>
+        <Member type="Method">public static double WebWeldFirstAttached()</Member>
+        <Member type="Method">public static void CreateVectorCoordinates()</Member>
+        <Member type="Method">public static double WebWeldsHorizontalLength()</Member>
+        <Member type="Method">public static double WebWeldsVerticalLength()</Member>
+        <Member type="Method">public static double LocalEccentricity()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>IdeaConnection</Name>
+        <Access>Public</Access>
+        <Location left="2025" top="274" />
+        <Size width="277" height="451" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">public OpenModelGenerator openModelGenerator</Member>
+        <Member type="Field">public Lazy&lt;dynamic&gt; dynLinkLazy</Member>
+        <Member type="Field">public ConnectionTemplateGenerator connectionTemplateGenerator</Member>
+        <Member type="Field">public Joint joint</Member>
+        <Member type="Field">public Guid ideaConnectionIdentifier</Member>
+        <Member type="Field">public string filePath</Member>
+        <Member type="Constructor">public IdeaConnection(Joint j)</Member>
+        <Member type="Method">private MemoryStream GetIdeaImportSettingStream()</Member>
+        <Member type="Method">private Guid GetConnectionIdentifier()</Member>
+        <Member type="Method">public void Dispose()</Member>
+        <Member type="Method">public void SaveIdeaConnectionProjectFile()</Member>
+        <Member type="Method">public ConProjectInfo GetConProjectInfo()</Member>
+        <Member type="Method">public ConnectionData GetConnectionData()</Member>
+        <Member type="Method">public ConnectionResultsData GetConnectionResultsData()</Member>
+        <Member type="Method">public void MapWeldsIdsAndOperationIds()</Member>
+        <Member type="Method">public void RunAnalysis()</Member>
+        <Member type="Method">public void CheckConnectionWelds()</Member>
+        <Member type="Method">public void IncreaseFailingWelds()</Member>
+        <Member type="Method">public void OptimizeWelds()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>Crosssection</Name>
+        <Access>Public</Access>
+        <Location left="902" top="630" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">public Project project</Member>
+        <Member type="Field">public string crosssectionName</Member>
+        <Member type="Field">public Shape shape</Member>
+        <Member type="Field">public double height</Member>
+        <Member type="Field">public double width</Member>
+        <Member type="Field">public double flangeThickness</Member>
+        <Member type="Field">public double webThickness</Member>
+        <Member type="Field">public double radius</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Enum">
+        <Name>AnalysisMethod</Name>
+        <Access>Public</Access>
+        <Location left="660" top="10" />
+        <Size width="162" height="112" />
+        <Collapsed>False</Collapsed>
+        <Value>FullstrengthMethod</Value>
+        <Value>DirectionalMethod</Value>
+        <Value>IdeaMethod</Value>
+      </Entity>
+      <Entity type="Class">
+        <Name>Vector</Name>
+        <Access>Public</Access>
+        <Location left="546" top="1103" />
+        <Size width="232" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">public double X</Member>
+        <Member type="Field">public double Y</Member>
+        <Member type="Field">public double Z</Member>
+        <Member type="Property">public double Length { get; }</Member>
+        <Member type="Method">public Vector Unitize()</Member>
+        <Member type="Method">public static bool AreVectorsEqual()</Member>
+        <Member type="Method">public static double AngleBetweenVectors()</Member>
+        <Member type="Method">public static Vector FilpVector()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>MaterialSteel</Name>
+        <Access>Public</Access>
+        <Location left="902" top="912" />
+        <Size width="162" height="136" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">Project project</Member>
+        <Member type="Field">int id</Member>
+        <Member type="Field">SteelGrade steelGrade</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>BearingMember</Name>
+        <Access>Public</Access>
+        <Location left="1418" top="870" />
+        <Size width="162" height="133" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">bool isSingle</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>AttachedMember</Name>
+        <Access>Public</Access>
+        <Location left="1507" top="630" />
+        <Size width="162" height="196" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">ElementRAZ elementRAZ</Member>
+        <Member type="Field">VectorRAZ distanceVector</Member>
+        <Member type="Field">bool isStartPoint</Member>
+        <Member type="Field">Line ideaLine</Member>
+        <Member type="Field">int ideaOperationId</Member>
+        <Member type="Field">bool plateFailure</Member>
+        <Member type="Method">public static bool PlateFailure()</Member>
+        <Modifier>Abstract</Modifier>
+      </Entity>
+      <Entity type="Enum">
+        <Name>SteelGrade</Name>
+        <Access>Public</Access>
+        <Location left="1121" top="912" />
+        <Size width="162" height="136" />
+        <Collapsed>False</Collapsed>
+        <Value>S235</Value>
+        <Value>S275</Value>
+        <Value>S355</Value>
+      </Entity>
+      <Entity type="Enum">
+        <Name>WeldType</Name>
+        <Access>Public</Access>
+        <Location left="1772" top="1253" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Value>NotSpecified</Value>
+        <Value>Fillet</Value>
+        <Value>DoubleFillet</Value>
+        <Value>FilletRear</Value>
+        <Value>Bevel</Value>
+      </Entity>
+      <Entity type="Class">
+        <Name>Weld</Name>
+        <Access>Public</Access>
+        <Location left="1542" top="1253" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">WeldType weldType</Member>
+        <Member type="Field">double size</Member>
+        <Member type="Field">double unitycheck</Member>
+        <Member type="Field">public List&lt;int&gt; Ids</Member>
+        <Member type="Method">public static double CalcWeldSurface()</Member>
+        <Member type="Method">public double CalcFullStrenthThroat()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Enum">
+        <Name>SawingCut</Name>
+        <Access>Public</Access>
+        <Location left="1121" top="374" />
+        <Size width="162" height="134" />
+        <Collapsed>False</Collapsed>
+        <Value>NoCut</Value>
+        <Value>RightAngledCut</Value>
+        <Value>SingleMiterCut</Value>
+        <Value>DoubleMiterCut</Value>
+      </Entity>
+      <Entity type="Class">
+        <Name>ConnectionTemplateGenerator</Name>
+        <Access>Public</Access>
+        <Location left="1905" top="847" />
+        <Size width="295" height="216" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">public ConnectionTemplate connectionTemplate</Member>
+        <Member type="Method">public ConnectionTemplate LoadFromXmlFile()</Member>
+        <Member type="Method">public MemoryStream SerializeToXMLMemoryStream()</Member>
+        <Member type="Method">public void UpdateTemplate()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Class">
+        <Name>OpenModelGenerator</Name>
+        <Access>Public</Access>
+        <Location left="2231" top="847" />
+        <Size width="295" height="276" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">public OpenModel openModel</Member>
+        <Member type="Field">public OpenModelResult openModelResult</Member>
+        <Member type="Method">public void OpenModelGenerator(Joint j)</Member>
+        <Member type="Method">private void AddMaterialSteelToOpenModel()</Member>
+        <Member type="Method">private void AddCrossSectionToOpenModel()</Member>
+        <Member type="Method">private void AddRolledCSS()</Member>
+        <Member type="Method">private void AddPointsToOpenModel()</Member>
+        <Member type="Method">private void AddConnectedMember()</Member>
+        <Member type="Method">private void AddLoadCaseToOpenModel()</Member>
+        <Member type="Method">private void CreateIDEAOpenModelResults()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Enum">
+        <Name>Shape</Name>
+        <Access>Public</Access>
+        <Location left="1121" top="630" />
+        <Size width="162" height="128" />
+        <Collapsed>False</Collapsed>
+        <Value>ISection</Value>
+        <Value>HollowSection</Value>
+      </Entity>
+    </Entities>
+    <Relationships>
+      <Relationship type="Association" first="0" second="1">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>429</X>
+          <Y>275</Y>
+        </BendPoint>
+        <Direction>Bidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <StartRole>project</StartRole>
+        <EndRole>elementRazs</EndRole>
+        <StartMultiplicity>1</StartMultiplicity>
+        <EndMultiplicity>*</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="1" second="3">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Composition</AssociationType>
+        <StartRole>ElementRAZs</StartRole>
+        <EndRole>Line</EndRole>
+        <StartMultiplicity>*</StartMultiplicity>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="3" second="2">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>546</X>
+          <Y>988</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>435</X>
+          <Y>1065</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <StartRole>Line</StartRole>
+        <EndRole>Points</EndRole>
+        <StartMultiplicity>1</StartMultiplicity>
+        <EndMultiplicity>2</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="0" second="5">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="0" second="4">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>431</X>
+          <Y>196</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>1445</X>
+          <Y>280</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <EndRole>Joints</EndRole>
+        <StartMultiplicity>1</StartMultiplicity>
+        <EndMultiplicity>*</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="6" second="7">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>232</X>
+          <Y>574</Y>
+        </BendPoint>
+        <Direction>Bidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <StartMultiplicity>1</StartMultiplicity>
+        <EndMultiplicity>*</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="1" second="11">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>976</X>
+          <Y>491</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>976</X>
+          <Y>605</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <StartMultiplicity>1</StartMultiplicity>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="10" second="4">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Bidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="7" second="8">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>160</X>
+          <Y>780</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Composition</AssociationType>
+        <EndRole>StartLoads</EndRole>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="7" second="8">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>276</X>
+          <Y>778</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Composition</AssociationType>
+        <EndRole>EndLoads</EndRole>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="0" second="6">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Bidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <StartRole>project</StartRole>
+        <EndRole>loadCasesRaz</EndRole>
+        <StartMultiplicity>1</StartMultiplicity>
+        <EndMultiplicity>1..*</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="3" second="13">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <StartMultiplicity>1</StartMultiplicity>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="14" second="17">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1089</X>
+          <Y>970</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>1095</X>
+          <Y>970</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="11" second="14">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <StartMultiplicity>1</StartMultiplicity>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="16" second="4">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1590</X>
+          <Y>605</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>1590</X>
+          <Y>634</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="12" second="0">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>429</X>
+          <Y>50</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Generalization" first="9" second="16">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>1632</X>
+          <Y>853</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Generalization" first="15" second="16">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>1524</X>
+          <Y>851</Y>
+        </BendPoint>
+      </Relationship>
+      <Relationship type="Association" first="16" second="1">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>1482</X>
+          <Y>701</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>1415</X>
+          <Y>321</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="7" second="1">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>406</X>
+          <Y>572</Y>
+        </BendPoint>
+        <BendPoint relativeToStartShape="False">
+          <X>597</X>
+          <Y>425</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+        <StartMultiplicity>1</StartMultiplicity>
+        <EndMultiplicity>1</EndMultiplicity>
+      </Relationship>
+      <Relationship type="Association" first="19" second="18">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="19" second="9">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="1" second="20">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="10" second="22">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>2269</X>
+          <Y>819</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="10" second="21">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="True">
+          <X>2091</X>
+          <Y>757</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="11" second="23">
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>1090</X>
+          <Y>739</Y>
+        </BendPoint>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+    </Relationships>
+  </ProjectItem>
+</Project>
