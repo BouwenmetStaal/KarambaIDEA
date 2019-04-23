@@ -1,0 +1,9 @@
+﻿<Window
+	x:Class="ConnectionLinkTestApp.ProtocolWindow"
+	xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+	xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+	Title="ProtocolWindow" Height="561.9" Width="1005">
+	<Grid>
+		<WebBrowser x:Name="webBrowser" />
+	</Grid>
+</Window>
