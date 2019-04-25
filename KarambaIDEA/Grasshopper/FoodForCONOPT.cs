@@ -29,9 +29,9 @@ namespace KarambaIDEA
 {
 
 
-    public class FoodForCONOPT : GH_Component
+    public class JointExporter : GH_Component
     {
-        public FoodForCONOPT() : base("FoodForIDEA", "FFI", "Exporting selected joint to IDEA Statica Connection", "KarmabaIDEA", "KarambaIDEA")
+        public JointExporter() : base("Joint Exporter", "JE", "Exporting selected joint to IDEA Statica Connection", "KarmabaIDEA", "KarambaIDEA")
         {
 
         }
