@@ -1,27 +1,14 @@
 ﻿using System;
-using System.Collections;
 using System.Collections.Generic;
-using Rhino;
+
 using Rhino.Geometry;
 using System.Linq;
 
-using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 
 
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
-using System.Windows;
-using System.Text;
-
-using System.Xaml;
-
-using System.Xml;
-using System.Runtime.Serialization;
-using System.Xml.Serialization;
 using KarambaIDEA.Core;
 
 

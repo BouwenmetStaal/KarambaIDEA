@@ -80,14 +80,9 @@ namespace KarambaIDEA.Core
         {
             using (var stream = new FileStream(fileName, FileMode.Open))
             {
-
                 var XML = new XmlSerializer(typeof(Project));
                 return (Project)XML.Deserialize(stream);
-
-
-
             }
-
         }
 
         public void CreateFolder()
@@ -101,14 +96,25 @@ namespace KarambaIDEA.Core
             }
         }
 
-        public void CreateJoints(double tol, double eccentricity, List<PointRAZ> punten, List<ElementRAZ> elementRAZs, List<Hierarchy> hierarchy)
+        public void CreateJoints(double tol, double eccentricity, List<PointRAZ> points, List<ElementRAZ> elementRAZs, List<Hierarchy> hierarchy)
         {
+            if (!hierarchy.Any())
+            {
+                //no hierarchy, first member found is an ended bearing member 
+            }
+            else
+            {
+                //hierarchy determined, list will be build based on hierarchy
+            }
+
+
+
             double tolbox = tol + eccentricity;
             List<Joint> joints = new List<Joint>();
             //iterate over all the points that represent centerpoints of the joint
-            for (int i = 0; i < punten.Count; i++)
+            for (int i = 0; i < points.Count; i++)
             {
-                PointRAZ centerpoint = punten[i];
+                PointRAZ centerpoint = points[i];
                 List<VectorRAZ> eccentricityVectors = new List<VectorRAZ>();
                 List<int> elementIDs = new List<int>();
                 List<LineRAZ> linesatcenter = new List<LineRAZ>();

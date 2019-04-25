@@ -123,6 +123,7 @@
     <Compile Include="Core\Weld.cs" />
     <Compile Include="Excel.cs" />
     <Compile Include="Grasshopper\JointExporter.cs" />
+    <Compile Include="Grasshopper\JointViewer.cs" />
     <Compile Include="IDEA\ConnectionTemplateGenerator.cs" />
     <Compile Include="IDEA\EtabsOpenModelGenerator.cs" />
     <Compile Include="IDEA\IdeaConnection.cs" />
@@ -210,6 +211,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\KarambaIDEA_logo.png" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="Resources\KarambaIDEAviewer_logo.png" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
