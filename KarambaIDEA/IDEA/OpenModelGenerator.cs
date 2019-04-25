@@ -584,7 +584,6 @@ namespace KarambaIDEA
             }
             openModelResult.ResultOnMembers.Add(resultIF);
         }
-
         private void CreateIDEAOpenModelResultsOLD(Joint joint)
         {
             Project project = joint.project;

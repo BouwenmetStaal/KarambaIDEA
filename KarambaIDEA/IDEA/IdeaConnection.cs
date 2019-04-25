@@ -196,15 +196,6 @@ namespace KarambaIDEA.IDEA
         /// Get connection check results
         /// </summary>
         /// <returns>the ConnectionCheckRes object</returns>
-        public ConnectionCheckRes GetConnectionCheckResults222222()
-        {
-            Guid guid = this.GetConnectionIdentifier();
-            var resultsdataXML = dynLinkLazy.Value.GetResultsData();
-            ConnectionResultsData connectionResultsData = new XmlSerializer(typeof(ConnectionResultsData)).Deserialize(new StringReader(resultsdataXML)) as ConnectionResultsData;
-            ConnectionCheckRes connectionCheckRes = connectionResultsData.ConnectionCheckRes.FirstOrDefault(a => a.ConnectionID == this.GetConnectionIdentifier());
-            return connectionCheckRes;
-        }
-
         public ConnectionResultsData GetConnectionCheckResults()
         {
             Guid guid = this.GetConnectionIdentifier();
