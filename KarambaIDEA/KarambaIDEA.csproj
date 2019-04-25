@@ -122,7 +122,7 @@
     <Compile Include="Core\VectorRAZ.cs" />
     <Compile Include="Core\Weld.cs" />
     <Compile Include="Excel.cs" />
-    <Compile Include="Grasshopper\FoodForCONOPT.cs" />
+    <Compile Include="Grasshopper\JointExporter.cs" />
     <Compile Include="IDEA\ConnectionTemplateGenerator.cs" />
     <Compile Include="IDEA\EtabsOpenModelGenerator.cs" />
     <Compile Include="IDEA\IdeaConnection.cs" />
