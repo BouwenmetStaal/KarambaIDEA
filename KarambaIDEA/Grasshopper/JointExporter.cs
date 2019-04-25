@@ -422,27 +422,9 @@ namespace KarambaIDEA
             }
             
 
-
-            ////Send output back to Grasshopper
-            ///
             DA.SetDataList(0, jointlines);
       
-            //DA.SetDataList(0, numberOfSawingCuts);
-            //DA.SetData(1, TotalRightAngledCuts);
-            //DA.SetData(2, TotalSingleMiterCuts);
-            //DA.SetData(3, TotalDoubleMiterCuts);
-
-            //DA.SetData(4, totalWeldingVolume);
-            //DA.SetDataList(5, weldVolumePerJoint);
-            //DA.SetDataList(6, plateYieldingJoint);
-
-            //DA.SetDataList(7, throatBegin);
-            //DA.SetDataList(8, throatEnd);
-
-            //DA.SetDataList(9, plateBegin);
-            //DA.SetDataList(10, plateEnd);
-
-            //DA.SetDataList(11, CSSnames);
+            
 
 
         }

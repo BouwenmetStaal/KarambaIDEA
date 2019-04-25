@@ -47,32 +47,32 @@ namespace KarambaIDEA.Core
         /// If not the line will be flipped. Where startpoint and endpoint
         /// </summary>
         /// <param name="tol"></param>
-        /// <param name="punt"></param>
-        /// <param name="lijn"></param>
+        /// <param name="point"></param>
+        /// <param name="line"></param>
         /// <returns></returns>
-        public static LineRAZ FlipLineIfPointNotEqualStartPoint(double tol, PointRAZ punt, LineRAZ lijn)
+        public static LineRAZ FlipLineIfPointNotEqualStartPoint(double tol, PointRAZ point, LineRAZ line)
         {
-            if (PointRAZ.ArePointsEqual(tol, punt, lijn.Start) == true)
+            if (PointRAZ.ArePointsEqual(tol, point, line.Start) == true)
             {
-                return lijn;
+                return line;
             }
             else
             {
-                return new LineRAZ(lijn.id, lijn.End, lijn.Start);
+                return new LineRAZ(line.id, line.End, line.Start);
             }
         }
 
-        public static LineRAZ FlipLine(LineRAZ lijn)
+        public static LineRAZ FlipLine(LineRAZ line)
         {
-            return new LineRAZ(lijn.id, lijn.End, lijn.Start);
+            return new LineRAZ(line.id, line.End, line.Start);
         }
 
 
-        public static int ShouldEccentricityBeAssumedPOSOrNEG(double tol, PointRAZ punt, LineRAZ lijn)
+        public static int ShouldEccentricityBeAssumedPOSOrNEG(double tol, PointRAZ point, LineRAZ line)
         {
-            if (PointRAZ.ArePointsEqual(tol, punt, lijn.End) == true)
+            if (PointRAZ.ArePointsEqual(tol, point, line.End) == true)
             {
-                LineRAZ lijn2 = LineRAZ.FlipLineIfPointNotEqualStartPoint(tol, punt, lijn);
+                LineRAZ lijn2 = LineRAZ.FlipLineIfPointNotEqualStartPoint(tol, point, line);
                 if (lijn2.vector.Z > 0)
                 {
                     return -1;
@@ -85,7 +85,7 @@ namespace KarambaIDEA.Core
             }
             else
             {
-                if (lijn.vector.Z > 0)
+                if (line.vector.Z > 0)
                 {
                     return -1;
                 }
