@@ -85,26 +85,61 @@ namespace KarambaIDEA.Core
             }
         }
 
-        public void CreateFolder()
+        /// <summary>
+        /// Create Folder to save IDEA files on location spedified, or on default location
+        /// </summary>
+        /// <param name="userpath">folder specified by user</param>
+        public void CreateFolder(string userpath)
         {
             //create folder
             String timeStamp = DateTime.Now.ToString("yyyyMMddHHmmss");
-            this.filepath = Path.Combine(@"C:\Data", timeStamp);
+            string pathlocation = "";
+            if (string.IsNullOrEmpty(userpath) || string.IsNullOrWhiteSpace(userpath))
+            {
+                pathlocation = @"C:\Data";
+            }
+            else
+            {
+                
+                pathlocation = userpath;
+               
+            }            
+                        
+            this.filepath = Path.Combine(pathlocation, timeStamp);
             if (!Directory.Exists(this.filepath))
             {
-                Directory.CreateDirectory(this.filepath);
+                if (Uri.IsWellFormedUriString(filepath, UriKind.Absolute))
+                {
+                    Directory.CreateDirectory(this.filepath);
+                }
+                else
+                {
+                    System.Windows.MessageBox.Show("Provided path is invalid, provided path:" + userpath, "Path invalid");
+                    //TODO include workerthread or progress bar
+                }
+
             }
         }
 
+        /// <summary>
+        /// All data is inventised and converted to seperate data needed to calculate individual joints 
+        /// </summary>
+        /// <param name="tol">tolerance</param>
+        /// <param name="eccentricity">eccentricity if specified</param>
+        /// <param name="points">points in project</param>
+        /// <param name="elementRAZs">elements of project</param>
+        /// <param name="hierarchy">hierarchy if specified</param>
         public void CreateJoints(double tol, double eccentricity, List<PointRAZ> points, List<ElementRAZ> elementRAZs, List<Hierarchy> hierarchy)
         {
             if (!hierarchy.Any())
             {
-                //no hierarchy, first member found is an ended bearing member 
+                //no hierarchy, first member found is an ended bearing member
+                //TODO add code
             }
             else
             {
                 //hierarchy determined, list will be build based on hierarchy
+                //TODE add code
             }
 
 
@@ -486,13 +521,17 @@ namespace KarambaIDEA.Core
             }
         }
 
-        public void CalculateWeldsProject()
+        /// <summary>
+        /// Caluclate welds of all joints in project according to the specified method
+        /// </summary>
+        public void CalculateWeldsProject(string userpath)
         {
+            //calculate welds by using IDEA statica
             if (this.analysisMethod == AnalysisMethod.IdeaMethod)
             {
                 if (startIDEA == true)
                 {
-                    CreateFolder();
+                    CreateFolder(userpath);
                     if (calculateAllJoints == true)
                     {
                         foreach (Joint j in this.joints)
@@ -507,15 +546,9 @@ namespace KarambaIDEA.Core
                         MainWindow mainWindow = new MainWindow();
                         mainWindow.Test(j);
                     }
-
-
-                    
-                    
-
-                    //MainWindow mainWindow = new MainWindow();
-                    //mainWindow.Test(this.joints[7]);
                 }
             }
+            //calculate welds by using other methods
             else
             {
                 foreach (Joint j in this.joints)
@@ -537,6 +570,10 @@ namespace KarambaIDEA.Core
             return weldvolume;
         }
 
+        /// <summary>
+        /// Set a specific minimum throat thickness to all welds
+        /// </summary>
+        /// <param name="minThroatThickness">minimum throat thickness of welds</param>
         public void SetMinThroats(double minThroatThickness)
         {
             this.minthroat = minThroatThickness;
@@ -576,7 +613,9 @@ namespace KarambaIDEA.Core
             }
         }
 
-
+        /// <summary>
+        /// Different analysis methods to calculate welding volume
+        /// </summary>
         public enum AnalysisMethod
         {
             MinSetWelds,

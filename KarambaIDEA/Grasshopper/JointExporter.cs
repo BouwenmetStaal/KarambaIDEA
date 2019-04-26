@@ -137,8 +137,7 @@ namespace KarambaIDEA
 
             // grasshopperinput
             #region GrasshopperInput
-            DA.GetData(0, ref IDEAfilepath);
-            
+            DA.GetData(0, ref IDEAfilepath);           
             
 
             DA.GetDataList(1, hierarchy);
@@ -324,7 +323,7 @@ namespace KarambaIDEA
 
 
             //CALCULATE THROATS ACCORDING TO ANALYSIS METHOD
-            project.CalculateWeldsProject();
+            project.CalculateWeldsProject(IDEAfilepath);
 
             //CALCULATE WELDVOLUME
             totalWeldingVolume = project.CalculateWeldVolume();
