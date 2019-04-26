@@ -531,6 +531,7 @@ namespace KarambaIDEA.Core
             {
                 if (startIDEA == true)
                 {
+                    //Calculate all joints
                     CreateFolder(userpath);
                     if (calculateAllJoints == true)
                     {
@@ -540,8 +541,10 @@ namespace KarambaIDEA.Core
                             mainWindow.Test(j);
                         }
                     }
+                    //Calculate one joint
                     else
                     {
+                        
                         Joint j = this.joints[calculateThisJoint];
                         MainWindow mainWindow = new MainWindow();
                         mainWindow.Test(j);

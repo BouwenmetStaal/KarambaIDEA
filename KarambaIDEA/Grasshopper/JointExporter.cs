@@ -37,9 +37,9 @@ namespace KarambaIDEA
             pManager.AddPointParameter("Points", "Points", "Points of connections", GH_ParamAccess.list);
 
             //Input ElementsRAZ
-            pManager.AddLineParameter("Lines", "L", "Lines of geometry", GH_ParamAccess.list);
-            pManager.AddTextParameter("Groupnames", "GN", "Groupname of element", GH_ParamAccess.list);
-            pManager.AddTextParameter("Material", "Mat", "Steel grade of every element", GH_ParamAccess.list);
+            pManager.AddLineParameter("Lines", "Lines", "Lines of geometry", GH_ParamAccess.list);
+            pManager.AddTextParameter("Groupnames", "Groupnames", "Groupname of element", GH_ParamAccess.list);
+            pManager.AddTextParameter("Material", "Material", "Steel grade of every element", GH_ParamAccess.list);
 
             //Input for creating Cross-section Objects
             pManager.AddTextParameter("Cross-section", "CroSecName", "Name of cross-section", GH_ParamAccess.list);
@@ -61,7 +61,7 @@ namespace KarambaIDEA
 
             
             //pManager.AddBooleanParameter("RunAllJoints", "RunAllJoints", "If true run all joints, if false run ChooseJoint joint", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("ChooseJoint", "ChooseJoint", "Specify the joint that will be calculated in IDEA", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("ChooseJoint", "ChooseJoint", "Specify the joint that will be calculated in IDEA. Note: starts at zero.", GH_ParamAccess.item);
             pManager.AddBooleanParameter("RunIDEA", "RunIDEA", "Bool for running IDEA Statica Connection", GH_ParamAccess.item);
 
 
@@ -69,6 +69,7 @@ namespace KarambaIDEA
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
+            pManager.AddIntegerParameter("#Joints found", "#Joints found", "Number of Joints found", GH_ParamAccess.item);
             pManager.AddLineParameter("Selected Joint", "Selected Joint", "Lines of selected Joint", GH_ParamAccess.list);
 
         }
@@ -187,6 +188,7 @@ namespace KarambaIDEA
             project.startIDEA = startIDEA;
             project.calculateAllJoints = calculateAllJoints;
             project.calculateThisJoint = calculateThisJoint;
+            
 
             //CREATE HIERARCHY
             for (int i = 0; i < hierarchy.Count; i++)
@@ -286,6 +288,8 @@ namespace KarambaIDEA
             double tol = 1e-6;
             project.CreateJoints(tol, eccentricity, punten, project.elementRAZs, project.hierarchylist);
 
+            //Adjust out of bounds index calculateThisJoint
+            project.calculateThisJoint = calculateThisJoint % project.joints.Count;
 
             //CALCULATE SAWING CUTS 
             //store them in the element properties
@@ -402,13 +406,17 @@ namespace KarambaIDEA
                 numberOfSawingCuts.Add(cutsPerElement);
             }
 
-            foreach (int i in project.joints[calculateThisJoint].beamIDs)
+
+            //export lines of joint for visualisation purposes
+            foreach (int i in project.joints[project.calculateThisJoint].beamIDs)
             {
                 jointlines.Add(lines[i]);
             }
-            
 
-            DA.SetDataList(0, jointlines);
+            //Output lines
+            DA.SetData(0, project.joints.Count);
+            DA.SetDataList(1, jointlines);
+            
       
             
 
