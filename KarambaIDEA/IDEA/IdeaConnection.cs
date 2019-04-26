@@ -446,6 +446,13 @@ namespace KarambaIDEA.IDEA
             }
         }
 
+        /// <summary>
+        /// If platefailure occurs in any plate of the beam element (topflange, bottomflange or web) return failure.
+        /// </summary>
+        /// <param name="bfl">bottomflange</param>
+        /// <param name="tfl">topflange</param>
+        /// <param name="w">web</param>
+        /// <returns></returns>
         public static bool PlateFailure(bool bfl, bool tfl, bool w)
         {
             if(bfl == false || tfl == false || w == false)

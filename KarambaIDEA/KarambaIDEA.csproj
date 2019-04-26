@@ -125,10 +125,8 @@
     <Compile Include="Grasshopper\JointExporter.cs" />
     <Compile Include="Grasshopper\JointViewer.cs" />
     <Compile Include="IDEA\ConnectionTemplateGenerator.cs" />
-    <Compile Include="IDEA\EtabsOpenModelGenerator.cs" />
     <Compile Include="IDEA\IdeaConnection.cs" />
     <Compile Include="IDEA\OpenModelGenerator.cs" />
-    <Compile Include="IDEA\SaveOpenModelGenerator.cs" />
     <Compile Include="TestFrameworkJoint.cs" />
     <Page Include="MainWindow.xaml">
       <Generator>MSBuild:Compile</Generator>

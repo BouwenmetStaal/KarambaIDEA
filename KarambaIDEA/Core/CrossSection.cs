@@ -51,9 +51,21 @@ namespace KarambaIDEA.Core
             this.project = _project;
             _project.crossSections.Add(this);
 
-#warning: DOORSNEDES ALLEEN AANMAKEN ALS DEZE NOG NIET BESTAAT!
-        }
 
+        }
+        /// <summary>
+        /// Create crosssection only if the cross-section does not exist yet in the project
+        /// </summary>
+        /// <param name="_project"></param>
+        /// <param name="_name"></param>
+        /// <param name="_shape"></param>
+        /// <param name="_material"></param>
+        /// <param name="_height"></param>
+        /// <param name="_width"></param>
+        /// <param name="_thicknessFlange"></param>
+        /// <param name="_thicknessWeb"></param>
+        /// <param name="_radius"></param>
+        /// <returns></returns>
         public static CrossSection CreateNewOrExisting(Project _project, string _name, Shape _shape, MaterialSteel _material, double _height, double _width, double _thicknessFlange, double _thicknessWeb, double _radius)
         {
             

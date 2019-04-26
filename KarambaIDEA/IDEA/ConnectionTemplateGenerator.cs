@@ -75,7 +75,6 @@ namespace KarambaIDEA.IDEA
             xmlSerializer.WriteObject(xmlTemplateStream, this.connectionTemplate);
             xmlTemplateStream.Flush();
             return xmlTemplateStream;
-#warning To be tested
         }
 
         /// <summary>
