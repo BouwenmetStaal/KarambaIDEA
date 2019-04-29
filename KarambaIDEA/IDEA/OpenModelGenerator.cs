@@ -6,7 +6,7 @@ using IdeaRS.OpenModel.Loading;
 using IdeaRS.OpenModel.Material;
 using IdeaRS.OpenModel.Model;
 using IdeaRS.OpenModel.Result;
-using Microsoft.Win32;
+
 using System;
 using System.Collections.Generic;
 using System.Linq;

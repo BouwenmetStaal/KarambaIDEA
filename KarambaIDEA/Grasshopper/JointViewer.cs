@@ -2,15 +2,11 @@
 using System.Collections.Generic;
 
 using Rhino.Geometry;
-using System.Linq;
 
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
-using Grasshopper.Kernel.Types;
 
-
-using KarambaIDEA.Core;
 
 
 namespace KarambaIDEA.Grasshopper

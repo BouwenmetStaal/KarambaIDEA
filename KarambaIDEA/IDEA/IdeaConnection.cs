@@ -2,24 +2,15 @@
 using System.Collections.Generic;
 using System.Linq;
 
-using IdeaRS.OpenModel;
+
 using IdeaRS.OpenModel.Connection;
-using IdeaRS.OpenModel.CrossSection;
-using IdeaRS.OpenModel.Geometry3D;
-using IdeaRS.OpenModel.Loading;
-using IdeaRS.OpenModel.Material;
-using IdeaRS.OpenModel.Model;
-using IdeaRS.OpenModel.Result;
 using IdeaRS.Connections.Data;
 
-using IdeaRS.OpenModel.Message;
-using Microsoft.Win32;
 
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
-using System.Windows;
-using System.Text;
+
 
 using System.Xml;
 using System.Runtime.Serialization;
@@ -501,29 +492,29 @@ namespace KarambaIDEA.IDEA
         /// <param name="maxiterations">the maximum number of iterations</param>
         public void OptimizeWelds(int maxiterations = 10)
         {
-            //excel set headers
-            int spacing = 7;
-            Excel excel = new Excel(@"C:\Data\TEMPLATES\iterationLOG_template.xlsx", 1);
-            List<ConnectingMember> CMs = this.joint.attachedMembers.OfType<ConnectingMember>().ToList();
-            excel.WritetoCellstring(0, 0, "U.C.");
-            excel.WritetoCellstring(0, spacing, "Weldsize");
-            excel.WritetoCellstring(0, spacing + spacing, "PlateFailure");
-            int pos = 0;
-            string bearname = this.joint.attachedMembers.OfType<BearingMember>().First().ElementRAZ.crossSection.name;
-            excel.WritetoCellstring(1, spacing + spacing, "Bear "+bearname);
-            for (int i =0; i < CMs.Count; i++)
-            {
-                string name =CMs[i].ElementRAZ.crossSection.name;
-                excel.WritetoCellstring(1, pos, "Con" + i+" "+name);
-                excel.WritetoCellstring(1, pos+spacing, "Con" + i + " " + name);
-                excel.WritetoCellstring(1, 1+i + spacing + spacing, "Con" + i + " " + name);//plateHeaders
-                excel.WritetoCellstring(2, pos, "Flange"+ "Con" + i);
-                excel.WritetoCellstring(2, pos+spacing, "Flange"+ "Con" + i);
-                pos += 1;
-                excel.WritetoCellstring(2, pos, "Web" + "Con" + i);
-                excel.WritetoCellstring(2, pos + spacing, "Web" + "Con" + i);
-                pos += 1;
-            }
+            ////excel set headers
+            //int spacing = 7;
+            ////Excel excel = new Excel(@"C:\Data\TEMPLATES\iterationLOG_template.xlsx", 1);
+            //List<ConnectingMember> CMs = this.joint.attachedMembers.OfType<ConnectingMember>().ToList();
+            //excel.WritetoCellstring(0, 0, "U.C.");
+            //excel.WritetoCellstring(0, spacing, "Weldsize");
+            //excel.WritetoCellstring(0, spacing + spacing, "PlateFailure");
+            //int pos = 0;
+            //string bearname = this.joint.attachedMembers.OfType<BearingMember>().First().ElementRAZ.crossSection.name;
+            //excel.WritetoCellstring(1, spacing + spacing, "Bear "+bearname);
+            //for (int i =0; i < CMs.Count; i++)
+            //{
+            //    string name =CMs[i].ElementRAZ.crossSection.name;
+            //    excel.WritetoCellstring(1, pos, "Con" + i+" "+name);
+            //    excel.WritetoCellstring(1, pos+spacing, "Con" + i + " " + name);
+            //    excel.WritetoCellstring(1, 1+i + spacing + spacing, "Con" + i + " " + name);//plateHeaders
+            //    excel.WritetoCellstring(2, pos, "Flange"+ "Con" + i);
+            //    excel.WritetoCellstring(2, pos+spacing, "Flange"+ "Con" + i);
+            //    pos += 1;
+            //    excel.WritetoCellstring(2, pos, "Web" + "Con" + i);
+            //    excel.WritetoCellstring(2, pos + spacing, "Web" + "Con" + i);
+            //    pos += 1;
+            //}
 
 
 
@@ -538,41 +529,41 @@ namespace KarambaIDEA.IDEA
                 this.SaveIdeaConnectionProjectFile(filePath2);
 
                 //update excel file
-                string bearfailure = "";
-                if (this.joint.attachedMembers.OfType<BearingMember>().First().platefailure == false)
-                {
-                    bearfailure = "Failure";
-                }
-                else
-                {
-                    bearfailure = "No Failure";
-                }
-                excel.WritetoCellstring(2 + i, spacing + spacing, bearfailure);
+                //string bearfailure = "";
+                //if (this.joint.attachedMembers.OfType<BearingMember>().First().platefailure == false)
+                //{
+                //    bearfailure = "Failure";
+                //}
+                //else
+                //{
+                //    bearfailure = "No Failure";
+                //}
+                //excel.WritetoCellstring(2 + i, spacing + spacing, bearfailure);
                 List<ConnectingMember> CMs2 = this.joint.attachedMembers.OfType<ConnectingMember>().ToList();
-                int pos3 = 0;
+                //int pos3 = 0;
                 for (int b=0; b < CMs2.Count; b++)
                 {
-                    double flangesize = CMs2[b].flangeWeld.size;
-                    double websize = CMs2[b].webWeld.size;
-                    double flangeUC = CMs2[b].flangeWeld.unitycheck;
-                    double webUC = CMs2[b].webWeld.unitycheck;
-                    string failure = "";
-                    if (CMs2[b].platefailure == false)
-                    {
-                        failure = "Failure";
-                    }
-                    else
-                    {
-                        failure = "No Failure";
-                    }
+                    //double flangesize = CMs2[b].flangeWeld.size;
+                    //double websize = CMs2[b].webWeld.size;
+                    //double flangeUC = CMs2[b].flangeWeld.unitycheck;
+                    //double webUC = CMs2[b].webWeld.unitycheck;
+                    //string failure = "";
+                    //if (CMs2[b].platefailure == false)
+                    //{
+                    //    failure = "Failure";
+                    //}
+                    //else
+                    //{
+                    //    failure = "No Failure";
+                    //}
 
-                    excel.WritetoCell(2 + i, pos3, flangeUC);
-                    excel.WritetoCell(2 + i, pos3+spacing, flangesize);
-                    excel.WritetoCellstring(2 + i, 1+b + spacing+spacing, failure);
-                    pos3 += 1;
-                    excel.WritetoCell(2 + i, pos3, webUC);
-                    excel.WritetoCell(2 + i, pos3 + spacing, websize);
-                    pos3 += 1;
+                    //excel.WritetoCell(2 + i, pos3, flangeUC);
+                    //excel.WritetoCell(2 + i, pos3+spacing, flangesize);
+                    //excel.WritetoCellstring(2 + i, 1+b + spacing+spacing, failure);
+                    //pos3 += 1;
+                    //excel.WritetoCell(2 + i, pos3, webUC);
+                    //excel.WritetoCell(2 + i, pos3 + spacing, websize);
+                    //pos3 += 1;
                 }
                         
 
@@ -582,9 +573,9 @@ namespace KarambaIDEA.IDEA
                 if (this.joint.attachedMembers.OfType<ConnectingMember>().All(a => a.flangeWeld.unitycheck < tresshold) && this.joint.attachedMembers.OfType<ConnectingMember>().All(a => a.webWeld.unitycheck < tresshold))
                 {
                     //save excel file
-                    string excelpath = this.filepath + "\\" + "iterationLOG.xlsx";
-                    excel.SaveAs(excelpath);
-                    excel.Close();
+                    //string excelpath = this.filepath + "\\" + "iterationLOG.xlsx";
+                    //excel.SaveAs(excelpath);
+                    //excel.Close();
                     //exit loop
                     break;
                 }
@@ -599,9 +590,9 @@ namespace KarambaIDEA.IDEA
                     else
                     {
                         //save excel file
-                        string excelpath = this.filepath + "\\" + "iterationLOG.xlsx";
-                        excel.SaveAs(excelpath);
-                        excel.Close();
+                        //string excelpath = this.filepath + "\\" + "iterationLOG.xlsx";
+                        //excel.SaveAs(excelpath);
+                        //excel.Close();
                     }
                 }
             }
