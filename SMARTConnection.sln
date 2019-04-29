@@ -3,7 +3,7 @@ Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
 VisualStudioVersion = 15.0.27703.2042
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestCON", "TestCON\TestCON.csproj", "{A3956C19-C059-47A2-AAA9-822A36CB5C29}"
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Tester", "Tester\Tester.csproj", "{A3956C19-C059-47A2-AAA9-822A36CB5C29}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "KarambaIDEA", "KarambaIDEA\KarambaIDEA.csproj", "{C3C4325A-131E-4666-BB48-A170A5DDB0E6}"
 EndProject

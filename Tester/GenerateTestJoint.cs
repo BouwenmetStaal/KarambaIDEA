@@ -20,9 +20,9 @@ using System.Xml;
 using System.Runtime.Serialization;
 using KarambaIDEA.Core;
 
-namespace KarambaIDEA
+namespace Tester
 {
-    public class TestFrameworkJoint
+    public class GenerateTestJoint
     {
         public Joint TestjointCornerA()
         {
@@ -300,16 +300,16 @@ namespace KarambaIDEA
 
             //new LoadcaseRAZ(1,);
             LoadcaseRAZ lc1 = new LoadcaseRAZ(project2, 1);
-            
 
-            new LoadsPerLineRAZ(project2.elementRAZs[0], lc1, new LoadsRAZ(1, 1, 1, 1 , 1 ,1), new LoadsRAZ(1, 1, 1, 1, 1, 1));
+
+            new LoadsPerLineRAZ(project2.elementRAZs[0], lc1, new LoadsRAZ(1, 1, 1, 1, 1, 1), new LoadsRAZ(1, 1, 1, 1, 1, 1));
             new LoadsPerLineRAZ(project2.elementRAZs[1], lc1, new LoadsRAZ(1, 1, 1, 1, 1, 1), new LoadsRAZ(1, 1, 1, 1, 1, 1));
             new LoadsPerLineRAZ(project2.elementRAZs[2], lc1, new LoadsRAZ(1, 1, 1, 1, 1, 1), new LoadsRAZ(1, 1, 1, 1, 1, 1));
             new LoadsPerLineRAZ(project2.elementRAZs[3], lc1, new LoadsRAZ(1, 1, 1, 1, 1, 1), new LoadsRAZ(1, 1, 1, 1, 1, 1));
             new LoadsPerLineRAZ(project2.elementRAZs[4], lc1, new LoadsRAZ(1, 1, 1, 1, 1, 1), new LoadsRAZ(1, 1, 1, 1, 1, 1));
             new LoadsPerLineRAZ(project2.elementRAZs[5], lc1, new LoadsRAZ(1, 1, 1, 1, 1, 1), new LoadsRAZ(1, 1, 1, 1, 1, 1));
 
-            
+
 
 
             double tol = 1e-6;
@@ -358,10 +358,10 @@ namespace KarambaIDEA
             LoadcaseRAZ lc2 = new LoadcaseRAZ(project2, 2);
             LoadcaseRAZ lc3 = new LoadcaseRAZ(project2, 3);
 
-            new LoadsPerLineRAZ(project2.elementRAZs[0], lc1, new LoadsRAZ(0, 0, 0), new LoadsRAZ(1,1,1));
-            new LoadsPerLineRAZ(project2.elementRAZs[1], lc1, new LoadsRAZ(1,1,1), new LoadsRAZ(0, 0, 0));
-            new LoadsPerLineRAZ(project2.elementRAZs[2], lc1, new LoadsRAZ(0, 0, 0), new LoadsRAZ(1,1,1));
-            new LoadsPerLineRAZ(project2.elementRAZs[3], lc1, new LoadsRAZ(1,1,1), new LoadsRAZ(0, 0, 0));
+            new LoadsPerLineRAZ(project2.elementRAZs[0], lc1, new LoadsRAZ(0, 0, 0), new LoadsRAZ(1, 1, 1));
+            new LoadsPerLineRAZ(project2.elementRAZs[1], lc1, new LoadsRAZ(1, 1, 1), new LoadsRAZ(0, 0, 0));
+            new LoadsPerLineRAZ(project2.elementRAZs[2], lc1, new LoadsRAZ(0, 0, 0), new LoadsRAZ(1, 1, 1));
+            new LoadsPerLineRAZ(project2.elementRAZs[3], lc1, new LoadsRAZ(1, 1, 1), new LoadsRAZ(0, 0, 0));
 
             new LoadsPerLineRAZ(project2.elementRAZs[0], lc2, new LoadsRAZ(0, 0, 0), new LoadsRAZ(0, 0, 0));
             new LoadsPerLineRAZ(project2.elementRAZs[1], lc2, new LoadsRAZ(0, 0, 0), new LoadsRAZ(0, 0, 0));
@@ -503,7 +503,7 @@ namespace KarambaIDEA
             PointRAZ puntB = new PointRAZ(project2, 0, 0, 0);
             PointRAZ puntC = new PointRAZ(project2, 3.125, 0, 0);
             PointRAZ puntD = new PointRAZ(project2, 0, 0, -1.5);
-            
+
 
 
             KarambaIDEA.Core.MaterialSteel steel = new MaterialSteel(project2, MaterialSteel.SteelGrade.S275);
@@ -517,7 +517,7 @@ namespace KarambaIDEA
             new ElementRAZ(project2, 0, new LineRAZ(0, puntA, puntB), project2.crossSections[0], "Bottomchord", 1);
             new ElementRAZ(project2, 1, new LineRAZ(1, puntB, puntC), project2.crossSections[0], "Bottomchord", 1);
             new ElementRAZ(project2, 2, new LineRAZ(2, puntD, puntB), project2.crossSections[1], "Post", 2);
-            
+
 
             List<PointRAZ> pointRAZs = new List<PointRAZ>();
             pointRAZs.Add(puntB);
@@ -746,7 +746,7 @@ namespace KarambaIDEA
 
             new ElementRAZ(project2, 0, new LineRAZ(0, puntA, puntB), project2.crossSections[1], "Column", 1);
             new ElementRAZ(project2, 1, new LineRAZ(1, puntB, puntC), project2.crossSections[1], "Column", 1);
-            
+
             new ElementRAZ(project2, 2, new LineRAZ(2, puntE, puntB), project2.crossSections[0], "Diagonal", 3);
             new ElementRAZ(project2, 3, new LineRAZ(3, puntD, puntB), project2.crossSections[0], "Diagonal", 3);
 
@@ -769,7 +769,7 @@ namespace KarambaIDEA
             project2.hierarchylist.Add(new Hierarchy(4, "Diagonal"));
 
             LoadcaseRAZ lc1 = new LoadcaseRAZ(project2, 1);
-            new LoadsPerLineRAZ(project2.elementRAZs[0], lc1, new LoadsRAZ(5,5,5,5,5,5), new LoadsRAZ(10, 10, 10, 10, 10, 10));
+            new LoadsPerLineRAZ(project2.elementRAZs[0], lc1, new LoadsRAZ(5, 5, 5, 5, 5, 5), new LoadsRAZ(10, 10, 10, 10, 10, 10));
             new LoadsPerLineRAZ(project2.elementRAZs[1], lc1, new LoadsRAZ(5, 5, 5, 5, 5, 5), new LoadsRAZ(10, 10, 10, 10, 10, 10));
             new LoadsPerLineRAZ(project2.elementRAZs[2], lc1, new LoadsRAZ(5, 5, 5, 5, 5, 5), new LoadsRAZ(10, 10, 10, 10, 10, 10));
             new LoadsPerLineRAZ(project2.elementRAZs[3], lc1, new LoadsRAZ(5, 5, 5, 5, 5, 5), new LoadsRAZ(10, 10, 10, 10, 10, 10));
@@ -816,7 +816,7 @@ namespace KarambaIDEA
             new ElementRAZ(project2, 2, new LineRAZ(2, puntB, puntE), project2.crossSections[0], "Diagonal", 3);
             new ElementRAZ(project2, 3, new LineRAZ(3, puntB, puntD), project2.crossSections[0], "Diagonal", 3);
 
-            
+
 
             List<PointRAZ> pointRAZs = new List<PointRAZ>();
             pointRAZs.Add(puntB);
@@ -832,7 +832,7 @@ namespace KarambaIDEA
             new LoadsPerLineRAZ(project2.elementRAZs[1], lc1, new LoadsRAZ(5, 5, 5, 5, 5, 5), new LoadsRAZ(10, 10, 10, 10, 10, 10));
             new LoadsPerLineRAZ(project2.elementRAZs[2], lc1, new LoadsRAZ(5, 5, 5, 5, 5, 5), new LoadsRAZ(10, 10, 10, 10, 10, 10));
             new LoadsPerLineRAZ(project2.elementRAZs[3], lc1, new LoadsRAZ(5, 5, 5, 5, 5, 5), new LoadsRAZ(10, 10, 10, 10, 10, 10));
-            
+
 
 
             double tol = 1e-6;

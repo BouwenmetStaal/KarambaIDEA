@@ -9,7 +9,7 @@ using System.Windows.Forms;
 using KarambaIDEA;
 
 
-namespace TestCON
+namespace Tester
 {
     static class Program
     {
@@ -20,7 +20,8 @@ namespace TestCON
         static void Main()
         {
             KarambaIDEA.MainWindow mainWindow = new MainWindow();
-            KarambaIDEA.TestFrameworkJoint fj = new TestFrameworkJoint();
+            Tester.GenerateTestJoint fj = new GenerateTestJoint();
+            //KarambaIDEA.TestFrameworkJoint fj = new TestFrameworkJoint();
 
             //hieronder testjoint definieren
             Joint joint = fj.Testjoint7();

@@ -6,6 +6,7 @@ using System.Linq;
 using System.Reflection;
 using KarambaIDEA.Core;
 using KarambaIDEA.IDEA;
+using Grasshopper.Kernel;
 
 //using IdeaRS.ConnectionLink;
 
@@ -38,7 +39,7 @@ namespace KarambaIDEA
 
             //string assemblypath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().FullName);
             string templateFilePath = dirpath + @"\Resources\ended2members.contemp";
-
+            
 
             /*
             string templateFilePath = @"C:\Data\template.contemp";

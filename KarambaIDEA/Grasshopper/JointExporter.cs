@@ -30,7 +30,8 @@ namespace KarambaIDEA
             //pManager.AddIntegerParameter("MinThroat", "minA", "Minimal throat thickness [mm]", GH_ParamAccess.item);
             //pManager.AddNumberParameter("MaxEccentricity", "e_max", "Maximum eccentricity present in project [m]", GH_ParamAccess.item);
             //pManager.AddIntegerParameter("AnalysisMethod", "AnalyzeMeth", "Type of analysis", GH_ParamAccess.item);
-            pManager.AddTextParameter("Filepath", "Filepath", "Save location of IDEA file", GH_ParamAccess.item);
+            pManager.AddTextParameter("Template File", "Template File Location", "File location of template to be used", GH_ParamAccess.item);
+            pManager.AddTextParameter("Output Filepath", "Output Filepath", "Save location of IDEA Statica Connection output file", GH_ParamAccess.item);
 
             //Input needed for creating Joints                 
             pManager.AddTextParameter("Hierarchy", "Hierarchy", "List of hierarchy on with joints are made", GH_ParamAccess.list);
@@ -102,6 +103,7 @@ namespace KarambaIDEA
 
             List<Point3d> centerpoints = new List<Point3d>();
             string projectnameFromGH = null;
+            string templatelocation = null;
             string IDEAfilepath = null;
             List<string> shapesDirty = new List<string>();
             List<string> shapes = new List<string>();
@@ -138,36 +140,37 @@ namespace KarambaIDEA
 
             // grasshopperinput
             #region GrasshopperInput
-            DA.GetData(0, ref IDEAfilepath);           
+            DA.GetData(0, ref templatelocation);
+            DA.GetData(1, ref IDEAfilepath);           
             
 
-            DA.GetDataList(1, hierarchy);
-            DA.GetDataList(2, centerpoints);
+            DA.GetDataList(2, hierarchy);
+            DA.GetDataList(3, centerpoints);
 
-            DA.GetDataList(3, lines);
-            DA.GetDataList(4, groupnamesDirty);
-            DA.GetDataList(5, steelgrades);
+            DA.GetDataList(4, lines);
+            DA.GetDataList(5, groupnamesDirty);
+            DA.GetDataList(6, steelgrades);
 
-            DA.GetDataList(6, crossectionsNameDirty);
-            DA.GetDataList(7, shapesDirty);
-            DA.GetDataList(8, height);
-            DA.GetDataList(9, width);
-            DA.GetDataList(10, thicknessFlange);
-            DA.GetDataList(11, thicknessWeb);
-            DA.GetDataList(12, radius);
+            DA.GetDataList(7, crossectionsNameDirty);
+            DA.GetDataList(8, shapesDirty);
+            DA.GetDataList(9, height);
+            DA.GetDataList(10, width);
+            DA.GetDataList(11, thicknessFlange);
+            DA.GetDataList(12, thicknessWeb);
+            DA.GetDataList(13, radius);
 
 
-            DA.GetDataTree(13, out N);
-            DA.GetDataTree(14, out Vz);
-            DA.GetDataTree(15, out Vy);
-            DA.GetDataTree(16, out Mt);
-            DA.GetDataTree(17, out My);
-            DA.GetDataTree(18, out Mz);
+            DA.GetDataTree(14, out N);
+            DA.GetDataTree(15, out Vz);
+            DA.GetDataTree(16, out Vy);
+            DA.GetDataTree(17, out Mt);
+            DA.GetDataTree(18, out My);
+            DA.GetDataTree(19, out Mz);
 
             
             
-            DA.GetData(19, ref calculateThisJoint);
-            DA.GetData(20, ref startIDEA);
+            DA.GetData(20, ref calculateThisJoint);
+            DA.GetData(21, ref startIDEA);
 
             #endregion
 
@@ -423,6 +426,7 @@ namespace KarambaIDEA
 
         }
 
+        
 
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.
