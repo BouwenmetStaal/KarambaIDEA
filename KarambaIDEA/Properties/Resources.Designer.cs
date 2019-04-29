@@ -61,6 +61,26 @@ namespace KarambaIDEA.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] continues2members {
+            get {
+                object obj = ResourceManager.GetObject("continues2members", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Byte[].
+        /// </summary>
+        internal static byte[] ended2members {
+            get {
+                object obj = ResourceManager.GetObject("ended2members", resourceCulture);
+                return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
         internal static System.Drawing.Bitmap KarambaIDEA_logo {

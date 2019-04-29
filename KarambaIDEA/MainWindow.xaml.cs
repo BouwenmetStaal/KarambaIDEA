@@ -1,9 +1,9 @@
 ﻿
+using System;
 using System.Collections.Generic;
 
 using System.Linq;
-
-
+using System.Reflection;
 using KarambaIDEA.Core;
 using KarambaIDEA.IDEA;
 
@@ -33,12 +33,24 @@ namespace KarambaIDEA
             joint.project.SetWeldType();
 
             //2.Select template
+
+            string dirpath = System.IO.Directory.GetCurrentDirectory();
+
+            //string assemblypath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().FullName);
+            string templateFilePath = dirpath + @"\Resources\ended2members.contemp";
+
+
+            /*
             string templateFilePath = @"C:\Data\template.contemp";
             string templateFolder = @"C:\Data\TEMPLATES\";
             List<ConnectingMember> conmembers = joint.attachedMembers.OfType<ConnectingMember>().ToList();
             if (joint.IsContinues == false)
             {
-                templateFilePath = templateFolder + "ended2members.contemp";
+                //templateFilePath = templateFolder + "ended2members.contemp";
+
+                //select template saved in assembly/Resources folder
+                
+
             }
             else
             {
@@ -63,6 +75,7 @@ namespace KarambaIDEA
                 }
                 
             }
+            */
 
             //3. create idea connection
             string path = @"C:\Data\";

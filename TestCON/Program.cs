@@ -25,7 +25,7 @@ namespace TestCON
             //hieronder testjoint definieren
             Joint joint = fj.Testjoint7();
             //Joint joint = fj.Testjoint5();
-            joint.project.CreateFolder();
+            joint.project.CreateFolder(@"C:\Data\");
             //min lasafmeting uitzetten bij Grasshopper
             joint.project.minthroat = 1.0;
 
