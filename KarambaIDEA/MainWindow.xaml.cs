@@ -1,23 +1,9 @@
-﻿using IdeaRS.OpenModel.Message;
-using IdeaRS.OpenModel;
-using Microsoft.Win32;
-using System;
-using System.Diagnostics;
-using System.IO;
-using System.Reflection;
-using System.Windows;
-using System.Text;
+﻿
 using System.Collections.Generic;
-using IdeaRS.Connections.Data;
 
-using System.Xml.Serialization;
 using System.Linq;
 
-using IdeaRS.OpenModel.Connection;
 
-
-using System.Xml;
-using System.Runtime.Serialization;
 using KarambaIDEA.Core;
 using KarambaIDEA.IDEA;
 

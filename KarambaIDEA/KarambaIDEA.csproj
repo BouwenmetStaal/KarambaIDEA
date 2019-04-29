@@ -72,8 +72,9 @@
     <Reference Include="IdeaRS.OpenModel">
       <HintPath>C:\Program Files\IDEAStatiCa\StatiCa9\IdeaRS.OpenModel.dll</HintPath>
     </Reference>
-    <Reference Include="IdeaStatiCa.ConnectionBasicTypes">
-      <HintPath>C:\Program Files\IDEAStatiCa\StatiCa9\IdeaStatiCa.ConnectionBasicTypes.dll</HintPath>
+    <Reference Include="IdeaStatiCa.ConnectionBasicTypes, Version=9.1.51.51750, Culture=neutral, PublicKeyToken=b195254c3273d5c1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Program Files\IDEAStatiCa\StatiCa9\IdeaStatiCa.ConnectionBasicTypes.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="RhinoCommon">

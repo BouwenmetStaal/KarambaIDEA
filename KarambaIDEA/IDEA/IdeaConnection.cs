@@ -53,6 +53,7 @@ namespace KarambaIDEA.IDEA
 
 
             //3.initialize connection with IdeaRS connectionlink, must be by lazy link
+            //IdeaRS.ConnectionLink object will only be found during runtime by use of the lazylink
             this.dynLinkLazy = new Lazy<dynamic>(() =>
             {
                 string ideaInstallDir = @"C:\Program Files\IDEAStatiCa\StatiCa9";
@@ -348,6 +349,7 @@ namespace KarambaIDEA.IDEA
                         //run hidden analysis
                         if (dynLinkLazy.Value != null)
                         {
+                            //RunHiddenAnalysis is part of the IdeaRS.ConnectionLink DLL
                             this.dynLinkLazy.Value.RunHiddenAnalysis(iomStream, resultsStream, existingConProjStream, requiredTemplateStream, importSettingsStream, closeInputStreams);
                         }
                     }
