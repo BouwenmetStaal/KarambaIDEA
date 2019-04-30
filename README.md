@@ -1,7 +1,6 @@
 # KarambaIDEAtest
 KarambaIDEA is Grasshopper plug-in that imports output from Karamba3D to IDEA Statica Connection. The plug-in KarambaIDEA is developed as part of the research project SMARTconnection. More information about the research project can be found at: https://www.bouwenmetstaal.nl/themas/parametrisch-ontwerpen/smartconnection/
 
--Install
 
 ## Installation
 
