@@ -28,7 +28,7 @@ TODO: include installation steps
 ## Usage
 
 ```c#
-TODO: include usage explaination/ link to tutorial video's
+TODO: include usage explaination/ link to tutorial videos
 ```
 
 ## Contributing
