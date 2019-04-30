@@ -10,6 +10,11 @@ Needed software:
 Markup: *IDEA Statica Connection version 9.1
         *Rhino 6
         *Karamba3D
+        
+Markup : * Bullet list
+              * Nested bullet
+                  * Sub-nested bullet etc
+          * Bullet list item 2
 
 ```bash
 pip install foobar
