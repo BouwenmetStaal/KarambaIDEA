@@ -16,12 +16,11 @@ Markup : * Bullet list
                   * Sub-nested bullet etc
           * Bullet list item 2
 
-###Example
-* Item 1
-* Item 2
-  * Sub Item 1
-  * Sub Item 2
-
+Needed software:
+* IDEA Statica Connection version 9.1
+* Rhino 6
+* Karamba3D
+  
 ```bash
 pip install foobar
 ```
