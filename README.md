@@ -22,17 +22,13 @@ Needed software:
 * Karamba3D
   
 ```bash
-pip install foobar
+TODO: include installation steps
 ```
 
 ## Usage
 
 ```c#
-import foobar
-
-foobar.pluralize('word') # returns 'words'
-foobar.pluralize('goose') # returns 'geese'
-foobar.singularize('phenomena') # returns 'phenomenon'
+TODO: include usage explaination/ link to tutorial video's
 ```
 
 ## Contributing
