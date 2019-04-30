@@ -3,7 +3,7 @@
 
 # User-specific files
 *.suo
-*.user
+## Dont ignore *.user
 *.userosscache
 *.sln.docstates
 
