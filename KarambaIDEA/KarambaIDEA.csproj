@@ -58,8 +58,9 @@
     <AssemblyOriginatorKeyFile>..\..\Common\StrongKey\ideastaticasnk.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GH_IO">
+    <Reference Include="GH_IO, Version=6.10.18311.20531, Culture=neutral, PublicKeyToken=6a29997d2e6b4f97, processorArchitecture=MSIL">
       <HintPath>..\..\..\Program Files\Rhino 6\Plug-ins\Grasshopper\GH_IO.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
     </Reference>
     <Reference Include="Grasshopper">

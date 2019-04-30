@@ -27,6 +27,7 @@ namespace Tester
             Joint joint = fj.Testjoint7();
             //Joint joint = fj.Testjoint5();
             joint.project.CreateFolder(@"C:\Data\");
+            joint.project.templatePath = @"C:\Data\template.contemp";
             //min lasafmeting uitzetten bij Grasshopper
             joint.project.minthroat = 1.0;
 
