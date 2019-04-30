@@ -5,11 +5,11 @@ Custom Grasshopper component that imports output from Karamba3D to IDEA Statica 
 
 ## Installation
 
-Use the package manager [pip](https://pip.pypa.io/en/stable/) to install foobar.
 
-IDEA Statica Connection 9.1
-Rhino 6
-Karamba3D
+Needed software:
+*IDEA Statica Connection version 9.1
+*Rhino 6
+*Karamba3D
 
 ```bash
 pip install foobar
@@ -17,7 +17,7 @@ pip install foobar
 
 ## Usage
 
-```python
+```c#
 import foobar
 
 foobar.pluralize('word') # returns 'words'
