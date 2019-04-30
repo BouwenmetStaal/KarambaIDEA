@@ -16,6 +16,12 @@ Markup : * Bullet list
                   * Sub-nested bullet etc
           * Bullet list item 2
 
+###Example
+* Item 1
+* Item 2
+  * Sub Item 1
+  * Sub Item 2
+
 ```bash
 pip install foobar
 ```
