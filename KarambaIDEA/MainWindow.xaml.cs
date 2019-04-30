@@ -34,12 +34,13 @@ namespace KarambaIDEA
             joint.project.SetWeldType();
 
             //2.Select template
+            string templateFilePath = joint.project.templatePath;
 
-            string dirpath = System.IO.Directory.GetCurrentDirectory();
+            //string dirpath = System.IO.Directory.GetCurrentDirectory();
 
             //string assemblypath = System.IO.Path.GetDirectoryName(Assembly.GetExecutingAssembly().FullName);
-            string templateFilePath = dirpath + @"\Resources\ended2members.contemp";
-            
+            //string templateFilePath = dirpath + @"\Resources\ended2members.contemp";
+
 
             /*
             string templateFilePath = @"C:\Data\template.contemp";
@@ -79,8 +80,8 @@ namespace KarambaIDEA
             */
 
             //3. create idea connection
-            string path = @"C:\Data\";
-            IdeaConnection ideaConnection = new IdeaConnection(joint, templateFilePath,path);
+            string path =joint.project.filepath;
+            IdeaConnection ideaConnection = new IdeaConnection(joint, templateFilePath, path);
 
             //4.Mapwelds
             ideaConnection.MapWeldsIdsAndOperationIds();

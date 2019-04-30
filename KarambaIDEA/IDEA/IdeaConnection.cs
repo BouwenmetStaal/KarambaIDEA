@@ -43,6 +43,8 @@ namespace KarambaIDEA.IDEA
             //1.set joint
             joint = _joint;
 
+            //TODO: make sure only one folder is created now two folders are created.
+
             //2.create folder
             string folder = this.joint.project.filepath;
             filepath = Path.Combine(folder, this.joint.Name);

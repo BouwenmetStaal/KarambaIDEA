@@ -26,6 +26,7 @@ namespace KarambaIDEA.Core
         public string projectName = null;
         public string author;
         public string filepath;
+        public string templatePath;
         public double minthroat;
         public bool startIDEA;
         public bool calculateAllJoints;

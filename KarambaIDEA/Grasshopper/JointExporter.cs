@@ -30,8 +30,8 @@ namespace KarambaIDEA
             //pManager.AddIntegerParameter("MinThroat", "minA", "Minimal throat thickness [mm]", GH_ParamAccess.item);
             //pManager.AddNumberParameter("MaxEccentricity", "e_max", "Maximum eccentricity present in project [m]", GH_ParamAccess.item);
             //pManager.AddIntegerParameter("AnalysisMethod", "AnalyzeMeth", "Type of analysis", GH_ParamAccess.item);
-            pManager.AddTextParameter("Template File", "Template File Location", "File location of template to be used", GH_ParamAccess.item);
-            pManager.AddTextParameter("Output Filepath", "Output Filepath", "Save location of IDEA Statica Connection output file", GH_ParamAccess.item);
+            pManager.AddTextParameter("Template File", "Template File Location", "File location of template to be used. For example: 'C:\\Data\\template.contemp'", GH_ParamAccess.item);
+            pManager.AddTextParameter("Output Filepath", "Output Filepath", "Save location of IDEA Statica Connection output file. For example: 'C:\\Data'", GH_ParamAccess.item);
 
             //Input needed for creating Joints                 
             pManager.AddTextParameter("Hierarchy", "Hierarchy", "List of hierarchy on with joints are made", GH_ParamAccess.list);
@@ -187,6 +187,10 @@ namespace KarambaIDEA
             //CREATE PROJECT
             Project project = new Project(projectnameFromGH);
 
+            //Load paths
+            project.templatePath = templatelocation;
+            project.filepath = IDEAfilepath;
+
             //START IDEA BOOL
             project.startIDEA = startIDEA;
             project.calculateAllJoints = calculateAllJoints;
@@ -330,7 +334,7 @@ namespace KarambaIDEA
 
 
             //CALCULATE THROATS ACCORDING TO ANALYSIS METHOD
-            project.CalculateWeldsProject(IDEAfilepath);
+            project.CalculateWeldsProject(project.filepath);
 
             //CALCULATE WELDVOLUME
             totalWeldingVolume = project.CalculateWeldVolume();
