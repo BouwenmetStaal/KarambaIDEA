@@ -7,9 +7,9 @@ Custom Grasshopper component that imports output from Karamba3D to IDEA Statica 
 
 
 Needed software:
-*IDEA Statica Connection version 9.1
-*Rhino 6
-*Karamba3D
+Markup: *IDEA Statica Connection version 9.1
+        *Rhino 6
+        *Karamba3D
 
 ```bash
 pip install foobar
