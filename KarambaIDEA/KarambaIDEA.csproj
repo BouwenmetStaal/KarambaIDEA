@@ -121,6 +121,7 @@
     <Compile Include="Core\Weld.cs" />
     <Compile Include="Grasshopper\JointExporter.cs" />
     <Compile Include="Grasshopper\JointViewer.cs" />
+    <Compile Include="Grasshopper\LoadsToLoadsTrees.cs" />
     <Compile Include="IDEA\ConnectionTemplateGenerator.cs" />
     <Compile Include="IDEA\IdeaConnection.cs" />
     <Compile Include="IDEA\OpenModelGenerator.cs" />
