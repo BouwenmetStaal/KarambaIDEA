@@ -143,7 +143,9 @@ namespace KarambaIDEA.Core
                 //TODE add code
             }
 
-
+            //1. DEFINE JOINTS
+            //2. ORDER ATTACHEDMEMBERS ACCORDING TO HIERARCHY
+            //3. ADD JOINTS TO PROJECT
 
             double tolbox = tol + eccentricity;
             List<Joint> joints = new List<Joint>();
