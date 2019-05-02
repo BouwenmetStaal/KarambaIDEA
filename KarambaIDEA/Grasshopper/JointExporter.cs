@@ -300,7 +300,7 @@ namespace KarambaIDEA
 
             //CALCULATE SAWING CUTS 
             //store them in the element properties
-            Project.CalculateSawingCuts(project, tol);
+            //Project.CalculateSawingCuts(project, tol);
 
             //SET ALL THROATS TO MIN-THROAT THICKNESS
             project.SetMinThroats(minThroatThickness);
@@ -334,11 +334,12 @@ namespace KarambaIDEA
 
 
             //CALCULATE THROATS ACCORDING TO ANALYSIS METHOD
+            //Send DATA to IDEA
             project.CalculateWeldsProject(project.filepath);
 
             //CALCULATE WELDVOLUME
             totalWeldingVolume = project.CalculateWeldVolume();
-
+            
 
             //Output back to Grasshopper
             //OUTPUT: WELDING, VOLUME PER JOINT
@@ -367,7 +368,7 @@ namespace KarambaIDEA
                 }
             }
 
-
+            
 
             //OUTPUT:SAWING 
             for (int i = 0; i < project.elementRAZs.Count; i++)
@@ -412,7 +413,7 @@ namespace KarambaIDEA
                 }
                 numberOfSawingCuts.Add(cutsPerElement);
             }
-
+            
 
             //export lines of joint for visualisation purposes
             foreach (int i in project.joints[project.calculateThisJoint].beamIDs)
