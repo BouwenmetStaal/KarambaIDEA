@@ -160,13 +160,15 @@ namespace KarambaIDEA.Core
                     //If fromPoints or startPoints of line fall in the tolerancebox than add lines.
                     if (PointRAZ.ArePointsEqual(tolbox, centerpoint, element.line.Start) && element.line.vector.length > tolbox)
                     {
-                        VectorRAZ distancevector = new VectorRAZ(centerpoint.X - element.line.Start.X, centerpoint.Y - element.line.Start.Y, centerpoint.Z - element.line.Start.Z);
-                        LineRAZ transposedline = LineRAZ.TranslateLineWithVector(this, element.line, distancevector);//No flip needed
-                        int signlocalEccentricity = LineRAZ.ShouldEccentricityBeAssumedPOSOrNEG(tol, centerpoint, transposedline);
-                        double localEccnetricty = signlocalEccentricity * ConnectingMember.LocalEccentricity(centerpoint, element.line.Start, element.line.vector);
+                        //VectorRAZ distancevector = new VectorRAZ(centerpoint.X - element.line.Start.X, centerpoint.Y - element.line.Start.Y, centerpoint.Z - element.line.Start.Z);
+                        //LineRAZ transposedline = LineRAZ.TranslateLineWithVector(this, element.line, distancevector);//No flip needed
+                        //int signlocalEccentricity = LineRAZ.ShouldEccentricityBeAssumedPOSOrNEG(tol, centerpoint, transposedline);
+                        //double localEccnetricty = signlocalEccentricity * ConnectingMember.LocalEccentricity(centerpoint, element.line.Start, element.line.vector);
+                        LineRAZ line = element.line;
+                        VectorRAZ distancevector = new VectorRAZ(0.0, 0.0, 0.0);
+                        double localEccnetricty = 0.0;
 
-
-                        ConnectingMember connectingMember = new ConnectingMember(element, distancevector, true, transposedline, localEccnetricty);
+                        ConnectingMember connectingMember = new ConnectingMember(element, distancevector, true, line, localEccnetricty);
 
                         elementIDs.Add(elementRAZs.IndexOf(element));
                         attachedMemTemp.Add(connectingMember);
@@ -175,11 +177,14 @@ namespace KarambaIDEA.Core
                     //If toPoints or endPoints of line fall in the tolerancebox than add lines.
                     if (PointRAZ.ArePointsEqual(tolbox, centerpoint, element.line.End) && element.line.vector.length > tolbox)
                     {
-                        VectorRAZ distancevector = new VectorRAZ(centerpoint.X - element.line.End.X, centerpoint.Y - element.line.End.Y, centerpoint.Z - element.line.End.Z);
-                        LineRAZ transposedline = LineRAZ.TranslateLineWithVector(this, element.line, distancevector);//translate line with vector
-                        LineRAZ idealine = LineRAZ.FlipLine(transposedline);//in this case of endpoint line needs to be flipped
-                        int signlocalEccentricity = LineRAZ.ShouldEccentricityBeAssumedPOSOrNEG(tol, centerpoint, idealine);
-                        double localEccnetricty = signlocalEccentricity * ConnectingMember.LocalEccentricity(centerpoint, element.line.End, element.line.vector);
+                        //VectorRAZ distancevector = new VectorRAZ(centerpoint.X - element.line.End.X, centerpoint.Y - element.line.End.Y, centerpoint.Z - element.line.End.Z);
+                        //LineRAZ transposedline = LineRAZ.TranslateLineWithVector(this, element.line, distancevector);//translate line with vector
+                        LineRAZ idealine = LineRAZ.FlipLine(element.line);//in this case of endpoint line needs to be flipped
+                        //int signlocalEccentricity = LineRAZ.ShouldEccentricityBeAssumedPOSOrNEG(tol, centerpoint, idealine);
+                        //double localEccnetricty = signlocalEccentricity * ConnectingMember.LocalEccentricity(centerpoint, element.line.End, element.line.vector);
+                        
+                        VectorRAZ distancevector = new VectorRAZ(0.0, 0.0, 0.0);
+                        double localEccnetricty = 0.0;
 
                         ConnectingMember connectingMember = new ConnectingMember(element, distancevector, false, idealine, localEccnetricty);
 

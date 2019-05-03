@@ -137,6 +137,11 @@ namespace KarambaIDEA
                         AddHollowCSS(crossSection);
                         return;
                     }
+                case KarambaIDEA.Core.CrossSection.Shape.CHSsection:
+                    {
+                        AddchsCSS(crossSection);
+                        return;
+                    }
                 default:
                     {
                         throw new NotImplementedException();
@@ -181,6 +186,30 @@ namespace KarambaIDEA
             crossSectionParameter.Name = crossSection.name;
             crossSectionParameter.Parameters.Add(new ParameterString() { Name = "UniqueName", Value = crossSection.name });
             openModel.AddObject(crossSectionParameter);
+        }
+        private void AddchsCSS(KarambaIDEA.Core.CrossSection crossSection)
+        {
+            CrossSectionParameter chs = new CrossSectionParameter();
+            chs.Id = crossSection.id;
+            MatSteel material = openModel.MatSteel.First(a => a.Id == crossSection.material.id);
+            chs.Material = new ReferenceElement(material);
+            chs.Name = crossSection.name;
+            double height = crossSection.height / 1000;
+            double width = crossSection.width / 1000;
+            double tweb = crossSection.thicknessWeb / 1000;
+            double tflange = crossSection.thicknessFlange / 1000;
+            double radius = crossSection.radius / 1000;
+            //CrossSectionFactory.FillCssRectangleHollow(hollow, width, height, tweb, tweb, tflange, tflange);
+            CrossSectionFactory.FillOHollow(chs, height, tweb);
+            //height
+            //width
+            //thickness
+            //innerradius
+            //outerradius
+            //unkown
+            //CrossSectionFactory.FillCssSteelChannel(hollow, height, width, tweb, tflange, radius, radius, 0);
+
+            openModel.AddObject(chs);
         }
         private void AddPointsToOpenModel(PointRAZ point)
         {

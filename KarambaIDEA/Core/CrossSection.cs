@@ -74,7 +74,8 @@ namespace KarambaIDEA.Core
         public enum Shape
         {
             ISection,
-            HollowSection
+            HollowSection,
+            CHSsection
         }
 
 

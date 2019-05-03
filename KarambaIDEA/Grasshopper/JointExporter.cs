@@ -221,9 +221,13 @@ namespace KarambaIDEA
                 {
                     shape = CrossSection.Shape.ISection;
                 }
-                else
+                else if (shapes[i].StartsWith("[]"))
                 {
                     shape = CrossSection.Shape.HollowSection;
+                }
+                else
+                {
+                    shape = CrossSection.Shape.CHSsection;
                 }
                 if (crosssection == null)
                 {
