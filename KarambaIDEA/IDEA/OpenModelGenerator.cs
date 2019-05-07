@@ -194,7 +194,7 @@ namespace KarambaIDEA
             MatSteel material = openModel.MatSteel.First(a => a.Id == crossSection.material.id);
             chs.Material = new ReferenceElement(material);
             chs.Name = crossSection.name;
-            double height = crossSection.height / 1000;
+            double height = crossSection.height / 1000/2; //adjust to radius
             double width = crossSection.width / 1000;
             double tweb = crossSection.thicknessWeb / 1000;
             double tflange = crossSection.thicknessFlange / 1000;
