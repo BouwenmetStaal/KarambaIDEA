@@ -115,7 +115,7 @@ namespace KarambaIDEA.Core
                 }
                 else
                 {
-                    System.Windows.MessageBox.Show("Provided path is invalid, provided path:" + userpath, "Path invalid");
+                    //System.Windows.MessageBox.Show("Provided path is invalid, provided path:" + userpath, "Path invalid");
                     //TODO include workerthread or progress bar
                 }
 
@@ -132,11 +132,6 @@ namespace KarambaIDEA.Core
         /// <param name="hierarchy">hierarchy if specified</param>
         public void CreateJoints(double tol, double eccentricity, List<PointRAZ> points, List<ElementRAZ> elementRAZs, List<Hierarchy> hierarchy)
         {
-            
-
-            
-            
-
             double tolbox = tol + eccentricity;
             List<Joint> joints = new List<Joint>();
 
@@ -160,10 +155,6 @@ namespace KarambaIDEA.Core
                     //If fromPoints or startPoints of line fall in the tolerancebox than add lines.
                     if (PointRAZ.ArePointsEqual(tolbox, centerpoint, element.line.Start) && element.line.vector.length > tolbox)
                     {
-                        //VectorRAZ distancevector = new VectorRAZ(centerpoint.X - element.line.Start.X, centerpoint.Y - element.line.Start.Y, centerpoint.Z - element.line.Start.Z);
-                        //LineRAZ transposedline = LineRAZ.TranslateLineWithVector(this, element.line, distancevector);//No flip needed
-                        //int signlocalEccentricity = LineRAZ.ShouldEccentricityBeAssumedPOSOrNEG(tol, centerpoint, transposedline);
-                        //double localEccnetricty = signlocalEccentricity * ConnectingMember.LocalEccentricity(centerpoint, element.line.Start, element.line.vector);
                         LineRAZ line = element.line;
                         VectorRAZ distancevector = new VectorRAZ(0.0, 0.0, 0.0);
                         double localEccnetricty = 0.0;
@@ -177,12 +168,7 @@ namespace KarambaIDEA.Core
                     //If toPoints or endPoints of line fall in the tolerancebox than add lines.
                     if (PointRAZ.ArePointsEqual(tolbox, centerpoint, element.line.End) && element.line.vector.length > tolbox)
                     {
-                        //VectorRAZ distancevector = new VectorRAZ(centerpoint.X - element.line.End.X, centerpoint.Y - element.line.End.Y, centerpoint.Z - element.line.End.Z);
-                        //LineRAZ transposedline = LineRAZ.TranslateLineWithVector(this, element.line, distancevector);//translate line with vector
                         LineRAZ idealine = LineRAZ.FlipLine(element.line);//in this case of endpoint line needs to be flipped
-                        //int signlocalEccentricity = LineRAZ.ShouldEccentricityBeAssumedPOSOrNEG(tol, centerpoint, idealine);
-                        //double localEccnetricty = signlocalEccentricity * ConnectingMember.LocalEccentricity(centerpoint, element.line.End, element.line.vector);
-                        
                         VectorRAZ distancevector = new VectorRAZ(0.0, 0.0, 0.0);
                         double localEccnetricty = 0.0;
 
@@ -202,7 +188,6 @@ namespace KarambaIDEA.Core
                 if (!hierarchy.Any())
                 {
                     //no hierarchy, first member found is an ended bearing member
-                    //TODO add code
                     IsContinues = false;
                     //First member is bearing
                     AttachedMember w = attachedMemTemp.First();

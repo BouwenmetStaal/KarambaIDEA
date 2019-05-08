@@ -141,10 +141,10 @@ namespace KarambaIDEA
             // grasshopperinput
             #region GrasshopperInput
             DA.GetData(0, ref templatelocation);
-            DA.GetData(1, ref IDEAfilepath);           
-            
+            DA.GetData(1, ref IDEAfilepath);
 
-            DA.GetDataList(2, hierarchy);
+
+            if (!DA.GetDataList(2, hierarchy)) { return; } ;
             DA.GetDataList(3, centerpoints);
 
             DA.GetDataList(4, lines);
