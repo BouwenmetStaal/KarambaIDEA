@@ -505,10 +505,12 @@ namespace KarambaIDEA
             {
                 //Continues Chord consist out of one member
                 Member1D mb = openModel.Member1D[ibeam];
+                //Loop is needed in case of a continuous member
                 for (int iele = 0; iele < mb.Elements1D.Count; iele++)
                 {
-                    //Continues chord consist out of two elements
-                    Element1D elem = openModel.Element1D.First(a => a.Id == mb.Elements1D[iele].Id);
+                    //Continues chord consists out of two elements
+                    Element1D elem = openModel.Element1D.First(a => a.Id == mb.Elements1D[iele].Id);//wordt hier de link met het verkeerde element gelegd?
+                    //word de verkeerde id toegekent?
 
                     //results on members are constant in the framework
                     ResultOnMember resMember = new ResultOnMember(new Member() { Id = elem.Id, MemberType = MemberType.Element1D }, ResultType.InternalForces);
@@ -584,13 +586,9 @@ namespace KarambaIDEA
                                 double My = My0*(-1); // 
 
                                 double Vz = Vz0*(-1);
-                                //double Vz = Vz0 * (-1);// zonder LCS
-
                                 double Vy = Vy0*(-1);
-
-                                //double Mz = Mz0*(-1); //  zonder LCS
+                                
                                 double Mz = Mz0*(-1); //  
-
                                 double Mt = Mt0*(-1); 
 
                                 resLoadCase.N = N;//
