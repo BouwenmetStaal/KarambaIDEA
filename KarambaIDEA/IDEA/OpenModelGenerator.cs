@@ -228,15 +228,64 @@ namespace KarambaIDEA
             polyLine3D.Id = openModel.GetMaxId(polyLine3D) + 1;
             openModel.AddObject(polyLine3D);
 
-
-
+            Point3D pA = new Point3D();
+            Point3D pB = new Point3D();
+            Point3D pC = new Point3D();
+            Point3D pD = new Point3D();
+            //view from point [B], point [B] is centerpoint of connection
+            if (bearingMembers[0].isStartPoint == false)
+            {
+                if (bearingMembers[1].isStartPoint == true)
+                {
+                    // [A]=0=>[B]=1=>[C]
+                    pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
+                    pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
+                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
+                    pD = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
+                }
+                else
+                {
+                    // [A]=0=>[B]<=1=[C]
+                    pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
+                    pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
+                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
+                    pD = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
+                }
+            }
+            else
+            {
+                if (bearingMembers[1].isStartPoint == true)
+                {
+                    // [A]<=0=[B]=1=>[C]
+                    pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
+                    pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
+                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
+                    pD = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
+                }
+                else
+                {
+                    // [A]<=0=[B]<=1=[C]
+                    pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
+                    pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
+                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
+                    pD = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
+                    /*
+                    pA = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
+                    pB = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
+                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
+                    pD = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
+                    */
+                }
+            }
+            
 
             //segments
+            /*
             Point3D pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ideaLine.Start.id);
             Point3D pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ideaLine.End.id);
             Point3D pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ideaLine.Start.id);
             Point3D pD = openModel.Point3D.First(a => a.Id == bearingMembers[1].ideaLine.End.id);
-
+            */
 
             List<Point3D> points = new List<Point3D>() { pA, pB, pC, pD };
             //Point3D pointB = points.Where(a => a.Id == connectionPoint.Id).First();
@@ -244,8 +293,8 @@ namespace KarambaIDEA
             //Point3D pointC = points.Where(a => a.Id != connectionPoint.Id).ToList()[1];
 
             //Note: not most robust solution, e.g. does not hold in case of segments with inverse vectors
-            Point3D pointA = pB; //Endpoint of first member
-            Point3D pointB = pA; //Startpoint of first member
+            Point3D pointA = pA; //Endpoint of first member
+            Point3D pointB = pB; //Startpoint of first member
             Point3D pointC = pD; //Endpoint of second member
 
 
