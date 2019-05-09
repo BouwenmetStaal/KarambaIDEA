@@ -29,6 +29,10 @@ TODO: include installation steps
 
 ## Usage
 
+This repository contains two folders: KarambaIDEA and Tester.
+
+The Tester folder, can be used to test.
+
 ```c#
 TODO: include usage explaination/ link to tutorial videos
 ```
