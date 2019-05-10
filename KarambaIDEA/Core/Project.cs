@@ -115,7 +115,7 @@ namespace KarambaIDEA.Core
                 }
                 else
                 {
-                    System.Windows.MessageBox.Show("Provided path is invalid, provided path:" + userpath, "Path invalid");
+                    //System.Windows.MessageBox.Show("Provided path is invalid, provided path:" + userpath, "Path invalid");
                     //TODO include workerthread or progress bar
                 }
 
@@ -132,21 +132,9 @@ namespace KarambaIDEA.Core
         /// <param name="hierarchy">hierarchy if specified</param>
         public void CreateJoints(double tol, double eccentricity, List<PointRAZ> points, List<ElementRAZ> elementRAZs, List<Hierarchy> hierarchy)
         {
-            if (!hierarchy.Any())
-            {
-                //no hierarchy, first member found is an ended bearing member
-                //TODO add code
-            }
-            else
-            {
-                //hierarchy determined, list will be build based on hierarchy
-                //TODE add code
-            }
-
-
-
             double tolbox = tol + eccentricity;
             List<Joint> joints = new List<Joint>();
+
             //iterate over all the points that represent centerpoints of the joint
             for (int i = 0; i < points.Count; i++)
             {
@@ -158,189 +146,123 @@ namespace KarambaIDEA.Core
                 List<AttachedMember> attachedMemTemp = new List<AttachedMember>();
                 List<AttachedMember> attachedMembers = new List<AttachedMember>();
 
+                //1. DEFINE JOINTS
                 //iterate over all lines in project
                 foreach (ElementRAZ element in elementRAZs)
                 {
-                    //DETECT ECCENTRIC WARREN TRUSS JOINTS
-                    //if the number of lines attached to the centerpoint is equal to two it is a eccentric warren truss joint
-                    if (PointRAZ.ArePointsEqual(tol, centerpoint, element.line.End) == true || PointRAZ.ArePointsEqual(tol, centerpoint, element.line.Start) == true)
+                                      
+                    //STARTPoints
+                    //If fromPoints or startPoints of line fall in the tolerancebox than add lines.
+                    if (PointRAZ.ArePointsEqual(tolbox, centerpoint, element.line.Start) && element.line.vector.length > tolbox)
                     {
-                        linesatcenter.Add(element.line);
+                        LineRAZ line = element.line;
+                        VectorRAZ distancevector = new VectorRAZ(0.0, 0.0, 0.0);
+                        double localEccnetricty = 0.0;
+
+                        ConnectingMember connectingMember = new ConnectingMember(element, distancevector, true, line, localEccnetricty);
+
+                        elementIDs.Add(elementRAZs.IndexOf(element));
+                        attachedMemTemp.Add(connectingMember);
                     }
                     //ENDPoints
                     //If toPoints or endPoints of line fall in the tolerancebox than add lines.
                     if (PointRAZ.ArePointsEqual(tolbox, centerpoint, element.line.End) && element.line.vector.length > tolbox)
                     {
-                        //flag_exists prevents that duplicates are added to the list
-                        bool flag_exists = false;
-                        foreach (int id in elementIDs)
-                        {
-                            if (elementRAZs.IndexOf(element) == id)
-                            {
-                                flag_exists = true;
-                            }
-                        }
-                        if (!flag_exists)
-                        {
-                            VectorRAZ distancevector = new VectorRAZ(centerpoint.X - element.line.End.X, centerpoint.Y - element.line.End.Y, centerpoint.Z - element.line.End.Z);
-                            LineRAZ transposedline = LineRAZ.TranslateLineWithVector(this, element.line, distancevector);//translate line with vector
-                            LineRAZ idealine = LineRAZ.FlipLine(transposedline);//in this case of endpoint line needs to be flipped
-                            int signlocalEccentricity = LineRAZ.ShouldEccentricityBeAssumedPOSOrNEG(tol, centerpoint, idealine);
-                            double localEccnetricty = signlocalEccentricity * ConnectingMember.LocalEccentricity(centerpoint, element.line.End, element.line.vector);
+                        LineRAZ idealine = LineRAZ.FlipLine(element.line);//in this case of endpoint line needs to be flipped
+                        VectorRAZ distancevector = new VectorRAZ(0.0, 0.0, 0.0);
+                        double localEccnetricty = 0.0;
 
-                            ConnectingMember connectingMember = new ConnectingMember(element, distancevector, false, idealine, localEccnetricty);
+                        ConnectingMember connectingMember = new ConnectingMember(element, distancevector, false, idealine, localEccnetricty);
 
-                            elementIDs.Add(elementRAZs.IndexOf(element));
-                            attachedMemTemp.Add(connectingMember);
-                        }
-                    }
-                    //STARTPoints
-                    //If fromPoints or startPoints of line fall in the tolerancebox than add lines.
-                    if (PointRAZ.ArePointsEqual(tolbox, centerpoint, element.line.Start) && element.line.vector.length > tolbox)
-                    {
-                        //flag_exists prevents that duplicates are added to the list
-                        bool flag_exists = false;
-                        foreach (int id in elementIDs)
-                        {
-                            if (elementRAZs.IndexOf(element) == id)
-                            {
-                                flag_exists = true;
-                            }
-                        }
-                        if (!flag_exists)
-                        {
-                            VectorRAZ distancevector = new VectorRAZ(centerpoint.X - element.line.Start.X, centerpoint.Y - element.line.Start.Y, centerpoint.Z - element.line.Start.Z);
-                            LineRAZ transposedline = LineRAZ.TranslateLineWithVector(this, element.line, distancevector);//No flip needed
-                            int signlocalEccentricity = LineRAZ.ShouldEccentricityBeAssumedPOSOrNEG(tol, centerpoint, transposedline);
-                            double localEccnetricty = signlocalEccentricity * ConnectingMember.LocalEccentricity(centerpoint, element.line.Start, element.line.vector);
-
-
-                            ConnectingMember connectingMember = new ConnectingMember(element, distancevector, true, transposedline, localEccnetricty);
-
-                            elementIDs.Add(elementRAZs.IndexOf(element));
-                            attachedMemTemp.Add(connectingMember);
-                        }
+                        elementIDs.Add(elementRAZs.IndexOf(element));
+                        attachedMemTemp.Add(connectingMember);
                     }
                 }
 
-                //Check if joint is WarrenEccentrictyJoint
-                bool WEJ = false;
-                if (linesatcenter.Count == 2 && VectorRAZ.AreVectorsEqual(tol, linesatcenter[0].vector, linesatcenter[1].vector) == true)
-                {
-                    WEJ = true;
-                }
 
-                //bearingMemberVector
-                //iterate over hierarchy rank
-                VectorRAZ bearingMemberUnitVector = new VectorRAZ();
-                for (int rank = 0; rank < 1 + this.hierarchylist.Max(a => a.numberInHierarchy); rank++)
-                {
-                    //iterate over attachedMembers of every joint
-                    for (int ibb = 0; ibb < attachedMemTemp.Count; ibb++)
-                    {
-                        //find highest member in hierarchy, create bearingMemberUnitVector
-                        if (attachedMemTemp[ibb].ElementRAZ.numberInHierarchy == rank)
-                        {
+                //2. ORDER ATTACHEDMEMBERS ACCORDING TO HIERARCHY
 
-                            bearingMemberUnitVector = attachedMemTemp[ibb].ideaLine.vector.Unitize();
-                            goto End;
-                        }
-
-                    }
-
-                }
-                End:
-
+                bool IsContinues = true;
                 //Redistribute attachedMemTemp over BearingMember and ConnectingMember
                 //iterate over hierarchy rank to make sure list is created in a orded way
-                for (int rank = 0; rank < 1 + hierarchy.Max(a => a.numberInHierarchy); rank++)
+                if (!hierarchy.Any())
                 {
-
-                    //iterate over attachedMembers of every joint
-                    List<AttachedMember> templist = new List<AttachedMember>();
-
-                    for (int ibb = 0; ibb < attachedMemTemp.Count; ibb++)
-                    {
-                        AttachedMember w = attachedMemTemp[ibb];
-                        if (w.ElementRAZ.numberInHierarchy == rank && rank == attachedMemTemp.Min(a => a.ElementRAZ.numberInHierarchy))
-                        {
-                            BearingMember bearing = new BearingMember(w.ElementRAZ, w.distanceVector, w.isStartPoint, w.ideaLine);
-                            attachedMembers.Add(bearing);
-                        }
-                        if (w.ElementRAZ.numberInHierarchy == rank && rank != attachedMemTemp.Min(a => a.ElementRAZ.numberInHierarchy))
-                        {
-                            //temp
-                            templist.Add(attachedMemTemp[ibb]);
-                        }
-                    }
-                    //Hierarchy in same rank will be determined by the angle, member with biggest angle receives priority.
-                    if (templist.Count > 1)
-                    {
-                        foreach (AttachedMember member in templist)
-                        {
-                            attachedMembers.Add(member);
-                        }
-
-                       
-                    }
-                    if (templist.Count == 1)
-                    {
-                        attachedMembers.Add(templist[0]);
-                    }
-
-                }
-                //If there is more than one Bearing Member, IsContinues joint
-                List<BearingMember> BM = attachedMembers.OfType<BearingMember>().ToList();
-                bool IsContinues = true;
-                if (BM.Count == 1)
-                {
+                    //no hierarchy, first member found is an ended bearing member
                     IsContinues = false;
-                }
-
-                //All attachedMembers Found
-                double maxGlobalEccentricity = attachedMembers.Max(a => a.distanceVector.length);
-
-                //REMOVE JOINT WHICH ARE NO JOINTS BUT CONTINUES BEAM, HAPPENS IN WARREN TRUSSES
-                if (attachedMemTemp.Count == 2 && VectorRAZ.AreVectorsEqual(tol, attachedMemTemp[0].ElementRAZ.line.vector, attachedMemTemp[1].ElementRAZ.line.vector) == true)
-                {
-                    //This is not a joint
+                    //First member is bearing
+                    AttachedMember w = attachedMemTemp.First();
+                    BearingMember bearing = new BearingMember(w.ElementRAZ, w.distanceVector, w.isStartPoint, w.ideaLine);
+                    attachedMembers.Add(bearing);
+                    //Rest of members are connecting members
+                    for (int b = 1; b < attachedMemTemp.Count; b++)
+                    {
+                        attachedMembers.Add(attachedMemTemp[b]);
+                    }
                 }
                 else
                 {
-                    //CREATE JOINT ADD TO PROJECT
-                    //Joint id starts from one, because IDEA counts from one
-                    Joint w = new Joint(this, i + 1, elementIDs, attachedMembers, centerpoint, maxGlobalEccentricity, WEJ, bearingMemberUnitVector, IsContinues);
-                    this.joints.Add(w);
+                    //hierarchy determined, list will be build based on hierarchy
+                    //TODE add code
+                    //If only one hierarchy entry defined
+                    if (hierarchy.Count == 1)
+                    {
+                        IsContinues = false;
+                        //First member is bearing
+                        AttachedMember w = attachedMemTemp.First();
+                        BearingMember bearing = new BearingMember(w.ElementRAZ, w.distanceVector, w.isStartPoint, w.ideaLine);
+                        attachedMembers.Add(bearing);
+                        //Rest of members are connecting members
+                        for (int b = 1; b < attachedMemTemp.Count; b++)
+                        {
+                            attachedMembers.Add(attachedMemTemp[b]);
+                        }
+                    }
+                    else
+                    {
+                        for (int rank = 0; rank < 1 + hierarchy.Max(a => a.numberInHierarchy); rank++)
+                        {
 
-                    //Add ideaOperationID;
-                    //note: since IDEA has bug in importing sequence of members, this workaround is needed
-                    List<BearingMember> bearlist = w.attachedMembers.OfType<BearingMember>().ToList();
-                    foreach (BearingMember BearM in bearlist)
-                    {
-                        BearM.ideaOperationID = 1;
-                    }
-                    List<ConnectingMember> conlist = w.attachedMembers.OfType<ConnectingMember>().ToList();
-                    VectorRAZ bear = w.bearingMemberUnitVector;
-                    if (bear.X < 0.0 || bear.Z < 0.0)
-                    {
-                        bear = VectorRAZ.FlipVector(bear);
-                    }
-                    foreach (ConnectingMember con in conlist)
-                    {
-                        VectorRAZ convec = con.ideaLine.vector.Unitize();
-                        con.angleWithBear = VectorRAZ.AngleBetweenVectors(bear, convec);
-                    }
-                    List<ConnectingMember> newlist = conlist.OrderByDescending(a => a.angleWithBear).ToList();
-                    for (int ic = 0; ic < newlist.Count(); ic++)
-                    {
+                            //iterate over attachedMembers of every joint
+                            //List<AttachedMember> templist = new List<AttachedMember>();
 
-                        newlist[ic].ideaOperationID = 2 + ic;
+                            for (int ibb = 0; ibb < attachedMemTemp.Count; ibb++)
+                            {
+                                AttachedMember w = attachedMemTemp[ibb];
+                                //if hierarchy if the highest occuring
+                                if (w.ElementRAZ.numberInHierarchy == rank && rank == attachedMemTemp.Min(a => a.ElementRAZ.numberInHierarchy))
+                                {
+                                    BearingMember bearing = new BearingMember(w.ElementRAZ, w.distanceVector, w.isStartPoint, w.ideaLine);
+                                    attachedMembers.Add(bearing);
+                                }
+                                if (w.ElementRAZ.numberInHierarchy == rank && rank != attachedMemTemp.Min(a => a.ElementRAZ.numberInHierarchy))
+                                {
+                                    attachedMembers.Add(w);
+                                    //temp
+                                    //templist.Add(attachedMemTemp[ibb]);
+                                }
+                            }
+                        }
+                    }
+
+                    
+                    //If there is more than one Bearing Member, IsContinues joint
+                    List<BearingMember> BM = attachedMembers.OfType<BearingMember>().ToList();
+                    
+                    if (BM.Count == 1)
+                    {
+                        IsContinues = false;
                     }
 
                 }
-
-
-
+                
+                //3. ADD JOINTS TO PROJECT
+                //CREATE JOINT ADD TO PROJECT
+                //Joint id starts from one, because IDEA counts from one
+                double maxGlobalEccentricity = 0.0;
+                bool WEJ = false;
+                VectorRAZ bearingMemberUnitVector = new VectorRAZ(1.0, 0.0, 0.0);
+                Joint joint = new Joint(this, i + 1, elementIDs, attachedMembers, centerpoint, maxGlobalEccentricity, WEJ, bearingMemberUnitVector, IsContinues);
+                this.joints.Add(joint);
             }
 
         }

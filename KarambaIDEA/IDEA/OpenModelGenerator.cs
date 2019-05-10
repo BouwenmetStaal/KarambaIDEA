@@ -137,6 +137,11 @@ namespace KarambaIDEA
                         AddHollowCSS(crossSection);
                         return;
                     }
+                case KarambaIDEA.Core.CrossSection.Shape.CHSsection:
+                    {
+                        AddchsCSS(crossSection);
+                        return;
+                    }
                 default:
                     {
                         throw new NotImplementedException();
@@ -182,6 +187,30 @@ namespace KarambaIDEA
             crossSectionParameter.Parameters.Add(new ParameterString() { Name = "UniqueName", Value = crossSection.name });
             openModel.AddObject(crossSectionParameter);
         }
+        private void AddchsCSS(KarambaIDEA.Core.CrossSection crossSection)
+        {
+            CrossSectionParameter chs = new CrossSectionParameter();
+            chs.Id = crossSection.id;
+            MatSteel material = openModel.MatSteel.First(a => a.Id == crossSection.material.id);
+            chs.Material = new ReferenceElement(material);
+            chs.Name = crossSection.name;
+            double height = crossSection.height / 1000/2; //adjust to radius
+            double width = crossSection.width / 1000;
+            double tweb = crossSection.thicknessWeb / 1000;
+            double tflange = crossSection.thicknessFlange / 1000;
+            double radius = crossSection.radius / 1000;
+            //CrossSectionFactory.FillCssRectangleHollow(hollow, width, height, tweb, tweb, tflange, tflange);
+            CrossSectionFactory.FillOHollow(chs, height, tweb);
+            //height
+            //width
+            //thickness
+            //innerradius
+            //outerradius
+            //unkown
+            //CrossSectionFactory.FillCssSteelChannel(hollow, height, width, tweb, tflange, radius, radius, 0);
+
+            openModel.AddObject(chs);
+        }
         private void AddPointsToOpenModel(PointRAZ point)
         {
             Point3D p = new Point3D();
@@ -199,15 +228,64 @@ namespace KarambaIDEA
             polyLine3D.Id = openModel.GetMaxId(polyLine3D) + 1;
             openModel.AddObject(polyLine3D);
 
-
-
+            Point3D pA = new Point3D();
+            Point3D pB = new Point3D();
+            Point3D pC = new Point3D();
+            Point3D pD = new Point3D();
+            //view from point [B], point [B] is centerpoint of connection
+            if (bearingMembers[0].isStartPoint == false)
+            {
+                if (bearingMembers[1].isStartPoint == true)
+                {
+                    // [A]=0=>[B]=1=>[C]
+                    pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
+                    pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
+                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
+                    pD = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
+                }
+                else
+                {
+                    // [A]=0=>[B]<=1=[C]
+                    pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
+                    pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
+                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
+                    pD = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
+                }
+            }
+            else
+            {
+                if (bearingMembers[1].isStartPoint == true)
+                {
+                    // [A]<=0=[B]=1=>[C]
+                    pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
+                    pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
+                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
+                    pD = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
+                }
+                else
+                {
+                    // [A]<=0=[B]<=1=[C]
+                    pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
+                    pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
+                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
+                    pD = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
+                    /*
+                    pA = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
+                    pB = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
+                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
+                    pD = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
+                    */
+                }
+            }
+            
 
             //segments
+            /*
             Point3D pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ideaLine.Start.id);
             Point3D pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ideaLine.End.id);
             Point3D pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ideaLine.Start.id);
             Point3D pD = openModel.Point3D.First(a => a.Id == bearingMembers[1].ideaLine.End.id);
-
+            */
 
             List<Point3D> points = new List<Point3D>() { pA, pB, pC, pD };
             //Point3D pointB = points.Where(a => a.Id == connectionPoint.Id).First();
@@ -215,8 +293,8 @@ namespace KarambaIDEA
             //Point3D pointC = points.Where(a => a.Id != connectionPoint.Id).ToList()[1];
 
             //Note: not most robust solution, e.g. does not hold in case of segments with inverse vectors
-            Point3D pointA = pB; //Endpoint of first member
-            Point3D pointB = pA; //Startpoint of first member
+            Point3D pointA = pA; //Endpoint of first member
+            Point3D pointB = pB; //Startpoint of first member
             Point3D pointC = pD; //Endpoint of second member
 
 
@@ -476,10 +554,12 @@ namespace KarambaIDEA
             {
                 //Continues Chord consist out of one member
                 Member1D mb = openModel.Member1D[ibeam];
+                //Loop is needed in case of a continuous member
                 for (int iele = 0; iele < mb.Elements1D.Count; iele++)
                 {
-                    //Continues chord consist out of two elements
-                    Element1D elem = openModel.Element1D.First(a => a.Id == mb.Elements1D[iele].Id);
+                    //Continues chord consists out of two elements
+                    Element1D elem = openModel.Element1D.First(a => a.Id == mb.Elements1D[iele].Id);//wordt hier de link met het verkeerde element gelegd?
+                    //word de verkeerde id toegekent?
 
                     //results on members are constant in the framework
                     ResultOnMember resMember = new ResultOnMember(new Member() { Id = elem.Id, MemberType = MemberType.Element1D }, ResultType.InternalForces);
@@ -555,13 +635,9 @@ namespace KarambaIDEA
                                 double My = My0*(-1); // 
 
                                 double Vz = Vz0*(-1);
-                                //double Vz = Vz0 * (-1);// zonder LCS
-
                                 double Vy = Vy0*(-1);
-
-                                //double Mz = Mz0*(-1); //  zonder LCS
+                                
                                 double Mz = Mz0*(-1); //  
-
                                 double Mt = Mt0*(-1); 
 
                                 resLoadCase.N = N;//

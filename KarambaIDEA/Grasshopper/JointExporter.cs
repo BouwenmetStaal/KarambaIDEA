@@ -141,10 +141,10 @@ namespace KarambaIDEA
             // grasshopperinput
             #region GrasshopperInput
             DA.GetData(0, ref templatelocation);
-            DA.GetData(1, ref IDEAfilepath);           
-            
+            DA.GetData(1, ref IDEAfilepath);
 
-            DA.GetDataList(2, hierarchy);
+
+            if (!DA.GetDataList(2, hierarchy)) { return; } ;
             DA.GetDataList(3, centerpoints);
 
             DA.GetDataList(4, lines);
@@ -221,9 +221,13 @@ namespace KarambaIDEA
                 {
                     shape = CrossSection.Shape.ISection;
                 }
-                else
+                else if (shapes[i].StartsWith("[]"))
                 {
                     shape = CrossSection.Shape.HollowSection;
+                }
+                else
+                {
+                    shape = CrossSection.Shape.CHSsection;
                 }
                 if (crosssection == null)
                 {
@@ -300,7 +304,7 @@ namespace KarambaIDEA
 
             //CALCULATE SAWING CUTS 
             //store them in the element properties
-            Project.CalculateSawingCuts(project, tol);
+            //Project.CalculateSawingCuts(project, tol);
 
             //SET ALL THROATS TO MIN-THROAT THICKNESS
             project.SetMinThroats(minThroatThickness);
@@ -334,11 +338,12 @@ namespace KarambaIDEA
 
 
             //CALCULATE THROATS ACCORDING TO ANALYSIS METHOD
+            //Send DATA to IDEA
             project.CalculateWeldsProject(project.filepath);
 
             //CALCULATE WELDVOLUME
             totalWeldingVolume = project.CalculateWeldVolume();
-
+            
 
             //Output back to Grasshopper
             //OUTPUT: WELDING, VOLUME PER JOINT
@@ -367,7 +372,7 @@ namespace KarambaIDEA
                 }
             }
 
-
+            
 
             //OUTPUT:SAWING 
             for (int i = 0; i < project.elementRAZs.Count; i++)
@@ -412,7 +417,7 @@ namespace KarambaIDEA
                 }
                 numberOfSawingCuts.Add(cutsPerElement);
             }
-
+            
 
             //export lines of joint for visualisation purposes
             foreach (int i in project.joints[project.calculateThisJoint].beamIDs)
