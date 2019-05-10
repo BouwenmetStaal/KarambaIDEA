@@ -14,15 +14,15 @@ Needed software:
 * Karamba3D
 * .NET Framework 4.7 (to built solution)
   
-```bash
+
 In most cases the following references are not being found, when opening the project folder for the first time. Update the following references.
 
-References to update
+References (to update)
 GH_IO                              path C:\Program Files\Rhino 6\Plug-ins\Grasshopper\GH_IO.dll
 Grasshopper                        path C:\Program Files\Rhino 6\Plug-ins\Grasshopper\Grasshopper.dll
 RhinoCommon                        path C:\Program Files\Rhino 6\System\RhinoCommon.dll
 IdeaStatiCa.ConnectionBasicTypes   path C:\Program Files\IDEAStatiCa\StatiCa9\IdeaStatiCa.ConnectionBasicTypes.dll
-```
+
 
 ## Usage
 
