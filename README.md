@@ -19,13 +19,18 @@ Markup : * Bullet list
           * Bullet list item 2
 
 Needed software:
-* IDEA Statica Connection version 9.1
-* Rhino 6
+* IDEA Statica Connection version 9.1     (installed in path C:\Program Files\IDEAStatiCa\StatiCa9)
+* Rhino 6                                 (installed in path C:\Program Files\Rhino 6)
 * Karamba3D
-* KarambaIDEA is built in .NET Framework 4.7
+* .NET Framework 4.7 (to built solution)
   
 ```bash
 TODO: include installation steps
+Update References
+GH_IO                              path C:\Program Files\Rhino 6\Plug-ins\Grasshopper\GH_IO.dll
+Grasshopper                        path C:\Program Files\Rhino 6\Plug-ins\Grasshopper\Grasshopper.dll
+RhinoCommon                        path C:\Program Files\Rhino 6\System\RhinoCommon.dll
+IdeaStatiCa.ConnectionBasicTypes   path C:\Program Files\IDEAStatiCa\StatiCa9\IdeaStatiCa.ConnectionBasicTypes.dll
 ```
 
 ## Usage
