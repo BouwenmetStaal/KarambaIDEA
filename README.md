@@ -22,6 +22,7 @@ Needed software:
 * IDEA Statica Connection version 9.1
 * Rhino 6
 * Karamba3D
+* KarambaIDEA is built in .NET Framework 4.7
   
 ```bash
 TODO: include installation steps
