@@ -6,17 +6,7 @@ This repository contains the source-code of the plug-in KarambaIDEA. The plug-in
 KarambaIDEA is not official software of either Karamba3D or IDEA Statica Connection.
 
 ## Installation
-
-
-Needed software:
-Markup: *IDEA Statica Connection version 9.1
-        *Rhino 6
-        *Karamba3D
-        
-Markup : * Bullet list
-              * Nested bullet
-                  * Sub-nested bullet etc
-          * Bullet list item 2
+The source-code can be opened in Visual Studio. The following software packages are needed in order to run.
 
 Needed software:
 * IDEA Statica Connection version 9.1     (installed in path C:\Program Files\IDEAStatiCa\StatiCa9)
@@ -25,8 +15,9 @@ Needed software:
 * .NET Framework 4.7 (to built solution)
   
 ```bash
-TODO: include installation steps
-Update References
+In most cases the following references are not being found, when opening the project folder for the first time. Update the following references.
+
+References to update
 GH_IO                              path C:\Program Files\Rhino 6\Plug-ins\Grasshopper\GH_IO.dll
 Grasshopper                        path C:\Program Files\Rhino 6\Plug-ins\Grasshopper\Grasshopper.dll
 RhinoCommon                        path C:\Program Files\Rhino 6\System\RhinoCommon.dll
@@ -37,7 +28,8 @@ IdeaStatiCa.ConnectionBasicTypes   path C:\Program Files\IDEAStatiCa\StatiCa9\Id
 
 This repository contains two folders: KarambaIDEA and Tester.
 
-The Tester folder, can be used to test.
+The Tester folder, can be used to test the link between IDEA Statica Connection and raw data.
+
 
 ```c#
 TODO: include usage explaination/ link to tutorial videos
