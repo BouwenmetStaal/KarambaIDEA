@@ -6,7 +6,8 @@ This repository contains the source-code of the plug-in KarambaIDEA. The plug-in
 KarambaIDEA is not official software of either Karamba3D or IDEA Statica Connection.
 
 ## Installation & Usage
-
+The installation and usage manual can be found at:
+https://github.com/BouwenmetStaal/KarambaIDEA/wiki/Installation-&-Usage
 
 ## Contributing
 Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
