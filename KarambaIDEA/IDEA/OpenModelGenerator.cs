@@ -1,4 +1,4 @@
-﻿// Copyright (c) 2019 Rayaan Ajouz. Please see the LICENSE file	
+﻿// Copyright (c) 2019 Rayaan Ajouz, Bouwen met Staal, ABT bv. Please see the LICENSE file	
 // for details. All rights reserved. Use of this source code is governed by a	
 // Apache-2.0 license that can be found in the LICENSE file.	
 using IdeaRS.OpenModel;
@@ -15,7 +15,7 @@ using System.Collections.Generic;
 using System.Linq;
 using KarambaIDEA.Core;
 
-//using CONOPT.Core;
+
 
 namespace KarambaIDEA
 {
@@ -233,28 +233,31 @@ namespace KarambaIDEA
 
             Point3D pA = new Point3D();
             Point3D pB = new Point3D();
+            Point3D pB2 = new Point3D();
             Point3D pC = new Point3D();
-            Point3D pD = new Point3D();
             //view from point [B], point [B] is centerpoint of connection
+            // []=0=>[B]=1=[]
             if (bearingMembers[0].isStartPoint == false)
             {
                 if (bearingMembers[1].isStartPoint == true)
                 {
+                    // [ ]=0=>[B]=1=>[ ]
                     // [A]=0=>[B]=1=>[C]
                     pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
                     pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
-                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
-                    pD = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
+                    pB2 = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
+                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
                 }
                 else
                 {
                     // [A]=0=>[B]<=1=[C]
                     pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
                     pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
-                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
-                    pD = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
+                    pB2 = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
+                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
                 }
             }
+            // []<=0=[B]=1=[]
             else
             {
                 if (bearingMembers[1].isStartPoint == true)
@@ -262,43 +265,26 @@ namespace KarambaIDEA
                     // [A]<=0=[B]=1=>[C]
                     pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
                     pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
-                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
-                    pD = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
+                    pB2 = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
+                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
                 }
                 else
                 {
-                    // [A]<=0=[B]<=1=[C]
-                    pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
-                    pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
-                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
-                    pD = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
-                    /*
-                    pA = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
-                    pB = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
+                    // [ ]<=0=[B]<=1=[ ]
+                    // [C]<=0=[B]<=1=[A]
+                    pA = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
+                    pB = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
+                    pB2 = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
                     pC = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
-                    pD = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
-                    */
                 }
             }
-            
 
-            //segments
-            /*
-            Point3D pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ideaLine.Start.id);
-            Point3D pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ideaLine.End.id);
-            Point3D pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ideaLine.Start.id);
-            Point3D pD = openModel.Point3D.First(a => a.Id == bearingMembers[1].ideaLine.End.id);
-            */
-
-            List<Point3D> points = new List<Point3D>() { pA, pB, pC, pD };
-            //Point3D pointB = points.Where(a => a.Id == connectionPoint.Id).First();
-            //Point3D pointA = points.Where(a => a.Id != connectionPoint.Id).ToList()[0];//logica 
-            //Point3D pointC = points.Where(a => a.Id != connectionPoint.Id).ToList()[1];
+            List<Point3D> points = new List<Point3D>() { pA, pB, pB2, pC };
 
             //Note: not most robust solution, e.g. does not hold in case of segments with inverse vectors
             Point3D pointA = pA; //Endpoint of first member
             Point3D pointB = pB; //Startpoint of first member
-            Point3D pointC = pD; //Endpoint of second member
+            Point3D pointC = pC; //Endpoint of second member
 
 
             LineSegment3D lineSegment1 = new LineSegment3D();
@@ -411,12 +397,14 @@ namespace KarambaIDEA
             member1D.Elements1D.Add(new ReferenceElement(el1));
             member1D.Elements1D.Add(new ReferenceElement(el2));
             openModel.Member1D.Add(member1D);
+           
 
             //create connected member
             ConnectedMember connectedMember = new ConnectedMember();
             connectedMember.Id = member1D.Id;
             connectedMember.MemberId = new ReferenceElement(member1D);
             connectionPoint.ConnectedMembers.Add(connectedMember);
+            connectionPoint.BearingMember.
         }
         private void AddConnectedMember(AttachedMember attachedMember, ConnectionPoint connectionPoint)
         {
@@ -584,7 +572,7 @@ namespace KarambaIDEA
 
                             //Check if Startpoint is equal to centerpoint
                             int GrassId = elem.Id - 1;//Element1D.Id - 1 == ElementRAZ.id
-                            int GrassLCId = i - 1;
+                            int GrassLCId = i - 1;//Loadcase grasshopper starts at 0, Loadcase IDEA starts at 1.
 
 
                             AttachedMember attached = joint.attachedMembers.Find(a => a.ElementRAZ.id == GrassId);
@@ -653,184 +641,6 @@ namespace KarambaIDEA
 
                                 resSec.Results.Add(resLoadCase);
                                 
-                            }
-                        }
-                        resMember.Results.Add(resSec);
-                    }
-                    resultIF.Members.Add(resMember);
-
-                }
-            }
-            openModelResult.ResultOnMembers.Add(resultIF);
-        }
-        private void CreateIDEAOpenModelResultsOLD(Joint joint)
-        {
-            Project project = joint.project;
-            openModelResult.ResultOnMembers = new List<ResultOnMembers>();
-            ResultOnMembers resultIF = new ResultOnMembers();
-            for (int ibeam = 0; ibeam < openModel.Member1D.Count; ibeam++)
-            {
-                //Continues Chord consist out of one member
-                Member1D mb = openModel.Member1D[ibeam];
-                for (int iele = 0; iele < mb.Elements1D.Count; iele++)
-                {
-                    //Continues chord consist out of two elements
-                    Element1D elem = openModel.Element1D.First(a => a.Id == mb.Elements1D[iele].Id);
-
-                    //results on members are constant in the framework
-                    ResultOnMember resMember = new ResultOnMember(new Member() { Id = elem.Id, MemberType = MemberType.Element1D }, ResultType.InternalForces);
-                    int numPoints = 10;
-                    for (int ip = 0; ip <= numPoints; ip++)
-                    {
-                        ResultOnSection resSec = new ResultOnSection();
-                        resSec.AbsoluteRelative = AbsoluteRelative.Relative;
-                        resSec.Position = (double)ip / (double)numPoints;
-                        //iterate over loadcases
-                        int count = openModel.LoadCase.Count;
-                        for (int i = 1; i <= count; i++)
-                        {
-                            ResultOfInternalForces resLoadCase = new ResultOfInternalForces();
-                            int loadCaseNumber = i;
-                            resLoadCase.Loading = new ResultOfLoading() { Id = loadCaseNumber, LoadingType = LoadingType.LoadCase };
-                            resLoadCase.Loading.Items.Add(new ResultOfLoadingItem() { Coefficient = 1.0 });
-
-
-                            //Check if Startpoint is equal to centerpoint
-                            int GrassId = elem.Id - 1;//Element1D.Id - 1 == ElementRAZ.id
-                            int GrassLCId = i - 1;
-
-
-                            AttachedMember attached = joint.attachedMembers.Find(a => a.ElementRAZ.id == GrassId);
-                            //The following if statements simulate that every member has a local coordinate system
-                            //where the local z - axis points counterclockwise(shear force)
-                            //and where the positive bending moment is clockwise
-                            if (attached.isStartPoint == true)
-                            {
-
-                                //Pick startloads
-                               // API to IDEA UI, My and Vz are plotted negatively
-                                double N0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.N;
-                                double My0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.My * -1;
-                                double Vz0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.Vz * -1;
-
-                                double Vy0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.Vy;
-                                double Mz0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.Mz;
-                                double Mt0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.Mt;
-
-                                //From Karamba3D to Framework
-                                double N = N0;
-                                double My = My0;
-                                double Vz = Vz0;
-
-                                double Vy = Vy0;
-                                double Mz = Mz0;
-                                double Mt = Mt0;
-
-
-                                //From Framework to IDEA
-                                VectorRAZ unitvector = attached.ideaLine.vector.Unitize();//gaat niet op bij ColumnT-Joint want gebruikt globale asses ipv locale
-                                if (unitvector.X < -10e-6)
-                                {
-                                    if (attached is BearingMember)//exception
-                                    {
-                                        resLoadCase.N = N;//
-                                        resLoadCase.My = My * (-1);// in case of start point M of the begin element of the chords needs to be flipped
-                                        resLoadCase.Qz = Vz * (-1);//
-
-                                        resLoadCase.Qy = Vy;
-                                        resLoadCase.Mz = Mz0;
-                                        resLoadCase.Mx = Mt;
-
-                                        resSec.Results.Add(resLoadCase);
-                                    }
-                                    else//members where rule needs to be applied to
-                                    {
-                                        resLoadCase.N = N;//
-                                        resLoadCase.My = My * -1;//
-                                        resLoadCase.Qz = Vz * -1;//
-
-                                        resLoadCase.Qy = Vy;
-                                        resLoadCase.Mz = Mz0;
-                                        resLoadCase.Mx = Mt;
-
-                                        resSec.Results.Add(resLoadCase);
-                                    }
-
-                                }
-                                else
-                                {
-                                    resLoadCase.N = N;//
-                                    resLoadCase.My = My;//
-                                    resLoadCase.Qz = Vz;//
-
-                                    resLoadCase.Qy = Vy;
-                                    resLoadCase.Mz = Mz0;
-                                    resLoadCase.Mx = Mt;
-
-                                    resSec.Results.Add(resLoadCase);
-                                }
-                            }
-                            else//isEndPoint
-                            {
-                                //Pick endloads
-                                //API to IDEA UI, My and Vz are plotted negatively
-                                double N0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.N;
-                                double My0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.My * -1;
-                                double Vz0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.Vz * -1;
-                                double Vy0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.Vy;
-                                double Mz0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.Mz;
-                                double Mt0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.Mt;
-
-                                //From Karamba3D to Framework
-                                double N = N0;
-                                double My = My0 * (-1);//*-1
-                                double Vz = Vz0 * (-1);//*-1
-
-                                double Vy = Vy0 * (-1);//*-1
-                                double Mz = Mz0 * (-1);//*-1
-                                double Mt = Mt0 * (-1);//*-1
-
-                                //From Framework to IDEA
-                                VectorRAZ unitvector = attached.ideaLine.vector.Unitize();//gaat niet op bij ColumnT-Joint want gebruikt globale asses ipv locale
-                                if (unitvector.X < -10e-6)
-                                {
-                                    if (attached is BearingMember)//exception
-                                    {
-                                        resLoadCase.N = N;//
-                                        resLoadCase.My = My * (-1);// in case of start point M of the begin element of the chords needs to be flipped
-                                        resLoadCase.Qz = Vz * (-1);//
-
-                                        resLoadCase.Qy = Vy * (-1);
-                                        resLoadCase.Mz = Mz0 * (-1);
-                                        resLoadCase.Mx = Mt * (-1);
-
-                                        resSec.Results.Add(resLoadCase);
-                                    }
-                                    else//members where rule needs to be applied to
-                                    {
-                                        resLoadCase.N = N;//
-                                        resLoadCase.My = My * (-1);// * (-1)
-                                        resLoadCase.Qz = Vz * (-1);// * (-1)
-
-                                        resLoadCase.Qy = Vy * (-1);
-                                        resLoadCase.Mz = Mz0 * (-1);
-                                        resLoadCase.Mx = Mt * (-1);
-
-                                        resSec.Results.Add(resLoadCase);
-                                    }
-                                }
-                                else
-                                {
-                                    resLoadCase.N = N;//
-                                    resLoadCase.My = My;//
-                                    resLoadCase.Qz = Vz;//
-
-                                    resLoadCase.Qy = Vy;
-                                    resLoadCase.Mz = Mz0;
-                                    resLoadCase.Mx = Mt;
-
-                                    resSec.Results.Add(resLoadCase);
-                                }
                             }
                         }
                         resMember.Results.Add(resSec);

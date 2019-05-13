@@ -1,4 +1,6 @@
-﻿// Copyright (c) 2019 Rayaan Ajouz 
+﻿// Copyright (c) 2019 Rayaan Ajouz, Bouwen met Staal, ABT bv. Please see the LICENSE file	
+// for details. All rights reserved. Use of this source code is governed by a	
+// Apache-2.0 license that can be found in the LICENSE file.	
 using System;
 using System.Collections;
 using System.Collections.Generic;
