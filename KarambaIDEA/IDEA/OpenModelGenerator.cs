@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using KarambaIDEA.Core;
+using KarambaIDEA.IDEA;
 
 
 
@@ -231,6 +232,8 @@ namespace KarambaIDEA
             polyLine3D.Id = openModel.GetMaxId(polyLine3D) + 1;
             openModel.AddObject(polyLine3D);
 
+
+           
             Point3D pA = new Point3D();
             Point3D pB = new Point3D();
             Point3D pB2 = new Point3D();
@@ -250,7 +253,8 @@ namespace KarambaIDEA
                 }
                 else
                 {
-                    // [A]=0=>[B]<=1=[C]
+                    // [ ]=0=>[B]<=1=[ ]
+                    // [A]=0=[B]=1=[C]
                     pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
                     pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
                     pB2 = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
@@ -262,7 +266,8 @@ namespace KarambaIDEA
             {
                 if (bearingMembers[1].isStartPoint == true)
                 {
-                    // [A]<=0=[B]=1=>[C]
+                    // [ ]<=0=[B]=1=>[ ]
+                    // [A]=0=[B]=1=[C]
                     pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
                     pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
                     pB2 = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
@@ -281,7 +286,6 @@ namespace KarambaIDEA
 
             List<Point3D> points = new List<Point3D>() { pA, pB, pB2, pC };
 
-            //Note: not most robust solution, e.g. does not hold in case of segments with inverse vectors
             Point3D pointA = pA; //Endpoint of first member
             Point3D pointB = pB; //Startpoint of first member
             Point3D pointC = pC; //Endpoint of second member
@@ -404,7 +408,6 @@ namespace KarambaIDEA
             connectedMember.Id = member1D.Id;
             connectedMember.MemberId = new ReferenceElement(member1D);
             connectionPoint.ConnectedMembers.Add(connectedMember);
-            connectionPoint.BearingMember.
         }
         private void AddConnectedMember(AttachedMember attachedMember, ConnectionPoint connectionPoint)
         {
@@ -548,7 +551,7 @@ namespace KarambaIDEA
                 //Loop is needed in case of a continuous member
                 for (int iele = 0; iele < mb.Elements1D.Count; iele++)
                 {
-                    //Continues chord consists out of two elements
+                    //Continouos chord consists out of two elements
                     Element1D elem = openModel.Element1D.First(a => a.Id == mb.Elements1D[iele].Id);//wordt hier de link met het verkeerde element gelegd?
                     //word de verkeerde id toegekent?
 
@@ -574,11 +577,8 @@ namespace KarambaIDEA
                             int GrassId = elem.Id - 1;//Element1D.Id - 1 == ElementRAZ.id
                             int GrassLCId = i - 1;//Loadcase grasshopper starts at 0, Loadcase IDEA starts at 1.
 
-
+                            //Find the element to check: isStartpoint true or false
                             AttachedMember attached = joint.attachedMembers.Find(a => a.ElementRAZ.id == GrassId);
-                            //The following if statements simulate that every member has a local coordinate system
-                            //where the local z-axis points counterclockwise (shear force)
-                            //and where the positive bending moment is clockwise
                             if (attached.isStartPoint == true)
                             {
                                 //Pick startloads
@@ -594,15 +594,13 @@ namespace KarambaIDEA
                                 double N = N0;
                                 double My = My0;
                                 double Vz = Vz0;
-
                                 double Vy = Vy0;
                                 double Mz = Mz0;
                                 double Mt = Mt0;
 
-                                resLoadCase.N = N;//
-                                resLoadCase.My = My;// 
-                                resLoadCase.Qz = Vz;//
-
+                                resLoadCase.N = N;
+                                resLoadCase.My = My;
+                                resLoadCase.Qz = Vz;
                                 resLoadCase.Qy = Vy;
                                 resLoadCase.Mz = Mz;
                                 resLoadCase.Mx = Mt;
@@ -623,18 +621,15 @@ namespace KarambaIDEA
 
                                 //From Karamba3D to Framework
                                 double N =  N0*(-1);
-                                double My = My0*(-1); // 
-
+                                double My = My0*(-1); 
                                 double Vz = Vz0*(-1);
                                 double Vy = Vy0*(-1);
-                                
-                                double Mz = Mz0*(-1); //  
+                                double Mz = Mz0*(-1);  
                                 double Mt = Mt0*(-1); 
 
-                                resLoadCase.N = N;//
-                                resLoadCase.My = My ;//  
-                                resLoadCase.Qz = Vz ;//
-
+                                resLoadCase.N = N;
+                                resLoadCase.My = My ; 
+                                resLoadCase.Qz = Vz ;
                                 resLoadCase.Qy = Vy;
                                 resLoadCase.Mz = Mz;
                                 resLoadCase.Mx = Mt;

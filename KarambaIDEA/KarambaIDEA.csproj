@@ -62,6 +62,7 @@
       <HintPath>..\..\..\Program Files\Rhino 6\Plug-ins\Grasshopper\GH_IO.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="Grasshopper">
       <HintPath>..\..\..\Program Files\Rhino 6\Plug-ins\Grasshopper\Grasshopper.dll</HintPath>
@@ -74,8 +75,9 @@
       <HintPath>C:\Program Files\IDEAStatiCa\StatiCa9\IdeaRS.OpenModel.dll</HintPath>
     </Reference>
     <Reference Include="IdeaStatiCa.ConnectionBasicTypes, Version=9.1.51.51750, Culture=neutral, PublicKeyToken=b195254c3273d5c1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\Program Files\IDEAStatiCa\StatiCa9\IdeaStatiCa.ConnectionBasicTypes.dll</HintPath>
+      <SpecificVersion>False</SpecificVersion>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="RhinoCommon">
@@ -123,6 +125,7 @@
     <Compile Include="Grasshopper\JointViewer.cs" />
     <Compile Include="Grasshopper\LoadsToLoadsTrees.cs" />
     <Compile Include="IDEA\ConnectionTemplateGenerator.cs" />
+    <Compile Include="IDEA\extention.cs" />
     <Compile Include="IDEA\IdeaConnection.cs" />
     <Compile Include="IDEA\OpenModelGenerator.cs" />
     <Compile Include="Properties\Resources.Designer.cs">

@@ -27,7 +27,7 @@ namespace Tester
             //KarambaIDEA.TestFrameworkJoint fj = new TestFrameworkJoint();
 
             //hieronder testjoint definieren
-            Joint joint = fj.Testjoint7();
+            Joint joint = fj.Testjoint();
             //Joint joint = fj.Testjoint5();
             joint.project.CreateFolder(@"C:\Data\");
             joint.project.templatePath = @"C:\Data\template.contemp";
