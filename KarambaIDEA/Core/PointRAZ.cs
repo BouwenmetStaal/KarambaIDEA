@@ -11,6 +11,7 @@ namespace KarambaIDEA.Core
 {
     public class PointRAZ
     {
+        public string name;
         public double X;
         public double Y;
         public double Z;
@@ -54,6 +55,14 @@ namespace KarambaIDEA.Core
             if (p == null)
                 p = new PointRAZ(_project, _x, _y, _z);
             return p;
+        }
+
+        public PointRAZ(string _name, double _X, double _Y, double _Z)
+        {
+            this.name = _name;
+            this.X = _X;
+            this.Y = _Y;
+            this.Z = _Z;
         }
 
 

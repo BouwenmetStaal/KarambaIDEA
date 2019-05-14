@@ -121,9 +121,11 @@
     <Compile Include="Core\SawingCuts.cs" />
     <Compile Include="Core\VectorRAZ.cs" />
     <Compile Include="Core\Weld.cs" />
+    <Compile Include="Grasshopper\CreateLinesFromNodes.cs" />
     <Compile Include="Grasshopper\JointExporter.cs" />
     <Compile Include="Grasshopper\JointViewer.cs" />
     <Compile Include="Grasshopper\LoadsToLoadsTrees.cs" />
+    <Compile Include="Grasshopper\LoadsToLoadsTrees2.cs" />
     <Compile Include="IDEA\ConnectionTemplateGenerator.cs" />
     <Compile Include="IDEA\extention.cs" />
     <Compile Include="IDEA\IdeaConnection.cs" />
