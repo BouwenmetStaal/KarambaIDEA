@@ -17,7 +17,7 @@ namespace KarambaIDEA.Grasshopper
 {
     public class CreateLinesFromNodes : GH_Component
     {
-        public CreateLinesFromNodes() : base("LinesFromNodes", "LinesFromNodes", "Create lines from nodes", "KarmabaIDEA", "KarambaIDEA")
+        public CreateLinesFromNodes() : base("LinesFromNodeNames", "LinesFromNodeNames", "Create lines from nodes", "KarmabaIDEA", "KarambaIDEA")
         {
 
         }
@@ -82,7 +82,7 @@ namespace KarambaIDEA.Grasshopper
             get
             {
 
-                return Properties.Resources.KarambaIDEAviewer_logo;
+                return Properties.Resources.KarambaIDEA_logo_LinesFromNodes;
 
             }
         }

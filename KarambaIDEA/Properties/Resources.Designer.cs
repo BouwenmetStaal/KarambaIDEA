@@ -93,9 +93,29 @@ namespace KarambaIDEA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
-        internal static System.Drawing.Bitmap KarambaIDEAviewer_logo {
+        internal static System.Drawing.Bitmap KarambaIDEA_logo_excel {
             get {
-                object obj = ResourceManager.GetObject("KarambaIDEAviewer_logo", resourceCulture);
+                object obj = ResourceManager.GetObject("KarambaIDEA_logo_excel", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap KarambaIDEA_logo_LinesFromNodes {
+            get {
+                object obj = ResourceManager.GetObject("KarambaIDEA_logo_LinesFromNodes", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap KarambaIDEA_logo_viewer {
+            get {
+                object obj = ResourceManager.GetObject("KarambaIDEA_logo_viewer", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

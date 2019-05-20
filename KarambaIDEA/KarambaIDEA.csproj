@@ -185,10 +185,13 @@
     <Content Include="Resources\continues2members.contemp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\KarambaIDEA_logo.png" />
+    <None Include="Resources\KarambaIDEA_logo_viewer.png" />
+    <None Include="Resources\KarambaIDEA_logo_LinesFromNodes.png" />
+    <None Include="Resources\KarambaIDEA_logo_excel.png" />
     <EmbeddedResource Include="Resources\ended2members.contemp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
-    <None Include="Resources\KarambaIDEA_logo.png" />
   </ItemGroup>
   <ItemGroup>
     <None Include="Resources\KarambaIDEAviewer_logo.png" />

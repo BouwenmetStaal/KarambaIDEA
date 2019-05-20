@@ -148,7 +148,7 @@ namespace KarambaIDEA.Grasshopper
             DA.SetDataTree(6, My);
             DA.SetDataTree(7, Mz);
         }
-        /*
+        
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.
         /// Icons need to be 24x24 pixels.
@@ -158,11 +158,11 @@ namespace KarambaIDEA.Grasshopper
             get
             {
 
-                return Properties.Resources.KarambaIDEAviewer_logo;
+                return Properties.Resources.KarambaIDEA_logo_excel;
 
             }
         }
-        */
+        
         public override Guid ComponentGuid
         {
             get { return new Guid("d4d103e1-d6b1-4117-8aa6-2f1ce8f5310d"); }

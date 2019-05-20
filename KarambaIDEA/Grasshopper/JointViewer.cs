@@ -86,7 +86,7 @@ namespace KarambaIDEA.Grasshopper
             get
             {
                 
-                return Properties.Resources.KarambaIDEAviewer_logo;
+                return Properties.Resources.KarambaIDEA_logo_viewer;
 
             }
         }
