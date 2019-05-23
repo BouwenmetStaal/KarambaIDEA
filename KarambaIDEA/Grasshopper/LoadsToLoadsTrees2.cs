@@ -65,7 +65,6 @@ namespace KarambaIDEA.Grasshopper
             List<double> Entry_Mt = new List<double>();
             List<double> Entry_My = new List<double>();
             List<double> Entry_Mz = new List<double>();
-
             
 
             //Link input

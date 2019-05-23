@@ -123,6 +123,7 @@
     <Compile Include="Core\Weld.cs" />
     <Compile Include="Grasshopper\CreateLinesFromNodes.cs" />
     <Compile Include="Grasshopper\JointExporter.cs" />
+    <Compile Include="Grasshopper\JointVector.cs" />
     <Compile Include="Grasshopper\JointViewer.cs" />
     <Compile Include="Grasshopper\LoadsToLoadsTrees.cs" />
     <Compile Include="Grasshopper\LoadsToLoadsTrees2.cs" />
