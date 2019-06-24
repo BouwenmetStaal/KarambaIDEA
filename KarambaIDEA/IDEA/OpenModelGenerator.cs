@@ -579,7 +579,7 @@ namespace KarambaIDEA
 
                             //Find the element to check: isStartpoint true or false
                             AttachedMember attached = joint.attachedMembers.Find(a => a.ElementRAZ.id == GrassId);
-                            if (attached.isStartPoint == true)
+                            if (attached.isStartPoint == true | iele ==1) //or statement refers to second element of bearing member
                             {
                                 //Pick startloads
                                 //API to IDEA UI, My, Vy and Vz are plotted negatively

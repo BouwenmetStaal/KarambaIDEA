@@ -14,7 +14,7 @@ namespace KarambaIDEA.Grasshopper
 {
     public class JointVector : GH_Component
     {
-        public JointVector() : base("JointVector", "Id", "Return Id's of beams attached to connection", "KarmabaIDEA", "KarambaIDEA")
+        public JointVector() : base("JointVector", "Id", "Define normal vector of the joint", "KarmabaIDEA", "KarambaIDEA")
         {
 
         }
