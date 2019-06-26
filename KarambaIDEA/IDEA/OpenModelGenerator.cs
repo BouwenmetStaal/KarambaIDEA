@@ -238,6 +238,13 @@ namespace KarambaIDEA
             Point3D pB = new Point3D();
             Point3D pB2 = new Point3D();
             Point3D pC = new Point3D();
+
+            pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
+            pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
+            pB2 = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
+            pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
+
+            /*
             //view from point [B], point [B] is centerpoint of connection
             // []=0=>[B]=1=[]
             if (bearingMembers[0].isStartPoint == false)
@@ -277,12 +284,20 @@ namespace KarambaIDEA
                 {
                     // [ ]<=0=[B]<=1=[ ]
                     // [C]<=0=[B]<=1=[A]
+                    /*
                     pA = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
                     pB = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
                     pB2 = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
                     pC = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
+                    //
+                    /*
+                    pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
+                    pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
+                    pB2 = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
+                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
                 }
             }
+            */
 
             List<Point3D> points = new List<Point3D>() { pA, pB, pB2, pC };
 
@@ -298,38 +313,7 @@ namespace KarambaIDEA
             lineSegment1.EndPoint = new ReferenceElement(pointB);
             polyLine3D.Segments.Add(new ReferenceElement(lineSegment1));
 
-           
-            ///*
-            //Defining LCS for First lineSegment
-            double xcor = bearingMembers[0].ElementRAZ.line.vector.X;
-            double ycor = bearingMembers[0].ElementRAZ.line.vector.Y;
-            double zcor = bearingMembers[0].ElementRAZ.line.vector.Z;
-
-            //Define LCS (local-y in XY plane) and unitize
-            VectorRAZ vx = new VectorRAZ(xcor, ycor, zcor).Unitize();
-            VectorRAZ vy = new VectorRAZ();
-            VectorRAZ vz = new VectorRAZ();
-            if (xcor==0.0 && ycor == 0.0)
-            {
-                vy = new VectorRAZ(0.0, 1.0, 0.0).Unitize();
-                vz = new VectorRAZ((-zcor ), 0.0, (xcor)).Unitize();
-            }
-            else
-            {
-                vy = new VectorRAZ(-ycor, xcor, 0.0).Unitize();
-                vz = new VectorRAZ((-zcor * xcor), (-zcor * ycor), ((xcor * xcor) + (ycor * ycor))).Unitize();
-            }
-            
-            
-            
-            var LocalCoordinateSystem = new CoordSystemByVector();
-            LocalCoordinateSystem.VecX = new Vector3D() { X = vx.X, Y = vx.Y, Z = vx.Z }; 
-            LocalCoordinateSystem.VecY = new Vector3D() { X = vy.X, Y = vy.Y, Z = vy.Z };
-            LocalCoordinateSystem.VecZ = new Vector3D() { X = vz.X, Y = vz.Y, Z = vz.Z };
-
-            lineSegment1.LocalCoordinateSystem = LocalCoordinateSystem;
-            
-            //*/
+            SetLCS(bearingMembers[0], lineSegment1);
 
             LineSegment3D lineSegment2 = new LineSegment3D();
             lineSegment2.Id = openModel.GetMaxId(lineSegment2) + 1;
@@ -338,37 +322,7 @@ namespace KarambaIDEA
             lineSegment2.EndPoint = new ReferenceElement(pointC);
             polyLine3D.Segments.Add(new ReferenceElement(lineSegment2));
 
-
-            ///*
-            /////Defining LCS for Second lineSegment
-            double xcor2 = bearingMembers[1].ElementRAZ.line.vector.X;
-            double ycor2 = bearingMembers[1].ElementRAZ.line.vector.Y;
-            double zcor2 = bearingMembers[1].ElementRAZ.line.vector.Z;
-
-            //Define LCS (local-y in XY plane) and unitize
-            VectorRAZ vx2 = new VectorRAZ(xcor2, ycor2, zcor2).Unitize();
-            VectorRAZ vy2 = new VectorRAZ();
-            VectorRAZ vz2 = new VectorRAZ();
-            if (xcor2 == 0.0 && ycor2 == 0.0)
-            {
-                vy2 = new VectorRAZ(0.0, 1.0, 0.0).Unitize();
-                vz2 = new VectorRAZ((-zcor2), 0.0, (xcor2)).Unitize();
-            }
-            else
-            {
-                vy2 = new VectorRAZ(-ycor2, xcor2, 0.0).Unitize();
-                vz2 = new VectorRAZ((-zcor2 * xcor2), (-zcor2 * ycor2), ((xcor2 * xcor2) + (ycor2 * ycor2))).Unitize();
-            }
-
-
-
-            var LocalCoordinateSystem2 = new CoordSystemByVector();
-            LocalCoordinateSystem2.VecX = new Vector3D() { X = vx2.X, Y = vx2.Y, Z = vx2.Z };
-            LocalCoordinateSystem2.VecY = new Vector3D() { X = vy2.X, Y = vy2.Y, Z = vy2.Z };
-            LocalCoordinateSystem2.VecZ = new Vector3D() { X = vz2.X, Y = vz2.Y, Z = vz2.Z };
-
-            lineSegment2.LocalCoordinateSystem = LocalCoordinateSystem2;
-            //*/
+            SetLCS(bearingMembers[1], lineSegment2);
 
             //create elements
             Element1D el1 = new Element1D();
@@ -427,35 +381,7 @@ namespace KarambaIDEA
             openModel.AddObject(lineSegment);
             polyLine3D.Segments.Add(new ReferenceElement(lineSegment));
 
-            ///*
-            double xcor = attachedMember.ElementRAZ.line.vector.X;                
-            double ycor = attachedMember.ElementRAZ.line.vector.Y;
-            double zcor = attachedMember.ElementRAZ.line.vector.Z;
-
-            //Define LCS (local-y in XY plane) and unitize
-            VectorRAZ vx = new VectorRAZ(xcor, ycor, zcor).Unitize();
-            VectorRAZ vy = new VectorRAZ();
-            VectorRAZ vz = new VectorRAZ();
-            if (xcor== 0.0 && ycor == 0.0)
-            {
-                vy = new VectorRAZ(0.0, 1.0, 0.0).Unitize();
-                vz = new VectorRAZ((-zcor ), 0.0, (xcor)).Unitize();
-            }
-            else
-            {
-                vy = new VectorRAZ(-ycor, xcor, 0.0).Unitize();
-                vz = new VectorRAZ((-zcor * xcor), (-zcor * ycor), ((xcor * xcor) + (ycor * ycor))).Unitize();
-            }
-            
-            
-            
-            var LocalCoordinateSystem = new CoordSystemByVector();
-            LocalCoordinateSystem.VecX = new Vector3D() { X = vx.X, Y = vx.Y, Z = vx.Z }; 
-            LocalCoordinateSystem.VecY = new Vector3D() { X = vy.X, Y = vy.Y, Z = vy.Z };
-            LocalCoordinateSystem.VecZ = new Vector3D() { X = vz.X, Y = vz.Y, Z = vz.Z };
-
-            lineSegment.LocalCoordinateSystem = LocalCoordinateSystem;
-            //*/
+            SetLCS(attachedMember, lineSegment);
 
             //create element
             Element1D element1D = new Element1D();
@@ -557,7 +483,7 @@ namespace KarambaIDEA
 
                     //results on members are constant in the framework
                     ResultOnMember resMember = new ResultOnMember(new Member() { Id = elem.Id, MemberType = MemberType.Element1D }, ResultType.InternalForces);
-                    int numPoints = 10;
+                    int numPoints = 1;
                     for (int ip = 0; ip <= numPoints; ip++)
                     {
                         ResultOnSection resSec = new ResultOnSection();
@@ -577,65 +503,27 @@ namespace KarambaIDEA
                             int GrassId = elem.Id - 1;//Element1D.Id - 1 == ElementRAZ.id
                             int GrassLCId = i - 1;//Loadcase grasshopper starts at 0, Loadcase IDEA starts at 1.
 
+                            List<BearingMember> BM = joint.attachedMembers.OfType<BearingMember>().ToList();
+
                             //Find the element to check: isStartpoint true or false
                             AttachedMember attached = joint.attachedMembers.Find(a => a.ElementRAZ.id == GrassId);
-                            if (attached.isStartPoint == true | iele ==1) //or statement refers to second element of bearing member
+                            if (attached.isStartPoint == true) //
                             {
-                                //Pick startloads
-                                //API to IDEA UI, My, Vy and Vz are plotted negatively
-                                double N0  =        1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.N;
-                                double My0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.My;
-                                double Vz0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.Vz;
-                                double Vy0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.Vy;
-                                double Mz0 =        1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.Mz;
-                                double Mt0 =        1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.Mt;
-
-                                //From Karamba3D to Framework
-                                double N = N0;
-                                double My = My0;
-                                double Vz = Vz0;
-                                double Vy = Vy0;
-                                double Mz = Mz0;
-                                double Mt = Mt0;
-
-                                resLoadCase.N = N;
-                                resLoadCase.My = My;
-                                resLoadCase.Qz = Vz;
-                                resLoadCase.Qy = Vy;
-                                resLoadCase.Mz = Mz;
-                                resLoadCase.Mx = Mt;
-
-                                resSec.Results.Add(resLoadCase);
+                                SetStartLoads(1, joint, GrassLCId, GrassId, resLoadCase, resSec);
+                                
 
                             }
                             else//isEndPoint
                             {
-                                //Pick endloads
-                                //API to IDEA UI, My, Vy and Vz are plotted negatively
-                                double N0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.N;
-                                double My0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.My;
-                                double Vz0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.Vz;
-                                double Vy0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.Vy;
-                                double Mz0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.Mz;
-                                double Mt0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.Mt;
-
-                                //From Karamba3D to Framework
-                                double N =  N0*(-1);
-                                double My = My0*(-1); 
-                                double Vz = Vz0*(-1);
-                                double Vy = Vy0*(-1);
-                                double Mz = Mz0*(-1);  
-                                double Mt = Mt0*(-1); 
-
-                                resLoadCase.N = N;
-                                resLoadCase.My = My ; 
-                                resLoadCase.Qz = Vz ;
-                                resLoadCase.Qy = Vy;
-                                resLoadCase.Mz = Mz;
-                                resLoadCase.Mx = Mt;
-
-                                resSec.Results.Add(resLoadCase);
                                 
+                                if (attached is BearingMember && BM.Count == 2)
+                                {
+                                    SetEndLoads(1, joint, GrassLCId, GrassId, resLoadCase, resSec);
+                                }
+                                else
+                                {
+                                    SetEndLoads(-1, joint, GrassLCId, GrassId, resLoadCase, resSec);
+                                }
                             }
                         }
                         resMember.Results.Add(resSec);
@@ -645,6 +533,95 @@ namespace KarambaIDEA
                 }
             }
             openModelResult.ResultOnMembers.Add(resultIF);
+        }
+
+        public void SetStartLoads(int sign,Joint joint, int GrassLCId, int GrassId, ResultOfInternalForces resLoadCase, ResultOnSection resSec)
+        {
+            //Pick Startloads
+            //API to IDEA UI, My, Vy and Vz are plotted negatively
+            double N0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.N;
+            double My0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.My;
+            double Vz0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.Vz;
+            double Vy0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.Vy;
+            double Mz0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.Mz;
+            double Mt0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.Mt;
+
+            //From Karamba3D to Framework
+            double N =  N0  * sign;
+            double My = My0 * sign;
+            double Vz = Vz0 * sign;
+            double Vy = Vy0 * sign;
+            double Mz = Mz0 * sign;
+            double Mt = Mt0 * sign;
+
+            resLoadCase.N = N;
+            resLoadCase.My = My;
+            resLoadCase.Qz = Vz;
+            resLoadCase.Qy = Vy;
+            resLoadCase.Mz = Mz;
+            resLoadCase.Mx = Mt;
+
+            resSec.Results.Add(resLoadCase);
+        }
+        public void SetEndLoads(int sign, Joint joint, int GrassLCId, int GrassId, ResultOfInternalForces resLoadCase, ResultOnSection resSec)
+        {
+            //Pick EndLoads
+            //API to IDEA UI, My, Vy and Vz are plotted negatively
+            double N0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.N;
+            double My0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.My;
+            double Vz0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.Vz;
+            double Vy0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.Vy;
+            double Mz0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.Mz;
+            double Mt0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.Mt;
+
+            //From Karamba3D to Framework
+            double N = N0 * sign;
+            double My = My0 * sign;
+            double Vz = Vz0 * sign;
+            double Vy = Vy0 * sign;
+            double Mz = Mz0 * sign;
+            double Mt = Mt0 * sign;
+
+            resLoadCase.N = N;
+            resLoadCase.My = My;
+            resLoadCase.Qz = Vz;
+            resLoadCase.Qy = Vy;
+            resLoadCase.Mz = Mz;
+            resLoadCase.Mx = Mt;
+
+            resSec.Results.Add(resLoadCase);
+        }
+
+        public void SetLCS(AttachedMember attachedMember, LineSegment3D lineSegment)
+        {
+            //Defining LCS for First lineSegment
+            double xcor = attachedMember.ElementRAZ.line.vector.X;
+            double ycor = attachedMember.ElementRAZ.line.vector.Y;
+            double zcor = attachedMember.ElementRAZ.line.vector.Z;
+
+            //Define LCS (local-y in XY plane) and unitize
+            VectorRAZ vx = new VectorRAZ(xcor, ycor, zcor).Unitize();
+            VectorRAZ vy = new VectorRAZ();
+            VectorRAZ vz = new VectorRAZ();
+            if (xcor == 0.0 && ycor == 0.0)
+            {
+                vy = new VectorRAZ(0.0, 1.0, 0.0).Unitize();
+                vz = new VectorRAZ((-zcor), 0.0, (xcor)).Unitize();
+            }
+            else
+            {
+                vy = new VectorRAZ(-ycor, xcor, 0.0).Unitize();
+                vz = new VectorRAZ((-zcor * xcor), (-zcor * ycor), ((xcor * xcor) + (ycor * ycor))).Unitize();
+            }
+
+
+
+            var LocalCoordinateSystem = new CoordSystemByVector();
+            LocalCoordinateSystem.VecX = new Vector3D() { X = vx.X, Y = vx.Y, Z = vx.Z };
+            LocalCoordinateSystem.VecY = new Vector3D() { X = vy.X, Y = vy.Y, Z = vy.Z };
+            LocalCoordinateSystem.VecZ = new Vector3D() { X = vz.X, Y = vz.Y, Z = vz.Z };
+
+            lineSegment.LocalCoordinateSystem = LocalCoordinateSystem;
         }
     }
 }
