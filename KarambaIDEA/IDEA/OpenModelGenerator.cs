@@ -623,5 +623,33 @@ namespace KarambaIDEA
 
             lineSegment.LocalCoordinateSystem = LocalCoordinateSystem;
         }
+        public void SetLCSwithZvec(AttachedMember attachedMember, LineSegment3D lineSegment)
+        {
+            //Explode x-vector
+            double xcor = attachedMember.ElementRAZ.line.vector.X;
+            double ycor = attachedMember.ElementRAZ.line.vector.Y;
+            double zcor = attachedMember.ElementRAZ.line.vector.Z;
+
+            VectorRAZ vx = new VectorRAZ(xcor, ycor, zcor).Unitize();
+
+            //Explode z-vector
+            double xcorZ = 0.0;
+            double ycorZ = 0.0;
+            double zcorZ = 0.0;
+
+            VectorRAZ vz = new VectorRAZ(xcorZ, ycorZ, zcorZ).Unitize();
+
+            //Create y-vector with cross-product
+            VectorRAZ vy = new VectorRAZ();
+            vz = new VectorRAZ((vz.Y*vx.Z-vx.Y*vz.Z), (-vz.X*vx.Z+vx.X*vz.Z), (vz.X*vx.Y-vx.X*vz.Y)).Unitize();
+            
+            //Set LCS
+            var LocalCoordinateSystem = new CoordSystemByVector();
+            LocalCoordinateSystem.VecX = new Vector3D() { X = vx.X, Y = vx.Y, Z = vx.Z };
+            LocalCoordinateSystem.VecY = new Vector3D() { X = vy.X, Y = vy.Y, Z = vy.Z };
+            LocalCoordinateSystem.VecZ = new Vector3D() { X = vz.X, Y = vz.Y, Z = vz.Z };
+
+            lineSegment.LocalCoordinateSystem = LocalCoordinateSystem;
+        }
     }
 }

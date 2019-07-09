@@ -59,13 +59,13 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="GH_IO, Version=6.10.18311.20531, Culture=neutral, PublicKeyToken=6a29997d2e6b4f97, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Program Files\Rhino 6\Plug-ins\Grasshopper\GH_IO.dll</HintPath>
+      <HintPath>..\..\..\..\Program Files\Rhino 6\Plug-ins\Grasshopper\GH_IO.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <Private>False</Private>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="Grasshopper">
-      <HintPath>..\..\..\Program Files\Rhino 6\Plug-ins\Grasshopper\Grasshopper.dll</HintPath>
+      <HintPath>..\..\..\..\Program Files\Rhino 6\Plug-ins\Grasshopper\Grasshopper.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="IdeaRS.Connections">
@@ -75,13 +75,13 @@
       <HintPath>C:\Program Files\IDEAStatiCa\StatiCa9\IdeaRS.OpenModel.dll</HintPath>
     </Reference>
     <Reference Include="IdeaStatiCa.ConnectionBasicTypes, Version=9.1.51.51750, Culture=neutral, PublicKeyToken=b195254c3273d5c1, processorArchitecture=MSIL">
-      <HintPath>..\..\..\Program Files\IDEAStatiCa\StatiCa9\IdeaStatiCa.ConnectionBasicTypes.dll</HintPath>
+      <HintPath>..\..\..\..\Program Files\IDEAStatiCa\StatiCa9\IdeaStatiCa.ConnectionBasicTypes.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="RhinoCommon">
-      <HintPath>..\..\..\Program Files\Rhino 6\System\RhinoCommon.dll</HintPath>
+      <HintPath>..\..\..\..\Program Files\Rhino 6\System\RhinoCommon.dll</HintPath>
       <Private>False</Private>
     </Reference>
     <Reference Include="System" />
