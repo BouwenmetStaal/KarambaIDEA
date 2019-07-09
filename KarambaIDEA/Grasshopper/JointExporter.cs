@@ -42,6 +42,7 @@ namespace KarambaIDEA
 
             //Input ElementsRAZ
             pManager.AddLineParameter("Lines", "Lines", "Lines of geometry", GH_ParamAccess.list);
+            pManager.AddVectorParameter("Z-vectors", "Z-vectors", "Z-vectors of lines", GH_ParamAccess.list);
             pManager.AddTextParameter("Groupnames", "Groupnames", "Groupname of element", GH_ParamAccess.list);
             pManager.AddTextParameter("Material", "Material", "Steel grade of every element", GH_ParamAccess.list);
 
@@ -82,6 +83,7 @@ namespace KarambaIDEA
         {
             //Input
             List<Line> lines = new List<Line>();
+            List<Vector3d> zvectors = new List<Vector3d>();
             List<string> crossectionsNameDirty = new List<string>();
             List<string> crossectionsName = new List<string>();
             List<string> groupnamesDirty = new List<string>();
@@ -151,29 +153,28 @@ namespace KarambaIDEA
             DA.GetDataList(3, centerpoints);
 
             DA.GetDataList(4, lines);
-            DA.GetDataList(5, groupnamesDirty);
-            DA.GetDataList(6, steelgrades);
+            if (!DA.GetDataList(5, zvectors)) { return; };
+            DA.GetDataList(6, groupnamesDirty);
+            DA.GetDataList(7, steelgrades);
 
-            DA.GetDataList(7, crossectionsNameDirty);
-            DA.GetDataList(8, shapesDirty);
-            DA.GetDataList(9, height);
-            DA.GetDataList(10, width);
-            DA.GetDataList(11, thicknessFlange);
-            DA.GetDataList(12, thicknessWeb);
-            DA.GetDataList(13, radius);
+            DA.GetDataList(8, crossectionsNameDirty);
+            DA.GetDataList(9, shapesDirty);
+            DA.GetDataList(10, height);
+            DA.GetDataList(11, width);
+            DA.GetDataList(12, thicknessFlange);
+            DA.GetDataList(13, thicknessWeb);
+            DA.GetDataList(14, radius);
 
 
-            DA.GetDataTree(14, out N);
-            DA.GetDataTree(15, out Vz);
-            DA.GetDataTree(16, out Vy);
-            DA.GetDataTree(17, out Mt);
-            DA.GetDataTree(18, out My);
-            DA.GetDataTree(19, out Mz);
-
+            DA.GetDataTree(15, out N);
+            DA.GetDataTree(16, out Vz);
+            DA.GetDataTree(17, out Vy);
+            DA.GetDataTree(18, out Mt);
+            DA.GetDataTree(19, out My);
+            DA.GetDataTree(20, out Mz);
             
-            
-            DA.GetData(20, ref calculateThisJoint);
-            DA.GetData(21, ref startIDEA);
+            DA.GetData(21, ref calculateThisJoint);
+            DA.GetData(22, ref startIDEA);
 
             #endregion
 
@@ -242,13 +243,16 @@ namespace KarambaIDEA
                 PointRAZ end = PointRAZ.CreateNewOrExisting(project, lines[i].ToX, lines[i].ToY, lines[i].ToZ);
                 LineRAZ line = new LineRAZ(i, start, end);
 
+                //Z-VECTOR
+                VectorRAZ zvector = new VectorRAZ(zvectors[i].X, zvectors[i].Y, zvectors[i].Z);
+
                 int hierarchyId = -1;
                 Hierarchy h = project.hierarchylist.FirstOrDefault(a => groupnames[i].StartsWith(a.groupname));
                 if (h != null)
                 {
                     hierarchyId = h.numberInHierarchy;
                 }
-                ElementRAZ element = new ElementRAZ(project, i, line, crosssection, groupnames[i], hierarchyId);
+                ElementRAZ element = new ElementRAZ(project, i, line, crosssection, groupnames[i], hierarchyId, zvector);
             }
 
             //CREATE LIST OF LOADS

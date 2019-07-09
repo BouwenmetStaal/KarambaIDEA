@@ -18,12 +18,13 @@ namespace KarambaIDEA.Core
         public LineRAZ line;
         public CrossSection crossSection;
         public string groupname;
+        public VectorRAZ Zvector;
         public SawingCut startCut;
         public SawingCut endCut;
 
 
 
-        public ElementRAZ(Project _project, int _id, LineRAZ _line, CrossSection _crossSection, string _groupname, int _numberInHierarchy)
+        public ElementRAZ(Project _project, int _id, LineRAZ _line, CrossSection _crossSection, string _groupname, int _numberInHierarchy, VectorRAZ vector=null)
 
         {
             this.project = _project;

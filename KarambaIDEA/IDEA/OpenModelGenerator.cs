@@ -244,61 +244,6 @@ namespace KarambaIDEA
             pB2 = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
             pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
 
-            /*
-            //view from point [B], point [B] is centerpoint of connection
-            // []=0=>[B]=1=[]
-            if (bearingMembers[0].isStartPoint == false)
-            {
-                if (bearingMembers[1].isStartPoint == true)
-                {
-                    // [ ]=0=>[B]=1=>[ ]
-                    // [A]=0=>[B]=1=>[C]
-                    pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
-                    pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
-                    pB2 = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
-                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
-                }
-                else
-                {
-                    // [ ]=0=>[B]<=1=[ ]
-                    // [A]=0=[B]=1=[C]
-                    pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
-                    pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
-                    pB2 = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
-                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
-                }
-            }
-            // []<=0=[B]=1=[]
-            else
-            {
-                if (bearingMembers[1].isStartPoint == true)
-                {
-                    // [ ]<=0=[B]=1=>[ ]
-                    // [A]=0=[B]=1=[C]
-                    pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
-                    pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
-                    pB2 = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
-                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
-                }
-                else
-                {
-                    // [ ]<=0=[B]<=1=[ ]
-                    // [C]<=0=[B]<=1=[A]
-                    /*
-                    pA = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
-                    pB = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
-                    pB2 = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
-                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
-                    //
-                    /*
-                    pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
-                    pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
-                    pB2 = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
-                    pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
-                }
-            }
-            */
-
             List<Point3D> points = new List<Point3D>() { pA, pB, pB2, pC };
 
             Point3D pointA = pA; //Endpoint of first member
@@ -313,7 +258,14 @@ namespace KarambaIDEA
             lineSegment1.EndPoint = new ReferenceElement(pointB);
             polyLine3D.Segments.Add(new ReferenceElement(lineSegment1));
 
-            SetLCS(bearingMembers[0], lineSegment1);
+            if (bearingMembers[0].ElementRAZ.Zvector == null)
+            {
+                SetLCS(bearingMembers[0], lineSegment1);
+            }
+            else
+            {
+                SetLCSwithZvec(bearingMembers[0], lineSegment1);
+            }
 
             LineSegment3D lineSegment2 = new LineSegment3D();
             lineSegment2.Id = openModel.GetMaxId(lineSegment2) + 1;
@@ -321,8 +273,15 @@ namespace KarambaIDEA
             lineSegment2.StartPoint = new ReferenceElement(pointB);
             lineSegment2.EndPoint = new ReferenceElement(pointC);
             polyLine3D.Segments.Add(new ReferenceElement(lineSegment2));
-
-            SetLCS(bearingMembers[1], lineSegment2);
+            
+            if (bearingMembers[1].ElementRAZ.Zvector == null)
+            {
+                SetLCS(bearingMembers[1], lineSegment2);
+            }
+            else
+            {
+                SetLCSwithZvec(bearingMembers[1], lineSegment2);
+            }
 
             //create elements
             Element1D el1 = new Element1D();
@@ -381,7 +340,15 @@ namespace KarambaIDEA
             openModel.AddObject(lineSegment);
             polyLine3D.Segments.Add(new ReferenceElement(lineSegment));
 
-            SetLCS(attachedMember, lineSegment);
+            if (attachedMember.ElementRAZ.Zvector == null)
+            {
+                SetLCS(attachedMember, lineSegment);
+            }
+            else
+            {
+                SetLCSwithZvec(attachedMember, lineSegment);
+            }
+            
 
             //create element
             Element1D element1D = new Element1D();
@@ -633,9 +600,9 @@ namespace KarambaIDEA
             VectorRAZ vx = new VectorRAZ(xcor, ycor, zcor).Unitize();
 
             //Explode z-vector
-            double xcorZ = 0.0;
-            double ycorZ = 0.0;
-            double zcorZ = 0.0;
+            double xcorZ = attachedMember.ElementRAZ.Zvector.X;
+            double ycorZ = attachedMember.ElementRAZ.Zvector.Y;
+            double zcorZ = attachedMember.ElementRAZ.Zvector.Z;
 
             VectorRAZ vz = new VectorRAZ(xcorZ, ycorZ, zcorZ).Unitize();
 
