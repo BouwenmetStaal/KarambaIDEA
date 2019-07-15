@@ -58,6 +58,10 @@
     <AssemblyOriginatorKeyFile>..\..\Common\StrongKey\ideastaticasnk.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="karamba">
+      <HintPath>C:\Program Files\Rhino 6\Plug-ins\karamba.gha</HintPath>
+      <Private>False</Private>
+    </Reference>
     <Reference Include="GH_IO, Version=6.10.18311.20531, Culture=neutral, PublicKeyToken=6a29997d2e6b4f97, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\Program Files\Rhino 6\Plug-ins\Grasshopper\GH_IO.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -78,6 +82,9 @@
       <HintPath>..\..\..\..\Program Files\IDEAStatiCa\StatiCa9\IdeaStatiCa.ConnectionBasicTypes.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
       <EmbedInteropTypes>False</EmbedInteropTypes>
+    </Reference>
+    <Reference Include="karambaCommon">
+      <HintPath>..\..\..\..\Program Files\Rhino 6\Plug-ins\karambaCommon.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="RhinoCommon">
@@ -125,6 +132,7 @@
     <Compile Include="Grasshopper\JointExporter.cs" />
     <Compile Include="Grasshopper\JointVector.cs" />
     <Compile Include="Grasshopper\JointViewer.cs" />
+    <Compile Include="Grasshopper\KarambaConversion.cs" />
     <Compile Include="Grasshopper\LoadsToLoadsTrees.cs" />
     <Compile Include="Grasshopper\LoadsToLoadsTrees2.cs" />
     <Compile Include="IDEA\ConnectionTemplateGenerator.cs" />
@@ -194,10 +202,6 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
-  <ItemGroup>
-    <None Include="Resources\KarambaIDEAviewer_logo.png" />
-  </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>Copy "$(TargetPath)" "$(TargetDir)$(ProjectName).gha"</PostBuildEvent>

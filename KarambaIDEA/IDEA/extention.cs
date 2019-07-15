@@ -9,6 +9,10 @@ namespace KarambaIDEA.IDEA
 {
     public static class extention
     {
+
+        
+
+
         public static BearingMember SecondOrDefault(this List<BearingMember> source)
         {
             if (source.Count() >= 1) { return source[1]; } else { return null; }

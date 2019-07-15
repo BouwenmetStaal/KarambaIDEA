@@ -29,10 +29,6 @@ namespace KarambaIDEA
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             //Single input variables
-            //pManager.AddTextParameter("Projectname", "PN", "Name of project or truss variant", GH_ParamAccess.item);
-            //pManager.AddIntegerParameter("MinThroat", "minA", "Minimal throat thickness [mm]", GH_ParamAccess.item);
-            //pManager.AddNumberParameter("MaxEccentricity", "e_max", "Maximum eccentricity present in project [m]", GH_ParamAccess.item);
-            //pManager.AddIntegerParameter("AnalysisMethod", "AnalyzeMeth", "Type of analysis", GH_ParamAccess.item);
             pManager.AddTextParameter("Template File", "Template File Location", "File location of template to be used. For example: 'C:\\Data\\template.contemp'", GH_ParamAccess.item);
             pManager.AddTextParameter("Output Filepath", "Output Filepath", "Save location of IDEA Statica Connection output file. For example: 'C:\\Data'", GH_ParamAccess.item);
 
@@ -42,7 +38,7 @@ namespace KarambaIDEA
 
             //Input ElementsRAZ
             pManager.AddLineParameter("Lines", "Lines", "Lines of geometry", GH_ParamAccess.list);
-            pManager.AddVectorParameter("Z-vectors", "Z-vectors", "Z-vectors of lines", GH_ParamAccess.list);
+            pManager.AddNumberParameter("LCS rotation", "LCS rotation", "Local Coordinate System rotation of element", GH_ParamAccess.list);
             pManager.AddTextParameter("Groupnames", "Groupnames", "Groupname of element", GH_ParamAccess.list);
             pManager.AddTextParameter("Material", "Material", "Steel grade of every element", GH_ParamAccess.list);
 
@@ -83,7 +79,7 @@ namespace KarambaIDEA
         {
             //Input
             List<Line> lines = new List<Line>();
-            List<Vector3d> zvectors = new List<Vector3d>();
+            List<double> rotationLCS = new List<double>();
             List<string> crossectionsNameDirty = new List<string>();
             List<string> crossectionsName = new List<string>();
             List<string> groupnamesDirty = new List<string>();
@@ -153,7 +149,7 @@ namespace KarambaIDEA
             DA.GetDataList(3, centerpoints);
 
             DA.GetDataList(4, lines);
-            if (!DA.GetDataList(5, zvectors)) { return; };
+            if (!DA.GetDataList(5, rotationLCS)) { return; };
             DA.GetDataList(6, groupnamesDirty);
             DA.GetDataList(7, steelgrades);
 
@@ -244,7 +240,7 @@ namespace KarambaIDEA
                 LineRAZ line = new LineRAZ(i, start, end);
 
                 //Z-VECTOR
-                VectorRAZ zvector = new VectorRAZ(zvectors[i].X, zvectors[i].Y, zvectors[i].Z);
+                //VectorRAZ zvector = new VectorRAZ(rotationLCS[i].X, rotationLCS[i].Y, rotationLCS[i].Z);
 
                 int hierarchyId = -1;
                 Hierarchy h = project.hierarchylist.FirstOrDefault(a => groupnames[i].StartsWith(a.groupname));
@@ -252,7 +248,7 @@ namespace KarambaIDEA
                 {
                     hierarchyId = h.numberInHierarchy;
                 }
-                ElementRAZ element = new ElementRAZ(project, i, line, crosssection, groupnames[i], hierarchyId, zvector);
+                ElementRAZ element = new ElementRAZ(project, i, line, crosssection, groupnames[i], hierarchyId, rotationLCS[i]);
             }
 
             //CREATE LIST OF LOADS

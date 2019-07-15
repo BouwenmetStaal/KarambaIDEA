@@ -102,5 +102,39 @@ namespace KarambaIDEA.Core
             VectorRAZ invers = new VectorRAZ(-vector.X, -vector.Y, -vector.Z);
             return invers;
         }
+
+        static public VectorRAZ CrossProduct(VectorRAZ a, VectorRAZ b)
+        {
+            double x = a.Y * b.Z - a.Z * b.Y;
+            double y = a.Z * b.X - a.X * b.Z;
+            double z = a.X * b.Y - a.Y * b.X;
+            VectorRAZ vector = new VectorRAZ(x, y, z);
+            return vector;
+        }
+
+        static public double DotProduct(VectorRAZ a, VectorRAZ b)
+        {
+            double scalar = a.X*b.X+a.Y*b.Y+a.Z*b.Z;
+            return scalar;
+        }
+
+        static public VectorRAZ VecScalMultiply(VectorRAZ vec, double scalar)
+        {
+            VectorRAZ vector = new VectorRAZ(vec.X * scalar, vec.Y * scalar, vec.Z * scalar);
+            return vector;
+        }
+
+        static public VectorRAZ RotateVector(VectorRAZ n, double a, VectorRAZ v)
+        {
+            double rad = a * (System.Math.PI / 180.0);
+            VectorRAZ p1 = VecScalMultiply(v, System.Math.Cos(rad));
+            VectorRAZ p2 = VecScalMultiply(n, DotProduct(v, n) * (1.0 - System.Math.Cos(rad)));
+            VectorRAZ p3 = VecScalMultiply(CrossProduct(n, v), System.Math.Sin(rad));
+
+            VectorRAZ vector = new VectorRAZ(p1.X + p2.X + p3.X, p1.Y + p2.Y + p3.Y, p1.Z + p2.Z + p3.Z);
+            
+            return vector;
+          
+        }
     }
 }

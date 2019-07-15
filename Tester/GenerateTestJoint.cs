@@ -47,11 +47,11 @@ namespace Tester
             KarambaIDEA.Core.CrossSection.CreateNewOrExisting(project2, "HEA160", KarambaIDEA.Core.CrossSection.Shape.ISection, steel, 20, 20, 20, 20, 20);
             //CrossSection cross = new CrossSection(project2, "HEA100", "I", steel, 20, 20, 20, 20, 20);
 
-            new ElementRAZ(project2, 0, new LineRAZ(0, puntA, puntB), project2.crossSections[1], "Column", 1);
-            new ElementRAZ(project2, 1, new LineRAZ(1, puntB, puntC), project2.crossSections[1], "Column", 1);
+            new ElementRAZ(project2, 0, new LineRAZ(0, puntA, puntB), project2.crossSections[1], "Column", 1,0.0);
+            new ElementRAZ(project2, 1, new LineRAZ(1, puntB, puntC), project2.crossSections[1], "Column", 1, 0.0);
 
-            new ElementRAZ(project2, 2, new LineRAZ(2, puntB, puntE), project2.crossSections[0], "Diagonal", 3);
-            new ElementRAZ(project2, 3, new LineRAZ(3, puntB, puntD), project2.crossSections[0], "Diagonal", 3);
+            new ElementRAZ(project2, 2, new LineRAZ(2, puntB, puntE), project2.crossSections[0], "Diagonal", 3, 0.0);
+            new ElementRAZ(project2, 3, new LineRAZ(3, puntB, puntD), project2.crossSections[0], "Diagonal", 3, 0.0);
 
 
 

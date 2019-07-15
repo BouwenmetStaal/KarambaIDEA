@@ -22,6 +22,13 @@ namespace Tester
         [STAThread]
         static void Main()
         {
+            VectorRAZ a = new VectorRAZ(1, 2, 3);
+            VectorRAZ b = new VectorRAZ(0, 0, 1);
+
+            double scalar = VectorRAZ.DotProduct(a, b);
+            VectorRAZ vector = VectorRAZ.CrossProduct(a, b);
+            VectorRAZ xx = VectorRAZ.RotateVector(b, 90.0, a);
+
             KarambaIDEA.MainWindow mainWindow = new MainWindow();
             Tester.GenerateTestJoint fj = new GenerateTestJoint();
             //KarambaIDEA.TestFrameworkJoint fj = new TestFrameworkJoint();

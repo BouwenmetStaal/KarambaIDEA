@@ -258,14 +258,7 @@ namespace KarambaIDEA
             lineSegment1.EndPoint = new ReferenceElement(pointB);
             polyLine3D.Segments.Add(new ReferenceElement(lineSegment1));
 
-            if (bearingMembers[0].ElementRAZ.Zvector == null)
-            {
-                SetLCS(bearingMembers[0], lineSegment1);
-            }
-            else
-            {
-                SetLCSwithZvec(bearingMembers[0], lineSegment1);
-            }
+            SetLCS(bearingMembers[0], lineSegment1);
 
             LineSegment3D lineSegment2 = new LineSegment3D();
             lineSegment2.Id = openModel.GetMaxId(lineSegment2) + 1;
@@ -274,14 +267,7 @@ namespace KarambaIDEA
             lineSegment2.EndPoint = new ReferenceElement(pointC);
             polyLine3D.Segments.Add(new ReferenceElement(lineSegment2));
             
-            if (bearingMembers[1].ElementRAZ.Zvector == null)
-            {
-                SetLCS(bearingMembers[1], lineSegment2);
-            }
-            else
-            {
-                SetLCSwithZvec(bearingMembers[1], lineSegment2);
-            }
+            SetLCS(bearingMembers[1], lineSegment2);
 
             //create elements
             Element1D el1 = new Element1D();
@@ -294,6 +280,7 @@ namespace KarambaIDEA
             IdeaRS.OpenModel.CrossSection.CrossSection crossSection = openModel.CrossSection.First(a => a.Id == bearingMembers[0].ElementRAZ.crossSection.id);
             el1.CrossSectionBegin = new ReferenceElement(crossSection);
             el1.CrossSectionEnd = new ReferenceElement(crossSection);
+            el1.RotationRx = bearingMembers[0].ElementRAZ.rotationLCS;
             openModel.AddObject(el1);
 
             Element1D el2 = new Element1D();
@@ -305,6 +292,7 @@ namespace KarambaIDEA
             el2.Segment = new ReferenceElement(lineSegment2);
             el2.CrossSectionBegin = new ReferenceElement(crossSection);
             el2.CrossSectionEnd = new ReferenceElement(crossSection);
+            el2.RotationRx = bearingMembers[1].ElementRAZ.rotationLCS;
             openModel.AddObject(el2);
 
             //create member
@@ -340,14 +328,7 @@ namespace KarambaIDEA
             openModel.AddObject(lineSegment);
             polyLine3D.Segments.Add(new ReferenceElement(lineSegment));
 
-            if (attachedMember.ElementRAZ.Zvector == null)
-            {
-                SetLCS(attachedMember, lineSegment);
-            }
-            else
-            {
-                SetLCSwithZvec(attachedMember, lineSegment);
-            }
+            SetLCS(attachedMember, lineSegment);
             
 
             //create element
@@ -362,6 +343,7 @@ namespace KarambaIDEA
             IdeaRS.OpenModel.CrossSection.CrossSection crossSection = openModel.CrossSection.First(a => a.Id == attachedMember.ElementRAZ.crossSection.id);
             element1D.CrossSectionBegin = new ReferenceElement(crossSection);
             element1D.CrossSectionEnd = new ReferenceElement(crossSection);
+            element1D.RotationRx = attachedMember.ElementRAZ.rotationLCS;
 
             if (attachedMember is ConnectingMember)
             {
@@ -377,6 +359,7 @@ namespace KarambaIDEA
                 }
                 element1D.EccentricityBeginZ = eccentricty;
                 element1D.EccentricityEndZ = eccentricty;
+
             }
 
             openModel.AddObject(element1D);
@@ -566,6 +549,8 @@ namespace KarambaIDEA
             double ycor = attachedMember.ElementRAZ.line.vector.Y;
             double zcor = attachedMember.ElementRAZ.line.vector.Z;
 
+            
+
             //Define LCS (local-y in XY plane) and unitize
             VectorRAZ vx = new VectorRAZ(xcor, ycor, zcor).Unitize();
             VectorRAZ vy = new VectorRAZ();
@@ -581,7 +566,15 @@ namespace KarambaIDEA
                 vz = new VectorRAZ((-zcor * xcor), (-zcor * ycor), ((xcor * xcor) + (ycor * ycor))).Unitize();
             }
 
+            if (attachedMember.ElementRAZ.rotationLCS == 0.0)
+            {
 
+            }
+            else
+            {
+                vy = VectorRAZ.RotateVector(vx, attachedMember.ElementRAZ.rotationLCS, vy);
+                vz = VectorRAZ.RotateVector(vx, attachedMember.ElementRAZ.rotationLCS, vz);
+            }
 
             var LocalCoordinateSystem = new CoordSystemByVector();
             LocalCoordinateSystem.VecX = new Vector3D() { X = vx.X, Y = vx.Y, Z = vx.Z };
@@ -590,7 +583,7 @@ namespace KarambaIDEA
 
             lineSegment.LocalCoordinateSystem = LocalCoordinateSystem;
         }
-        public void SetLCSwithZvec(AttachedMember attachedMember, LineSegment3D lineSegment)
+        public void SetLCSwithRotation(AttachedMember attachedMember, LineSegment3D lineSegment)
         {
             //Explode x-vector
             double xcor = attachedMember.ElementRAZ.line.vector.X;
@@ -599,10 +592,12 @@ namespace KarambaIDEA
 
             VectorRAZ vx = new VectorRAZ(xcor, ycor, zcor).Unitize();
 
+            double rotation = attachedMember.ElementRAZ.rotationLCS;
+
             //Explode z-vector
-            double xcorZ = attachedMember.ElementRAZ.Zvector.X;
-            double ycorZ = attachedMember.ElementRAZ.Zvector.Y;
-            double zcorZ = attachedMember.ElementRAZ.Zvector.Z;
+            double xcorZ = 0.0;
+            double ycorZ = 0.0;
+            double zcorZ = 0.0;
 
             VectorRAZ vz = new VectorRAZ(xcorZ, ycorZ, zcorZ).Unitize();
 

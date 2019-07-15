@@ -18,13 +18,13 @@ namespace KarambaIDEA.Core
         public LineRAZ line;
         public CrossSection crossSection;
         public string groupname;
-        public VectorRAZ Zvector;
+        public double rotationLCS;
         public SawingCut startCut;
         public SawingCut endCut;
 
 
 
-        public ElementRAZ(Project _project, int _id, LineRAZ _line, CrossSection _crossSection, string _groupname, int _numberInHierarchy, VectorRAZ vector=null)
+        public ElementRAZ(Project _project, int _id, LineRAZ _line, CrossSection _crossSection, string _groupname, int _numberInHierarchy, double _rotationLCS)
 
         {
             this.project = _project;
@@ -34,6 +34,7 @@ namespace KarambaIDEA.Core
             this.crossSection = _crossSection;
             this.groupname = _groupname;
             this.numberInHierarchy = _numberInHierarchy;
+            this.rotationLCS = _rotationLCS;
 
         }
 
