@@ -38,7 +38,7 @@ namespace KarambaIDEA
 
             //Input ElementsRAZ
             pManager.AddLineParameter("Lines", "Lines", "Lines of geometry", GH_ParamAccess.list);
-            pManager.AddNumberParameter("LCS rotation", "LCS rotation", "Local Coordinate System rotation of element", GH_ParamAccess.list);
+            pManager.AddNumberParameter("LCS rotation", "LCS rotation [Deg]", "Local Coordinate System rotation of element in degrees. Rotation runs from local y to local z-axis", GH_ParamAccess.list);
             pManager.AddTextParameter("Groupnames", "Groupnames", "Groupname of element", GH_ParamAccess.list);
             pManager.AddTextParameter("Material", "Material", "Steel grade of every element", GH_ParamAccess.list);
 
@@ -431,13 +431,7 @@ namespace KarambaIDEA
             //Output lines
             DA.SetData(0, project.joints.Count);
             DA.SetDataList(1, jointlines);
-            
-      
-            
-
-
         }
-
         
 
         /// <summary>

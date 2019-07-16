@@ -25,9 +25,25 @@ namespace Tester
             VectorRAZ a = new VectorRAZ(1, 2, 3);
             VectorRAZ b = new VectorRAZ(0, 0, 1);
 
+            double angle = 90.0;
+
             double scalar = VectorRAZ.DotProduct(a, b);
             VectorRAZ vector = VectorRAZ.CrossProduct(a, b);
-            VectorRAZ xx = VectorRAZ.RotateVector(b, 90.0, a);
+            VectorRAZ xx = VectorRAZ.RotateVector(b, angle, a);
+
+            System.Windows.Media.Media3D.Vector3D va = new System.Windows.Media.Media3D.Vector3D(a.X, a.Y, a.Z);
+            System.Windows.Media.Media3D.Vector3D vb = new System.Windows.Media.Media3D.Vector3D(b.X, b.Y, b.Z);
+
+            double dot = System.Windows.Media.Media3D.Vector3D.DotProduct(va, vb);
+            System.Windows.Media.Media3D.Vector3D cross = System.Windows.Media.Media3D.Vector3D.CrossProduct(va, vb);
+
+            System.Windows.Media.Media3D.AxisAngleRotation3D vec = new System.Windows.Media.Media3D.AxisAngleRotation3D();
+            
+
+            
+
+            //System.Windows.Media.Media3D.Rotation3D rot = new System.Windows.Media.Media3D.Rotation3D();
+
 
             KarambaIDEA.MainWindow mainWindow = new MainWindow();
             Tester.GenerateTestJoint fj = new GenerateTestJoint();

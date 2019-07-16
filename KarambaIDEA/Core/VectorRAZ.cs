@@ -124,11 +124,22 @@ namespace KarambaIDEA.Core
             return vector;
         }
 
-        static public VectorRAZ RotateVector(VectorRAZ n, double a, VectorRAZ v)
+        /// <summary>
+        /// This method rotates a the vector v arount the vector-axis n by degree degrees.
+        /// </summary>
+        /// <param name="n">axis to rotate around</param>
+        /// <param name="degree">rotation in degrees</param>
+        /// <param name="v">vector to rotate</param>
+        /// <returns></returns>
+        static public VectorRAZ RotateVector(VectorRAZ n, double degree, VectorRAZ v)
         {
-            double rad = a * (System.Math.PI / 180.0);
+            double rad = System.Math.PI * (degree / 180.0);
+            //n should be converted to a unit-vector
+            n = n.Unitize();
+
+            //Rodrigues' rotation formula
             VectorRAZ p1 = VecScalMultiply(v, System.Math.Cos(rad));
-            VectorRAZ p2 = VecScalMultiply(n, DotProduct(v, n) * (1.0 - System.Math.Cos(rad)));
+            VectorRAZ p2 = VecScalMultiply(VecScalMultiply(n, DotProduct(v, n)), (1.0 - System.Math.Cos(rad)));
             VectorRAZ p3 = VecScalMultiply(CrossProduct(n, v), System.Math.Sin(rad));
 
             VectorRAZ vector = new VectorRAZ(p1.X + p2.X + p3.X, p1.Y + p2.Y + p3.Y, p1.Z + p2.Z + p3.Z);

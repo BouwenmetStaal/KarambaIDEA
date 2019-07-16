@@ -280,7 +280,7 @@ namespace KarambaIDEA
             IdeaRS.OpenModel.CrossSection.CrossSection crossSection = openModel.CrossSection.First(a => a.Id == bearingMembers[0].ElementRAZ.crossSection.id);
             el1.CrossSectionBegin = new ReferenceElement(crossSection);
             el1.CrossSectionEnd = new ReferenceElement(crossSection);
-            el1.RotationRx = bearingMembers[0].ElementRAZ.rotationLCS;
+            //el1.RotationRx = bearingMembers[0].ElementRAZ.rotationLCS;
             openModel.AddObject(el1);
 
             Element1D el2 = new Element1D();
@@ -292,7 +292,7 @@ namespace KarambaIDEA
             el2.Segment = new ReferenceElement(lineSegment2);
             el2.CrossSectionBegin = new ReferenceElement(crossSection);
             el2.CrossSectionEnd = new ReferenceElement(crossSection);
-            el2.RotationRx = bearingMembers[1].ElementRAZ.rotationLCS;
+            //el2.RotationRx = bearingMembers[1].ElementRAZ.rotationLCS;
             openModel.AddObject(el2);
 
             //create member
@@ -343,7 +343,7 @@ namespace KarambaIDEA
             IdeaRS.OpenModel.CrossSection.CrossSection crossSection = openModel.CrossSection.First(a => a.Id == attachedMember.ElementRAZ.crossSection.id);
             element1D.CrossSectionBegin = new ReferenceElement(crossSection);
             element1D.CrossSectionEnd = new ReferenceElement(crossSection);
-            element1D.RotationRx = attachedMember.ElementRAZ.rotationLCS;
+            //element1D.RotationRx = attachedMember.ElementRAZ.rotationLCS;
 
             if (attachedMember is ConnectingMember)
             {
