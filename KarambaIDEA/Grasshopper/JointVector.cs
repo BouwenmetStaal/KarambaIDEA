@@ -142,6 +142,23 @@ namespace KarambaIDEA.Grasshopper
             DA.SetDataList(0, JointVectors);
         }
 
+        /// <summary>
+        /// Provides an Icon for every component that will be visible in the User Interface.
+        /// Icons need to be 24x24 pixels.
+        /// </summary>
+        protected override System.Drawing.Bitmap Icon
+        {
+            get
+            {
+
+                // You can add image files to your project resources and access them like this:
+                //return Resources.IconForThisComponent;
+
+                return Properties.Resources.KarambaIDEA_logo_JointVector;
+
+            }
+        }
+
         public override Guid ComponentGuid
         {
             get { return new Guid("157eeca2-26a5-422f-96d8-76ab78eef843"); }

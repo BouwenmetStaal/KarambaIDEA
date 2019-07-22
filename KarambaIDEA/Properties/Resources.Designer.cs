@@ -103,6 +103,16 @@ namespace KarambaIDEA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap KarambaIDEA_logo_JointVector {
+            get {
+                object obj = ResourceManager.GetObject("KarambaIDEA_logo_JointVector", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap KarambaIDEA_logo_LinesFromNodes {
             get {
                 object obj = ResourceManager.GetObject("KarambaIDEA_logo_LinesFromNodes", resourceCulture);

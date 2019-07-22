@@ -58,10 +58,6 @@
     <AssemblyOriginatorKeyFile>..\..\Common\StrongKey\ideastaticasnk.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="karamba">
-      <HintPath>C:\Program Files\Rhino 6\Plug-ins\karamba.gha</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="GH_IO, Version=6.10.18311.20531, Culture=neutral, PublicKeyToken=6a29997d2e6b4f97, processorArchitecture=MSIL">
       <HintPath>..\..\..\..\Program Files\Rhino 6\Plug-ins\Grasshopper\GH_IO.dll</HintPath>
       <SpecificVersion>False</SpecificVersion>
@@ -72,19 +68,17 @@
       <HintPath>..\..\..\..\Program Files\Rhino 6\Plug-ins\Grasshopper\Grasshopper.dll</HintPath>
       <Private>False</Private>
     </Reference>
-    <Reference Include="IdeaRS.Connections">
-      <HintPath>C:\Program Files\IDEAStatiCa\StatiCa9\IdeaRS.Connections.dll</HintPath>
-    </Reference>
-    <Reference Include="IdeaRS.OpenModel">
-      <HintPath>C:\Program Files\IDEAStatiCa\StatiCa9\IdeaRS.OpenModel.dll</HintPath>
-    </Reference>
-    <Reference Include="IdeaStatiCa.ConnectionBasicTypes, Version=9.1.51.51750, Culture=neutral, PublicKeyToken=b195254c3273d5c1, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\Program Files\IDEAStatiCa\StatiCa9\IdeaStatiCa.ConnectionBasicTypes.dll</HintPath>
+    <Reference Include="IdeaRS.Connections, Version=10.0.39.53451, Culture=neutral, PublicKeyToken=b195254c3273d5c1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>..\..\..\..\Program Files\IDEAStatiCa\StatiCa9\IdeaRS.Connections.dll</HintPath>
     </Reference>
-    <Reference Include="karambaCommon">
-      <HintPath>..\..\..\..\Program Files\Rhino 6\Plug-ins\karambaCommon.dll</HintPath>
+    <Reference Include="IdeaRS.OpenModel, Version=10.0.39.53451, Culture=neutral, PublicKeyToken=b195254c3273d5c1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files\IDEAStatiCa\StatiCa9\IdeaRS.OpenModel.dll</HintPath>
+    </Reference>
+    <Reference Include="IdeaStatiCa.ConnectionBasicTypes, Version=10.0.39.53451, Culture=neutral, PublicKeyToken=b195254c3273d5c1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Program Files\IDEAStatiCa\StatiCa9\IdeaStatiCa.ConnectionBasicTypes.dll</HintPath>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="RhinoCommon">
@@ -137,7 +131,6 @@
     <Compile Include="Grasshopper\LoadsToLoadsTrees2.cs" />
     <Compile Include="Grasshopper\RotateVector.cs" />
     <Compile Include="IDEA\ConnectionTemplateGenerator.cs" />
-    <Compile Include="IDEA\extention.cs" />
     <Compile Include="IDEA\IdeaConnection.cs" />
     <Compile Include="IDEA\OpenModelGenerator.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
@@ -195,6 +188,7 @@
     <Content Include="Resources\continues2members.contemp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\KarambaIDEA_logo_JointVector.png" />
     <None Include="Resources\KarambaIDEA_logo.png" />
     <None Include="Resources\KarambaIDEA_logo_viewer.png" />
     <None Include="Resources\KarambaIDEA_logo_LinesFromNodes.png" />
