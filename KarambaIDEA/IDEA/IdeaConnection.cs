@@ -61,7 +61,7 @@ namespace KarambaIDEA.IDEA
             //IdeaRS.ConnectionLink object will only be found during runtime by use of the lazylink
             this.dynLinkLazy = new Lazy<dynamic>(() =>
             {
-                string ideaInstallDir = @"C:\Program Files\IDEAStatiCa\StatiCa9";
+                string ideaInstallDir = @"C:\Program Files\IDEAStatiCa\StatiCa10";
                 string ideaConLinkFullPath = System.IO.Path.Combine(ideaInstallDir, "IdeaRS.ConnectionLink.dll");
                 var conLinkAssembly = Assembly.LoadFrom(ideaConLinkFullPath);
 
