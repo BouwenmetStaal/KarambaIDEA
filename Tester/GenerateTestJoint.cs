@@ -1,8 +1,7 @@
-﻿// Copyright (c) 2019 Rayaan Ajouz, Bouwen met Staal, ABT bv. Please see the LICENSE file	
+﻿// Copyright (c) 2019 Rayaan Ajouz, Bouwen met Staal. Please see the LICENSE file	
 // for details. All rights reserved. Use of this source code is governed by a	
 // Apache-2.0 license that can be found in the LICENSE file.	 
-using IdeaRS.OpenModel.Message;
-using IdeaRS.OpenModel;
+
 using Microsoft.Win32;
 using System;
 using System.Diagnostics;
@@ -11,12 +10,12 @@ using System.Reflection;
 using System.Windows;
 using System.Text;
 using System.Collections.Generic;
-using IdeaRS.Connections.Data;
+
 
 using System.Xml.Serialization;
 using System.Linq;
 
-using IdeaRS.OpenModel.Connection;
+
 
 
 using System.Xml;
