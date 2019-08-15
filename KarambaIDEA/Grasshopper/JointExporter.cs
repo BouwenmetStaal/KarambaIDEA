@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using Rhino.Geometry;
 using System.Linq;
 
+using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
@@ -72,7 +73,7 @@ namespace KarambaIDEA
         {
             pManager.AddIntegerParameter("#Joints found", "#Joints found", "Number of Joints found", GH_ParamAccess.item);
             pManager.AddLineParameter("Selected Joint", "Selected Joint", "Lines of selected Joint", GH_ParamAccess.list);
-
+            pManager.AddLineParameter("Joint types", "Joint types", "Types of joint in project", GH_ParamAccess.tree);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -138,6 +139,7 @@ namespace KarambaIDEA
             List<string> plateEnd = new List<string>();
 
             List<string> CSSnames = new List<string>();
+            
 
             // grasshopperinput
             #region GrasshopperInput
@@ -420,6 +422,8 @@ namespace KarambaIDEA
                 }
                 numberOfSawingCuts.Add(cutsPerElement);
             }
+
+            
             
 
             //export lines of joint for visualisation purposes
@@ -428,9 +432,43 @@ namespace KarambaIDEA
                 jointlines.Add(lines[i]);
             }
 
+            //Define Brandnames and assemble tree
+            project.SetBrandnames(project);
+            //select unique brandName
+            //GH_Structure<GH_Line> linetree = new GH_Structure<GH_Line>();
+            DataTree<Line> linetree = new DataTree<Line>();
+            
+           
+            var lstBrand =project.joints.Select(a => a.brandName).Distinct().ToList();
+            for(int a = 0; a < lstBrand.Count; a++)
+            {
+                int d = 0;
+                for (int b = 0; b < project.joints.Count; b++)
+                {
+                    if (lstBrand[a] == project.joints[b].brandName)
+                    {
+                        for (int c = 0; c < project.joints[b].attachedMembers.Count; c++)
+                        {
+                            LineRAZ oriline = project.joints[b].attachedMembers[c].ideaLine;
+                            PointRAZ centerpoint = project.joints[b].centralNodeOfJoint;
+                            LineRAZ line = LineRAZ.MoveLineToOrigin(centerpoint, oriline);
+                            GH_Path path = new GH_Path(a, d);
+                            Point3d start = new Point3d(line.Start.X, line.Start.Y, line.Start.Z);
+                            Point3d end = new Point3d(line.End.X, line.End.Y, line.End.Z);
+                            Line rhinoline = new Line(start, end);
+                            linetree.Add(rhinoline, path);
+                        }
+                        d = d + 1;
+                    }
+                }
+            }
+            
+            //joint.attachedMembers.Select(a => a.ideaLine.Start).ToList();
+            
             //Output lines
             DA.SetData(0, project.joints.Count);
             DA.SetDataList(1, jointlines);
+            DA.SetDataTree(2, linetree);
         }
         
 

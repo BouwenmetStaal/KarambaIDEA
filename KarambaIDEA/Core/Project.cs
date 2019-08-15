@@ -79,6 +79,26 @@ namespace KarambaIDEA.Core
             }
         }
 
+        public void SetBrandnames(Project project)
+        {
+            foreach (Joint joint in project.joints)
+            {
+                List<int> intlist = new List<int>();
+                foreach (AttachedMember atta in joint.attachedMembers)
+                {
+                    int number = atta.ElementRAZ.numberInHierarchy;
+                    intlist.Add(number);
+                }
+                intlist= intlist.OrderBy(x => x).ToList();
+                string str = "";
+                foreach (var s in intlist)
+                {
+                    str = str + s.ToString();
+                }
+
+                joint.brandName = str;
+            }
+        }
 
         public static Project ReadProjectFromXML(string fileName)
         {
@@ -161,6 +181,8 @@ namespace KarambaIDEA.Core
                         LineRAZ line = element.line;
                         VectorRAZ distancevector = new VectorRAZ(0.0, 0.0, 0.0);
                         double localEccnetricty = 0.0;
+                        
+                        
 
                         ConnectingMember connectingMember = new ConnectingMember(element, distancevector, true, line, localEccnetricty);
 
@@ -171,9 +193,12 @@ namespace KarambaIDEA.Core
                     //If toPoints or endPoints of line fall in the tolerancebox than add lines.
                     if (PointRAZ.ArePointsEqual(tolbox, centerpoint, element.line.End) && element.line.vector.length > tolbox)
                     {
-                        LineRAZ idealine = LineRAZ.FlipLine(element.line);//in this case of endpoint line needs to be flipped
+                        
                         VectorRAZ distancevector = new VectorRAZ(0.0, 0.0, 0.0);
                         double localEccnetricty = 0.0;
+                        //IDEAline
+                        LineRAZ idealine = LineRAZ.FlipLine(element.line);//in this case of endpoint line needs to be flipped
+                        
 
                         ConnectingMember connectingMember = new ConnectingMember(element, distancevector, false, idealine, localEccnetricty);
 
@@ -205,7 +230,6 @@ namespace KarambaIDEA.Core
                 else
                 {
                     //hierarchy determined, list will be build based on hierarchy
-                    //TODE add code
                     //If only one hierarchy entry defined
                     if (hierarchy.Count == 1)
                     {

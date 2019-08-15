@@ -36,6 +36,13 @@ namespace KarambaIDEA.Core
             this.End = _End;
 
         }
+        public LineRAZ(PointRAZ _Start, PointRAZ _End)
+        {
+           
+            this.Start = _Start;
+            this.End = _End;
+
+        }
 
         public static LineRAZ TranslateLineWithVector(Project _project, LineRAZ line, VectorRAZ translation)
         {
@@ -97,6 +104,20 @@ namespace KarambaIDEA.Core
                     return 1;
                 }
             }
+        }
+
+        /// <summary>
+        /// Move line to 0,0,0 based on given point
+        /// </summary>
+        /// <param name="point">centerpoint of joint</param>
+        /// <param name="line">line to move</param>
+        /// <returns></returns>
+        public static LineRAZ MoveLineToOrigin(PointRAZ centerpoint,LineRAZ line)
+        {
+            PointRAZ start = PointRAZ.MovePointToOrigin(centerpoint, line.Start);
+            PointRAZ end = PointRAZ.MovePointToOrigin(centerpoint, line.End);
+            LineRAZ newline = new LineRAZ(start, end);
+            return newline;
         }
     }
 }

@@ -39,6 +39,8 @@ namespace KarambaIDEA.Core
             this.project.pointRAZs.Add(this);
         }
 
+       
+
         /// <summary>
         /// Creates a point at specified coordinates or finds an existing point within given tolerances
         /// </summary>
@@ -65,6 +67,13 @@ namespace KarambaIDEA.Core
             this.Z = _Z;
         }
 
+        public PointRAZ(double _X, double _Y, double _Z)
+        {
+            this.X = _X;
+            this.Y = _Y;
+            this.Z = _Z;
+        }
+
 
 
         static public bool ArePointsEqual(double tol, PointRAZ a, PointRAZ b)
@@ -77,6 +86,21 @@ namespace KarambaIDEA.Core
             {
                 return false;
             }
+        }
+
+        /// <summary>
+        /// 0
+        /// </summary>
+        /// <param name="centerpoint">Centerpoint of Joint</param>
+        /// <param name="point">Point that will be moved</param>
+        /// <returns></returns>
+        public static PointRAZ MovePointToOrigin(PointRAZ centerpoint, PointRAZ point)
+        {
+            double x = point.X - centerpoint.X;
+            double y = point.Y - centerpoint.Y;
+            double z = point.Z - centerpoint.Z;
+            PointRAZ newpoint = new PointRAZ(x, y, z);
+            return newpoint;
         }
     }
 }
