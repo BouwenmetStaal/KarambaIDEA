@@ -487,8 +487,7 @@ namespace KarambaIDEA.Core
                     {
                         foreach (Joint j in this.joints)
                         {
-                            MainWindow mainWindow = new MainWindow();
-                            mainWindow.Test(j);
+                            KarambaIDEA.IDEA.IdeaConnection idea = new IDEA.IdeaConnection(j);
                         }
                     }
                     //Calculate one joint
@@ -496,8 +495,9 @@ namespace KarambaIDEA.Core
                     {
                         
                         Joint j = this.joints[calculateThisJoint];
-                        MainWindow mainWindow = new MainWindow();
-                        mainWindow.Test(j);
+                        KarambaIDEA.IDEA.IdeaConnection idea = new IDEA.IdeaConnection(j);
+                        //MainWindow mainWindow = new MainWindow();
+                        //mainWindow.Test(j);
                     }
                 }
             }
