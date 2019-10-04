@@ -24,10 +24,10 @@ namespace KarambaIDEA
     public class OpenModelGenerator
     {
         public OpenModel openModel = new OpenModel();
-        public OpenModelResult openModelResult = new OpenModelResult();
-       
+        public OpenModelResult openModelResult = new OpenModelResult() { ResultOnMembers = new List<ResultOnMembers>() };
 
-        public string CreateOpenModelGenerator(Joint joint, string path)
+
+		public string CreateOpenModelGenerator(Joint joint, string path)
         {
             //1.Set general project settings
             openModel.OriginSettings = new OriginSettings();
@@ -37,8 +37,13 @@ namespace KarambaIDEA
             openModel.OriginSettings.ProjectDescription = joint.project.projectName + "_connection:" + joint.id;
             openModel.OriginSettings.DateOfCreate = DateTime.Now;
 
-            //2.add all relevant materials:
-            List<KarambaIDEA.Core.MaterialSteel> materials = joint.attachedMembers.Select(a => a.ElementRAZ.crossSection.material).Distinct().ToList();
+
+			//NEW INICILI
+			openModel.Connections.Add(new ConnectionData());
+			openModel.Connections[0].Beams = new List<BeamData>();
+
+			//2.add all relevant materials:
+			List<KarambaIDEA.Core.MaterialSteel> materials = joint.attachedMembers.Select(a => a.ElementRAZ.crossSection.material).Distinct().ToList();
             foreach (KarambaIDEA.Core.MaterialSteel m in materials)
             {
                 this.AddMaterialSteelToOpenModel(m as MaterialSteel);
@@ -90,8 +95,8 @@ namespace KarambaIDEA
                 AddLoadCaseToOpenModel(loadcase);
             }
 
-            //8.create IOMresults
-            CreateIDEAOpenModelResults(joint);
+			//8.create IOMresults
+			CreateIDEAOpenModelResults(joint);
 
             ////9.save XML
             string strFil = path + "IOM";
@@ -302,10 +307,20 @@ namespace KarambaIDEA
             member1D.Elements1D.Add(new ReferenceElement(el1));
             member1D.Elements1D.Add(new ReferenceElement(el2));
             openModel.Member1D.Add(member1D);
-           
 
-            //create connected member
-            ConnectedMember connectedMember = new ConnectedMember();
+			BeamData beamData = new BeamData
+			{
+				Id = member1D.Id,
+				OriginalModelId = member1D.Id.ToString(),
+				IsAdded = false,
+				MirrorY = false,
+				RefLineInCenterOfGravity = false,
+			};
+			openModel.Connections[0].Beams.Add(beamData);
+
+
+			//create connected member
+			ConnectedMember connectedMember = new ConnectedMember();
             connectedMember.Id = member1D.Id;
             connectedMember.MemberId = new ReferenceElement(member1D);
             connectionPoint.ConnectedMembers.Add(connectedMember);
@@ -371,13 +386,25 @@ namespace KarambaIDEA
             member1D.Elements1D.Add(new ReferenceElement(element1D));
             openModel.Member1D.Add(member1D);
 
-            //create connected member
-            ConnectedMember connectedMember = new ConnectedMember();
+			IdeaRS.OpenModel.Connection.BeamData beam1Data = new IdeaRS.OpenModel.Connection.BeamData
+			{
+				Id = member1D.Id,
+				OriginalModelId = member1D.Id.ToString(),
+				IsAdded = false,
+				MirrorY = false,
+				RefLineInCenterOfGravity = false,
+			};
+			openModel.Connections[0].Beams.Add(beam1Data);
+
+
+			//create connected member
+			ConnectedMember connectedMember = new ConnectedMember();
             connectedMember.Id = member1D.Id;
             connectedMember.MemberId = new ReferenceElement(member1D);
-            connectionPoint.ConnectedMembers.Add(connectedMember);
-        }
-        private void AddLoadCaseToOpenModel(KarambaIDEA.Core.LoadcaseRAZ _loadCaseRAZ)
+			connectionPoint.ConnectedMembers.Add(connectedMember);
+
+		}
+		private void AddLoadCaseToOpenModel(KarambaIDEA.Core.LoadcaseRAZ _loadCaseRAZ)
         {
             LoadCase loadCase = new LoadCase();
             loadCase.Name = _loadCaseRAZ.name;

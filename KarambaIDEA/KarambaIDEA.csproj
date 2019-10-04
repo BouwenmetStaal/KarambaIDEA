@@ -71,14 +71,22 @@
     <Reference Include="IdeaRS.Connections, Version=10.0.39.53451, Culture=neutral, PublicKeyToken=b195254c3273d5c1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files\IDEA StatiCa\StatiCa 10.1\IdeaRS.Connections.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="IdeaRS.OpenModel, Version=10.0.39.53451, Culture=neutral, PublicKeyToken=b195254c3273d5c1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files\IDEA StatiCa\StatiCa 10.1\IdeaRS.OpenModel.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="IdeaStatiCa.ConnectionBasicTypes, Version=10.0.39.53451, Culture=neutral, PublicKeyToken=b195254c3273d5c1, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\..\..\Program Files\IDEA StatiCa\StatiCa 10.1\IdeaStatiCa.ConnectionBasicTypes.dll</HintPath>
+      <Private>False</Private>
+    </Reference>
+    <Reference Include="IdeaStatiCa.IOMToConnection, Version=10.1.99.54266, Culture=neutral, PublicKeyToken=b195254c3273d5c1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\Users\pavel.vadura\Work\release_101\_Sources\bin\Debug\IdeaStatiCa.IOMToConnection.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="Microsoft.CSharp" />
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">

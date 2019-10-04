@@ -56,7 +56,7 @@ namespace Tester
             //min lasafmeting uitzetten bij Grasshopper
             joint.project.minthroat = 1.0;
 
-            KarambaIDEA.IDEA.IdeaConnection idea = new KarambaIDEA.IDEA.IdeaConnection(joint); ;
+            KarambaIDEA.IDEA.IdeaConnection idea = new KarambaIDEA.IDEA.IdeaConnection(joint);
         }
         
     }
