@@ -53,21 +53,21 @@ namespace KarambaIDEA.Grasshopper
             DA.GetDataList(3, endpointName);
 
             //output variables
-            List<Line> lines = new List<Line>();
+            List<Rhino.Geometry.Line> lines = new List<Rhino.Geometry.Line>();
 
             //Link pointName with points
-            List<PointRAZ> plist = new List<PointRAZ>();
+            List<Core.Point> plist = new List<Core.Point>();
             for (int i=0; i<points.Count; i++)
             {
-                PointRAZ p = new PointRAZ(pointName[i], points[i].X, points[i].Y, points[i].Z);
+                Core.Point p = new Core.Point(pointName[i], points[i].X, points[i].Y, points[i].Z);
                 plist.Add(p);
             }
             //Create lines bases on startpointName and endpointName
             for (int b = 0; b < startpointName.Count; b++)
             {
-                PointRAZ start = plist.Find(a => a.name == startpointName[b]);
-                PointRAZ end = plist.Find(a => a.name == endpointName[b]);
-                Line line = new Line(start.X, start.Y, start.Z, end.X, end.Y, end.Z);
+                Core.Point start = plist.Find(a => a.name == startpointName[b]);
+                Core.Point end = plist.Find(a => a.name == endpointName[b]);
+                Rhino.Geometry.Line line = new Rhino.Geometry.Line(start.X, start.Y, start.Z, end.X, end.Y, end.Z);
                 lines.Add(line);
             }
             //link output

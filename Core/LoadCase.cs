@@ -9,17 +9,17 @@ using System.Threading.Tasks;
 
 namespace KarambaIDEA.Core
 {
-    public class LoadcaseRAZ
+    public class LoadCase
     {
         
-        public List<LoadsPerLineRAZ> loadsPerLineRAZs = new List<LoadsPerLineRAZ>();
+        public List<LoadsPerLine> loadsPerLines = new List<LoadsPerLine>();
         public int id;
         public string name;
         public Project project;
 
         
         //Er kunnen een x aantal loadcases voorkomen in het project. Hoe ga ik dit daarvoor Robuust maken.
-        public LoadcaseRAZ(Project _project, int _id)
+        public LoadCase(Project _project, int _id)
         {
             this.project = _project;
             _project.loadcases.Add(this);           
@@ -28,34 +28,34 @@ namespace KarambaIDEA.Core
         }
     }
     
-    public class LoadsPerLineRAZ
+    public class LoadsPerLine
     {
         
-        public LoadsRAZ startLoads;
-        public LoadsRAZ endLoads;
-        public ElementRAZ elementRAZ;
-        public LoadcaseRAZ loadcase;
+        public Load startLoad;
+        public Load endLoad;
+        public Element element;
+        public LoadCase loadcase;
 
         
-        public LoadsPerLineRAZ(ElementRAZ _elementRAZ, LoadcaseRAZ _loadcase,LoadsRAZ _Start, LoadsRAZ _End)
+        public LoadsPerLine(Element _element, LoadCase _loadcase,Load _Start, Load _End)
         {
 
-            this.startLoads = _Start;
-            this.endLoads = _End;
-            this.elementRAZ = _elementRAZ;
+            this.startLoad = _Start;
+            this.endLoad = _End;
+            this.element = _element;
             this.loadcase = _loadcase;
-            _loadcase.loadsPerLineRAZs.Add(this);
+            _loadcase.loadsPerLines.Add(this);
         }
 
-        public LoadsPerLineRAZ(LoadsRAZ _Start, LoadsRAZ _End)
+        public LoadsPerLine(Load _Start, Load _End)
         {
-            this.startLoads = _Start;
-            this.endLoads = _End;
+            this.startLoad = _Start;
+            this.endLoad = _End;
         }
     }
 
 
-    public class LoadsRAZ
+    public class Load
     {
         public double N;
         public double Vz;
@@ -66,7 +66,7 @@ namespace KarambaIDEA.Core
         public double Mz;
 
 
-        public LoadsRAZ(double _N, double _Vz, double _My)
+        public Load(double _N, double _Vz, double _My)
         {
             this.N = _N;
             this.Vz = _Vz;
@@ -74,7 +74,7 @@ namespace KarambaIDEA.Core
 
         }
 
-        public LoadsRAZ(double _N, double _Vz, double _Vy, double _Mt, double _My, double _Mz)
+        public Load(double _N, double _Vz, double _Vy, double _Mt, double _My, double _Mz)
         {
             this.N = _N;
             this.Vz = _Vz;

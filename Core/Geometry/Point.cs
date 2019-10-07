@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace KarambaIDEA.Core
 {
-    public class PointRAZ
+    public class Point
     {
         public string name;
         public double X;
@@ -21,22 +21,22 @@ namespace KarambaIDEA.Core
         {
             get
             {
-                return this.project.pointRAZs.IndexOf(this)+1;//IDEA count from one
+                return this.project.points.IndexOf(this)+1;//IDEA count from one
             }
         }
 
-        public PointRAZ()
+        public Point()
         {
 
         }
 
-        public PointRAZ(Project _project, double _X, double _Y, double _Z)
+        public Point(Project _project, double _X, double _Y, double _Z)
         {
             this.X = _X;
             this.Y = _Y;
             this.Z = _Z;
             this.project = _project;
-            this.project.pointRAZs.Add(this);
+            this.project.points.Add(this);
         }
 
        
@@ -50,16 +50,16 @@ namespace KarambaIDEA.Core
         /// <param name="_z">The Z coordinate of the point</param>
         /// <param name="tol">Tolerance within an existing point will be returned</param>
         /// <returns></returns>
-        public static PointRAZ CreateNewOrExisting(Project _project, double _x, double _y, double _z)
+        public static Point CreateNewOrExisting(Project _project, double _x, double _y, double _z)
         {
             double tol = Project.tolerance;
-            PointRAZ p = _project.pointRAZs.Where(a => Math.Abs(a.X - _x) <= tol && Math.Abs(a.Y - _y) <= tol && Math.Abs(a.Z - _z) <= tol).FirstOrDefault();
+            Point p = _project.points.Where(a => Math.Abs(a.X - _x) <= tol && Math.Abs(a.Y - _y) <= tol && Math.Abs(a.Z - _z) <= tol).FirstOrDefault();
             if (p == null)
-                p = new PointRAZ(_project, _x, _y, _z);
+                p = new Point(_project, _x, _y, _z);
             return p;
         }
 
-        public PointRAZ(string _name, double _X, double _Y, double _Z)
+        public Point(string _name, double _X, double _Y, double _Z)
         {
             this.name = _name;
             this.X = _X;
@@ -67,7 +67,7 @@ namespace KarambaIDEA.Core
             this.Z = _Z;
         }
 
-        public PointRAZ(double _X, double _Y, double _Z)
+        public Point(double _X, double _Y, double _Z)
         {
             this.X = _X;
             this.Y = _Y;
@@ -76,7 +76,7 @@ namespace KarambaIDEA.Core
 
 
 
-        static public bool ArePointsEqual(double tol, PointRAZ a, PointRAZ b)
+        static public bool ArePointsEqual(double tol, Point a, Point b)
         {
             if (Math.Abs(a.X - b.X) < tol && Math.Abs(a.Y - b.Y) < tol && Math.Abs(a.Z - b.Z) < tol)
             {
@@ -94,12 +94,12 @@ namespace KarambaIDEA.Core
         /// <param name="centerpoint">Centerpoint of Joint</param>
         /// <param name="point">Point that will be moved</param>
         /// <returns></returns>
-        public static PointRAZ MovePointToOrigin(PointRAZ centerpoint, PointRAZ point)
+        public static Point MovePointToOrigin(Point centerpoint, Point point)
         {
             double x = point.X - centerpoint.X;
             double y = point.Y - centerpoint.Y;
             double z = point.Z - centerpoint.Z;
-            PointRAZ newpoint = new PointRAZ(x, y, z);
+            Point newpoint = new Point(x, y, z);
             return newpoint;
         }
     }

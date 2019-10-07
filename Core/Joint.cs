@@ -5,9 +5,6 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 
-
-using KarambaIDEA.IDEA;
-
 namespace KarambaIDEA.Core
 {
 
@@ -15,13 +12,13 @@ namespace KarambaIDEA.Core
     {
         public Project project;
         public int id;
-        public PointRAZ centralNodeOfJoint;
+        public Point centralNodeOfJoint;
         public double maxGlobalEccentricity;
         public List<int> beamIDs;
         public bool isWarrenEccentricJoint;
-        public VectorRAZ bearingMemberUnitVector;
+        public Vector bearingMemberUnitVector;
         public List<AttachedMember> attachedMembers;
-        public IdeaConnection ideaConnection;
+        // public IdeaConnection ideaConnection;
         public bool IsContinues;
         public double weldVolume;
         public string brandName;
@@ -46,7 +43,7 @@ namespace KarambaIDEA.Core
         /// <param name="_isWarrenEccentricJoint"></param>
         /// <param name="_bearingMemberUnitVector"></param>
         /// <param name="_IsContinues">defines wether joint is continues or ended</param>
-        public Joint(Project _project, int _id, List<int> _beamIDs, List<AttachedMember> _attachedMembers, PointRAZ _centralNodeOfJoint, double _globaleccenticitylength, bool _isWarrenEccentricJoint, VectorRAZ _bearingMemberUnitVector, bool _IsContinues)
+        public Joint(Project _project, int _id, List<int> _beamIDs, List<AttachedMember> _attachedMembers, Point _centralNodeOfJoint, double _globaleccenticitylength, bool _isWarrenEccentricJoint, Vector _bearingMemberUnitVector, bool _IsContinues)
         {
             this.project = _project;
             this.id = _id;
@@ -61,6 +58,7 @@ namespace KarambaIDEA.Core
 
 
 
+#warning This method gives expectations but ultimately does not implement functionality. Where is the functionality? Alternatively remove method
         public void CalculateWelds()
         {
             switch (this.project.analysisMethod)
@@ -89,9 +87,6 @@ namespace KarambaIDEA.Core
                     }
                 case Project.AnalysisMethod.IdeaMethod:
                     {
-                        //MainWindow mainWindow = new MainWindow();
-                        //mainWindow.Test();
-                        //this.ideaConnection = new IdeaConnection(this, @"C:\Data\TEMPLATES\");
                         return;
                     }
             }

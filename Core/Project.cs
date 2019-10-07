@@ -8,15 +8,11 @@ using System.Collections.Generic;
 using System.Linq;
 
 
-
-
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
 using System.Windows;
 using System.Text;
-
-
 
 using System.Xml;
 using System.Runtime.Serialization;
@@ -28,16 +24,18 @@ namespace KarambaIDEA.Core
     {
         public string projectName = null;
         public string author;
-        public string filepath;
-        public string templatePath;
         public double minthroat;
+#warning: below properties should be part of IDEA
+        public string folderpath;
+        public string templatePath;
         public bool startIDEA;
         public bool calculateAllJoints;
+#warning: below property should not be part of project
         public int calculateThisJoint;
 
-        public List<PointRAZ> pointRAZs = new List<PointRAZ>();
-        public List<ElementRAZ> elementRAZs = new List<ElementRAZ>();
-        public List<LoadcaseRAZ> loadcases = new List<LoadcaseRAZ>();
+        public List<Point> points = new List<Point>();
+        public List<Element> elements = new List<Element>();
+        public List<LoadCase> loadcases = new List<LoadCase>();
         public List<Joint> joints = new List<Joint>();
         public List<Hierarchy> hierarchylist = new List<Hierarchy>();
         public List<CrossSection> crossSections = new List<CrossSection>();
@@ -60,9 +58,9 @@ namespace KarambaIDEA.Core
             
         }
 
-        public Project(string projectname, List<Hierarchy> hierarchylist, List<ElementRAZ> _elementRAZs, AnalysisMethod _analysisMethod = AnalysisMethod.FullStrengthMethod)
+        public Project(string projectname, List<Hierarchy> hierarchylist, List<Element> _elements, AnalysisMethod _analysisMethod = AnalysisMethod.FullStrengthMethod)
         {
-            this.elementRAZs = _elementRAZs;
+            this.elements = _elements;
             this.analysisMethod = _analysisMethod;
         }
 
@@ -86,7 +84,7 @@ namespace KarambaIDEA.Core
                 List<int> intlist = new List<int>();
                 foreach (AttachedMember atta in joint.attachedMembers)
                 {
-                    int number = atta.ElementRAZ.numberInHierarchy;
+                    int number = atta.element.numberInHierarchy;
                     intlist.Add(number);
                 }
                 intlist= intlist.OrderBy(x => x).ToList();
@@ -129,12 +127,12 @@ namespace KarambaIDEA.Core
                
             }            
                         
-            this.filepath = Path.Combine(pathlocation, timeStamp);
-            if (!Directory.Exists(this.filepath))
+            this.folderpath = Path.Combine(pathlocation, timeStamp);
+            if (!Directory.Exists(this.folderpath))
             {
-                if (Uri.IsWellFormedUriString(filepath, UriKind.Absolute))
+                if (Uri.IsWellFormedUriString(folderpath, UriKind.Absolute))
                 {
-                    Directory.CreateDirectory(this.filepath);
+                    Directory.CreateDirectory(this.folderpath);
                 }
                 else
                 {
@@ -151,9 +149,9 @@ namespace KarambaIDEA.Core
         /// <param name="tol">tolerance</param>
         /// <param name="eccentricity">eccentricity if specified</param>
         /// <param name="points">points in project</param>
-        /// <param name="elementRAZs">elements of project</param>
+        /// <param name="elements">elements of project</param>
         /// <param name="hierarchy">hierarchy if specified</param>
-        public void CreateJoints(double tol, double eccentricity, List<PointRAZ> points, List<ElementRAZ> elementRAZs, List<Hierarchy> hierarchy)
+        public void CreateJoints(double tol, double eccentricity, List<Point> points, List<Element> elements, List<Hierarchy> hierarchy)
         {
             double tolbox = tol + eccentricity;
             List<Joint> joints = new List<Joint>();
@@ -161,48 +159,48 @@ namespace KarambaIDEA.Core
             //iterate over all the points that represent centerpoints of the joint
             for (int i = 0; i < points.Count; i++)
             {
-                PointRAZ centerpoint = points[i];
-                List<VectorRAZ> eccentricityVectors = new List<VectorRAZ>();
+                Point centerpoint = points[i];
+                List<Vector> eccentricityVectors = new List<Vector>();
                 List<int> elementIDs = new List<int>();
-                List<LineRAZ> linesatcenter = new List<LineRAZ>();
+                List<Line> linesatcenter = new List<Line>();
 
                 List<AttachedMember> attachedMemTemp = new List<AttachedMember>();
                 List<AttachedMember> attachedMembers = new List<AttachedMember>();
 
                 //1. DEFINE JOINTS
                 //iterate over all lines in project
-                foreach (ElementRAZ element in elementRAZs)
+                foreach (Element element in elements)
                 {
                                       
                     //STARTPoints
                     //If fromPoints or startPoints of line fall in the tolerancebox than add lines.
-                    if (PointRAZ.ArePointsEqual(tolbox, centerpoint, element.line.Start) && element.line.vector.length > tolbox)
+                    if (Point.ArePointsEqual(tolbox, centerpoint, element.line.Start) && element.line.vector.length > tolbox)
                     {
-                        LineRAZ line = element.line;
-                        VectorRAZ distancevector = new VectorRAZ(0.0, 0.0, 0.0);
+                        Line line = element.line;
+                        Vector distancevector = new Vector(0.0, 0.0, 0.0);
                         double localEccnetricty = 0.0;
                         
                         
 
                         ConnectingMember connectingMember = new ConnectingMember(element, distancevector, true, line, localEccnetricty);
 
-                        elementIDs.Add(elementRAZs.IndexOf(element));
+                        elementIDs.Add(elements.IndexOf(element));
                         attachedMemTemp.Add(connectingMember);
                     }
                     //ENDPoints
                     //If toPoints or endPoints of line fall in the tolerancebox than add lines.
-                    if (PointRAZ.ArePointsEqual(tolbox, centerpoint, element.line.End) && element.line.vector.length > tolbox)
+                    if (Point.ArePointsEqual(tolbox, centerpoint, element.line.End) && element.line.vector.length > tolbox)
                     {
                         
-                        VectorRAZ distancevector = new VectorRAZ(0.0, 0.0, 0.0);
+                        Vector distancevector = new Vector(0.0, 0.0, 0.0);
                         double localEccnetricty = 0.0;
                         //IDEAline
-                        LineRAZ idealine = LineRAZ.FlipLine(element.line);//in this case of endpoint line needs to be flipped
+                        Line idealine = Line.FlipLine(element.line);//in this case of endpoint line needs to be flipped
                         
 
                         ConnectingMember connectingMember = new ConnectingMember(element, distancevector, false, idealine, localEccnetricty);
 
-                        elementIDs.Add(elementRAZs.IndexOf(element));
+                        elementIDs.Add(elements.IndexOf(element));
                         attachedMemTemp.Add(connectingMember);
                     }
                 }
@@ -219,7 +217,7 @@ namespace KarambaIDEA.Core
                     IsContinues = false;
                     //First member is bearing
                     AttachedMember w = attachedMemTemp.First();
-                    BearingMember bearing = new BearingMember(w.ElementRAZ, w.distanceVector, w.isStartPoint, w.ideaLine);
+                    BearingMember bearing = new BearingMember(w.element, w.distanceVector, w.isStartPoint, w.ideaLine);
                     attachedMembers.Add(bearing);
                     //Rest of members are connecting members
                     for (int b = 1; b < attachedMemTemp.Count; b++)
@@ -236,7 +234,7 @@ namespace KarambaIDEA.Core
                         IsContinues = false;
                         //First member is bearing
                         AttachedMember w = attachedMemTemp.First();
-                        BearingMember bearing = new BearingMember(w.ElementRAZ, w.distanceVector, w.isStartPoint, w.ideaLine);
+                        BearingMember bearing = new BearingMember(w.element, w.distanceVector, w.isStartPoint, w.ideaLine);
                         attachedMembers.Add(bearing);
                         //Rest of members are connecting members
                         for (int b = 1; b < attachedMemTemp.Count; b++)
@@ -256,12 +254,12 @@ namespace KarambaIDEA.Core
                             {
                                 AttachedMember w = attachedMemTemp[ibb];
                                 //if hierarchy if the highest occuring
-                                if (w.ElementRAZ.numberInHierarchy == rank && rank == attachedMemTemp.Min(a => a.ElementRAZ.numberInHierarchy))
+                                if (w.element.numberInHierarchy == rank && rank == attachedMemTemp.Min(a => a.element.numberInHierarchy))
                                 {
-                                    BearingMember bearing = new BearingMember(w.ElementRAZ, w.distanceVector, w.isStartPoint, w.ideaLine);
+                                    BearingMember bearing = new BearingMember(w.element, w.distanceVector, w.isStartPoint, w.ideaLine);
                                     attachedMembers.Add(bearing);
                                 }
-                                if (w.ElementRAZ.numberInHierarchy == rank && rank != attachedMemTemp.Min(a => a.ElementRAZ.numberInHierarchy))
+                                if (w.element.numberInHierarchy == rank && rank != attachedMemTemp.Min(a => a.element.numberInHierarchy))
                                 {
                                     attachedMembers.Add(w);
                                     //temp
@@ -287,7 +285,7 @@ namespace KarambaIDEA.Core
                 //Joint id starts from one, because IDEA counts from one
                 double maxGlobalEccentricity = 0.0;
                 bool WEJ = false;
-                VectorRAZ bearingMemberUnitVector = new VectorRAZ(1.0, 0.0, 0.0);
+                Vector bearingMemberUnitVector = new Vector(1.0, 0.0, 0.0);
                 Joint joint = new Joint(this, i + 1, elementIDs, attachedMembers, centerpoint, maxGlobalEccentricity, WEJ, bearingMemberUnitVector, IsContinues);
                 this.joints.Add(joint);
             }
@@ -296,6 +294,7 @@ namespace KarambaIDEA.Core
 
         public static void CalculateSawingCuts(Project project, double tol)
         {
+#warning: should be implemented at joint level
             foreach (Joint j in project.joints)
             {
                 double eccentricity = new double();
@@ -334,11 +333,11 @@ namespace KarambaIDEA.Core
                 {
                     if (BM.isStartPoint == true)
                     {
-                        BM.ElementRAZ.startCut = ElementRAZ.SawingCut.RightAngledCut;
+                        BM.element.startCut = Element.SawingCut.RightAngledCut;
                     }
                     else
                     {
-                        BM.ElementRAZ.endCut = ElementRAZ.SawingCut.RightAngledCut;
+                        BM.element.endCut = Element.SawingCut.RightAngledCut;
                     }
                 }
 
@@ -351,7 +350,7 @@ namespace KarambaIDEA.Core
                     if (i == 0)
                     {
 
-                        double phiDirty = VectorRAZ.AngleBetweenVectors(j.bearingMemberUnitVector, connectingMembers[i].ElementRAZ.line.vector);
+                        double phiDirty = Vector.AngleBetweenVectors(j.bearingMemberUnitVector, connectingMembers[i].element.line.vector);
                         //phi should be an angle between 90 and 180 degree
 
                         phi = Math.PI - (Math.Min(phiDirty, (Math.PI - phiDirty)));
@@ -364,11 +363,11 @@ namespace KarambaIDEA.Core
                             //RightAngledCut
                             if (connectingMembers[i].isStartPoint == true)
                             {
-                                connectingMembers[i].ElementRAZ.startCut = ElementRAZ.SawingCut.RightAngledCut;
+                                connectingMembers[i].element.startCut = Element.SawingCut.RightAngledCut;
                             }
                             else
                             {
-                                connectingMembers[i].ElementRAZ.endCut = ElementRAZ.SawingCut.RightAngledCut;
+                                connectingMembers[i].element.endCut = Element.SawingCut.RightAngledCut;
                             }
                         }
                         else
@@ -376,11 +375,11 @@ namespace KarambaIDEA.Core
                             //SingleMiterCut
                             if (connectingMembers[i].isStartPoint == true)
                             {
-                                connectingMembers[i].ElementRAZ.startCut = ElementRAZ.SawingCut.SingleMiterCut;
+                                connectingMembers[i].element.startCut = Element.SawingCut.SingleMiterCut;
                             }
                             else
                             {
-                                connectingMembers[i].ElementRAZ.endCut = ElementRAZ.SawingCut.SingleMiterCut;
+                                connectingMembers[i].element.endCut = Element.SawingCut.SingleMiterCut;
                             }
                         }
                     }
@@ -393,10 +392,10 @@ namespace KarambaIDEA.Core
                         // phi   = anlge of first connecting member to bearingmember
                         // e     = eccntricity
 
-                        double a = connectingMembers[0].ElementRAZ.crossSection.height / 2;
-                        double b = bear.ElementRAZ.crossSection.height / 2;
-                        double h = connectingMembers[1].ElementRAZ.crossSection.height / 2;
-                        double thetaDirty = VectorRAZ.AngleBetweenVectors(j.bearingMemberUnitVector, connectingMembers[1].ElementRAZ.line.vector);
+                        double a = connectingMembers[0].element.crossSection.height / 2;
+                        double b = bear.element.crossSection.height / 2;
+                        double h = connectingMembers[1].element.crossSection.height / 2;
+                        double thetaDirty = Vector.AngleBetweenVectors(j.bearingMemberUnitVector, connectingMembers[1].element.line.vector);
                         //theta should be an angle between 0 and 90 degree
                         double theta = (Math.Min(thetaDirty, Math.PI - thetaDirty));
 
@@ -408,11 +407,11 @@ namespace KarambaIDEA.Core
                             //DoubleMiterCut
                             if (connectingMembers[i].isStartPoint == true)
                             {
-                                connectingMembers[i].ElementRAZ.startCut = ElementRAZ.SawingCut.DoubleMiterCut;
+                                connectingMembers[i].element.startCut = Element.SawingCut.DoubleMiterCut;
                             }
                             else
                             {
-                                connectingMembers[i].ElementRAZ.endCut = ElementRAZ.SawingCut.DoubleMiterCut;
+                                connectingMembers[i].element.endCut = Element.SawingCut.DoubleMiterCut;
                             }
                         }
                         else
@@ -420,11 +419,11 @@ namespace KarambaIDEA.Core
                             //SingleMiterCut
                             if (connectingMembers[i].isStartPoint == true)
                             {
-                                connectingMembers[i].ElementRAZ.startCut = ElementRAZ.SawingCut.SingleMiterCut;
+                                connectingMembers[i].element.startCut = Element.SawingCut.SingleMiterCut;
                             }
                             else
                             {
-                                connectingMembers[i].ElementRAZ.endCut = ElementRAZ.SawingCut.SingleMiterCut;
+                                connectingMembers[i].element.endCut = Element.SawingCut.SingleMiterCut;
                             }
                         }
 
@@ -432,10 +431,10 @@ namespace KarambaIDEA.Core
                     }
                     if (i == 2)
                     {
-                        double a = connectingMembers[0].ElementRAZ.crossSection.height / 2;
-                        double b = bear.ElementRAZ.crossSection.height / 2;
-                        double h = connectingMembers[2].ElementRAZ.crossSection.height / 2;
-                        double thetaDirty = VectorRAZ.AngleBetweenVectors(j.bearingMemberUnitVector, connectingMembers[2].ElementRAZ.line.vector);
+                        double a = connectingMembers[0].element.crossSection.height / 2;
+                        double b = bear.element.crossSection.height / 2;
+                        double h = connectingMembers[2].element.crossSection.height / 2;
+                        double thetaDirty = Vector.AngleBetweenVectors(j.bearingMemberUnitVector, connectingMembers[2].element.line.vector);
                         //theta should be an angle between 0 and 90 degree
                         double theta = (Math.Min(thetaDirty, Math.PI - thetaDirty));
 
@@ -447,11 +446,11 @@ namespace KarambaIDEA.Core
                             //DoubleMiterCut
                             if (connectingMembers[i].isStartPoint == true)
                             {
-                                connectingMembers[i].ElementRAZ.startCut = ElementRAZ.SawingCut.DoubleMiterCut;
+                                connectingMembers[i].element.startCut = Element.SawingCut.DoubleMiterCut;
                             }
                             else
                             {
-                                connectingMembers[i].ElementRAZ.endCut = ElementRAZ.SawingCut.DoubleMiterCut;
+                                connectingMembers[i].element.endCut = Element.SawingCut.DoubleMiterCut;
                             }
                         }
                         else
@@ -459,11 +458,11 @@ namespace KarambaIDEA.Core
                             //SingleMiterCut
                             if (connectingMembers[i].isStartPoint == true)
                             {
-                                connectingMembers[i].ElementRAZ.startCut = ElementRAZ.SawingCut.SingleMiterCut;
+                                connectingMembers[i].element.startCut = Element.SawingCut.SingleMiterCut;
                             }
                             else
                             {
-                                connectingMembers[i].ElementRAZ.endCut = ElementRAZ.SawingCut.SingleMiterCut;
+                                connectingMembers[i].element.endCut = Element.SawingCut.SingleMiterCut;
                             }
                         }
                     }
@@ -471,47 +470,50 @@ namespace KarambaIDEA.Core
             }
         }
 
-        /// <summary>
-        /// Caluclate welds of all joints in project according to the specified method
-        /// </summary>
-        public void CalculateWeldsProject(string userpath)
-        {
-            //calculate welds by using IDEA statica
-            if (this.analysisMethod == AnalysisMethod.IdeaMethod)
-            {
-                if (startIDEA == true)
-                {
-                    //Calculate all joints
-                    CreateFolder(userpath);
-                    if (calculateAllJoints == true)
-                    {
-                        foreach (Joint j in this.joints)
-                        {
-                            MainWindow mainWindow = new MainWindow();
-                            mainWindow.Test(j);
-                        }
-                    }
-                    //Calculate one joint
-                    else
-                    {
+//        /// <summary>
+//        /// Calculate welds of all joints in project according to the specified method
+//        /// </summary>
+//        public void CalculateWeldsProject(string userpath)
+//        {
+//            //calculate welds by using IDEA statica
+//            if (this.analysisMethod == AnalysisMethod.IdeaMethod)
+//            {
+//#warning: disabled due to circular reference . Weld calculation with Idea should not be called from here.
+//                throw new Exception("Calculation with IDEA disabled due to circular refernce");
+                     
+//                //if (startIDEA == true)
+//                //{
+//                //    //Calculate all joints
+//                //    CreateFolder(userpath);
+//                //    if (calculateAllJoints == true)
+//                //    {
+//                //        foreach (Joint j in this.joints)
+//                //        {
+//                //            MainWindow mainWindow = new MainWindow();
+//                //            mainWindow.Test(j);
+//                //        }
+//                //    }
+//                //    //Calculate one joint
+//                //    else
+//                //    {
                         
-                        Joint j = this.joints[calculateThisJoint];
-                        MainWindow mainWindow = new MainWindow();
-                        mainWindow.Test(j);
-                    }
-                }
-            }
-            //calculate welds by using other methods
-            else
-            {
-                foreach (Joint j in this.joints)
-                {
-                    j.CalculateWelds();
-                }
-            }
-        }
+//                //        Joint j = this.joints[calculateThisJoint];
+//                //        MainWindow mainWindow = new MainWindow();
+//                //        mainWindow.Test(j);
+//                //    }
+//                //}
+//            }
+//            //calculate welds by using other methods
+//            else
+//            {
+//                foreach (Joint j in this.joints)
+//                {
+//                    j.CalculateWelds();
+//                }
+//            }
+//        }
 
-        public double CalculateWeldVolume()
+        public double CalculateTotalWeldVolume()
         {
             double weldvolume = 0;
             foreach (Joint j in this.joints)
@@ -546,13 +548,14 @@ namespace KarambaIDEA.Core
         /// <summary>
         /// Fillet welds are assigned to Hollow sections, double fillet welds are assigned to Isections
         /// </summary>
-        public void SetWeldType()
+        public void SetDefaultWeldType()
         {
+#warning: this should be part of the joint constructor. Not a project setting.
             foreach (Joint j in this.joints)
             {
                 foreach (ConnectingMember CM in j.attachedMembers.OfType<ConnectingMember>())
                 {
-                    if (CM.ElementRAZ.crossSection.shape == CrossSection.Shape.HollowSection)
+                    if (CM.element.crossSection.shape == CrossSection.Shape.HollowSection)
                     {
                         CM.flangeWeld.weldType = Weld.WeldType.Fillet;
                         CM.webWeld.weldType = Weld.WeldType.Fillet;

@@ -9,34 +9,34 @@ using System.Threading.Tasks;
 
 namespace KarambaIDEA.Core
 {
-    public class LineRAZ
+    public class Line
     {
         public int id;
-        public PointRAZ Start;
-        public PointRAZ End;
-        //public VectorRAZ vectorq;
-        public VectorRAZ vector
+        public Point Start;
+        public Point End;
+        //public Vector vectorq;
+        public Vector vector
         {
             get
             {
-                return new VectorRAZ(Start, End);
+                return new Vector(Start, End);
             }
         }
 
 
-        public LineRAZ()
+        public Line()
         {
 
         }
 
-        public LineRAZ(int _id, PointRAZ _Start, PointRAZ _End)
+        public Line(int _id, Point _Start, Point _End)
         {
             this.id = _id;
             this.Start = _Start;
             this.End = _End;
 
         }
-        public LineRAZ(PointRAZ _Start, PointRAZ _End)
+        public Line(Point _Start, Point _End)
         {
            
             this.Start = _Start;
@@ -44,11 +44,11 @@ namespace KarambaIDEA.Core
 
         }
 
-        public static LineRAZ TranslateLineWithVector(Project _project, LineRAZ line, VectorRAZ translation)
+        public static Line TranslateLineWithVector(Project _project, Line line, Vector translation)
         {
-            PointRAZ newStart = PointRAZ.CreateNewOrExisting(_project,line.Start.X + translation.X, line.Start.Y + translation.Y, line.Start.Z + translation.Z);
-            PointRAZ newEnd = PointRAZ.CreateNewOrExisting(_project,line.End.X + translation.X, line.End.Y + translation.Y, line.End.Z + translation.Z);
-            LineRAZ result = new LineRAZ(line.id, newStart, newEnd);
+            Point newStart = Point.CreateNewOrExisting(_project,line.Start.X + translation.X, line.Start.Y + translation.Y, line.Start.Z + translation.Z);
+            Point newEnd = Point.CreateNewOrExisting(_project,line.End.X + translation.X, line.End.Y + translation.Y, line.End.Z + translation.Z);
+            Line result = new Line(line.id, newStart, newEnd);
             return result;
         }
 
@@ -60,29 +60,29 @@ namespace KarambaIDEA.Core
         /// <param name="point"></param>
         /// <param name="line"></param>
         /// <returns></returns>
-        public static LineRAZ FlipLineIfPointNotEqualStartPoint(double tol, PointRAZ point, LineRAZ line)
+        public static Line FlipLineIfPointNotEqualStartPoint(double tol, Point point, Line line)
         {
-            if (PointRAZ.ArePointsEqual(tol, point, line.Start) == true)
+            if (Point.ArePointsEqual(tol, point, line.Start) == true)
             {
                 return line;
             }
             else
             {
-                return new LineRAZ(line.id, line.End, line.Start);
+                return new Line(line.id, line.End, line.Start);
             }
         }
 
-        public static LineRAZ FlipLine(LineRAZ line)
+        public static Line FlipLine(Line line)
         {
-            return new LineRAZ(line.id, line.End, line.Start);
+            return new Line(line.id, line.End, line.Start);
         }
 
 
-        public static int ShouldEccentricityBeAssumedPOSOrNEG(double tol, PointRAZ point, LineRAZ line)
+        public static int ShouldEccentricityBeAssumedPOSOrNEG(double tol, Point point, Line line)
         {
-            if (PointRAZ.ArePointsEqual(tol, point, line.End) == true)
+            if (Point.ArePointsEqual(tol, point, line.End) == true)
             {
-                LineRAZ lijn2 = LineRAZ.FlipLineIfPointNotEqualStartPoint(tol, point, line);
+                Line lijn2 = Line.FlipLineIfPointNotEqualStartPoint(tol, point, line);
                 if (lijn2.vector.Z > 0)
                 {
                     return -1;
@@ -112,11 +112,11 @@ namespace KarambaIDEA.Core
         /// <param name="point">centerpoint of joint</param>
         /// <param name="line">line to move</param>
         /// <returns></returns>
-        public static LineRAZ MoveLineToOrigin(PointRAZ centerpoint,LineRAZ line)
+        public static Line MoveLineToOrigin(Point centerpoint,Line line)
         {
-            PointRAZ start = PointRAZ.MovePointToOrigin(centerpoint, line.Start);
-            PointRAZ end = PointRAZ.MovePointToOrigin(centerpoint, line.End);
-            LineRAZ newline = new LineRAZ(start, end);
+            Point start = Point.MovePointToOrigin(centerpoint, line.Start);
+            Point end = Point.MovePointToOrigin(centerpoint, line.End);
+            Line newline = new Line(start, end);
             return newline;
         }
     }
