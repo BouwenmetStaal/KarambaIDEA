@@ -9,10 +9,10 @@ namespace KarambaIDEA.Core
     public class AttachedMember
     {
 
-        public ElementRAZ ElementRAZ;
-        public VectorRAZ distanceVector;
+        public Element element;
+        public Vector distanceVector;
         public bool isStartPoint;
-        public LineRAZ ideaLine;
+        public Line ideaLine;
         public int ideaOperationID;
         public bool platefailure = true;
 
@@ -29,9 +29,10 @@ namespace KarambaIDEA.Core
 
         }
 
-        public BearingMember(ElementRAZ _elementRAZ, VectorRAZ _distancevector, bool _isStartPoint, LineRAZ _idealine, Nullable<bool> _isSingle = null)
+        public BearingMember(Element _element
+            , Vector _distancevector, bool _isStartPoint, Line _idealine, Nullable<bool> _isSingle = null)
         {
-            this.ElementRAZ = _elementRAZ;
+            this.element = _element;
             this.distanceVector = _distancevector;
             this.isStartPoint = _isStartPoint;
             this.ideaLine = _idealine;
@@ -51,19 +52,36 @@ namespace KarambaIDEA.Core
         public double angleWithBear = new double();
         
 
-        public ConnectingMember(ElementRAZ _elementRAZ, VectorRAZ _distancevector, bool _isStartPoint, LineRAZ _idealine, double _localEccentricity)
+        public ConnectingMember(Element _element, Vector _distancevector, bool _isStartPoint, Line _idealine, double _localEccentricity)
         {
-            this.ElementRAZ = _elementRAZ;
+            this.element = _element;
             this.distanceVector = _distancevector;
             this.isStartPoint = _isStartPoint;
             this.ideaLine = _idealine;
 
             this.localEccentricity = _localEccentricity;
 
-
-
-
+            SetDefaultWeldType();
         }
+
+        /// <summary>
+        /// Fillet welds are assigned to Hollow sections, double fillet welds are assigned to Isections
+        /// </summary>
+        public void SetDefaultWeldType()
+        {
+            if (this.element.crossSection.shape == CrossSection.Shape.HollowSection)
+            {
+                this.flangeWeld.weldType = Weld.WeldType.Fillet;
+                this.webWeld.weldType = Weld.WeldType.Fillet;
+            }
+            else
+            {
+                this.flangeWeld.weldType = Weld.WeldType.DoubleFillet;
+                this.webWeld.weldType = Weld.WeldType.DoubleFillet;
+            }
+        }
+
+
         static public double WebWeldFirstAttachedLength(double a, double phi)
         {
             double answer = 2 * Math.Abs(a / Math.Sin(phi));
@@ -159,7 +177,7 @@ namespace KarambaIDEA.Core
         }
 
 
-        static public double LocalEccentricity(PointRAZ c, PointRAZ a, VectorRAZ dir)
+        static public double LocalEccentricity(Point c, Point a, Vector dir)
         {
             double numerator = Math.Sqrt(Math.Pow((c.Y - a.Y) * dir.Z - (c.Z - a.Z) * dir.Y, 2) + Math.Pow((c.X - a.X) * dir.Z - (c.Z - a.Z) * dir.X, 2) + Math.Pow((c.X - a.X) * dir.Y - (c.Y - a.Y) * dir.X, 2));
             double denumerator = Math.Sqrt(Math.Pow(dir.X, 2) + Math.Pow(dir.Y, 2) + Math.Pow(dir.Z, 2));

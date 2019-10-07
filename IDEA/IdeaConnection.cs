@@ -21,6 +21,7 @@ using System.Runtime.Serialization;
 using System.Xml.Serialization;
 using KarambaIDEA.Core;
 
+
 namespace KarambaIDEA.IDEA
 {
     public class IdeaConnection
@@ -30,6 +31,7 @@ namespace KarambaIDEA.IDEA
         public OpenModelGenerator openModelGenerator;
         public ConnectionTemplateGenerator connectionTemplateGenerator;
 
+        
         public Joint joint;
         private Guid ideaConnectionIdentifier = Guid.Empty;
 
@@ -49,19 +51,20 @@ namespace KarambaIDEA.IDEA
             //TODO: make sure only one folder is created now two folders are created.
 
             //2.create folder
-            string folder = this.joint.project.filepath;
+            string folder = this.joint.project.folderpath;
             filepath = Path.Combine(folder, this.joint.Name);
             if (!Directory.Exists(this.filepath))
             {
                 Directory.CreateDirectory(this.filepath);
             }
 
-
             //3.initialize connection with IdeaRS connectionlink, must be by lazy link
             //IdeaRS.ConnectionLink object will only be found during runtime by use of the lazylink
             this.dynLinkLazy = new Lazy<dynamic>(() =>
             {
-                string ideaInstallDir = @"C:\Program Files\IDEAStatiCa\StatiCa10";
+                String ideaInstallDir = KarambaIDEA.IDEA.Properties.Settings.Default.IdeaInstallDir;
+                //string ideaInstallDir = @"C:\Program Files\IDEAStatiCa\StatiCa10"; 
+
                 string ideaConLinkFullPath = System.IO.Path.Combine(ideaInstallDir, "IdeaRS.ConnectionLink.dll");
                 var conLinkAssembly = Assembly.LoadFrom(ideaConLinkFullPath);
 
@@ -366,7 +369,7 @@ namespace KarambaIDEA.IDEA
         public void CheckConnectionWelds()
         {
             // check if all weld id's are set:
-            if (!(this.joint.attachedMembers.OfType<ConnectingMember>().All(a => a.flangeWeld.Ids != null) && this.joint.attachedMembers.OfType<ConnectingMember>().All(a => a.webWeld.Ids!=null)))
+            if (!(this.joint.attachedMembers.OfType<ConnectingMember>().All(a => a.flangeWeld.Ids != null) && this.joint.attachedMembers.OfType<ConnectingMember>().All(a => a.webWeld.Ids != null)))
             {
                 //map weld ids and operations first
                 this.MapWeldsIdsAndOperationIds();
@@ -375,7 +378,7 @@ namespace KarambaIDEA.IDEA
             // run analysis
             this.RunAnalysis();
 
-            // retrieve unity checks 
+            // retrieve unity checks for welds and save them in the joints
             //welds
             ConnectionResultsData connectionResultsData = this.GetConnectionCheckResults();
             foreach (ConnectingMember cm in joint.attachedMembers.OfType<ConnectingMember>().ToList())
@@ -405,39 +408,44 @@ namespace KarambaIDEA.IDEA
                 }
                 cm.webWeld.unitycheck = maxWebUC;
             }
-            //plates
-            List<CheckResPlate> plates = connectionResultsData.ConnectionCheckRes[0].CheckResPlate;
-            int listlength = 0;
-            if (joint.attachedMembers.OfType<BearingMember>().First().ElementRAZ.crossSection.shape == Core.CrossSection.Shape.HollowSection)
+
+            // plates
+            List<CheckResPlate> plates_results = connectionResultsData.ConnectionCheckRes[0].CheckResPlate;
+            #warning Below code is not robust enough since it is dependent on a hard coded of plates. Ignore the mapping and just return a list of unity checks?
+            if (plates_results.Count() > 0)
             {
-                joint.attachedMembers.OfType<BearingMember>().First().platefailure =  plates[0].CheckStatus;
-                listlength += 1;
-            }
-            else
-            {
-                bool bfl = plates[0].CheckStatus;
-                bool tfl = plates[1].CheckStatus;
-                bool w = plates[2].CheckStatus;
-                joint.attachedMembers.OfType<BearingMember>().First().platefailure = PlateFailure(bfl, tfl, w);
-                listlength += 3;
-            }
-            for (int i=0; i < 5; i++)
-            {
-                foreach (ConnectingMember cm in joint.attachedMembers.OfType<ConnectingMember>().ToList())
+                int listlength = 0;
+                if (joint.attachedMembers.OfType<BearingMember>().First().element.crossSection.shape == Core.CrossSection.Shape.HollowSection)
                 {
-                    if (i == cm.ideaOperationID)
+                    joint.attachedMembers.OfType<BearingMember>().First().platefailure = plates_results[0].CheckStatus;
+                    listlength += 1;
+                }
+                else
+                {
+                    bool bfl = plates_results[0].CheckStatus;
+                    bool tfl = plates_results[1].CheckStatus;
+                    bool w = plates_results[2].CheckStatus;
+                    joint.attachedMembers.OfType<BearingMember>().First().platefailure = PlateFailure(bfl, tfl, w);
+                    listlength += 3;
+                }
+                for (int i = 0; i < 5; i++)
+                {
+                    foreach (ConnectingMember cm in joint.attachedMembers.OfType<ConnectingMember>().ToList())
                     {
-                        if (cm.ElementRAZ.crossSection.shape == Core.CrossSection.Shape.HollowSection)
+                        if (i == cm.ideaOperationID)
                         {
-                            cm.platefailure = plates[listlength].CheckStatus;
-                        }
-                        else
-                        {
-                            bool bfl = plates[listlength+0].CheckStatus;
-                            bool tfl = plates[listlength+1].CheckStatus;
-                            bool w = plates[listlength+2].CheckStatus;
-                            cm.platefailure= PlateFailure(bfl, tfl, w);
-                            listlength += 3;
+                            if (cm.element.crossSection.shape == Core.CrossSection.Shape.HollowSection)
+                            {
+                                cm.platefailure = plates_results[listlength].CheckStatus;
+                            }
+                            else
+                            {
+                                bool bfl = plates_results[listlength + 0].CheckStatus;
+                                bool tfl = plates_results[listlength + 1].CheckStatus;
+                                bool w = plates_results[listlength + 2].CheckStatus;
+                                cm.platefailure = PlateFailure(bfl, tfl, w);
+                                listlength += 3;
+                            }
                         }
                     }
                 }
@@ -451,7 +459,7 @@ namespace KarambaIDEA.IDEA
         /// <param name="tfl">topflange</param>
         /// <param name="w">web</param>
         /// <returns></returns>
-        public static bool PlateFailure(bool bfl, bool tfl, bool w)
+        private static bool PlateFailure(bool bfl, bool tfl, bool w)
         {
             if(bfl == false || tfl == false || w == false)
             {
@@ -466,7 +474,7 @@ namespace KarambaIDEA.IDEA
         /// <summary>
         /// Increase weld dimensions of welds that fail with 1.0mm
         /// </summary>
-        public void IncreaseFailingWelds()
+        private void IncreaseFailingWelds()
         {
             foreach (ConnectingMember c in this.joint.attachedMembers.OfType<ConnectingMember>())
             {
@@ -478,7 +486,7 @@ namespace KarambaIDEA.IDEA
                     
                 if (c.webWeld.unitycheck > 100.0)
                 {
-                    if (c.ElementRAZ.crossSection.shape == Core.CrossSection.Shape.HollowSection)//HS does not posses flangewelds
+                    if (c.element.crossSection.shape == Core.CrossSection.Shape.HollowSection)//HS does not posses flangewelds
                     {
                         c.flangeWeld.size += 1.0;//mm
                         c.webWeld.size += 1.0;//mmm
@@ -507,11 +515,11 @@ namespace KarambaIDEA.IDEA
             //excel.WritetoCellstring(0, spacing, "Weldsize");
             //excel.WritetoCellstring(0, spacing + spacing, "PlateFailure");
             //int pos = 0;
-            //string bearname = this.joint.attachedMembers.OfType<BearingMember>().First().ElementRAZ.crossSection.name;
+            //string bearname = this.joint.attachedMembers.OfType<BearingMember>().First().Element.crossSection.name;
             //excel.WritetoCellstring(1, spacing + spacing, "Bear "+bearname);
             //for (int i =0; i < CMs.Count; i++)
             //{
-            //    string name =CMs[i].ElementRAZ.crossSection.name;
+            //    string name =CMs[i].Element.crossSection.name;
             //    excel.WritetoCellstring(1, pos, "Con" + i+" "+name);
             //    excel.WritetoCellstring(1, pos+spacing, "Con" + i + " " + name);
             //    excel.WritetoCellstring(1, 1+i + spacing + spacing, "Con" + i + " " + name);//plateHeaders
@@ -531,6 +539,7 @@ namespace KarambaIDEA.IDEA
                 //check welds
                 this.CheckConnectionWelds();
 
+       
                 //save iteration file
                 string filePath2 = this.filepath + "//" + joint.Name + "joint"+i+".ideaCon";
                 this.SaveIdeaConnectionProjectFile(filePath2);
@@ -580,7 +589,7 @@ namespace KarambaIDEA.IDEA
                 if (this.joint.attachedMembers.OfType<ConnectingMember>().All(a => a.flangeWeld.unitycheck < tresshold) && this.joint.attachedMembers.OfType<ConnectingMember>().All(a => a.webWeld.unitycheck < tresshold))
                 {
                     //save excel file
-                    //string excelpath = this.filepath + "\\" + "iterationLOG.xlsx";
+                    //string excelpath = this.folderpath + "\\" + "iterationLOG.xlsx";
                     //excel.SaveAs(excelpath);
                     //excel.Close();
                     //exit loop
@@ -597,7 +606,7 @@ namespace KarambaIDEA.IDEA
                     else
                     {
                         //save excel file
-                        //string excelpath = this.filepath + "\\" + "iterationLOG.xlsx";
+                        //string excelpath = this.folderpath + "\\" + "iterationLOG.xlsx";
                         //excel.SaveAs(excelpath);
                         //excel.Close();
                     }

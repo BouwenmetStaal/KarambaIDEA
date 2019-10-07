@@ -83,6 +83,9 @@
     <Compile Include="GenerateTestJoint.cs" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="MainWindow.xaml.cs">
+      <DependentUpon>MainWindow.xaml</DependentUpon>
+    </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
@@ -122,10 +125,24 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{76c4e11c-35ec-4e0d-87fe-149c3b15c0e0}</Project>
+      <Name>Core</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\IDEA\IDEA.csproj">
+      <Project>{48a8e110-8e17-4d3b-981a-adf7be95c461}</Project>
+      <Name>IDEA</Name>
+    </ProjectReference>
     <ProjectReference Include="..\KarambaIDEA\KarambaIDEA.csproj">
       <Project>{c3c4325a-131e-4666-bb48-a170a5ddb0e6}</Project>
       <Name>KarambaIDEA</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Page Include="MainWindow.xaml">
+      <Generator>MSBuild:Compile</Generator>
+      <SubType>Designer</SubType>
+    </Page>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

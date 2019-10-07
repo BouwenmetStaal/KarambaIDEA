@@ -38,24 +38,24 @@ namespace KarambaIDEA
             openModel.OriginSettings.DateOfCreate = DateTime.Now;
 
             //2.add all relevant materials:
-            List<KarambaIDEA.Core.MaterialSteel> materials = joint.attachedMembers.Select(a => a.ElementRAZ.crossSection.material).Distinct().ToList();
+            List<KarambaIDEA.Core.MaterialSteel> materials = joint.attachedMembers.Select(a => a.element.crossSection.material).Distinct().ToList();
             foreach (KarambaIDEA.Core.MaterialSteel m in materials)
             {
                 this.AddMaterialSteelToOpenModel(m as MaterialSteel);
             }
 
             //3.add all reelvant cross sections:
-            List<KarambaIDEA.Core.CrossSection> crossSections = joint.attachedMembers.Select(a => a.ElementRAZ.crossSection).Distinct().ToList();
+            List<KarambaIDEA.Core.CrossSection> crossSections = joint.attachedMembers.Select(a => a.element.crossSection).Distinct().ToList();
             foreach (KarambaIDEA.Core.CrossSection c in crossSections)
             {
                 this.AddCrossSectionToOpenModel(c);
             }
 
             //4.add all relevant nodes:
-            List<KarambaIDEA.Core.PointRAZ> startpoints = joint.attachedMembers.Select(a => a.ideaLine.Start).ToList();
-            List<KarambaIDEA.Core.PointRAZ> endpoints = joint.attachedMembers.Select(a => a.ideaLine.End).ToList();
-            List<KarambaIDEA.Core.PointRAZ> points = startpoints.Union(endpoints).Distinct().ToList();
-            foreach (KarambaIDEA.Core.PointRAZ p in points)
+            List<KarambaIDEA.Core.Point> startpoints = joint.attachedMembers.Select(a => a.ideaLine.Start).ToList();
+            List<KarambaIDEA.Core.Point> endpoints = joint.attachedMembers.Select(a => a.ideaLine.End).ToList();
+            List<KarambaIDEA.Core.Point> points = startpoints.Union(endpoints).Distinct().ToList();
+            foreach (KarambaIDEA.Core.Point p in points)
             {
                 this.AddPointsToOpenModel(p);
             }
@@ -85,7 +85,7 @@ namespace KarambaIDEA
             openModel.AddObject(connectionPoint);
 
             //7.create loadcases
-            foreach (LoadcaseRAZ loadcase in joint.project.loadcases)
+            foreach (Core.LoadCase loadcase in joint.project.loadcases)
             {
                 AddLoadCaseToOpenModel(loadcase);
             }
@@ -215,7 +215,7 @@ namespace KarambaIDEA
 
             openModel.AddObject(chs);
         }
-        private void AddPointsToOpenModel(PointRAZ point)
+        private void AddPointsToOpenModel(Point point)
         {
             Point3D p = new Point3D();
             p.X = point.X;
@@ -239,10 +239,10 @@ namespace KarambaIDEA
             Point3D pB2 = new Point3D();
             Point3D pC = new Point3D();
 
-            pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.Start.id);
-            pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ElementRAZ.line.End.id);
-            pB2 = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.Start.id);
-            pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ElementRAZ.line.End.id);
+            pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].element.line.Start.id);
+            pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].element.line.End.id);
+            pB2 = openModel.Point3D.First(a => a.Id == bearingMembers[1].element.line.Start.id);
+            pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].element.line.End.id);
 
             List<Point3D> points = new List<Point3D>() { pA, pB, pB2, pC };
 
@@ -273,26 +273,26 @@ namespace KarambaIDEA
             Element1D el1 = new Element1D();
             //el1.Id = openModel.GetMaxId(el1) + 1; 
 
-            el1.Id = bearingMembers[0].ElementRAZ.id + 1; //Use of Id from Grasshopper Model + Plus One
+            el1.Id = bearingMembers[0].element.id + 1; //Use of Id from Grasshopper Model + Plus One
 
             el1.Name = "E" + el1.Id.ToString();
             el1.Segment = new ReferenceElement(lineSegment1);
-            IdeaRS.OpenModel.CrossSection.CrossSection crossSection = openModel.CrossSection.First(a => a.Id == bearingMembers[0].ElementRAZ.crossSection.id);
+            IdeaRS.OpenModel.CrossSection.CrossSection crossSection = openModel.CrossSection.First(a => a.Id == bearingMembers[0].element.crossSection.id);
             el1.CrossSectionBegin = new ReferenceElement(crossSection);
             el1.CrossSectionEnd = new ReferenceElement(crossSection);
-            //el1.RotationRx = bearingMembers[0].ElementRAZ.rotationLCS;
+            //el1.RotationRx = bearingMembers[0].Element.rotationLCS;
             openModel.AddObject(el1);
 
             Element1D el2 = new Element1D();
             //el2.Id = openModel.GetMaxId(el2) + 1;
 
-            el2.Id = bearingMembers[1].ElementRAZ.id + 1; //Use of Id from Grasshopper Model + Plus One
+            el2.Id = bearingMembers[1].element.id + 1; //Use of Id from Grasshopper Model + Plus One
 
             el2.Name = "E" + el2.Id.ToString();
             el2.Segment = new ReferenceElement(lineSegment2);
             el2.CrossSectionBegin = new ReferenceElement(crossSection);
             el2.CrossSectionEnd = new ReferenceElement(crossSection);
-            //el2.RotationRx = bearingMembers[1].ElementRAZ.rotationLCS;
+            //el2.RotationRx = bearingMembers[1].Element.rotationLCS;
             openModel.AddObject(el2);
 
             //create member
@@ -335,15 +335,15 @@ namespace KarambaIDEA
             Element1D element1D = new Element1D();
             //element1D.Id = openModel.GetMaxId(element1D) + 1;
 
-            element1D.Id = attachedMember.ElementRAZ.id + 1; //Use of Id from Grasshopper Model + Plus One
+            element1D.Id = attachedMember.element.id + 1; //Use of Id from Grasshopper Model + Plus One
 
             element1D.Name = "Element " + element1D.Id.ToString();
             element1D.Segment = new ReferenceElement(lineSegment);
 
-            IdeaRS.OpenModel.CrossSection.CrossSection crossSection = openModel.CrossSection.First(a => a.Id == attachedMember.ElementRAZ.crossSection.id);
+            IdeaRS.OpenModel.CrossSection.CrossSection crossSection = openModel.CrossSection.First(a => a.Id == attachedMember.element.crossSection.id);
             element1D.CrossSectionBegin = new ReferenceElement(crossSection);
             element1D.CrossSectionEnd = new ReferenceElement(crossSection);
-            //element1D.RotationRx = attachedMember.ElementRAZ.rotationLCS;
+            //element1D.RotationRx = attachedMember.Element.rotationLCS;
 
             if (attachedMember is ConnectingMember)
             {
@@ -377,18 +377,18 @@ namespace KarambaIDEA
             connectedMember.MemberId = new ReferenceElement(member1D);
             connectionPoint.ConnectedMembers.Add(connectedMember);
         }
-        private void AddLoadCaseToOpenModel(KarambaIDEA.Core.LoadcaseRAZ _loadCaseRAZ)
+        private void AddLoadCaseToOpenModel(KarambaIDEA.Core.LoadCase _loadCase)
         {
-            LoadCase loadCase = new LoadCase();
-            loadCase.Name = _loadCaseRAZ.name;
-            loadCase.Id = _loadCaseRAZ.id;
+            IdeaRS.OpenModel.Loading.LoadCase loadCase = new IdeaRS.OpenModel.Loading.LoadCase();
+            loadCase.Name = _loadCase.name;
+            loadCase.Id = _loadCase.id;
             loadCase.Type = LoadCaseSubType.PermanentStandard;
 
             LoadGroupEC loadGroup = null;
 
             loadGroup = new LoadGroupEC();
-            loadGroup.Id = _loadCaseRAZ.id;
-            loadGroup.Name = "LG"+ _loadCaseRAZ.id;
+            loadGroup.Id = _loadCase.id;
+            loadGroup.Name = "LG"+ _loadCase.id;
             loadGroup.GammaQ = 1.5;
             loadGroup.Psi0 = 0.7;
             loadGroup.Psi1 = 0.5;
@@ -404,7 +404,7 @@ namespace KarambaIDEA
             openModel.AddObject(loadCase);
 
             CombiInputEC combi = new CombiInputEC();
-            combi.Name = "CO" + _loadCaseRAZ.id;
+            combi.Name = "CO" + _loadCase.id;
             combi.TypeCombiEC = TypeOfCombiEC.ULS;
             combi.TypeCalculationCombi = TypeCalculationCombiEC.Linear;
             combi.Items = new List<CombiItem>();
@@ -450,13 +450,13 @@ namespace KarambaIDEA
 
 
                             //Check if Startpoint is equal to centerpoint
-                            int GrassId = elem.Id - 1;//Element1D.Id - 1 == ElementRAZ.id
+                            int GrassId = elem.Id - 1;//Element1D.Id - 1 == Element.id
                             int GrassLCId = i - 1;//Loadcase grasshopper starts at 0, Loadcase IDEA starts at 1.
 
                             List<BearingMember> BM = joint.attachedMembers.OfType<BearingMember>().ToList();
 
                             //Find the element to check: isStartpoint true or false
-                            AttachedMember attached = joint.attachedMembers.Find(a => a.ElementRAZ.id == GrassId);
+                            AttachedMember attached = joint.attachedMembers.Find(a => a.element.id == GrassId);
                             if (attached.isStartPoint == true) //
                             {
                                 SetStartLoads(1, joint, GrassLCId, GrassId, resLoadCase, resSec);
@@ -489,12 +489,12 @@ namespace KarambaIDEA
         {
             //Pick Startloads
             //API to IDEA UI, My, Vy and Vz are plotted negatively
-            double N0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.N;
-            double My0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.My;
-            double Vz0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.Vz;
-            double Vy0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.Vy;
-            double Mz0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.Mz;
-            double Mt0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].startLoads.Mt;
+            double N0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLines[GrassId].startLoad.N;
+            double My0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLines[GrassId].startLoad.My;
+            double Vz0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLines[GrassId].startLoad.Vz;
+            double Vy0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLines[GrassId].startLoad.Vy;
+            double Mz0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLines[GrassId].startLoad.Mz;
+            double Mt0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLines[GrassId].startLoad.Mt;
 
             //From Karamba3D to Framework
             double N =  N0  * sign;
@@ -517,12 +517,12 @@ namespace KarambaIDEA
         {
             //Pick EndLoads
             //API to IDEA UI, My, Vy and Vz are plotted negatively
-            double N0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.N;
-            double My0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.My;
-            double Vz0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.Vz;
-            double Vy0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.Vy;
-            double Mz0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.Mz;
-            double Mt0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLineRAZs[GrassId].endLoads.Mt;
+            double N0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLines[GrassId].endLoad.N;
+            double My0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLines[GrassId].endLoad.My;
+            double Vz0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLines[GrassId].endLoad.Vz;
+            double Vy0 = (-1) * 1000 * joint.project.loadcases[GrassLCId].loadsPerLines[GrassId].endLoad.Vy;
+            double Mz0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLines[GrassId].endLoad.Mz;
+            double Mt0 = 1000 * joint.project.loadcases[GrassLCId].loadsPerLines[GrassId].endLoad.Mt;
 
             //From Karamba3D to Framework
             double N = N0 * sign;
@@ -545,35 +545,35 @@ namespace KarambaIDEA
         public void SetLCS(AttachedMember attachedMember, LineSegment3D lineSegment)
         {
             //Defining LCS for First lineSegment
-            double xcor = attachedMember.ElementRAZ.line.vector.X;
-            double ycor = attachedMember.ElementRAZ.line.vector.Y;
-            double zcor = attachedMember.ElementRAZ.line.vector.Z;
+            double xcor = attachedMember.element.line.vector.X;
+            double ycor = attachedMember.element.line.vector.Y;
+            double zcor = attachedMember.element.line.vector.Z;
 
             
 
             //Define LCS (local-y in XY plane) and unitize
-            VectorRAZ vx = new VectorRAZ(xcor, ycor, zcor).Unitize();
-            VectorRAZ vy = new VectorRAZ();
-            VectorRAZ vz = new VectorRAZ();
+            Vector vx = new Vector(xcor, ycor, zcor).Unitize();
+            Vector vy = new Vector();
+            Vector vz = new Vector();
             if (xcor == 0.0 && ycor == 0.0)
             {
-                vy = new VectorRAZ(0.0, 1.0, 0.0).Unitize();
-                vz = new VectorRAZ((-zcor), 0.0, (xcor)).Unitize();
+                vy = new Vector(0.0, 1.0, 0.0).Unitize();
+                vz = new Vector((-zcor), 0.0, (xcor)).Unitize();
             }
             else
             {
-                vy = new VectorRAZ(-ycor, xcor, 0.0).Unitize();
-                vz = new VectorRAZ((-zcor * xcor), (-zcor * ycor), ((xcor * xcor) + (ycor * ycor))).Unitize();
+                vy = new Vector(-ycor, xcor, 0.0).Unitize();
+                vz = new Vector((-zcor * xcor), (-zcor * ycor), ((xcor * xcor) + (ycor * ycor))).Unitize();
             }
 
-            if (attachedMember.ElementRAZ.rotationLCS == 0.0)
+            if (attachedMember.element.rotationLCS == 0.0)
             {
 
             }
             else
             {
-                vy = VectorRAZ.RotateVector(vx, attachedMember.ElementRAZ.rotationLCS, vy);
-                vz = VectorRAZ.RotateVector(vx, attachedMember.ElementRAZ.rotationLCS, vz);
+                vy = Vector.RotateVector(vx, attachedMember.element.rotationLCS, vy);
+                vz = Vector.RotateVector(vx, attachedMember.element.rotationLCS, vz);
             }
 
             var LocalCoordinateSystem = new CoordSystemByVector();
@@ -586,24 +586,24 @@ namespace KarambaIDEA
         public void SetLCSwithRotation(AttachedMember attachedMember, LineSegment3D lineSegment)
         {
             //Explode x-vector
-            double xcor = attachedMember.ElementRAZ.line.vector.X;
-            double ycor = attachedMember.ElementRAZ.line.vector.Y;
-            double zcor = attachedMember.ElementRAZ.line.vector.Z;
+            double xcor = attachedMember.element.line.vector.X;
+            double ycor = attachedMember.element.line.vector.Y;
+            double zcor = attachedMember.element.line.vector.Z;
 
-            VectorRAZ vx = new VectorRAZ(xcor, ycor, zcor).Unitize();
+            Vector vx = new Vector(xcor, ycor, zcor).Unitize();
 
-            double rotation = attachedMember.ElementRAZ.rotationLCS;
+            double rotation = attachedMember.element.rotationLCS;
 
             //Explode z-vector
             double xcorZ = 0.0;
             double ycorZ = 0.0;
             double zcorZ = 0.0;
 
-            VectorRAZ vz = new VectorRAZ(xcorZ, ycorZ, zcorZ).Unitize();
+            Vector vz = new Vector(xcorZ, ycorZ, zcorZ).Unitize();
 
             //Create y-vector with cross-product
-            VectorRAZ vy = new VectorRAZ();
-            vz = new VectorRAZ((vz.Y*vx.Z-vx.Y*vz.Z), (-vz.X*vx.Z+vx.X*vz.Z), (vz.X*vx.Y-vx.X*vz.Y)).Unitize();
+            Vector vy = new Vector();
+            vz = new Vector((vz.Y*vx.Z-vx.Y*vz.Z), (-vz.X*vx.Z+vx.X*vz.Z), (vz.X*vx.Y-vx.X*vz.Y)).Unitize();
             
             //Set LCS
             var LocalCoordinateSystem = new CoordSystemByVector();

@@ -10,12 +10,12 @@ namespace KarambaIDEA.Core
 
 
 
-    public class ElementRAZ
+    public class Element
     {
         public Project project;
         public int id;
         public int numberInHierarchy;
-        public LineRAZ line;
+        public Line line;
         public CrossSection crossSection;
         public string groupname;
         public double rotationLCS;
@@ -24,11 +24,11 @@ namespace KarambaIDEA.Core
 
 
 
-        public ElementRAZ(Project _project, int _id, LineRAZ _line, CrossSection _crossSection, string _groupname, int _numberInHierarchy, double _rotationLCS)
+        public Element(Project _project, int _id, Line _line, CrossSection _crossSection, string _groupname, int _numberInHierarchy, double _rotationLCS)
 
         {
             this.project = _project;
-            _project.elementRAZs.Add(this);
+            _project.elements.Add(this);
             this.id = _id;
             this.line = _line;
             this.crossSection = _crossSection;
@@ -38,7 +38,7 @@ namespace KarambaIDEA.Core
 
         }
 
-        public ElementRAZ()
+        public Element()
         {
 
         }
@@ -56,7 +56,7 @@ namespace KarambaIDEA.Core
 
             List<AttachedMember> attachedmembers = project.joints.SelectMany(a => a.attachedMembers).ToList();
             List<ConnectingMember> conmembers = attachedmembers.OfType<ConnectingMember>().ToList();
-            List<ConnectingMember> conmembers_element = conmembers.Where(a => a.ElementRAZ.id == id).ToList();
+            List<ConnectingMember> conmembers_element = conmembers.Where(a => a.element.id == id).ToList();
 
             if (conmembers_element.Count > 0)
             {
@@ -77,7 +77,7 @@ namespace KarambaIDEA.Core
 
             List<AttachedMember> attachedmembers = project.joints.SelectMany(a => a.attachedMembers).ToList();
             List<ConnectingMember> conmembers = attachedmembers.OfType<ConnectingMember>().ToList();
-            List<ConnectingMember> conmembers_element = conmembers.Where(a => a.ElementRAZ.id == id).ToList();
+            List<ConnectingMember> conmembers_element = conmembers.Where(a => a.element.id == id).ToList();
 
             if (conmembers_element.Count > 0)
             {
@@ -96,7 +96,7 @@ namespace KarambaIDEA.Core
         {
             string info = "";
             List<AttachedMember> attachedmembers = project.joints.SelectMany(a => a.attachedMembers).ToList();
-            List<AttachedMember> members = attachedmembers.Where(a => a.ElementRAZ.id == id).ToList();
+            List<AttachedMember> members = attachedmembers.Where(a => a.element.id == id).ToList();
             AttachedMember member = members.FirstOrDefault(a => a.isStartPoint == true);
             if (member != null)
             {
@@ -112,7 +112,7 @@ namespace KarambaIDEA.Core
         {
             string info = "";
             List<AttachedMember> attachedmembers = project.joints.SelectMany(a => a.attachedMembers).ToList();
-            List<AttachedMember> members = attachedmembers.Where(a => a.ElementRAZ.id == id).ToList();
+            List<AttachedMember> members = attachedmembers.Where(a => a.element.id == id).ToList();
             AttachedMember member = members.FirstOrDefault(a => a.isStartPoint == false);
             if (member != null)
             {

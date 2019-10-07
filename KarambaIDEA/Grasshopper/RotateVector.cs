@@ -48,10 +48,10 @@ namespace KarambaIDEA.Grasshopper
             Vector3d vrot = new Vector3d();
 
 
-            VectorRAZ vraz = new VectorRAZ(v.X, v.Y, v.Z);
-            VectorRAZ nraz = new VectorRAZ(n.X, n.Y, n.Z);
+            Vector vraz = new Vector(v.X, v.Y, v.Z);
+            Vector nraz = new Vector(n.X, n.Y, n.Z);
 
-            VectorRAZ vrotraz = VectorRAZ.RotateVector(nraz, angle, vraz);
+            Vector vrotraz = Vector.RotateVector(nraz, angle, vraz);
 
             vrot = new Vector3d(vrotraz.X, vrotraz.Y, vrotraz.Z);
             

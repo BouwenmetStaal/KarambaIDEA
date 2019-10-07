@@ -12,32 +12,40 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using Grasshopper.Kernel.Types;
 
+using System.Reflection;
+
 
 using KarambaIDEA.Core;
+using KarambaIDEA.IDEA;
 
-
-namespace KarambaIDEA
+namespace KarambaIDEA.Grasshopper
 {
+
 
 
     public class JointExporter : GH_Component
     {
+
+
+
         public JointExporter() : base("Joint Exporter", "JE", "Exporting selected joint to IDEA Statica Connection", "KarmabaIDEA", "KarambaIDEA")
         {
-
+            //ensure loading of IDEA dllss
+            AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(Utils.IdeaResolveEventHandler);
+            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(Utils.IdeaResolveEventHandler);
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             //Single input variables
             pManager.AddTextParameter("Template File", "Template File Location", "File location of template to be used. For example: 'C:\\Data\\template.contemp'", GH_ParamAccess.item);
-            pManager.AddTextParameter("Output Filepath", "Output Filepath", "Save location of IDEA Statica Connection output file. For example: 'C:\\Data'", GH_ParamAccess.item);
+            pManager.AddTextParameter("Output folder ", "Output folder", "Save location of IDEA Statica Connection output file. For example: 'C:\\Data'", GH_ParamAccess.item);
 
             //Input needed for creating Joints                 
             pManager.AddTextParameter("Hierarchy", "Hierarchy", "List of hierarchy on with joints are made", GH_ParamAccess.list);
             pManager.AddPointParameter("Points", "Points", "Points of connections", GH_ParamAccess.list);
 
-            //Input ElementsRAZ
+            //Input elements
             pManager.AddLineParameter("Lines", "Lines", "Lines of geometry", GH_ParamAccess.list);
             pManager.AddNumberParameter("LCS rotation", "LCS rotation [Deg]", "Local Coordinate System rotation of element in degrees. Rotation runs from local y to local z-axis", GH_ParamAccess.list);
             pManager.AddTextParameter("Groupnames", "Groupnames", "Groupname of element", GH_ParamAccess.list);
@@ -60,8 +68,6 @@ namespace KarambaIDEA
             pManager.AddNumberParameter("My", "My", "Moment force y-direction[kN]", GH_ParamAccess.tree);
             pManager.AddNumberParameter("Mz", "Mz", "Moment force z-direction[kN]", GH_ParamAccess.tree);
 
-
-            
             //pManager.AddBooleanParameter("RunAllJoints", "RunAllJoints", "If true run all joints, if false run ChooseJoint joint", GH_ParamAccess.item);
             pManager.AddIntegerParameter("ChooseJoint", "ChooseJoint", "Specify the joint that will be calculated in IDEA. Note: starts at zero.", GH_ParamAccess.item);
             pManager.AddBooleanParameter("RunIDEA", "RunIDEA", "Bool for running IDEA Statica Connection", GH_ParamAccess.item);
@@ -74,12 +80,15 @@ namespace KarambaIDEA
             pManager.AddIntegerParameter("#Joints found", "#Joints found", "Number of Joints found", GH_ParamAccess.item);
             pManager.AddLineParameter("Selected Joint", "Selected Joint", "Lines of selected Joint", GH_ParamAccess.list);
             pManager.AddLineParameter("Joint types", "Joint types", "Types of joint in project", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Joints", "Joints", "List of Joint objects of KarambaIdeaCore", GH_ParamAccess.list);
+
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             //Input
-            List<Line> lines = new List<Line>();
+            List<Rhino.Geometry.Line> lines = new List<Rhino.Geometry.Line>();
             List<double> rotationLCS = new List<double>();
             List<string> crossectionsNameDirty = new List<string>();
             List<string> crossectionsName = new List<string>();
@@ -106,7 +115,7 @@ namespace KarambaIDEA
             List<Point3d> centerpoints = new List<Point3d>();
             string projectnameFromGH = null;
             string templatelocation = null;
-            string IDEAfilepath = null;
+            string outputfolderpath = null;
             List<string> shapesDirty = new List<string>();
             List<string> shapes = new List<string>();
 
@@ -122,7 +131,7 @@ namespace KarambaIDEA
 
             //Output
 
-            List<Line> jointlines = new List<Line>();
+            List<Rhino.Geometry.Line> jointlines = new List<Rhino.Geometry.Line>();
 
             List<int> numberOfSawingCuts = new List<int>();
             int TotalRightAngledCuts = new int();
@@ -144,7 +153,7 @@ namespace KarambaIDEA
             // grasshopperinput
             #region GrasshopperInput
             DA.GetData(0, ref templatelocation);
-            DA.GetData(1, ref IDEAfilepath);
+            DA.GetData(1, ref outputfolderpath);
 
 
             if (!DA.GetDataList(2, hierarchy)) { return; } ;
@@ -191,7 +200,7 @@ namespace KarambaIDEA
 
             //Load paths
             project.templatePath = templatelocation;
-            project.filepath = IDEAfilepath;
+            project.folderpath = outputfolderpath;
 
             //START IDEA BOOL
             project.startIDEA = startIDEA;
@@ -237,12 +246,12 @@ namespace KarambaIDEA
                 }
 
                 //LINES
-                PointRAZ start = PointRAZ.CreateNewOrExisting(project, lines[i].FromX, lines[i].FromY, lines[i].FromZ);
-                PointRAZ end = PointRAZ.CreateNewOrExisting(project, lines[i].ToX, lines[i].ToY, lines[i].ToZ);
-                LineRAZ line = new LineRAZ(i, start, end);
+                Core.Point start = Core.Point.CreateNewOrExisting(project, lines[i].FromX, lines[i].FromY, lines[i].FromZ);
+                Core.Point end = Core.Point.CreateNewOrExisting(project, lines[i].ToX, lines[i].ToY, lines[i].ToZ);
+                Core.Line line = new Core.Line(i, start, end);
 
                 //Z-VECTOR
-                //VectorRAZ zvector = new VectorRAZ(rotationLCS[i].X, rotationLCS[i].Y, rotationLCS[i].Z);
+                //Vector zvector = new Vector(rotationLCS[i].X, rotationLCS[i].Y, rotationLCS[i].Z);
 
                 int hierarchyId = -1;
                 Hierarchy h = project.hierarchylist.FirstOrDefault(a => groupnames[i].StartsWith(a.groupname));
@@ -250,19 +259,19 @@ namespace KarambaIDEA
                 {
                     hierarchyId = h.numberInHierarchy;
                 }
-                ElementRAZ element = new ElementRAZ(project, i, line, crosssection, groupnames[i], hierarchyId, rotationLCS[i]);
+                Element element = new Element(project, i, line, crosssection, groupnames[i], hierarchyId, rotationLCS[i]);
             }
 
             //CREATE LIST OF LOADS
             //Here N,V,M are defined for the startpoint and endpoint of every line in the project.
-            List<LoadsPerLineRAZ> loadsPerLineRAZs = new List<LoadsPerLineRAZ>();
+            List<LoadsPerLine> loadsPerLines = new List<LoadsPerLine>();
 
             for (int i = 0; i < N.PathCount; i++)
             {
-                LoadsRAZ start =    new LoadsRAZ(N[i][0].Value, Vz[i][0].Value, Vy[i][0].Value, Mt[i][0].Value, My[i][0].Value, Mz[i][0].Value);
-                LoadsRAZ end =      new LoadsRAZ(N[i][1].Value, Vz[i][1].Value, Vy[i][1].Value, Mt[i][1].Value, My[i][1].Value, Mz[i][1].Value);
-                LoadsPerLineRAZ w = new LoadsPerLineRAZ(start, end);
-                loadsPerLineRAZs.Add(w);
+                Load start =    new Load(N[i][0].Value, Vz[i][0].Value, Vy[i][0].Value, Mt[i][0].Value, My[i][0].Value, Mz[i][0].Value);
+                Load end =      new Load(N[i][1].Value, Vz[i][1].Value, Vy[i][1].Value, Mt[i][1].Value, My[i][1].Value, Mz[i][1].Value);
+                LoadsPerLine w = new LoadsPerLine(start, end);
+                loadsPerLines.Add(w);
             }
 
             //REARRANGE LIST OF LOADS TO SEPERATE LOADCASES
@@ -273,15 +282,13 @@ namespace KarambaIDEA
             for (int a = 0; a < loadcases; a++)
             {
 
-                //LoadcasesRAZ loadcasesRAZ = new LoadcasesRAZ();
                 //loadcase id start from 1 because of IDEA
                 int loadCaseNumber = a + 1;
-                LoadcaseRAZ loadcase = new LoadcaseRAZ(project, loadCaseNumber);
-                List<LoadsPerLineRAZ> loadsPerline2s = new List<LoadsPerLineRAZ>();
+                LoadCase loadcase = new LoadCase(project, loadCaseNumber);
+                List<LoadsPerLine> loadsPerline2s = new List<LoadsPerLine>();
                 for (int b = 0; b < lines.Count; b++)
                 {
-                    //loadcasesRAZ w = 
-                    LoadsPerLineRAZ w = new LoadsPerLineRAZ(project.elementRAZs[b], loadcase, loadsPerLineRAZs[ib].startLoads, loadsPerLineRAZs[ib].endLoads);
+                    LoadsPerLine w = new LoadsPerLine(project.elements[b], loadcase, loadsPerLines[ib].startLoad, loadsPerLines[ib].endLoad);
                     ib++;
                     loadsPerline2s.Add(w);
                 }
@@ -290,19 +297,19 @@ namespace KarambaIDEA
             }
 
 
-            //Rhino.Point3D to PointRAZ
-            List<PointRAZ> punten = new List<PointRAZ>();
+            //Rhino.Point3D to Point
+            List<Core.Point> punten = new List<Core.Point>();
             for (int i = 0; i < centerpoints.Count; i++)
             {
-                PointRAZ pointRAZ = PointRAZ.CreateNewOrExisting(project, centerpoints[i].X, centerpoints[i].Y, centerpoints[i].Z);
-                punten.Add(pointRAZ);
+                Core.Point Point = Core.Point.CreateNewOrExisting(project, centerpoints[i].X, centerpoints[i].Y, centerpoints[i].Z);
+                punten.Add(Point);
             }
 
 
 
             //CREATE LIST OF JOINTS
             double tol = 1e-6;
-            project.CreateJoints(tol, eccentricity, punten, project.elementRAZs, project.hierarchylist);
+            project.CreateJoints(tol, eccentricity, punten, project.elements, project.hierarchylist);
 
             //Adjust out of bounds index calculateThisJoint
             project.calculateThisJoint = calculateThisJoint % project.joints.Count;
@@ -313,11 +320,12 @@ namespace KarambaIDEA
 
             //SET ALL THROATS TO MIN-THROAT THICKNESS
             project.SetMinThroats(minThroatThickness);
+           
             //SET WELDTYPE
-            project.SetWeldType();
+            //project.SetDefaultWeldType();  //Refactored, can be removed. todo after test run
 
 
-
+            #warning: what is the point of this if calculaton methods are not implemented?
             //DEFINE ANALYSES METHODS
             if (analysisMethod == 0)
             {
@@ -341,13 +349,35 @@ namespace KarambaIDEA
             }
 
 
-
             //CALCULATE THROATS ACCORDING TO ANALYSIS METHOD
-            //Send DATA to IDEA
-            project.CalculateWeldsProject(project.filepath);
+            if (project.analysisMethod == Project.AnalysisMethod.IdeaMethod)
+            {
+                if (startIDEA == true)
+                {
+                    //Send DATA to IDEA
+                    project.CreateFolder(project.folderpath);
+                    if (project.calculateAllJoints)
+                    {
+                        foreach (Joint joint in project.joints)
+                        {
+                            CalculateJoint(joint, templatelocation, project.folderpath);
+                        }
+                    }
+                    //Calculate one joint
+                    else
+                    {
+                        Joint joint = project.joints[project.calculateThisJoint];
+                        CalculateJoint(joint, templatelocation, project.folderpath);
+                    }
+                }
+            }
+            else
+            {
+                throw new Exception("Calculation methodology currently not implemented");
+            }
 
             //CALCULATE WELDVOLUME
-            totalWeldingVolume = project.CalculateWeldVolume();
+            totalWeldingVolume = project.CalculateTotalWeldVolume();
             
 
             //Output back to Grasshopper
@@ -359,7 +389,7 @@ namespace KarambaIDEA
             //OUTPUT: WELDING, THROATS PER ELEMENT
 
 
-            foreach (ElementRAZ ele in project.elementRAZs)
+            foreach (Element ele in project.elements)
             {
                 throatBegin.Add(ele.BeginThroatsElement());
                 throatEnd.Add(ele.EndThroatsElement());
@@ -380,31 +410,31 @@ namespace KarambaIDEA
             
 
             //OUTPUT:SAWING 
-            for (int i = 0; i < project.elementRAZs.Count; i++)
+            for (int i = 0; i < project.elements.Count; i++)
             {
-                ElementRAZ.SawingCut start = project.elementRAZs[i].startCut;
-                ElementRAZ.SawingCut end = project.elementRAZs[i].endCut;
-                if (start == ElementRAZ.SawingCut.RightAngledCut)
+                Element.SawingCut start = project.elements[i].startCut;
+                Element.SawingCut end = project.elements[i].endCut;
+                if (start == Element.SawingCut.RightAngledCut)
                 {
                     TotalRightAngledCuts++;
                 }
-                if (end == ElementRAZ.SawingCut.RightAngledCut)
+                if (end == Element.SawingCut.RightAngledCut)
                 {
                     TotalRightAngledCuts++;
                 }
-                if (start == ElementRAZ.SawingCut.SingleMiterCut)
+                if (start == Element.SawingCut.SingleMiterCut)
                 {
                     TotalSingleMiterCuts++;
                 }
-                if (end == ElementRAZ.SawingCut.SingleMiterCut)
+                if (end == Element.SawingCut.SingleMiterCut)
                 {
                     TotalSingleMiterCuts++;
                 }
-                if (start == ElementRAZ.SawingCut.DoubleMiterCut)
+                if (start == Element.SawingCut.DoubleMiterCut)
                 {
                     TotalDoubleMiterCuts++;
                 }
-                if (end == ElementRAZ.SawingCut.DoubleMiterCut)
+                if (end == Element.SawingCut.DoubleMiterCut)
                 {
                     TotalDoubleMiterCuts++;
                 }
@@ -436,7 +466,7 @@ namespace KarambaIDEA
             project.SetBrandnames(project);
             //select unique brandName
             //GH_Structure<GH_Line> linetree = new GH_Structure<GH_Line>();
-            DataTree<Line> linetree = new DataTree<Line>();
+            DataTree<Rhino.Geometry.Line> linetree = new DataTree<Rhino.Geometry.Line>();
             
            
             var lstBrand =project.joints.Select(a => a.brandName).Distinct().ToList();
@@ -449,28 +479,31 @@ namespace KarambaIDEA
                     {
                         for (int c = 0; c < project.joints[b].attachedMembers.Count; c++)
                         {
-                            LineRAZ oriline = project.joints[b].attachedMembers[c].ideaLine;
-                            PointRAZ centerpoint = project.joints[b].centralNodeOfJoint;
-                            LineRAZ line = LineRAZ.MoveLineToOrigin(centerpoint, oriline);
+                            Core.Line oriline = project.joints[b].attachedMembers[c].ideaLine;
+                            Core.Point centerpoint = project.joints[b].centralNodeOfJoint;
+                            Core.Line line = Core.Line.MoveLineToOrigin(centerpoint, oriline);
                             GH_Path path = new GH_Path(a, d);
                             Point3d start = new Point3d(line.Start.X, line.Start.Y, line.Start.Z);
                             Point3d end = new Point3d(line.End.X, line.End.Y, line.End.Z);
-                            Line rhinoline = new Line(start, end);
+                            Rhino.Geometry.Line rhinoline = new Rhino.Geometry.Line(start, end);
                             linetree.Add(rhinoline, path);
                         }
                         d = d + 1;
                     }
                 }
             }
-            
+
             //joint.attachedMembers.Select(a => a.ideaLine.Start).ToList();
-            
+
             //Output lines
             DA.SetData(0, project.joints.Count);
             DA.SetDataList(1, jointlines);
             DA.SetDataTree(2, linetree);
+            DA.SetData(3, project);
+            DA.SetDataList(4, project.joints);
+
         }
-        
+
 
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.
@@ -492,6 +525,22 @@ namespace KarambaIDEA
         public override Guid ComponentGuid
         {
             get { return new Guid("ca79dc4b-64f2-4627-93b4-066ad7649621"); }
+        }
+
+        private void CalculateJoint(Joint joint, String templateFilePath, String folderpath)
+        {
+            // Create connection
+            IdeaConnection ideaConnection = new IdeaConnection(joint, templateFilePath, folderpath);
+
+            // Map Connections
+            ideaConnection.MapWeldsIdsAndOperationIds();
+
+            // Check connection
+            // ideaConnection.CheckConnectionWelds();
+
+            //Save file
+            string filePath2 = ideaConnection.filepath + "//" + joint.Name + "joint.ideaCon";
+            ideaConnection.SaveIdeaConnectionProjectFile(filePath2);
         }
     }
 }
