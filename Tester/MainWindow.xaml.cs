@@ -86,17 +86,17 @@ namespace KarambaIDEA
             AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
 
-            IdeaConnection ideaConnection = new IdeaConnection(joint, templateFilePath, path);
+            IdeaConnection ideaConnection = new IdeaConnection(joint);
 
             //4.Mapwelds
-            ideaConnection.MapWeldsIdsAndOperationIds();
+            //ideaConnection.MapWeldsIdsAndOperationIds();
 
             //ideaConnection.OptimizeWelds();
 
 
             //6. save file
-            string filePath2 = ideaConnection.filepath + "//" + joint.Name + "joint.ideaCon";
-            ideaConnection.SaveIdeaConnectionProjectFile(filePath2);
+            //string filePath2 = ideaConnection.filepath + "//" + joint.Name + "joint.ideaCon";
+            //ideaConnection.SaveIdeaConnectionProjectFile(filePath2);
         }
     }
 }

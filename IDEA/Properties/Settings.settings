@@ -3,7 +3,7 @@
   <Profiles />
   <Settings>
     <Setting Name="IdeaInstallDir" Type="System.String" Scope="User">
-      <Value Profile="(Default)">C:\Program Files\IDEAStatiCa\StatiCa10</Value>
+      <Value Profile="(Default)">C:\Program Files\IDEA StatiCa\StatiCa 10.1</Value>
     </Setting>
   </Settings>
 </SettingsFile>

@@ -530,17 +530,18 @@ namespace KarambaIDEA.Grasshopper
         private void CalculateJoint(Joint joint, String templateFilePath, String folderpath)
         {
             // Create connection
-            IdeaConnection ideaConnection = new IdeaConnection(joint, templateFilePath, folderpath);
+            IdeaConnection ideaConnection = new IdeaConnection(joint);
+
 
             // Map Connections
-            ideaConnection.MapWeldsIdsAndOperationIds();
+//            ideaConnection.MapWeldsIdsAndOperationIds();
 
             // Check connection
             // ideaConnection.CheckConnectionWelds();
 
             //Save file
             string filePath2 = ideaConnection.filepath + "//" + joint.Name + "joint.ideaCon";
-            ideaConnection.SaveIdeaConnectionProjectFile(filePath2);
+            //ideaConnection.SaveIdeaConnectionProjectFile(filePath2);
         }
     }
 }

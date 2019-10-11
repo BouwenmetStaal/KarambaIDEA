@@ -31,17 +31,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IdeaRS.Connections">
-      <HintPath>..\..\..\..\..\..\Program Files\IDEAStatiCa\StatiCa10\IdeaRS.Connections.dll</HintPath>
-      <Private>False</Private>
-    </Reference>
     <Reference Include="IdeaRS.OpenModel">
-      <HintPath>..\..\..\..\..\..\Program Files\IDEAStatiCa\StatiCa10\IdeaRS.OpenModel.dll</HintPath>
-      <Private>False</Private>
+      <HintPath>..\..\..\..\Program Files\IDEA StatiCa\StatiCa 10.1\IdeaRS.OpenModel.dll</HintPath>
     </Reference>
-    <Reference Include="IdeaStatiCa.ConnectionBasicTypes">
-      <HintPath>..\..\..\..\..\..\Program Files\IDEAStatiCa\StatiCa10\IdeaStatiCa.ConnectionBasicTypes.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="IdeaStatiCa.IOMToConnection">
+      <HintPath>..\..\..\..\Program Files\IDEA StatiCa\StatiCa 10.1\IdeaStatiCa.IOMToConnection.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -58,7 +52,9 @@
   <ItemGroup>
     <Compile Include="ConnectionTemplateGenerator.cs" />
     <Compile Include="IdeaConnection.cs" />
+    <Compile Include="IdeaConnection_old.cs" />
     <Compile Include="OpenModelGenerator.cs" />
+    <Compile Include="OpenModelGenerator_old.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">
       <AutoGen>True</AutoGen>
