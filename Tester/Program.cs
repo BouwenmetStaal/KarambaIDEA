@@ -22,7 +22,6 @@ namespace Tester
         static void Main()
         {
 
-            KarambaIDEA.MainWindow mainWindow = new MainWindow();
             Tester.GenerateTestJoint fj = new GenerateTestJoint();
 
             //hieronder testjoint definieren
@@ -33,8 +32,17 @@ namespace Tester
             //min lasafmeting uitzetten bij Grasshopper
             joint.project.minthroat = 1.0;
 
-#warning: why is this test procedure not part of the tester?
-            mainWindow.Test(joint);
+
+            string templateFilePath = joint.project.templatePath;
+            //3. create idea connection
+            string path = joint.project.folderpath;
+
+            // Initialize idea references, before calling code.
+            AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
+            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
+
+            IdeaConnection ideaConnection = new IdeaConnection(joint);
+
         }
         
     }
