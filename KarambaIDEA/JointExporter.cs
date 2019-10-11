@@ -27,7 +27,7 @@ namespace KarambaIDEA.Grasshopper
     {
 
 
-
+#warning: Karmaba... spelfout
         public JointExporter() : base("Joint Exporter", "JE", "Exporting selected joint to IDEA Statica Connection", "KarmabaIDEA", "KarambaIDEA")
         {
             //ensure loading of IDEA dllss

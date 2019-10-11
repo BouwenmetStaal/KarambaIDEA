@@ -102,15 +102,15 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Grasshopper\ImportGrasshopperUtils.cs" />
-    <Compile Include="Grasshopper\CreateLinesFromNodes.cs" />
-    <Compile Include="Grasshopper\JointExporter.cs" />
-    <Compile Include="Grasshopper\JointVector.cs" />
-    <Compile Include="Grasshopper\JointViewer.cs" />
-    <Compile Include="Grasshopper\KarambaConversion.cs" />
-    <Compile Include="Grasshopper\LoadsToLoadsTrees.cs" />
-    <Compile Include="Grasshopper\LoadsToLoadsTrees2.cs" />
-    <Compile Include="Grasshopper\RotateVector.cs" />
+    <Compile Include="ImportGrasshopperUtils.cs" />
+    <Compile Include="CreateLinesFromNodes.cs" />
+    <Compile Include="JointExporter.cs" />
+    <Compile Include="JointVector.cs" />
+    <Compile Include="JointViewer.cs" />
+    <Compile Include="KarambaConversion.cs" />
+    <Compile Include="LoadsToLoadsTrees.cs" />
+    <Compile Include="LoadsToLoadsTrees2.cs" />
+    <Compile Include="RotateVector.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

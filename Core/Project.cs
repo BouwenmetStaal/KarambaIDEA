@@ -284,9 +284,8 @@ namespace KarambaIDEA.Core
                 //CREATE JOINT ADD TO PROJECT
                 //Joint id starts from one, because IDEA counts from one
                 double maxGlobalEccentricity = 0.0;
-                bool WEJ = false;
                 Vector bearingMemberUnitVector = new Vector(1.0, 0.0, 0.0);
-                Joint joint = new Joint(this, i + 1, elementIDs, attachedMembers, centerpoint, maxGlobalEccentricity, WEJ, bearingMemberUnitVector, IsContinues);
+                Joint joint = new Joint(this, i + 1, elementIDs, attachedMembers, centerpoint, maxGlobalEccentricity, false, bearingMemberUnitVector, IsContinues);
                 this.joints.Add(joint);
             }
 
