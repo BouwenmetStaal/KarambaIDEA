@@ -16,7 +16,7 @@ namespace KarambaIDEA.Grasshopper
 {
     public class JointViewer : GH_Component
     {
-        public JointViewer() : base("JointViewer", "JV", "Get insight in how joints are created from a list of lines", "KarmabaIDEA", "KarambaIDEA")
+        public JointViewer() : base("JointViewer", "JV", "Get insight in how joints are created from a list of lines", "KarambaIDEA", "0. Utilities")
         {
 
         }

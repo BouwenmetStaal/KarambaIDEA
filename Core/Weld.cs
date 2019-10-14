@@ -38,23 +38,34 @@ namespace KarambaIDEA.Core
             return surface;
         }
 
-        static public double CalcFullStrengthFactor(MaterialSteel materialSteel, double angle)
+        static public double CalcFullStrengthFactor(CrossSection cross, double angle)
         {
             //The full strenth factor returned is the factor for single fillet welds
-            //In case of double fillet welds take halve of the factor
+            
             //Calculation is made per 1 mm length piece
 
             double angleHalve = 0.5 * angle;//angle halved
-            double beta = materialSteel.beta;
+            double beta = cross.material.beta;
             double M2 = Project.gammaM2;
-            double fy = materialSteel.fy;
-            double fu = materialSteel.fu;
+            double fy = cross.material.fy;
+            double fu = cross.material.fu;
 
             double tuss = (2 * Math.Pow(Math.Cos(angleHalve), 2) + 1);
 
             double numerator = Math.Pow(beta, 2) * Math.Pow(M2, 2) * Math.Pow(fy, 2) * (2 * Math.Pow(Math.Cos(angleHalve), 2) + 1);
             double denominator = Math.Pow(fu, 2);
             double fullStrengthFactor = Math.Sqrt(numerator / denominator);
+
+            if(cross.shape == CrossSection.Shape.ISection)
+            {
+                //In case of double fillet welds take halve of the factor
+                fullStrengthFactor = 0.5 * fullStrengthFactor;
+            }
+            else
+            {
+
+            }
+            
 
             return fullStrengthFactor;
         }

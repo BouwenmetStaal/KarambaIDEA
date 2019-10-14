@@ -26,12 +26,8 @@ namespace KarambaIDEA.Core
         public string author;
         public double minthroat;
 #warning: below properties should be part of IDEA
+        
         public string folderpath;
-        public string templatePath;
-        public bool startIDEA;
-        public bool calculateAllJoints;
-#warning: below property should not be part of project
-        public int calculateThisJoint;
 
         public List<Point> points = new List<Point>();
         public List<Element> elements = new List<Element>();
@@ -76,7 +72,12 @@ namespace KarambaIDEA.Core
 
             }
         }
-
+        /// <summary>
+        /// Brandnames of joints are defined to recognize similiar joints. 
+        /// The Brandname is defined based on the number of attached elements and their hierarchy. 
+        /// The integers of all occuring hierarchys are chronologically ordered, creating a string that defines the brandname
+        /// </summary>
+        /// <param name="project"></param>
         public void SetBrandnames(Project project)
         {
             foreach (Joint joint in project.joints)
@@ -108,7 +109,7 @@ namespace KarambaIDEA.Core
         }
 
         /// <summary>
-        /// Create Folder to save IDEA files on location spedified, or on default location
+        /// Create Folder to save IDEA files on location specified, or on default location
         /// </summary>
         /// <param name="userpath">folder specified by user</param>
         public void CreateFolder(string userpath)
@@ -285,247 +286,15 @@ namespace KarambaIDEA.Core
                 //Joint id starts from one, because IDEA counts from one
                 double maxGlobalEccentricity = 0.0;
                 Vector bearingMemberUnitVector = new Vector(1.0, 0.0, 0.0);
-                Joint joint = new Joint(this, i + 1, elementIDs, attachedMembers, centerpoint, maxGlobalEccentricity, false, bearingMemberUnitVector, IsContinues);
+                Joint joint = new Joint(this, i + 1, elementIDs, attachedMembers, centerpoint, maxGlobalEccentricity, bearingMemberUnitVector, IsContinues);
                 this.joints.Add(joint);
             }
 
         }
 
-        public static void CalculateSawingCuts(Project project, double tol)
-        {
-#warning: should be implemented at joint level
-            foreach (Joint j in project.joints)
-            {
-                double eccentricity = new double();
-                //Convert eccentricity in meter to milimeter
-                //If warren double the eccentricity
-                if (j.isWarrenEccentricJoint == true)
-                {
-                    eccentricity = 2 * j.maxGlobalEccentricity * 1000;
-                }
-                else
-                {
-                    eccentricity = j.maxGlobalEccentricity * 1000;
-                }
-
-                //phi is the angle between the bearing member and the highest ranked connecting member
-                double phi = new double();
-                List<AttachedMember> connectingMembers = new List<AttachedMember>();
-                AttachedMember bear = new AttachedMember();
-                foreach (var con in j.attachedMembers)
-                {
-                    BearingMember bearing = new BearingMember();
-
-                    if (con is BearingMember)
-                    {
-                        bear = con;
-
-                    }
-                    if (con is ConnectingMember)
-                    {
-                        connectingMembers.Add(con);
-                    }
-
-                }
-                BearingMember BM = j.attachedMembers.OfType<BearingMember>().First();
-                if (j.IsContinues == false)
-                {
-                    if (BM.isStartPoint == true)
-                    {
-                        BM.element.startCut = Element.SawingCut.RightAngledCut;
-                    }
-                    else
-                    {
-                        BM.element.endCut = Element.SawingCut.RightAngledCut;
-                    }
-                }
-
-                for (int i = 0; i < connectingMembers.Count; i++)
-                {
-
-
-
-
-                    if (i == 0)
-                    {
-
-                        double phiDirty = Vector.AngleBetweenVectors(j.bearingMemberUnitVector, connectingMembers[i].element.line.vector);
-                        //phi should be an angle between 90 and 180 degree
-
-                        phi = Math.PI - (Math.Min(phiDirty, (Math.PI - phiDirty)));
-
-                        //Check if the first connecting member is a RightAngledCut or SingleMiterCut
-                        //This is checked by whether theta is equal to 90 degrees (1.57 rad)
-                        //phi==0 is needed for the midspan T-joint where the value of phi is lost because of some mysterious reason
-                        if (Math.Abs(0.5 * Math.PI - phi) < tol || phi == 0 || phi == Math.PI)
-                        {
-                            //RightAngledCut
-                            if (connectingMembers[i].isStartPoint == true)
-                            {
-                                connectingMembers[i].element.startCut = Element.SawingCut.RightAngledCut;
-                            }
-                            else
-                            {
-                                connectingMembers[i].element.endCut = Element.SawingCut.RightAngledCut;
-                            }
-                        }
-                        else
-                        {
-                            //SingleMiterCut
-                            if (connectingMembers[i].isStartPoint == true)
-                            {
-                                connectingMembers[i].element.startCut = Element.SawingCut.SingleMiterCut;
-                            }
-                            else
-                            {
-                                connectingMembers[i].element.endCut = Element.SawingCut.SingleMiterCut;
-                            }
-                        }
-                    }
-                    if (i == 1)
-                    {
-                        // a     = half height vertical
-                        // b     = half height horizontal
-                        // h     = half height diagonal
-                        // theta = angle of selected connecting member to bearingmember
-                        // phi   = anlge of first connecting member to bearingmember
-                        // e     = eccntricity
-
-                        double a = connectingMembers[0].element.crossSection.height / 2;
-                        double b = bear.element.crossSection.height / 2;
-                        double h = connectingMembers[1].element.crossSection.height / 2;
-                        double thetaDirty = Vector.AngleBetweenVectors(j.bearingMemberUnitVector, connectingMembers[1].element.line.vector);
-                        //theta should be an angle between 0 and 90 degree
-                        double theta = (Math.Min(thetaDirty, Math.PI - thetaDirty));
-
-                        double hor = ConnectingMember.WebWeldsHorizontalLength(a, b, h, theta, phi, eccentricity);
-                        double ver = ConnectingMember.WebWeldsVerticalLength(a, b, h, theta, phi, eccentricity);
-
-                        if (hor != 0.0 && ver != 0.0)
-                        {
-                            //DoubleMiterCut
-                            if (connectingMembers[i].isStartPoint == true)
-                            {
-                                connectingMembers[i].element.startCut = Element.SawingCut.DoubleMiterCut;
-                            }
-                            else
-                            {
-                                connectingMembers[i].element.endCut = Element.SawingCut.DoubleMiterCut;
-                            }
-                        }
-                        else
-                        {
-                            //SingleMiterCut
-                            if (connectingMembers[i].isStartPoint == true)
-                            {
-                                connectingMembers[i].element.startCut = Element.SawingCut.SingleMiterCut;
-                            }
-                            else
-                            {
-                                connectingMembers[i].element.endCut = Element.SawingCut.SingleMiterCut;
-                            }
-                        }
-
-
-                    }
-                    if (i == 2)
-                    {
-                        double a = connectingMembers[0].element.crossSection.height / 2;
-                        double b = bear.element.crossSection.height / 2;
-                        double h = connectingMembers[2].element.crossSection.height / 2;
-                        double thetaDirty = Vector.AngleBetweenVectors(j.bearingMemberUnitVector, connectingMembers[2].element.line.vector);
-                        //theta should be an angle between 0 and 90 degree
-                        double theta = (Math.Min(thetaDirty, Math.PI - thetaDirty));
-
-                        double hor = ConnectingMember.WebWeldsHorizontalLength(a, b, h, theta, phi, eccentricity);
-                        double ver = ConnectingMember.WebWeldsVerticalLength(a, b, h, theta, phi, eccentricity);
-
-                        if (hor != 0.0 && ver != 0.0)
-                        {
-                            //DoubleMiterCut
-                            if (connectingMembers[i].isStartPoint == true)
-                            {
-                                connectingMembers[i].element.startCut = Element.SawingCut.DoubleMiterCut;
-                            }
-                            else
-                            {
-                                connectingMembers[i].element.endCut = Element.SawingCut.DoubleMiterCut;
-                            }
-                        }
-                        else
-                        {
-                            //SingleMiterCut
-                            if (connectingMembers[i].isStartPoint == true)
-                            {
-                                connectingMembers[i].element.startCut = Element.SawingCut.SingleMiterCut;
-                            }
-                            else
-                            {
-                                connectingMembers[i].element.endCut = Element.SawingCut.SingleMiterCut;
-                            }
-                        }
-                    }
-                }
-            }
-        }
-
-//        /// <summary>
-//        /// Calculate welds of all joints in project according to the specified method
-//        /// </summary>
-//        public void CalculateWeldsProject(string userpath)
-//        {
-//            //calculate welds by using IDEA statica
-//            if (this.analysisMethod == AnalysisMethod.IdeaMethod)
-//            {
-//#warning: disabled due to circular reference . Weld calculation with Idea should not be called from here.
-//                throw new Exception("Calculation with IDEA disabled due to circular refernce");
-                     
-//                //if (startIDEA == true)
-//                //{
-//                //    //Calculate all joints
-//                //    CreateFolder(userpath);
-//                //    if (calculateAllJoints == true)
-//                //    {
-//                //        foreach (Joint j in this.joints)
-//                //        {
-//                //            MainWindow mainWindow = new MainWindow();
-//                //            mainWindow.Test(j);
-//                //        }
-//                //    }
-//                //    //Calculate one joint
-//                //    else
-//                //    {
-                        
-//                //        Joint j = this.joints[calculateThisJoint];
-//                //        MainWindow mainWindow = new MainWindow();
-//                //        mainWindow.Test(j);
-//                //    }
-//                //}
-//            }
-//            //calculate welds by using other methods
-//            else
-//            {
-//                foreach (Joint j in this.joints)
-//                {
-//                    j.CalculateWelds();
-//                }
-//            }
-//        }
-
-        public double CalculateTotalWeldVolume()
-        {
-            double weldvolume = 0;
-            foreach (Joint j in this.joints)
-            {
-                double weldVolumeJoint = j.CalculateWeldVolume();
-                j.weldVolume = weldVolumeJoint;//setWeldVolume
-                weldvolume = weldvolume + weldVolumeJoint;
-            }
-            return weldvolume;
-        }
 
         /// <summary>
-        /// Set a specific minimum throat thickness to all welds
+        /// Set a specific minimum throat thickness to all welds in project
         /// </summary>
         /// <param name="minThroatThickness">minimum throat thickness of welds</param>
         public void SetMinThroats(double minThroatThickness)
@@ -544,29 +313,6 @@ namespace KarambaIDEA.Core
             }
         }
 
-        /// <summary>
-        /// Fillet welds are assigned to Hollow sections, double fillet welds are assigned to Isections
-        /// </summary>
-        public void SetDefaultWeldType()
-        {
-#warning: this should be part of the joint constructor. Not a project setting.
-            foreach (Joint j in this.joints)
-            {
-                foreach (ConnectingMember CM in j.attachedMembers.OfType<ConnectingMember>())
-                {
-                    if (CM.element.crossSection.shape == CrossSection.Shape.HollowSection)
-                    {
-                        CM.flangeWeld.weldType = Weld.WeldType.Fillet;
-                        CM.webWeld.weldType = Weld.WeldType.Fillet;
-                    }
-                    else
-                    {
-                        CM.flangeWeld.weldType = Weld.WeldType.DoubleFillet;
-                        CM.webWeld.weldType = Weld.WeldType.DoubleFillet;
-                    }
-                }
-            }
-        }
 
         /// <summary>
         /// Different analysis methods to calculate welding volume

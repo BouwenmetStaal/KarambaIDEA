@@ -43,7 +43,7 @@ namespace KarambaIDEA.Core
         /// <param name="_isWarrenEccentricJoint"></param>
         /// <param name="_bearingMemberUnitVector"></param>
         /// <param name="_IsContinues">defines wether joint is continues or ended</param>
-        public Joint(Project _project, int _id, List<int> _beamIDs, List<AttachedMember> _attachedMembers, Point _centralNodeOfJoint, double _globaleccenticitylength, bool _isWarrenEccentricJoint, Vector _bearingMemberUnitVector, bool _IsContinues)
+        public Joint(Project _project, int _id, List<int> _beamIDs, List<AttachedMember> _attachedMembers, Point _centralNodeOfJoint, double _globaleccenticitylength, Vector _bearingMemberUnitVector, bool _IsContinues)
         {
             this.project = _project;
             this.id = _id;
@@ -51,52 +51,36 @@ namespace KarambaIDEA.Core
             this.beamIDs = _beamIDs;
             this.centralNodeOfJoint = _centralNodeOfJoint;
             this.maxGlobalEccentricity = _globaleccenticitylength;
-            this.isWarrenEccentricJoint = _isWarrenEccentricJoint;
             this.bearingMemberUnitVector = _bearingMemberUnitVector;
             this.IsContinues = _IsContinues;
         }
 
-
-
-#warning This method gives expectations but ultimately does not implement functionality. Where is the functionality? Alternatively remove method
-        public void CalculateWelds()
-        {
-            switch (this.project.analysisMethod)
-            {
-                case Project.AnalysisMethod.MinSetWelds:
-                    {
-                        //Volume are calculated with min weldsize
-                        return;
-                    }
-
-                case Project.AnalysisMethod.FullStrengthLazy:
-                    {
-                        
-                        return;
-                    }
-
-                case Project.AnalysisMethod.FullStrengthMethod:
-                    {
-                        
-                        return;
-                    }
-                case Project.AnalysisMethod.DirectionalMethod:
-                    {
-                        
-                        return;
-                    }
-                case Project.AnalysisMethod.IdeaMethod:
-                    {
-                        return;
-                    }
-            }
-
-        }
-        public double CalculateWeldVolume()
+        
+        public double GenerateWeldVolume()
         {
             return 0.0;
         }
-        
+
+
+        /// <summary>
+        /// Fillet welds are assigned to Hollow sections, double fillet welds are assigned to Isections
+        /// </summary>
+        public void SetDefaultWeldType()
+        {
+            foreach (ConnectingMember CM in this.attachedMembers.OfType<ConnectingMember>())
+            {
+                if (CM.element.crossSection.shape == CrossSection.Shape.HollowSection)
+                {
+                    CM.flangeWeld.weldType = Weld.WeldType.Fillet;
+                    CM.webWeld.weldType = Weld.WeldType.Fillet;
+                }
+                else
+                {
+                    CM.flangeWeld.weldType = Weld.WeldType.DoubleFillet;
+                    CM.webWeld.weldType = Weld.WeldType.DoubleFillet;
+                }
+            }
+        }
 
     }
 }

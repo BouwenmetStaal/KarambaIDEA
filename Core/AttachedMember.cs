@@ -69,15 +69,16 @@ namespace KarambaIDEA.Core
         /// </summary>
         public void SetDefaultWeldType()
         {
-            if (this.element.crossSection.shape == CrossSection.Shape.HollowSection)
-            {
-                this.flangeWeld.weldType = Weld.WeldType.Fillet;
-                this.webWeld.weldType = Weld.WeldType.Fillet;
-            }
-            else
+            if (this.element.crossSection.shape == CrossSection.Shape.ISection)
             {
                 this.flangeWeld.weldType = Weld.WeldType.DoubleFillet;
                 this.webWeld.weldType = Weld.WeldType.DoubleFillet;
+            }
+            else
+            {
+                
+                this.flangeWeld.weldType = Weld.WeldType.Fillet;
+                this.webWeld.weldType = Weld.WeldType.Fillet;
             }
         }
 

@@ -102,20 +102,21 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="CreateIDEAfile.cs" />
     <Compile Include="ImportGrasshopperUtils.cs" />
     <Compile Include="CreateLinesFromNodes.cs" />
     <Compile Include="JointExporter.cs" />
     <Compile Include="JointVector.cs" />
     <Compile Include="JointViewer.cs" />
-    <Compile Include="KarambaConversion.cs" />
     <Compile Include="LoadsToLoadsTrees.cs" />
     <Compile Include="LoadsToLoadsTrees2.cs" />
-    <Compile Include="RotateVector.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
+    <Compile Include="VisualizeJoints.cs" />
+    <Compile Include="WeldVolumeGenerator.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

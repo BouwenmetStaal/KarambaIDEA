@@ -22,25 +22,21 @@ namespace Tester
         static void Main()
         {
 
-            Tester.GenerateTestJoint fj = new GenerateTestJoint();
+            
+            Tester.GenerateTestJoint testrun = new GenerateTestJoint();
 
-            //hieronder testjoint definieren
-            Joint joint = fj.Testjoint();
-            //Joint joint = fj.Testjoint5();
-            joint.project.CreateFolder(@"C:\Data\");
-            joint.project.templatePath = @"C:\Data\template.contemp";
-            //min lasafmeting uitzetten bij Grasshopper
-            joint.project.minthroat = 1.0;
-
-
-            string templateFilePath = joint.project.templatePath;
-            //3. create idea connection
-            string path = joint.project.folderpath;
-
+            //Define testjoint
+            Joint joint = testrun.Testjoint();
+            
+            //Define save path
+            //joint.project.CreateFolder(@"C:\Data\");
+            string folderpath = @"C:\Data\";
+            joint.project.CreateFolder(folderpath);
             // Initialize idea references, before calling code.
             AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
 
+            //Run IDEA
             IdeaConnection ideaConnection = new IdeaConnection(joint);
 
         }

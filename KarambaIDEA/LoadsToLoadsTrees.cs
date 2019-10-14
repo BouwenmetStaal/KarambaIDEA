@@ -14,7 +14,7 @@ namespace KarambaIDEA.Grasshopper
 {
     public class LoadsToLoadsTrees: GH_Component
     {
-        public LoadsToLoadsTrees() : base("Convert Excel Loads", "CEL", "Convert loads from Excel into dataTree format", "KarmabaIDEA", "KarambaIDEA")
+        public LoadsToLoadsTrees() : base("Convert Excel Loads from OASYS GSA", "CEL", "Convert loads from Excel into dataTree format, these loads are imported from a datasheet, where loads at the start and end of each element are separatly defined", "KarambaIDEA", "1. Load-conversions")
         {
 
         }

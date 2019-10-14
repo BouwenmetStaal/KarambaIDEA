@@ -8,6 +8,11 @@ namespace KarambaIDEA.Core
 {
     public class ImportGrasshopperUtils
     {
+        /// <summary>
+        /// When strings are imported from Grasshopper, they may contain "\r\n". This method cleans strings that contain "\r\n" at their end
+        /// </summary>
+        /// <param name="list">list of strings imported from Grasshopper</param>
+        /// <returns></returns>
         static public List<string> DeleteEnterCommandsInGHStrings(List<string> list)
         {
             List<string> newlist = new List<string>();
@@ -26,6 +31,23 @@ namespace KarambaIDEA.Core
                 }
             }
             return newlist;
+        }
+
+        static public Rhino.Geometry.Point3d CastPointToRhino(Core.Point point)
+        {
+            Rhino.Geometry.Point3d rhiPoint = new Rhino.Geometry.Point3d();
+            rhiPoint.X = point.X;
+            rhiPoint.Y = point.Y;
+            rhiPoint.Z = point.Z;
+            return rhiPoint;
+        }
+
+        static public Rhino.Geometry.Line CastLineToRhino(Core.Line line)
+        {
+            Rhino.Geometry.Line rhiLine = new Rhino.Geometry.Line();
+            rhiLine.From = CastPointToRhino(line.Start);
+            rhiLine.To = CastPointToRhino(line.End);
+            return rhiLine;
         }
 
         
