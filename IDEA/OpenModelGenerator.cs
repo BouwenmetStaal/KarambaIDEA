@@ -93,6 +93,10 @@ namespace KarambaIDEA.IDEA
                 AddLoadCaseToOpenModel(loadcase);
             }
 
+            //WORKSHOP operations
+            //WorkshopOperations.WeldAllMembers(openModel);
+            WorkshopOperations.BoltedEndplateConnection(openModel,joint);
+
 			//8.create IOMresults
 			CreateIDEAOpenModelResults(joint);
 
@@ -241,11 +245,27 @@ namespace KarambaIDEA.IDEA
             Point3D pB = new Point3D();
             Point3D pB2 = new Point3D();
             Point3D pC = new Point3D();
-            
-            pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].element.line.Start.id);
-            pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].element.line.End.id);
-            pB2 = openModel.Point3D.First(a => a.Id == bearingMembers[1].element.line.Start.id);
-            pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].element.line.End.id);
+
+            BearingMember first = bearingMembers[0];
+            BearingMember second = bearingMembers[1];
+
+            //[A]=0=>[B]=1=>[C]
+            if(first.isStartPoint == false && second.isStartPoint == true)
+            {
+                pA = openModel.Point3D.First(a => a.Id == first.element.line.Start.id);
+                pB = openModel.Point3D.First(a => a.Id == first.element.line.End.id);
+                pB2 = openModel.Point3D.First(a => a.Id == second.element.line.Start.id);
+                pC = openModel.Point3D.First(a => a.Id == second.element.line.End.id);
+            }
+
+            //[A]<=0=[B]<=1=[C]
+            if (first.isStartPoint == true && second.isStartPoint == false)
+            {
+                pA = openModel.Point3D.First(a => a.Id == second.element.line.Start.id);
+                pB = openModel.Point3D.First(a => a.Id == second.element.line.End.id);
+                pB2 = openModel.Point3D.First(a => a.Id == first.element.line.Start.id);
+                pC = openModel.Point3D.First(a => a.Id == first.element.line.End.id);
+            }
             /*
             pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ideaLine.End.id);
             pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ideaLine.Start.id);
