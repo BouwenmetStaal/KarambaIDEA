@@ -29,7 +29,7 @@ namespace KarambaIDEA
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddNumberParameter("Weld volume [mm3]", "Weld volume", "Total weld volume of the joint in mm3", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Weld volume [cm3]", "Weld volume", "Total weld volume of the joint in cm3", GH_ParamAccess.list);
             pManager.AddBrepParameter("Brep weld volume", "Brep weld volume", "Brep weld volume", GH_ParamAccess.tree);
 
         }
@@ -91,8 +91,8 @@ namespace KarambaIDEA
                 //single fillet vs double fillet weld
                 //define perimeter
 
+                weldVolumeJoint = weldVolumeJoint / 1000.0; //conversion from mm3 to cm3
 
-                
                 weldVolumes.Add(weldVolumeJoint);
 
 
@@ -100,7 +100,7 @@ namespace KarambaIDEA
 
             }
 
-
+            
 
             //link output
             DA.SetDataList(0, weldVolumes);

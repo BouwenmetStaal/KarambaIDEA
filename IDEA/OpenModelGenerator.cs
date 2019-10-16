@@ -67,8 +67,9 @@ namespace KarambaIDEA.IDEA
             ConnectionPoint connectionPoint = new ConnectionPoint();
             Point3D point3D = openModel.Point3D.First(a => a.Id == joint.centralNodeOfJoint.id);
             connectionPoint.Node = new ReferenceElement(point3D);
-            connectionPoint.Id = joint.id;
-            connectionPoint.Name = "C" + joint.id;
+            connectionPoint.Id = joint.centralNodeOfJoint.id;
+            connectionPoint.Name = "C" + joint.centralNodeOfJoint.id;
+            //openModel.ConnectionPoint.Add(connectionPoint);
 
             //6.create members
             List<BearingMember> bearingMembers = joint.attachedMembers.OfType<BearingMember>().ToList();
@@ -95,7 +96,9 @@ namespace KarambaIDEA.IDEA
 
             //WORKSHOP operations
             //WorkshopOperations.WeldAllMembers(openModel);
-            WorkshopOperations.BoltedEndplateConnection(openModel,joint);
+            WorkshopOperations.BoltedEndplateConnection(openModel);
+
+            
 
 			//8.create IOMresults
 			CreateIDEAOpenModelResults(joint);
@@ -106,6 +109,7 @@ namespace KarambaIDEA.IDEA
             //openModelResult.SaveToXmlFile(strFil + "result");
             return strFil;
         }
+
 
         /// <summary>
         /// Serializes the openmodel  object and returns it as a memory stream
@@ -210,16 +214,7 @@ namespace KarambaIDEA.IDEA
             double tweb = crossSection.thicknessWeb / 1000;
             double tflange = crossSection.thicknessFlange / 1000;
             double radius = crossSection.radius / 1000;
-            //CrossSectionFactory.FillCssRectangleHollow(hollow, width, height, tweb, tweb, tflange, tflange);
             CrossSectionFactory.FillOHollow(chs, height, tweb);
-            //height
-            //width
-            //thickness
-            //innerradius
-            //outerradius
-            //unkown
-            //CrossSectionFactory.FillCssSteelChannel(hollow, height, width, tweb, tflange, radius, radius, 0);
-
             openModel.AddObject(chs);
         }
         private void AddPointsToOpenModel(Point point)
@@ -444,7 +439,7 @@ namespace KarambaIDEA.IDEA
 
             loadGroup = new LoadGroupEC();
             loadGroup.Id = _loadCaseRAZ.id;
-            loadGroup.Name = "LG"+ _loadCaseRAZ.id;
+            loadGroup.Name = "Load Group"+ _loadCaseRAZ.id;
             loadGroup.GammaQ = 1.5;
             loadGroup.Psi0 = 0.7;
             loadGroup.Psi1 = 0.5;
@@ -460,7 +455,7 @@ namespace KarambaIDEA.IDEA
             openModel.AddObject(loadCase);
 
             CombiInputEC combi = new CombiInputEC();
-            combi.Name = "CO" + _loadCaseRAZ.id;
+            combi.Name = "Load Case " + _loadCaseRAZ.id;
             combi.TypeCombiEC = TypeOfCombiEC.ULS;
             combi.TypeCalculationCombi = TypeCalculationCombiEC.Linear;
             combi.Items = new List<CombiItem>();

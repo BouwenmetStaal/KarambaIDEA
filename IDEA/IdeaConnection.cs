@@ -79,8 +79,8 @@ namespace KarambaIDEA.IDEA
             
 
             // save to the files
-            result.SaveToXmlFile("example.xmlR");
-            example.SaveToXmlFile("example.xml");
+            //result.SaveToXmlFile("example.xmlR");
+            //example.SaveToXmlFile("example.xml");
 
             string filename = joint.Name + "testingV101.ideaCon";
 
@@ -110,6 +110,9 @@ namespace KarambaIDEA.IDEA
 
             // end console application
             Console.WriteLine("Done. Press any key to exit.");
+
+           
+            
 
         }
 

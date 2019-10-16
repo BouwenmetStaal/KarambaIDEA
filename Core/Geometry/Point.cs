@@ -16,7 +16,10 @@ namespace KarambaIDEA.Core
         public double Y;
         public double Z;
         public Project project;
-        
+
+        /// <summary>
+        /// Point id's start counting from one. This prevents issues with using the IDEA Statica API, because objects id's in this API also start counting from one. 
+        /// </summary>
         public int id
         {
             get
@@ -89,7 +92,7 @@ namespace KarambaIDEA.Core
         }
 
         /// <summary>
-        /// 0
+        /// The centerpoint is the central point of a joint. It is the point where all members are connected to.
         /// </summary>
         /// <param name="centerpoint">Centerpoint of Joint</param>
         /// <param name="point">Point that will be moved</param>
