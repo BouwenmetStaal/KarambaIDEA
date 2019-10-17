@@ -96,12 +96,26 @@ namespace KarambaIDEA.IDEA
 
             //WORKSHOP operations
             //WorkshopOperations.WeldAllMembers(openModel);
-            WorkshopOperations.BoltedEndplateConnection(openModel);
+            //enumerator
+            //Delicate
 
+            if(joint.workshopOperation == EnumWorkshopOperations.NoOperation)
+            {
+
+            }
+            if (joint.workshopOperation == EnumWorkshopOperations.BoltedEndPlateConnection)
+            {
+                WorkshopOperations.BoltedEndplateConnection(openModel);
+            }
+            if (joint.workshopOperation == EnumWorkshopOperations.WeldAllMembers)
+            {
+                WorkshopOperations.WeldAllMembers(openModel);
+            }
             
 
-			//8.create IOMresults
-			CreateIDEAOpenModelResults(joint);
+
+            //8.create IOMresults
+            CreateIDEAOpenModelResults(joint);
 
             ////9.save XML
             string strFil = path + "IOM";
@@ -117,6 +131,7 @@ namespace KarambaIDEA.IDEA
         /// <returns>memory stream containing the openmodel  serialized in xml format</returns>
 
 
+        
 
         private void AddMaterialSteelToOpenModel(MaterialSteel material)
         {
@@ -650,4 +665,32 @@ namespace KarambaIDEA.IDEA
             lineSegment.LocalCoordinateSystem = LocalCoordinateSystem;
         }
     }
+    //uitleg Martin 17-10-2019
+    /*
+    class test
+    {
+        public void doaction(workshopconnecionObject workshopconnecionObject)
+        {
+            workshopconnecionObject.action(openModel);
+        }
+    }
+
+    public class workshopconnecionObject
+    {
+        public virtual void action(OpenModel openModel)
+        { }
+    }
+
+    public class lassen : workshopconnecionObject
+    {
+        public override void action(OpenModel openModel)
+        { openModel.AddObject(VariableTyp);
+    }
+
+    public class lijmen : workshopconnecionObject
+    {
+        public override void action(OpenModel openModel)
+        { openModel.Beam; }
+    }
+    */
 }

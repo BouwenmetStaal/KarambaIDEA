@@ -24,13 +24,16 @@ namespace KarambaIDEA
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Joints", "Joints", "List of Joint objects of KarambaIdeaCore", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddNumberParameter("Weld volume [cm3]", "Weld volume", "Total weld volume of the joint in cm3", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Weld volume [cm3]", "Weld volume [cm3]", "Total weld volume of the joint in cm3", GH_ParamAccess.list);
             pManager.AddBrepParameter("Brep weld volume", "Brep weld volume", "Brep weld volume", GH_ParamAccess.tree);
+
+            pManager.AddTextParameter("Throats Begin of Element", "ThroatsBegin", "ThroatFlange and ThroatWeb at Start of Element", GH_ParamAccess.list);
+            pManager.AddTextParameter("Throats End of Element", "ThroatsEnd", "ThroatFlange and ThroatWeb at End of Element", GH_ParamAccess.list);
 
         }
 
@@ -38,17 +41,21 @@ namespace KarambaIDEA
         {
 
             //Input variables
-            List<Joint> joints = new List<Joint>();
-
-
+            Project project = new Project();
+            
             //Link input
-            DA.GetDataList(0, joints);
+            DA.GetData(0, ref project);
+
+            
 
             //output variables
             List<double> weldVolumes = new List<double>();
             DataTree<Brep> brepVolumes = new DataTree<Brep>();
 
-            foreach(Joint joint in joints)
+            List<string> throatBegin = new List<string>();
+            List<string> throatEnd = new List<string>();
+
+            foreach (Joint joint in project.joints)
             {
                 double weldVolumeJoint = new double();
                 //Ignore highest hierarchy members by only taking connectingmembers
@@ -56,8 +63,12 @@ namespace KarambaIDEA
                 {
                     double weldVolume = new double();
                     CrossSection cross = con.element.crossSection;
-                    double factorWeb = Weld.CalcFullStrengthFactor(cross, 90);
-                    double throatWeb = cross.thicknessWeb * factorWeb;
+                    double factor = Weld.CalcFullStrengthFactor(cross, 90);
+                    double throatWeb = cross.thicknessWeb * factor;
+                    double throatFlange = cross.thicknessFlange * factor;
+
+                    con.webWeld.size = throatWeb;
+                    con.flangeWeld.size = throatFlange;
 
                     if (cross.shape == CrossSection.Shape.CHSsection)
                     {
@@ -73,9 +84,6 @@ namespace KarambaIDEA
                     }
                     if (cross.shape == CrossSection.Shape.ISection)
                     {
-                        double factorFlange = Weld.CalcFullStrengthFactor(cross, 90);
-                        double throatFlange = cross.thicknessFlange * factorFlange;
-
                         double weldVolumeWeb = 2*cross.height * Math.Pow(throatWeb, 2);
                         double weldVolumeFlange = 4*cross.width * Math.Pow(throatFlange, 2);
                         weldVolume = weldVolumeWeb + weldVolumeFlange;
@@ -100,11 +108,18 @@ namespace KarambaIDEA
 
             }
 
-            
+            foreach (Element ele in project.elements)
+            {
+                throatBegin.Add(ele.BeginThroatsElement());
+                throatEnd.Add(ele.EndThroatsElement());
+            }
 
             //link output
             DA.SetDataList(0, weldVolumes);
             DA.SetDataTree(1, brepVolumes); //visualize weldingvolume through brep
+
+            DA.SetDataList(2, throatBegin);
+            DA.SetDataList(3, throatEnd);
         }
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.

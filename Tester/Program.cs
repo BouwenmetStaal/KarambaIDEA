@@ -27,6 +27,9 @@ namespace Tester
 
             //Define testjoint
             Joint joint = testrun.Testjoint();
+
+            //Define workshop operations
+            //joint.workshopOperation = EnumWorkshopOperations.BoltedEndPlateConnection;
             
             //Define save path
             //joint.project.CreateFolder(@"C:\Data\");

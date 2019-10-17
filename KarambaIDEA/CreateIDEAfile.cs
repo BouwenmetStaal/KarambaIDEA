@@ -12,7 +12,8 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using KarambaIDEA.Core;
 using KarambaIDEA.IDEA;
-
+using Grasshopper.Kernel.Parameters;
+using Grasshopper.Kernel.Types;
 
 namespace KarambaIDEA
 {
@@ -26,9 +27,15 @@ namespace KarambaIDEA
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
-            pManager.AddTextParameter("Output folder ", "Output folder", "Save location of IDEA Statica Connection output file. For example: 'C:\\Data'", GH_ParamAccess.item);            
+            pManager.AddTextParameter("Output folder ", "Output folder", "Save location of IDEA Statica Connection output file. For example: 'C:\\Data'", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Workshop Operations", "WO", "Workshop operations", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("RunAllJoints", "RunAllJoints", "If true run all joints, if false run ChooseJoint joint", GH_ParamAccess.item);
             pManager.AddIntegerParameter("ChooseJoint", "ChooseJoint", "Specify the joint that will be calculated in IDEA. Note: starts at zero.", GH_ParamAccess.item);
             pManager.AddBooleanParameter("RunIDEA", "RunIDEA", "Bool for running IDEA Statica Connection", GH_ParamAccess.item);
+
+            // Assign default Workshop Operation.
+            Param_GenericObject param0 = (Param_GenericObject)pManager[2];
+            param0.PersistentData.Append(new GH_ObjectWrapper(EnumWorkshopOperations.NoOperation));
 
         }
 
@@ -43,6 +50,8 @@ namespace KarambaIDEA
             //Input variables
             Project project = new Project();
             string outputfolderpath = null;
+            EnumWorkshopOperations workshopOperations = EnumWorkshopOperations.NoOperation;
+            bool calculateAllJoints = false;
             int calculateThisJoint = 0;
             bool startIDEA = false;
                    
@@ -51,8 +60,14 @@ namespace KarambaIDEA
             DA.GetData(0, ref project);
             DA.GetData(1, ref outputfolderpath);
 
-            DA.GetData(2, ref calculateThisJoint);
-            DA.GetData(3, ref startIDEA);
+            
+            DA.GetData(2, ref workshopOperations);
+
+            DA.GetData(3, ref calculateAllJoints);
+
+            DA.GetData(4, ref calculateThisJoint);
+            DA.GetData(5, ref startIDEA);
+            
 
             //output variables
             List<Rhino.Geometry.Line> lines = new List<Rhino.Geometry.Line>();
@@ -63,18 +78,24 @@ namespace KarambaIDEA
 
             if (startIDEA == true)
             {
-                
                 project.CreateFolder(outputfolderpath);
-                Joint joint = project.joints[calculateThisJoint];
-                IdeaConnection ideaConnection = new IdeaConnection(joint);
+                if (calculateAllJoints == true)
+                {
+                    foreach(Joint joint in project.joints)
+                    {
+                        joint.workshopOperation = workshopOperations;
+                        IdeaConnection ideaConnection = new IdeaConnection(joint);
+                    }
+                }
+                else
+                {
+                    Joint joint = project.joints[calculateThisJoint];
+                    joint.workshopOperation = workshopOperations;
+                    IdeaConnection ideaConnection = new IdeaConnection(joint);
+                }              
+                
+                
             }
-
-            /*
-            foreach (Joint joint in project.joints)
-            {
-                CalculateJoint(joint, templatelocation, project.folderpath);
-            }
-            */
 
             //export lines of joint for visualisation purposes
             foreach (int i in project.joints[calculateThisJoint].beamIDs)
@@ -106,6 +127,7 @@ namespace KarambaIDEA
             get { return new Guid("52308472-3ab8-4f23-89d0-d3746ed013f6"); }
         }
 
-        
+
     }
+
 }

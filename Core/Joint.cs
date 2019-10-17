@@ -22,12 +22,13 @@ namespace KarambaIDEA.Core
         public bool IsContinues;
         public double weldVolume;
         public string brandName;
+        public EnumWorkshopOperations workshopOperation;
 
         public string Name
         {
             get
             {
-                return "C" + this.id;
+                return "C" + this.id+"-brandname"+this.brandName;
             }
         }
 
@@ -61,7 +62,7 @@ namespace KarambaIDEA.Core
             return 0.0;
         }
 
-
+        
         /// <summary>
         /// Fillet welds are assigned to Hollow sections, double fillet welds are assigned to Isections
         /// </summary>

@@ -82,7 +82,7 @@ namespace KarambaIDEA.IDEA
             //result.SaveToXmlFile("example.xmlR");
             //example.SaveToXmlFile("example.xml");
 
-            string filename = joint.Name + "testingV101.ideaCon";
+            string filename = joint.Name + ".ideaCon";
 
             //var desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
             var fileConnFileNameFromLocal = Path.Combine(folder,joint.Name, filename);

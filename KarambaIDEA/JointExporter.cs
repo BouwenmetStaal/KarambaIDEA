@@ -17,6 +17,7 @@ using System.Reflection;
 
 using KarambaIDEA.Core;
 using KarambaIDEA.IDEA;
+using Grasshopper.Kernel.Parameters;
 
 namespace KarambaIDEA.Grasshopper
 {
@@ -39,6 +40,7 @@ namespace KarambaIDEA.Grasshopper
             pManager.AddTextParameter("Hierarchy", "Hierarchy", "List of hierarchy on with joints are made", GH_ParamAccess.list);
             pManager.AddPointParameter("Points", "Points", "Points of connections", GH_ParamAccess.list);
 
+            
             //Input elements
             pManager.AddLineParameter("Lines", "Lines", "Lines of geometry", GH_ParamAccess.list);
             pManager.AddNumberParameter("LCS rotations [Deg]", "LCS rotations", "Local Coordinate System rotation of element in Degrees. Rotation runs from local y to local z-axis", GH_ParamAccess.list);
@@ -61,7 +63,12 @@ namespace KarambaIDEA.Grasshopper
             pManager.AddNumberParameter("Mt", "Mt", "Torsional force[kNm]", GH_ParamAccess.tree);
             pManager.AddNumberParameter("My", "My", "Moment force y-direction[kN]", GH_ParamAccess.tree);
             pManager.AddNumberParameter("Mz", "Mz", "Moment force z-direction[kN]", GH_ParamAccess.tree);
-            
+
+            // Assign default Hierarchy.
+            Param_String param0 = (Param_String)pManager[0];
+            param0.PersistentData.Append(new GH_String(""));
+
+
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -78,7 +85,10 @@ namespace KarambaIDEA.Grasshopper
             string projectnameFromGH = null;
             double eccentricity = 0.0;
 
+            List<GH_String> h_Strings = new List<GH_String>();
             List<string> hierarchy = new List<string>();
+
+
             List<Point3d> centerpoints = new List<Point3d>();
             List<Rhino.Geometry.Line> lines = new List<Rhino.Geometry.Line>();
             List<double> rotationLCS = new List<double>();
@@ -108,13 +118,13 @@ namespace KarambaIDEA.Grasshopper
             GH_Structure<GH_Number> Mt = new GH_Structure<GH_Number>();
             GH_Structure<GH_Number> Mz = new GH_Structure<GH_Number>();
 
-            
+
             //Link Input
             #region GrasshopperInput
-            if (!DA.GetDataList(0, hierarchy)) { return; } ;
+            DA.GetDataList(0, h_Strings);
             DA.GetDataList(1, centerpoints);
             DA.GetDataList(2, lines);
-            if (!DA.GetDataList(3, rotationLCS)) { return; };
+            DA.GetDataList(3, rotationLCS);
             DA.GetDataList(4, groupnamesDirty);
             DA.GetDataList(5, steelgrades);
 
@@ -132,9 +142,16 @@ namespace KarambaIDEA.Grasshopper
             DA.GetDataTree(16, out Mt);
             DA.GetDataTree(17, out My);
             DA.GetDataTree(18, out Mz);
-            
+
 
             #endregion
+
+            //cast Grassshopper string list to string list
+            if (h_Strings.Where(x => x != null && !string.IsNullOrWhiteSpace(x.Value)).Count() > 0)
+            {
+                hierarchy = h_Strings.Select(x => x.Value.ToString()).ToList();
+            }
+
 
             //Clean cross-section list from nextline ("\r\n") command produced by Karamba
             crossectionsName = ImportGrasshopperUtils.DeleteEnterCommandsInGHStrings(crossectionsNameDirty);

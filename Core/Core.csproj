@@ -44,6 +44,7 @@
     <Compile Include="AttachedMember.cs" />
     <Compile Include="CrossSection.cs" />
     <Compile Include="Element.cs" />
+    <Compile Include="EnumWorkshopOperations.cs" />
     <Compile Include="Hierarchy.cs" />
     <Compile Include="Joint.cs" />
     <Compile Include="Geometry\Line.cs" />
