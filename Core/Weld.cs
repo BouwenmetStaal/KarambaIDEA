@@ -17,7 +17,18 @@ namespace KarambaIDEA.Core
         /// </summary>
 		public List<int> Ids = new List<int>();
         public WeldType weldType;
-        public double size;
+        private double _size;
+        public double Size
+        {
+            get
+            {
+                return _size;
+            }
+            set
+            {
+                _size = Math.Ceiling(value);
+            }
+        }
         public double unitycheck;
 
         public enum WeldType
@@ -38,18 +49,28 @@ namespace KarambaIDEA.Core
             return surface;
         }
 
+        /// <summary>
+        /// In this method the full strength factor for welds is determined. 
+        /// This full strength factor can by multiplied with the thickness of the plate to generate the weld throat.
+        /// The angle between the connected parts can be taken into account. For right angled connections use an angle of 90 degrees.
+        /// The full equation can be found on page 61, equation 6.10 https://repository.tudelft.nl/islandora/object/uuid%3A8e8835b3-171c-471e-8ff4-e9c3e5c8b148
+        /// </summary>
+        /// <param name="cross">Cross-section of the connected member</param>
+        /// <param name="angle">Angle between connected parts in degrees</param>
+        /// <returns></returns>
         static public double CalcFullStrengthFactor(CrossSection cross, double angle)
         {
             //The full strenth factor returned is the factor for single fillet welds
-            
+
             //Calculation is made per 1 mm length piece
 
-            double angleHalve = 0.5 * angle;//angle halved
+            double angleHalve = (Math.PI / 180) * (0.5 * angle);//angle halved and converted to radians
             double beta = cross.material.beta;
             double M2 = Project.gammaM2;
             double fy = cross.material.fy;
             double fu = cross.material.fu;
 
+            //tuss is function for debugging purposes
             double tuss = (2 * Math.Pow(Math.Cos(angleHalve), 2) + 1);
 
             double numerator = Math.Pow(beta, 2) * Math.Pow(M2, 2) * Math.Pow(fy, 2) * (2 * Math.Pow(Math.Cos(angleHalve), 2) + 1);
@@ -63,11 +84,19 @@ namespace KarambaIDEA.Core
             }
             else
             {
-
+                //Hollow sections have a single weld. Therefore, no reduction.
             }
             
 
             return fullStrengthFactor;
+        }
+
+        static public void CalcFullStrengthWelds(ConnectingMember con)
+        {
+            CrossSection cross = con.element.crossSection;
+            double factor = Weld.CalcFullStrengthFactor(cross, 90);//angle of 90 degrees
+            con.webWeld.Size = cross.thicknessWeb * factor;
+            con.flangeWeld.Size = cross.thicknessFlange * factor;
         }
 
         static public double CalcDirFlangeThroat(MaterialSteel materialSteel, double angle, double N)
@@ -76,12 +105,13 @@ namespace KarambaIDEA.Core
             //In case of double fillet welds take halve of the factor
             //Calculation is made per 1 mm length piece
 
-            double angleHalve = 0.5 * angle;//angle halved
+            double angleHalve = (Math.PI/180)* (0.5 * angle);//angle halved and converted to radians
             double beta = materialSteel.beta;
             double M2 = Project.gammaM2;
             double fy = materialSteel.fy;
             double fu = materialSteel.fu;
 
+            //tuss is function for debugging purposes
             double tuss = (2 * Math.Pow(Math.Cos(angleHalve), 2) + 1);
 
             double numerator = Math.Pow(beta, 2) * Math.Pow(M2, 2) * Math.Pow(N, 2) * (2 * Math.Pow(Math.Cos(angleHalve), 2) + 1);
@@ -111,5 +141,7 @@ namespace KarambaIDEA.Core
 
             return throat;
         }
+
+        
     }
 }

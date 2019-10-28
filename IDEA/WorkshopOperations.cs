@@ -102,7 +102,9 @@ namespace KarambaIDEA.IDEA
             int number = 1 + openModel.Connections[0].Plates.Count;
             BeamData beam = openModel.Connections[0].Beams[refBeam];
 
-            CoordSystem coor = openModel.LineSegment3D[refBeam].LocalCoordinateSystem;
+            CoordSystem coor = openModel.LineSegment3D[refBeam].LocalCoordinateSystem;//based on integer of linesegments not of plates
+            var LocalCoordinateSystem = new CoordSystemByVector();
+            
             //TODO: make definition that creates plate based on the LCS of the reference beam
 
             openModel.Connections[0].Plates.Add(new IdeaRS.OpenModel.Connection.PlateData

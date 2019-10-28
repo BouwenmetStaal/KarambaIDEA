@@ -186,7 +186,34 @@ namespace KarambaIDEA.Core
             return numerator / denumerator;
         }
 
+        public static double CalculateWeldVolumeSimplified(ConnectingMember con)
+        {
+            CrossSection cross = con.element.crossSection;
+            double weldVolume = new double();
+            if (cross.shape == CrossSection.Shape.CHSsection)
+            {
+                double radius = 0.5 * cross.height;
+                double perimeter = 2 * Math.PI * radius;
+                weldVolume = perimeter * Math.Pow(con.webWeld.Size, 2);
+            }
 
+            if (cross.shape == CrossSection.Shape.HollowSection)
+            {
+                double perimeter = 2 * cross.width + 2 * cross.height;
+                weldVolume = perimeter * Math.Pow(con.webWeld.Size, 2);
+            }
+            if (cross.shape == CrossSection.Shape.ISection)
+            {
+                double weldVolumeWeb = 2 * cross.height * Math.Pow(con.webWeld.Size, 2);
+                double weldVolumeFlange = 4 * cross.width * Math.Pow(con.flangeWeld.Size, 2);
+                weldVolume = weldVolumeWeb + weldVolumeFlange;
+            }
+            else
+            {
+                //Warning: cross-sections not recognized
+            }
+            return weldVolume;
+        }
 
 
     }

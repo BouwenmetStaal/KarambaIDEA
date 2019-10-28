@@ -306,8 +306,8 @@ namespace KarambaIDEA.Core
                 {
                     if (CM is ConnectingMember)
                     {
-                        CM.flangeWeld.size = minThroatThickness;
-                        CM.webWeld.size = minThroatThickness;
+                        CM.flangeWeld.Size = minThroatThickness;
+                        CM.webWeld.Size = minThroatThickness;
                     }
                 }
             }

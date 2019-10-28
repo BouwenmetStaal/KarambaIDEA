@@ -63,8 +63,8 @@ namespace KarambaIDEA.Core
                 ConnectingMember connectingStart = conmembers_element.FirstOrDefault(a => a.isStartPoint == true);
                 if (connectingStart != null)
                 {
-                    double f = connectingStart.flangeWeld.size;
-                    double w = connectingStart.webWeld.size;
+                    double f = connectingStart.flangeWeld.Size;
+                    double w = connectingStart.webWeld.Size;
                     info = "af" + f + "-aw" + w;
                 }
             }
@@ -84,8 +84,8 @@ namespace KarambaIDEA.Core
                 ConnectingMember connectingStart = conmembers_element.FirstOrDefault(a => a.isStartPoint == false);
                 if (connectingStart != null)
                 {
-                    double f = connectingStart.flangeWeld.size;
-                    double w = connectingStart.webWeld.size;
+                    double f = connectingStart.flangeWeld.Size;
+                    double w = connectingStart.webWeld.Size;
                     info = "af" + f + "-aw" + w;
                 }
             }

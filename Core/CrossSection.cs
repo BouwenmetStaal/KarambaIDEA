@@ -2,7 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a	
 // Apache-2.0 license that can be found in the LICENSE file.	
 using System.Linq;
-
+using System;
+using System.Collections.Generic;
 
 namespace KarambaIDEA.Core
 {
@@ -80,6 +81,8 @@ namespace KarambaIDEA.Core
             HollowSection,
             CHSsection
         }
+
+        
 
 
         //public double CrosssectionProperties(string name)

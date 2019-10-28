@@ -39,14 +39,11 @@ namespace KarambaIDEA
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-
             //Input variables
             Project project = new Project();
             
             //Link input
             DA.GetData(0, ref project);
-
-            
 
             //output variables
             List<double> weldVolumes = new List<double>();
@@ -61,51 +58,15 @@ namespace KarambaIDEA
                 //Ignore highest hierarchy members by only taking connectingmembers
                 foreach (ConnectingMember con in joint.attachedMembers.OfType<ConnectingMember>())
                 {
+                    //Define weldsize
+                    Weld.CalcFullStrengthWelds(con);
+                    //Generate volume
                     double weldVolume = new double();
-                    CrossSection cross = con.element.crossSection;
-                    double factor = Weld.CalcFullStrengthFactor(cross, 90);
-                    double throatWeb = cross.thicknessWeb * factor;
-                    double throatFlange = cross.thicknessFlange * factor;
-
-                    con.webWeld.size = throatWeb;
-                    con.flangeWeld.size = throatFlange;
-
-                    if (cross.shape == CrossSection.Shape.CHSsection)
-                    {
-                        double radius = 0.5*cross.height;
-                        double perimeter = 2 * Math.PI * radius;
-                        weldVolume = perimeter * Math.Pow(throatWeb, 2);
-                    }
-
-                    if (cross.shape == CrossSection.Shape.HollowSection)
-                    {
-                        double perimeter = 2 * cross.width + 2 * cross.height;
-                        weldVolume = perimeter * Math.Pow(throatWeb, 2);
-                    }
-                    if (cross.shape == CrossSection.Shape.ISection)
-                    {
-                        double weldVolumeWeb = 2*cross.height * Math.Pow(throatWeb, 2);
-                        double weldVolumeFlange = 4*cross.width * Math.Pow(throatFlange, 2);
-                        weldVolume = weldVolumeWeb + weldVolumeFlange;
-                    }
-                    else
-                    {
-                        //Warning: cross-sections not recognized
-                    }
-
-                    weldVolumeJoint = +weldVolume;
+                    weldVolume = ConnectingMember.CalculateWeldVolumeSimplified(con);
+                    weldVolumeJoint = weldVolumeJoint+weldVolume;
                 }
-                //Calculate full strength weld
-                //single fillet vs double fillet weld
-                //define perimeter
-
                 weldVolumeJoint = weldVolumeJoint / 1000.0; //conversion from mm3 to cm3
-
                 weldVolumes.Add(weldVolumeJoint);
-
-
-
-
             }
 
             foreach (Element ele in project.elements)
