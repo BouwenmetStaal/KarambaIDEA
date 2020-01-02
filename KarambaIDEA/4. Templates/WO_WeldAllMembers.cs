@@ -19,7 +19,7 @@ namespace KarambaIDEA
 {
     public class WO_WeldAllMembers : GH_Component
     {
-        public WO_WeldAllMembers() : base("Weld all members", "Weld all members", "Weld all members", "KarambaIDEA", "4. Workshop operations")
+        public WO_WeldAllMembers() : base("Weld all members", "Weld all members", "Weld all members", "KarambaIDEA", "4. Templates")
         {
 
         }
@@ -35,7 +35,7 @@ namespace KarambaIDEA
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Workshop Operations: Weld all members", "WO: Weld all members", "All members in joint will be connected by weld according to the hierarchy", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Template: Weld all members", "Template: Weld all members", "All members in joint will be connected by weld according to the hierarchy", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)

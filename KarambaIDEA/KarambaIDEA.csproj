@@ -102,23 +102,26 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="CreateIDEAfile.cs" />
+    <Compile Include="3. Project utilities\CheckLocalCoordinateSystem.cs" />
+    <Compile Include="3. Project utilities\CreateIDEAfile.cs" />
     <Compile Include="ImportGrasshopperUtils.cs" />
-    <Compile Include="CreateLinesFromNodes.cs" />
-    <Compile Include="JointExporter.cs" />
-    <Compile Include="JointVector.cs" />
-    <Compile Include="JointViewer.cs" />
-    <Compile Include="LoadsToLoadsTrees.cs" />
-    <Compile Include="LoadsToLoadsTrees2.cs" />
+    <Compile Include="0. Utilities\CreateLinesFromNodes.cs" />
+    <Compile Include="3. Project utilities\JointEquilibrium.cs" />
+    <Compile Include="2. CreateProject\JointExporter.cs" />
+    <Compile Include="0. Utilities\JointVector.cs" />
+    <Compile Include="0. Utilities\JointViewer.cs" />
+    <Compile Include="1. Load-conversions\LoadsToLoadsTrees.cs" />
+    <Compile Include="1. Load-conversions\LoadsToLoadsTrees2.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Compile Include="VisualizeJoints.cs" />
-    <Compile Include="WeldVolumeGenerator.cs" />
-    <Compile Include="WO_BoltedEndPlateConnection.cs" />
-    <Compile Include="WO_WeldAllMembers.cs" />
+    <Compile Include="3. Project utilities\TransportElements.cs" />
+    <Compile Include="3. Project utilities\VisualizeJoints.cs" />
+    <Compile Include="3. Project utilities\WeldVolumeGenerator.cs" />
+    <Compile Include="4. Templates\WO_BoltedEndPlateConnection.cs" />
+    <Compile Include="4. Templates\WO_WeldAllMembers.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">

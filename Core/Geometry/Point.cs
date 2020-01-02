@@ -105,5 +105,16 @@ namespace KarambaIDEA.Core
             Point newpoint = new Point(x, y, z);
             return newpoint;
         }
+
+        public static Point MovePointByVectorandLength(Point point, Vector vector, double length)
+        {
+            vector = vector.Unitize();
+            Vector move = Vector.VecScalMultiply(vector, length);
+            double x = point.X + move.X;
+            double y = point.Y + move.Y;
+            double z = point.Z + move.Z;
+            Point newpoint = new Point(x, y, z);
+            return newpoint;
+        }
     }
 }

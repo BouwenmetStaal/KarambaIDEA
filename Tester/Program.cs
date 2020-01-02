@@ -21,15 +21,18 @@ namespace Tester
         [STAThread]
         static void Main()
         {
+            string filepath = "C:\\Data\\20191115214919\\C12-brandname\\APIproduced File - NotCorrect.ideaCon";
+            //KarambaIDEA.IDEA.MainVM("C:\Data\20191115214919\C12-brandname\APIproduced File - NotCorrect.ideaCon");
+            KarambaIDEA.IDEA.MainVM main = new MainVM(filepath);
 
-            
             Tester.GenerateTestJoint testrun = new GenerateTestJoint();
 
             //Define testjoint
             Joint joint = testrun.Testjoint();
 
+
             //Define workshop operations
-            //joint.workshopOperation = EnumWorkshopOperations.BoltedEndPlateConnection;
+            joint.workshopOperation = EnumWorkshopOperations.BoltedEndPlateConnection;
             
             //Define save path
             //joint.project.CreateFolder(@"C:\Data\");
@@ -41,7 +44,7 @@ namespace Tester
 
             //Run IDEA
             IdeaConnection ideaConnection = new IdeaConnection(joint);
-
+            
         }
         
     }

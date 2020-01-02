@@ -74,7 +74,6 @@ namespace KarambaIDEA.Grasshopper
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Joints", "Joints", "List of Joint objects of KarambaIdeaCore", GH_ParamAccess.list);
             
 
         }
@@ -220,6 +219,8 @@ namespace KarambaIDEA.Grasshopper
                 Element element = new Element(project, i, line, crosssection, groupnames[i], hierarchyId, rotationLCS[i]);
             }
 
+            
+
             //CREATE LIST OF LOADS
             //Here N,V,M are defined for the startpoint and endpoint of every line in the project.
             List<LoadsPerLine> loadsPerLines = new List<LoadsPerLine>();
@@ -266,7 +267,6 @@ namespace KarambaIDEA.Grasshopper
 
             //Link output
             DA.SetData(0, project);
-            DA.SetDataList(1, project.joints);
         }
 
 

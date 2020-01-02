@@ -105,7 +105,7 @@ namespace KarambaIDEA.IDEA
             }
             if (joint.workshopOperation == EnumWorkshopOperations.BoltedEndPlateConnection)
             {
-                WorkshopOperations.BoltedEndplateConnection(openModel);
+                WorkshopOperations.BoltedEndplateConnection(openModel, joint);
             }
             if (joint.workshopOperation == EnumWorkshopOperations.WeldAllMembers)
             {
@@ -259,81 +259,152 @@ namespace KarambaIDEA.IDEA
             BearingMember first = bearingMembers[0];
             BearingMember second = bearingMembers[1];
 
+            Element1D el1 = new Element1D();
+            Element1D el2 = new Element1D();
+
             //[A]=0=>[B]=1=>[C]
-            if(first.isStartPoint == false && second.isStartPoint == true)
+            if (first.isStartPoint == false && second.isStartPoint == true)
             {
                 pA = openModel.Point3D.First(a => a.Id == first.element.line.Start.id);
                 pB = openModel.Point3D.First(a => a.Id == first.element.line.End.id);
                 pB2 = openModel.Point3D.First(a => a.Id == second.element.line.Start.id);
                 pC = openModel.Point3D.First(a => a.Id == second.element.line.End.id);
+
+                List<Point3D> points = new List<Point3D>() { pA, pB, pB2, pC };
+
+                Point3D pointA = pA; //Endpoint of first member
+                Point3D pointB = pB; //Startpoint of first member
+                Point3D pointC = pC; //Endpoint of second member
+
+
+                LineSegment3D lineSegment1 = new LineSegment3D();
+                lineSegment1.Id = openModel.GetMaxId(lineSegment1) + 1;//volgerde id komt niet overeen wanneer lcs en tag niet samen oplopen
+                openModel.AddObject(lineSegment1);
+                lineSegment1.StartPoint = new ReferenceElement(pointA);
+                lineSegment1.EndPoint = new ReferenceElement(pointB);
+                polyLine3D.Segments.Add(new ReferenceElement(lineSegment1));
+
+                SetLCS(first, lineSegment1);
+
+                LineSegment3D lineSegment2 = new LineSegment3D();
+                lineSegment2.Id = openModel.GetMaxId(lineSegment2) + 1;
+                openModel.AddObject(lineSegment2);
+                lineSegment2.StartPoint = new ReferenceElement(pointB);
+                lineSegment2.EndPoint = new ReferenceElement(pointC);
+                polyLine3D.Segments.Add(new ReferenceElement(lineSegment2));
+
+                SetLCS(second, lineSegment2);
+
+                //create elements
+                //Element1D el1 = new Element1D();
+                //el1.Id = openModel.GetMaxId(el1) + 1; 
+
+                //Possibly id is linked with wrong line, pointcoordinates
+                el1.Id = first.element.id + 1; //Use of Id from Grasshopper Model + Plus One
+
+                el1.Name = "E" + el1.Id.ToString();
+                el1.Segment = new ReferenceElement(lineSegment1);
+                IdeaRS.OpenModel.CrossSection.CrossSection crossSection = openModel.CrossSection.First(a => a.Id == bearingMembers[0].element.crossSection.id);
+                el1.CrossSectionBegin = new ReferenceElement(crossSection);
+                el1.CrossSectionEnd = new ReferenceElement(crossSection);
+                //el1.RotationRx = bearingMembers[0].ElementRAZ.rotationLCS;
+                openModel.AddObject(el1);
+
+                //Element1D el2 = new Element1D();
+                //el2.Id = openModel.GetMaxId(el2) + 1;
+
+                //Possibly id is linked with wrong line, pointcoordinates
+                el2.Id = second.element.id + 1; //Use of Id from Grasshopper Model + Plus One
+
+                el2.Name = "E" + el2.Id.ToString();
+                el2.Segment = new ReferenceElement(lineSegment2);
+                el2.CrossSectionBegin = new ReferenceElement(crossSection);
+                el2.CrossSectionEnd = new ReferenceElement(crossSection);
+                //el2.RotationRx = bearingMembers[1].ElementRAZ.rotationLCS;
+                openModel.AddObject(el2);
             }
 
             //[A]<=0=[B]<=1=[C]
             if (first.isStartPoint == true && second.isStartPoint == false)
             {
+                
+                //Dit geval levert problemen op, de internekrachten worden verkeerd opgezet.
+                
                 pA = openModel.Point3D.First(a => a.Id == second.element.line.Start.id);
                 pB = openModel.Point3D.First(a => a.Id == second.element.line.End.id);
                 pB2 = openModel.Point3D.First(a => a.Id == first.element.line.Start.id);
                 pC = openModel.Point3D.First(a => a.Id == first.element.line.End.id);
+                /*
+                pA = openModel.Point3D.First(a => a.Id == first.element.line.End.id);
+                pB = openModel.Point3D.First(a => a.Id == first.element.line.Start.id);
+                pB2 = openModel.Point3D.First(a => a.Id == second.element.line.End.id);
+                pC = openModel.Point3D.First(a => a.Id == second.element.line.Start.id);
+                */
+
+                List<Point3D> points = new List<Point3D>() { pA, pB, pB2, pC };
+
+                Point3D pointA = pA; //Endpoint of first member
+                Point3D pointB = pB; //Startpoint of first member
+                Point3D pointC = pC; //Endpoint of second member
+
+                //Note: system does not like it when first segment, starts at middle point
+
+                LineSegment3D lineSegment1 = new LineSegment3D();
+                lineSegment1.Id = openModel.GetMaxId(lineSegment1) + 1;//volgerde id komt niet overeen wanneer lcs en tag niet samen oplopen
+                openModel.AddObject(lineSegment1);
+                lineSegment1.StartPoint = new ReferenceElement(pointA);
+                lineSegment1.EndPoint = new ReferenceElement(pointB);
+                polyLine3D.Segments.Add(new ReferenceElement(lineSegment1));
+
+                SetLCS(second, lineSegment1);
+
+                LineSegment3D lineSegment2 = new LineSegment3D();
+                lineSegment2.Id = openModel.GetMaxId(lineSegment2) + 1;
+                openModel.AddObject(lineSegment2);
+                lineSegment2.StartPoint = new ReferenceElement(pointB);
+                lineSegment2.EndPoint = new ReferenceElement(pointC);
+                polyLine3D.Segments.Add(new ReferenceElement(lineSegment2));
+
+                SetLCS(first, lineSegment2);
+
+                //create elements
+                //Element1D el1 = new Element1D();
+                //el1.Id = openModel.GetMaxId(el1) + 1; 
+
+                //Possibly id is linked with wrong line, pointcoordinates
+                el1.Id = second.element.id + 1; //Use of Id from Grasshopper Model + Plus One
+
+                el1.Name = "E" + el1.Id.ToString();
+                el1.Segment = new ReferenceElement(lineSegment1);
+                IdeaRS.OpenModel.CrossSection.CrossSection crossSection = openModel.CrossSection.First(a => a.Id == bearingMembers[0].element.crossSection.id);
+                el1.CrossSectionBegin = new ReferenceElement(crossSection);
+                el1.CrossSectionEnd = new ReferenceElement(crossSection);
+                //el1.RotationRx = bearingMembers[0].ElementRAZ.rotationLCS;
+                openModel.AddObject(el1);
+
+                //Element1D el2 = new Element1D();
+                //el2.Id = openModel.GetMaxId(el2) + 1;
+
+                //Possibly id is linked with wrong line, pointcoordinates
+                el2.Id = first.element.id + 1; //Use of Id from Grasshopper Model + Plus One
+
+                el2.Name = "E" + el2.Id.ToString();
+                el2.Segment = new ReferenceElement(lineSegment2);
+                el2.CrossSectionBegin = new ReferenceElement(crossSection);
+                el2.CrossSectionEnd = new ReferenceElement(crossSection);
+                //el2.RotationRx = bearingMembers[1].ElementRAZ.rotationLCS;
+                openModel.AddObject(el2);
+
             }
             /*
-            pA = openModel.Point3D.First(a => a.Id == bearingMembers[0].ideaLine.End.id);
-            pB = openModel.Point3D.First(a => a.Id == bearingMembers[0].ideaLine.Start.id);
-            pB2 = openModel.Point3D.First(a => a.Id == bearingMembers[1].ideaLine.Start.id);
-            pC = openModel.Point3D.First(a => a.Id == bearingMembers[1].ideaLine.End.id);
+            
+            pA = openModel.Point3D.First(a => a.Id == first.element.line.Start.id);
+            pB = openModel.Point3D.First(a => a.Id == first.element.line.End.id);
+            pB2 = openModel.Point3D.First(a => a.Id == second.element.line.Start.id);
+            pC = openModel.Point3D.First(a => a.Id == second.element.line.End.id);
             */
 
-
-            List<Point3D> points = new List<Point3D>() { pA, pB, pB2, pC };
-
-            Point3D pointA = pA; //Endpoint of first member
-            Point3D pointB = pB; //Startpoint of first member
-            Point3D pointC = pC; //Endpoint of second member
-
-
-            LineSegment3D lineSegment1 = new LineSegment3D();
-            lineSegment1.Id = openModel.GetMaxId(lineSegment1) + 1;
-            openModel.AddObject(lineSegment1);
-            lineSegment1.StartPoint = new ReferenceElement(pointA);
-            lineSegment1.EndPoint = new ReferenceElement(pointB);
-            polyLine3D.Segments.Add(new ReferenceElement(lineSegment1));
-
-            SetLCS(bearingMembers[0], lineSegment1);
-
-            LineSegment3D lineSegment2 = new LineSegment3D();
-            lineSegment2.Id = openModel.GetMaxId(lineSegment2) + 1;
-            openModel.AddObject(lineSegment2);
-            lineSegment2.StartPoint = new ReferenceElement(pointB);
-            lineSegment2.EndPoint = new ReferenceElement(pointC);
-            polyLine3D.Segments.Add(new ReferenceElement(lineSegment2));
             
-            SetLCS(bearingMembers[1], lineSegment2);
-
-            //create elements
-            Element1D el1 = new Element1D();
-            //el1.Id = openModel.GetMaxId(el1) + 1; 
-
-            el1.Id = bearingMembers[0].element.id + 1; //Use of Id from Grasshopper Model + Plus One
-
-            el1.Name = "E" + el1.Id.ToString();
-            el1.Segment = new ReferenceElement(lineSegment1);
-            IdeaRS.OpenModel.CrossSection.CrossSection crossSection = openModel.CrossSection.First(a => a.Id == bearingMembers[0].element.crossSection.id);
-            el1.CrossSectionBegin = new ReferenceElement(crossSection);
-            el1.CrossSectionEnd = new ReferenceElement(crossSection);
-            //el1.RotationRx = bearingMembers[0].ElementRAZ.rotationLCS;
-            openModel.AddObject(el1);
-
-            Element1D el2 = new Element1D();
-            //el2.Id = openModel.GetMaxId(el2) + 1;
-
-            el2.Id = bearingMembers[1].element.id + 1; //Use of Id from Grasshopper Model + Plus One
-
-            el2.Name = "E" + el2.Id.ToString();
-            el2.Segment = new ReferenceElement(lineSegment2);
-            el2.CrossSectionBegin = new ReferenceElement(crossSection);
-            el2.CrossSectionEnd = new ReferenceElement(crossSection);
-            //el2.RotationRx = bearingMembers[1].ElementRAZ.rotationLCS;
-            openModel.AddObject(el2);
 
             //create member
             Member1D member1D = new Member1D();
@@ -625,72 +696,15 @@ namespace KarambaIDEA.IDEA
 
         public void SetLCS(AttachedMember attachedMember, LineSegment3D lineSegment)
         {
-            //Defining LCS for First lineSegment
-            double xcor = attachedMember.element.line.vector.X;
-            double ycor = attachedMember.element.line.vector.Y;
-            double zcor = attachedMember.element.line.vector.Z;
-
             
-
-            //Define LCS (local-y in XY plane) and unitize
-            Vector vx = new Vector(xcor, ycor, zcor).Unitize();
-            Vector vy = new Vector();
-            Vector vz = new Vector();
-            if (xcor == 0.0 && ycor == 0.0)
-            {
-                vy = new Vector(0.0, 1.0, 0.0).Unitize();
-                vz = new Vector((-zcor), 0.0, (xcor)).Unitize();
-            }
-            else
-            {
-                vy = new Vector(-ycor, xcor, 0.0).Unitize();
-                vz = new Vector((-zcor * xcor), (-zcor * ycor), ((xcor * xcor) + (ycor * ycor))).Unitize();
-            }
-
-            if (attachedMember.element.rotationLCS == 0.0)
-            {
-
-            }
-            else
-            {
-                vy = Vector.RotateVector(vx, attachedMember.element.rotationLCS, vy);
-                vz = Vector.RotateVector(vx, attachedMember.element.rotationLCS, vz);
-            }
+            LocalCoordinateSystem lcs = attachedMember.element.localCoordinateSystem;
 
             var LocalCoordinateSystem = new CoordSystemByVector();
-            LocalCoordinateSystem.VecX = new Vector3D() { X = vx.X, Y = vx.Y, Z = vx.Z };
-            LocalCoordinateSystem.VecY = new Vector3D() { X = vy.X, Y = vy.Y, Z = vy.Z };
-            LocalCoordinateSystem.VecZ = new Vector3D() { X = vz.X, Y = vz.Y, Z = vz.Z };
+            LocalCoordinateSystem.VecX = new Vector3D() { X = lcs.X.X, Y = lcs.X.Y, Z = lcs.X.Z };
+            LocalCoordinateSystem.VecY = new Vector3D() { X = lcs.Y.X, Y = lcs.Y.Y, Z = lcs.Y.Z };
+            LocalCoordinateSystem.VecZ = new Vector3D() { X = lcs.Z.X, Y = lcs.Z.Y, Z = lcs.Z.Z };
 
             lineSegment.LocalCoordinateSystem = LocalCoordinateSystem;
         }
     }
-    //uitleg Martin 17-10-2019
-    /*
-    class test
-    {
-        public void doaction(workshopconnecionObject workshopconnecionObject)
-        {
-            workshopconnecionObject.action(openModel);
-        }
-    }
-
-    public class workshopconnecionObject
-    {
-        public virtual void action(OpenModel openModel)
-        { }
-    }
-
-    public class lassen : workshopconnecionObject
-    {
-        public override void action(OpenModel openModel)
-        { openModel.AddObject(VariableTyp);
-    }
-
-    public class lijmen : workshopconnecionObject
-    {
-        public override void action(OpenModel openModel)
-        { openModel.Beam; }
-    }
-    */
 }

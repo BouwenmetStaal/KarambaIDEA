@@ -79,8 +79,8 @@ namespace KarambaIDEA.IDEA
             
 
             // save to the files
-            //result.SaveToXmlFile("example.xmlR");
-            //example.SaveToXmlFile("example.xml");
+            result.SaveToXmlFile(Path.Combine(folder, joint.Name, "example.xmlR"));
+            example.SaveToXmlFile(Path.Combine(folder, joint.Name, "example.xml"));
 
             string filename = joint.Name + ".ideaCon";
 

@@ -49,6 +49,7 @@
     <Compile Include="Joint.cs" />
     <Compile Include="Geometry\Line.cs" />
     <Compile Include="LoadCase.cs" />
+    <Compile Include="LocalCoordinateSystem.cs" />
     <Compile Include="MaterialSteel.cs" />
     <Compile Include="Geometry\Point.cs" />
     <Compile Include="Project.cs" />

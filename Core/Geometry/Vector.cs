@@ -11,9 +11,9 @@ namespace KarambaIDEA.Core
 {
     public class Vector
     {
-        public double X;
-        public double Y;
-        public double Z;
+        public double X = 0d;
+        public double Y = 0d;
+        public double Z = 0d;
 
         public double length
         {
@@ -147,5 +147,7 @@ namespace KarambaIDEA.Core
             return vector;
           
         }
+
+        
     }
 }
