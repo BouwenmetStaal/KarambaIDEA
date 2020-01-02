@@ -177,7 +177,8 @@ namespace KarambaIDEA.IDEA
 
 
                     /*
-                    var conVM = (ConnectionVM)serviceDynamic;//Gaat mis var conVM = (ConnectionVM)param;
+                    //Using the methods of Calculate in here:
+                    var conVM = (ConnectionVM)serviceDynamic;//Goes wrong var conVM = (ConnectionVM)param;
 
                     //Running CBFEM and getting results
                     object resData = serviceDynamic.CalculateProject(conVM.ConnectionId);
