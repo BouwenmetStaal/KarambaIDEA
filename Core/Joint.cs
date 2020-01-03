@@ -22,7 +22,7 @@ namespace KarambaIDEA.Core
         public bool IsContinues;
         public double weldVolume;
         public string brandName;
-        public EnumWorkshopOperations workshopOperation;
+        public EnumWorkshopOperations template;
 
         public string Name
         {

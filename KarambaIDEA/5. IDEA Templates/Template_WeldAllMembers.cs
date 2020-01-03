@@ -17,9 +17,9 @@ using Grasshopper.Kernel.Types;
 
 namespace KarambaIDEA
 {
-    public class WO_BoltedEndPlateConnection : GH_Component
+    public class Template_WeldAllMembers : GH_Component
     {
-        public WO_BoltedEndPlateConnection() : base("Bolted endplate connection", "Bolted endplate connection", "Bolted endplate connection", "KarambaIDEA", "4. Workshop operations")
+        public Template_WeldAllMembers() : base("Weld all members", "Weld all members", "Weld all members", "KarambaIDEA", "5. IDEA Templates")
         {
 
         }
@@ -35,14 +35,14 @@ namespace KarambaIDEA
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Workshop Operations: Bolted endplate connection", "WO: Bolted endplate connection", "Bolted endplate connection", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Template: Weld all members", "Template: Weld all members", "All members in joint will be connected by weld according to the hierarchy", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-
+            
             //Input variables            
-
+            
             List<GH_String> brandNamesDirty = new List<GH_String>();
             List<string> brandNames = new List<string>();
 
@@ -50,13 +50,13 @@ namespace KarambaIDEA
             DA.GetDataList(0, brandNamesDirty);
 
             //process
-            if (brandNamesDirty.Where(x => x != null && !string.IsNullOrWhiteSpace(x.Value)).Count() > 0)
+            if (brandNamesDirty.Where(x=> x!=null&& !string.IsNullOrWhiteSpace(x.Value)).Count() > 0)
             {
                 List<string> brandNamesDirtyString = brandNamesDirty.Select(x => x.Value.ToString()).ToList();
                 brandNames = ImportGrasshopperUtils.DeleteEnterCommandsInGHStrings(brandNamesDirtyString);
-            }
+            }       
 
-            EnumWorkshopOperations operation = EnumWorkshopOperations.BoltedEndPlateConnection;
+            EnumWorkshopOperations operation = EnumWorkshopOperations.WeldAllMembers;
 
             //link output
             DA.SetData(0, operation);
@@ -76,7 +76,7 @@ namespace KarambaIDEA
         }
         public override Guid ComponentGuid
         {
-            get { return new Guid("c87e4243-ed21-492f-9d25-a599454de06f"); }
+            get { return new Guid("4052f7f6-024f-47de-85fe-33f67cb31130"); }
         }
 
 

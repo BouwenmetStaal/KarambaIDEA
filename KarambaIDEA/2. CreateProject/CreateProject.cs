@@ -24,9 +24,9 @@ namespace KarambaIDEA.Grasshopper
 
 
 
-    public class JointExporter : GH_Component
+    public class CreateProject : GH_Component
     {
-        public JointExporter() : base("Create Project", "CP", "Exporting selected joint to IDEA Statica Connection", "KarambaIDEA", "2. CreateProject")
+        public CreateProject() : base("Create Project", "CP", "Exporting selected joint to IDEA Statica Connection", "KarambaIDEA", "2. CreateProject")
         {
             //ensure loading of IDEA dllss
             AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(Utils.IdeaResolveEventHandler);

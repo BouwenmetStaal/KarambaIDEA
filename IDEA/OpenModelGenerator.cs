@@ -99,17 +99,17 @@ namespace KarambaIDEA.IDEA
             //enumerator
             //Delicate
 
-            if(joint.workshopOperation == EnumWorkshopOperations.NoOperation)
+            if(joint.template == EnumWorkshopOperations.NoOperation)
             {
 
             }
-            if (joint.workshopOperation == EnumWorkshopOperations.BoltedEndPlateConnection)
+            if (joint.template == EnumWorkshopOperations.BoltedEndPlateConnection)
             {
-                WorkshopOperations.BoltedEndplateConnection(openModel, joint);
+                Templates.BoltedEndplateConnection(openModel, joint);
             }
-            if (joint.workshopOperation == EnumWorkshopOperations.WeldAllMembers)
+            if (joint.template == EnumWorkshopOperations.WeldAllMembers)
             {
-                WorkshopOperations.WeldAllMembers(openModel);
+                Templates.WeldAllMembers(openModel);
             }
             
 

@@ -11,7 +11,7 @@ using System.Reflection;
 
 namespace KarambaIDEA.IDEA
 {
-    public class MainVM : INotifyPropertyChanged
+    public class HiddenCalculation : INotifyPropertyChanged
     {
         #region private fields
         public event PropertyChangedEventHandler PropertyChanged;
@@ -29,7 +29,7 @@ namespace KarambaIDEA.IDEA
         /// <summary>
         /// Constructor
         /// </summary>
-        public MainVM(string filepath)
+        public HiddenCalculation(string filepath)
         {
             //IdeaStatica needs to be initialized before running CBFEM -tr is done by creating the instance of 
             //IdeaRS.ConnectionLink.ConnectionLink it can be only once when an application starts.
@@ -56,6 +56,9 @@ namespace KarambaIDEA.IDEA
             }
 
             this.OpenAndCalculate(filepath);
+            
+
+            
             //this.Calculate(filepath);
             /*
             OpenProjectCmd = new CustomCommand(this.CanOpen, this.Open);//RAZ: openen van IDEA bestand
@@ -183,8 +186,27 @@ namespace KarambaIDEA.IDEA
                         var connectionId = (Guid)(con.Header.ConnectionID);
                         object resData = serviceDynamic.CalculateProject(connectionId);
                         ConnectionResultsData cbfemResults = (ConnectionResultsData)resData;
-                        int a = 0;
+
+                        List<CheckResSummary> result = cbfemResults.ConnectionCheckRes[0].CheckResSummary;
+                        double checkValueAnalysis = result[0].CheckValue;
+                        double checkValuePlates = result[1].CheckValue;
+                        double checkValueWelds = result[2].CheckValue;
+                        double checkValueBuckling = result[3].CheckValue;
+                        string message = string.Empty;
+                        foreach (var r in result)
+                        {
+                            message += r.Name + " " + r.UnityCheckMessage + " ";
+                        }
                     }
+
+                    
+
+                    //close file
+                    serviceDynamic.CloseServices();
+                    serviceDynamic = null;
+                    Service = null;
+                    Results = string.Empty;
+                    Connections.Clear();
                 }
                 catch (Exception e)
                 {
@@ -196,6 +218,7 @@ namespace KarambaIDEA.IDEA
                         Service = null;
                     }
                 }
+                
             }
         }
 

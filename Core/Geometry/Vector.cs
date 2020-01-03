@@ -85,9 +85,9 @@ namespace KarambaIDEA.Core
 
         }
 
-        static public double AngleBetweenVectors(Vector eerste, Vector tweede)
+        static public double AngleBetweenVectors(Vector first, Vector second)
         {
-            double ans = ((eerste.X * tweede.X) + (eerste.Y * tweede.Y) + (eerste.Z * tweede.Z)) / (eerste.length * tweede.length);
+            double ans = ((first.X * second.X) + (first.Y * second.Y) + (first.Z * second.Z)) / (first.length * second.length);
             //angle will be in most cases the smallest angle between the vectors.
             double angle = Math.Acos(ans);
             //reflexangle will be in most cases the largest angle between the vectors.

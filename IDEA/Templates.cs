@@ -17,7 +17,7 @@ using KarambaIDEA.Core;
 
 namespace KarambaIDEA.IDEA
 {
-    public class WorkshopOperations
+    public class Templates
     {
         static public OpenModel CutBeamByBeam(OpenModel openModel, int cuttingobject, int modifiedObject)
         {

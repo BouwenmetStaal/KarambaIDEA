@@ -12,9 +12,9 @@ using Grasshopper.Kernel.Data;
 
 namespace KarambaIDEA.Grasshopper
 {
-    public class LoadsToLoadsTrees2 : GH_Component
+    public class LoadConversionSCIA : GH_Component
     {
-        public LoadsToLoadsTrees2() : base("Convert Excel Loads from SCIA", "CEL", "Convert loads from Excel into dataTree format, these loads are imported from a datasheet, where loads are defined per mesh-length of the element. This component finds the start loads at the start of the element and the endloads based on the length of the element.", "KarambaIDEA", "1. Load-conversions")
+        public LoadConversionSCIA() : base("Convert Excel Loads from SCIA", "CEL", "Convert loads from Excel into dataTree format, these loads are imported from a datasheet, where loads are defined per mesh-length of the element. This component finds the start loads at the start of the element and the endloads based on the length of the element.", "KarambaIDEA", "1. Load-conversions")
         {
 
         }

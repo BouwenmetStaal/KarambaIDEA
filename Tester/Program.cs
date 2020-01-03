@@ -21,18 +21,19 @@ namespace Tester
         [STAThread]
         static void Main()
         {
+            /*
             string filepath = "C:\\Data\\20191115214919\\C12-brandname\\APIproduced File - NotCorrect.ideaCon";
-            //KarambaIDEA.IDEA.MainVM("C:\Data\20191115214919\C12-brandname\APIproduced File - NotCorrect.ideaCon");
-            KarambaIDEA.IDEA.MainVM main = new MainVM(filepath);
-
+            KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(filepath);
+            */
+            
             Tester.GenerateTestJoint testrun = new GenerateTestJoint();
 
             //Define testjoint
-            Joint joint = testrun.Testjoint();
+            Joint joint = testrun.Testjoint2();
 
 
             //Define workshop operations
-            joint.workshopOperation = EnumWorkshopOperations.BoltedEndPlateConnection;
+            joint.template = EnumWorkshopOperations.WeldAllMembers;
             
             //Define save path
             //joint.project.CreateFolder(@"C:\Data\");
@@ -42,9 +43,12 @@ namespace Tester
             AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
 
-            //Run IDEA
+            //Create IDEA file
             IdeaConnection ideaConnection = new IdeaConnection(joint);
+            string filepath = ideaConnection.filepath+".ideaCon";
+            KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(filepath);
             
+
         }
         
     }

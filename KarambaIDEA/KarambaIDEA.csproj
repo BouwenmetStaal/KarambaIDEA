@@ -103,15 +103,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="3. Project utilities\CheckLocalCoordinateSystem.cs" />
-    <Compile Include="3. Project utilities\CreateIDEAfile.cs" />
+    <Compile Include="4. IDEA utilities\CreateIDEAfile.cs" />
     <Compile Include="ImportGrasshopperUtils.cs" />
     <Compile Include="0. Utilities\CreateLinesFromNodes.cs" />
     <Compile Include="3. Project utilities\JointEquilibrium.cs" />
-    <Compile Include="2. CreateProject\JointExporter.cs" />
+    <Compile Include="2. CreateProject\CreateProject.cs" />
     <Compile Include="0. Utilities\JointVector.cs" />
     <Compile Include="0. Utilities\JointViewer.cs" />
-    <Compile Include="1. Load-conversions\LoadsToLoadsTrees.cs" />
-    <Compile Include="1. Load-conversions\LoadsToLoadsTrees2.cs" />
+    <Compile Include="1. Load-conversions\LoadConversionGSA.cs" />
+    <Compile Include="1. Load-conversions\LoadConversionSCIA.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
@@ -120,8 +120,8 @@
     <Compile Include="3. Project utilities\TransportElements.cs" />
     <Compile Include="3. Project utilities\VisualizeJoints.cs" />
     <Compile Include="3. Project utilities\WeldVolumeGenerator.cs" />
-    <Compile Include="4. Templates\WO_BoltedEndPlateConnection.cs" />
-    <Compile Include="4. Templates\WO_WeldAllMembers.cs" />
+    <Compile Include="5. IDEA Templates\Template_BoltedEndPlateConnection.cs" />
+    <Compile Include="5. IDEA Templates\Template_WeldAllMembers.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -171,6 +171,7 @@
       <Name>IDEA</Name>
     </ProjectReference>
   </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>Copy "$(TargetPath)" "$(TargetDir)$(ProjectName).gha"</PostBuildEvent>

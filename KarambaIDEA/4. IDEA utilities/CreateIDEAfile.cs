@@ -19,7 +19,7 @@ namespace KarambaIDEA
 {
     public class CreateIDEAfile : GH_Component
     {
-        public CreateIDEAfile() : base("Create IDEA File", "Create IDEA File", "Create IDEA file", "KarambaIDEA", "3. Project utilities")
+        public CreateIDEAfile() : base("Create IDEA File", "Create IDEA File", "Create IDEA file", "KarambaIDEA", "4. IDEA utilities")
         {
 
         }
@@ -28,7 +28,7 @@ namespace KarambaIDEA
         {
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
             pManager.AddTextParameter("Output folder ", "Output folder", "Save location of IDEA Statica Connection output file. For example: 'C:\\Data'", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Workshop Operations", "WO", "Workshop operations", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Template", "Template", "Template", GH_ParamAccess.item);
             pManager.AddBooleanParameter("RunAllJoints", "RunAllJoints", "If true run all joints, if false run ChooseJoint joint", GH_ParamAccess.item);
             pManager.AddIntegerParameter("ChooseJoint", "ChooseJoint", "Specify the joint that will be calculated in IDEA. Note: starts at zero.", GH_ParamAccess.item);
             pManager.AddBooleanParameter("RunIDEA", "RunIDEA", "Bool for running IDEA Statica Connection", GH_ParamAccess.item);
@@ -83,14 +83,14 @@ namespace KarambaIDEA
                 {
                     foreach(Joint joint in project.joints)
                     {
-                        joint.workshopOperation = workshopOperations;
+                        joint.template = workshopOperations;
                         IdeaConnection ideaConnection = new IdeaConnection(joint);
                     }
                 }
                 else
                 {
                     Joint joint = project.joints[calculateThisJoint];
-                    joint.workshopOperation = workshopOperations;
+                    joint.template = workshopOperations;
                     IdeaConnection ideaConnection = new IdeaConnection(joint);
                 }              
                 
