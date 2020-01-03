@@ -23,6 +23,14 @@ namespace KarambaIDEA.Core
             }
         }
 
+        public double Length
+        {
+            get
+            {
+                return LengthLine(this); 
+            }
+        }
+
 
         public Line()
         {
@@ -118,6 +126,14 @@ namespace KarambaIDEA.Core
             Point end = Point.MovePointToOrigin(centerpoint, line.End);
             Line newline = new Line(start, end);
             return newline;
+        }
+
+        public static double LengthLine(Line line)
+        {
+            Point st = line.Start;
+            Point end = line.End;
+            double length = Math.Pow(end.X - st.X, 2) + Math.Pow(end.Y - st.Y, 2) + Math.Pow(end.Z - st.Z, 2);
+            return Math.Sqrt(length);
         }
     }
 }

@@ -22,6 +22,7 @@ namespace KarambaIDEA
         {
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
             pManager.AddNumberParameter("Max Length", "Max Length", "Maximum length of 1D element", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Max Angle [rad]", "Max Angle [rad]", "Maximum angle in radians between elements", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -35,11 +36,13 @@ namespace KarambaIDEA
         {
             //Input variables
             Project project = new Project();
-            double length = new double();
+            double maxLength = 0.0;
+            double maxAngle = 0.0;
 
             //Link input
             DA.GetData(0, ref project);
-            DA.GetData(1, ref length);
+            DA.GetData(1, ref maxLength);
+            DA.GetData(2, ref maxAngle);
 
             //output variables
             //List<Rhino.Geometry.Line> lines = new List<Rhino.Geometry.Line>();
@@ -73,11 +76,22 @@ namespace KarambaIDEA
                 List<Element> templist = new List<Element>();
                 hierarchydata.RemoveAt(0);
                 templist = hierarchydata;
+                double length = element.line.Length;
 
                 next:
                 foreach (Element ele1 in templist)
                 {
-                    if(element.line.End == ele1.line.Start)//Forward integration
+                    double angle = Vector.AngleBetweenVectors(element.line.vector, ele1.line.vector);
+
+                    if (length > maxLength)//length is longer than maximum transport length, so cut element
+                    {
+                        double overLength = length - maxLength;
+                        //where to start end of line or start of line?
+                        //What if the length of the first line already exceeds the maxLenght?
+                    }
+
+
+                    if (element.line.End == ele1.line.Start && angle < maxAngle)//Forward integration
                     {
                         //add element to list
                         path = new GH_Path(a, b);
@@ -91,7 +105,7 @@ namespace KarambaIDEA
 
                         goto next;
                     }
-                    if (element.line.Start == ele1.line.End)//Backward integration
+                    if (element.line.Start == ele1.line.End && angle < maxAngle)//Backward integration
                     {
                         //add element to list
                         path = new GH_Path(a, b);

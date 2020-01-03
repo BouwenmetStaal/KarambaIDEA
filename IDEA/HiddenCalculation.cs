@@ -55,8 +55,8 @@ namespace KarambaIDEA.IDEA
                 StatusMessage = string.Format("ERROR IdeaStatiCa doesn't exist in '{0}'", ideaStatiCaDir);
             }
 
-            this.Open(filepath);
-            this.Calculate(filepath);
+            this.OpenAndCalculate(filepath);
+            //this.Calculate(filepath);
             /*
             OpenProjectCmd = new CustomCommand(this.CanOpen, this.Open);//RAZ: openen van IDEA bestand
             CloseProjectCmd = new CustomCommand(this.CanClose, this.Close);
@@ -151,7 +151,7 @@ namespace KarambaIDEA.IDEA
        /// 
        /// </summary>
        /// <param name="filepath">full filepath of .IdeaCon file</param>
-        public void Open(string filepath) //RAZ: open the IDEA-file
+        public void OpenAndCalculate(string filepath) //RAZ: open the IDEA-file
         {
             //OpenFileDialog openFileDialog = new OpenFileDialog();
             //openFileDialog.Filter = "IdeaConnection | *.ideacon";
@@ -174,22 +174,17 @@ namespace KarambaIDEA.IDEA
                     List<ConnectionVM> connectionsVm = GetConnectionViewModels();
 
                     this.Connections = new ObservableCollection<ConnectionVM>(connectionsVm);
-
-
-                    /*
-                    //Using the methods of Calculate in here:
-                    var conVM = (ConnectionVM)serviceDynamic;//Goes wrong var conVM = (ConnectionVM)param;
-
-                    //Running CBFEM and getting results
-                    object resData = serviceDynamic.CalculateProject(conVM.ConnectionId);
-                    ConnectionResultsData cbfemResults = (ConnectionResultsData)resData;
-
-                    */
-
-                    
-
-
-
+                                       
+                    // calculate all connections in the project
+                    var projectData = serviceDynamic.ConDataContract;
+                    //var con2 = projectData.Connections[0];
+                    foreach (var con in projectData.Connections.Values)
+                    {
+                        var connectionId = (Guid)(con.Header.ConnectionID);
+                        object resData = serviceDynamic.CalculateProject(connectionId);
+                        ConnectionResultsData cbfemResults = (ConnectionResultsData)resData;
+                        int a = 0;
+                    }
                 }
                 catch (Exception e)
                 {
@@ -252,14 +247,8 @@ namespace KarambaIDEA.IDEA
                 var conVM = (ConnectionVM)param;
 
                 //Running CBFEM and getting results
-                object resData = serviceDynamic.CalculateProject(conVM.ConnectionId);
-                ConnectionResultsData cbfemResults = (ConnectionResultsData)resData;
-
-                //The example of getting the geometry of the connection an its serialization it into JSON
-                if (cbfemResults != null) //RAZ: result data
-                {
-                   
-                }
+                
+                
             }
             catch (Exception e)
             {
