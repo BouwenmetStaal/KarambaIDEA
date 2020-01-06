@@ -21,11 +21,12 @@ namespace Tester
         [STAThread]
         static void Main()
         {
-            /*
-            string filepath = "C:\\Data\\20191115214919\\C12-brandname\\APIproduced File - NotCorrect.ideaCon";
-            KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(filepath);
-            */
+
+            Joint joint = new Joint();
+            joint.jointFilePath = "C:\\Data\\20191115214919\\C12-brandname\\APIproduced File - NotCorrect.ideaCon";
+            KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(joint);
             
+            /*
             Tester.GenerateTestJoint testrun = new GenerateTestJoint();
 
             //Define testjoint
@@ -47,7 +48,7 @@ namespace Tester
             IdeaConnection ideaConnection = new IdeaConnection(joint);
             string filepath = ideaConnection.filepath+".ideaCon";
             KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(filepath);
-            
+            */
 
         }
         

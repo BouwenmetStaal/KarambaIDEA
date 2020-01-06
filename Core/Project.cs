@@ -27,7 +27,7 @@ namespace KarambaIDEA.Core
         public double minthroat;
 #warning: below properties should be part of IDEA
         
-        public string folderpath;
+        public string projectFolderPath;
 
         public List<Point> points = new List<Point>();
         public List<Element> elements = new List<Element>();
@@ -128,12 +128,12 @@ namespace KarambaIDEA.Core
                
             }            
                         
-            this.folderpath = Path.Combine(pathlocation, timeStamp);
-            if (!Directory.Exists(this.folderpath))
+            this.projectFolderPath = Path.Combine(pathlocation, timeStamp);
+            if (!Directory.Exists(this.projectFolderPath))
             {
-                if (Uri.IsWellFormedUriString(folderpath, UriKind.Absolute))
+                if (Uri.IsWellFormedUriString(projectFolderPath, UriKind.Absolute))
                 {
-                    Directory.CreateDirectory(this.folderpath);
+                    Directory.CreateDirectory(this.projectFolderPath);
                 }
                 else
                 {

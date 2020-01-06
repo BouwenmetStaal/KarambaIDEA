@@ -8,6 +8,7 @@ using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Reflection;
+using KarambaIDEA.Core;
 
 namespace KarambaIDEA.IDEA
 {
@@ -23,14 +24,17 @@ namespace KarambaIDEA.IDEA
         dynamic serviceDynamic;
         ObservableCollection<ConnectionVM> connections;
         string results;
+        public Joint joint;
         #endregion
 
         #region Constructor
         /// <summary>
         /// Constructor
         /// </summary>
-        public HiddenCalculation(string filepath)
+        public HiddenCalculation(Joint _joint)
         {
+            //1.set joint
+            joint = _joint;
             //IdeaStatica needs to be initialized before running CBFEM -tr is done by creating the instance of 
             //IdeaRS.ConnectionLink.ConnectionLink it can be only once when an application starts.
             connections = new ObservableCollection<ConnectionVM>();
@@ -55,9 +59,7 @@ namespace KarambaIDEA.IDEA
                 StatusMessage = string.Format("ERROR IdeaStatiCa doesn't exist in '{0}'", ideaStatiCaDir);
             }
 
-            this.OpenAndCalculate(filepath);
-            
-
+            this.OpenAndCalculate(joint);
             
             //this.Calculate(filepath);
             /*
@@ -154,8 +156,9 @@ namespace KarambaIDEA.IDEA
        /// 
        /// </summary>
        /// <param name="filepath">full filepath of .IdeaCon file</param>
-        public void OpenAndCalculate(string filepath) //RAZ: open the IDEA-file
+        public void OpenAndCalculate(Joint joint) //RAZ: open the IDEA-file
         {
+            string filepath = joint.jointFilePath;
             //OpenFileDialog openFileDialog = new OpenFileDialog();
             //openFileDialog.Filter = "IdeaConnection | *.ideacon";
             if (filepath != null)
@@ -181,25 +184,19 @@ namespace KarambaIDEA.IDEA
                     // calculate all connections in the project
                     var projectData = serviceDynamic.ConDataContract;
                     //var con2 = projectData.Connections[0];
+
+                    Guid connectionId = new Guid();
+                    
                     foreach (var con in projectData.Connections.Values)
                     {
-                        var connectionId = (Guid)(con.Header.ConnectionID);
-                        object resData = serviceDynamic.CalculateProject(connectionId);
-                        ConnectionResultsData cbfemResults = (ConnectionResultsData)resData;
-
-                        List<CheckResSummary> result = cbfemResults.ConnectionCheckRes[0].CheckResSummary;
-                        double checkValueAnalysis = result[0].CheckValue;
-                        double checkValuePlates = result[1].CheckValue;
-                        double checkValueWelds = result[2].CheckValue;
-                        double checkValueBuckling = result[3].CheckValue;
-                        string message = string.Empty;
-                        foreach (var r in result)
-                        {
-                            message += r.Name + " " + r.UnityCheckMessage + " ";
-                        }
+                        connectionId = (Guid)(con.Header.ConnectionID);
                     }
-
+                   
+                    object resData = serviceDynamic.CalculateProject(connectionId);
+                    ConnectionResultsData cbfemResults = (ConnectionResultsData)resData;
+                    //SaveResultsSummary(joint, cbfemResults);
                     
+                    SaveResultsSummary(joint, cbfemResults);
 
                     //close file
                     serviceDynamic.CloseServices();
@@ -218,8 +215,25 @@ namespace KarambaIDEA.IDEA
                         Service = null;
                     }
                 }
-                
             }
+        }
+
+        public void SaveResultsSummary(Joint joint, ConnectionResultsData cbfemResults)
+        {
+            List<CheckResSummary> result = cbfemResults.ConnectionCheckRes[0].CheckResSummary;
+            joint.ResultsSummary = new ResultsSummary();
+
+            joint.ResultsSummary.analysis = result[0].CheckValue;
+            joint.ResultsSummary.plates = result[1].CheckValue;
+            joint.ResultsSummary.welds = result[2].CheckValue;
+            joint.ResultsSummary.buckling = result[3].CheckValue;
+            string message = string.Empty;
+            foreach (var r in result)
+            {
+                message += r.Name + " " + r.UnityCheckMessage + " ";
+            }
+            joint.ResultsSummary.summary = message;
+
         }
 
         /// <summary>
@@ -346,5 +360,7 @@ namespace KarambaIDEA.IDEA
         {
             PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
         }
+
+        
     }
 }

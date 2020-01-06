@@ -21,8 +21,11 @@ namespace KarambaIDEA
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddTextParameter("GroupNames", "GroupNames", "GroupNames/Hierarchies that will be asseset in algorithm", GH_ParamAccess.list);
             pManager.AddNumberParameter("Max Length", "Max Length", "Maximum length of 1D element", GH_ParamAccess.item);
             pManager.AddNumberParameter("Max Angle [rad]", "Max Angle [rad]", "Maximum angle in radians between elements", GH_ParamAccess.item);
+            //TODO: add hierarchy, only members of the set hierarchies will be asseset
+
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -36,13 +39,20 @@ namespace KarambaIDEA
         {
             //Input variables
             Project project = new Project();
+            List<string> groupNamesDirty = new List<string>();
+            List<string> groupNames = new List<string>();
+
             double maxLength = 0.0;
             double maxAngle = 0.0;
 
             //Link input
             DA.GetData(0, ref project);
-            DA.GetData(1, ref maxLength);
-            DA.GetData(2, ref maxAngle);
+            DA.GetDataList(1, groupNamesDirty);
+            DA.GetData(2, ref maxLength);
+            DA.GetData(3, ref maxAngle);
+
+            //Clean groupnames list from nextline ("\r\n") command produced by Karamba
+            groupNames = ImportGrasshopperUtils.DeleteEnterCommandsInGHStrings(groupNamesDirty);
 
             //output variables
             //List<Rhino.Geometry.Line> lines = new List<Rhino.Geometry.Line>();

@@ -49,7 +49,7 @@ namespace KarambaIDEA.IDEA
             //TODO: make sure only one folder is created now two folders are created.
 
             //2.create folder
-            string folder = this.joint.project.folderpath;
+            string folder = this.joint.project.projectFolderPath;
             filepath = Path.Combine(folder, this.joint.Name);
             if (!Directory.Exists(this.filepath))
             {

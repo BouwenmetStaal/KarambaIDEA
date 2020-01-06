@@ -23,6 +23,8 @@ namespace KarambaIDEA.Core
         public double weldVolume;
         public string brandName;
         public EnumWorkshopOperations template;
+        public string jointFilePath;
+        public ResultsSummary ResultsSummary;
 
         public string Name
         {
@@ -44,6 +46,11 @@ namespace KarambaIDEA.Core
         /// <param name="_isWarrenEccentricJoint"></param>
         /// <param name="_bearingMemberUnitVector"></param>
         /// <param name="_IsContinues">defines wether joint is continues or ended</param>
+        public Joint()
+        {
+
+        }
+
         public Joint(Project _project, int _id, List<int> _beamIDs, List<AttachedMember> _attachedMembers, Point _centralNodeOfJoint, double _globaleccenticitylength, Vector _bearingMemberUnitVector, bool _IsContinues)
         {
             this.project = _project;
