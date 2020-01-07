@@ -25,7 +25,7 @@ namespace KarambaIDEA.IDEA
         public OpenModelResult openModelResult = new OpenModelResult() { ResultOnMembers = new List<ResultOnMembers>() };
 
 
-		public string CreateOpenModelGenerator(Joint joint, string path)
+		public string CreateOpenModel(Joint joint, string path)
         {
             //1.Set general project settings
             openModel.OriginSettings = new OriginSettings();
@@ -55,8 +55,8 @@ namespace KarambaIDEA.IDEA
             }
 
             //4.add all relevant nodes:
-            List<KarambaIDEA.Core.Point> startpoints = joint.attachedMembers.Select(a => a.ideaLine.Start).ToList();
-            List<KarambaIDEA.Core.Point> endpoints = joint.attachedMembers.Select(a => a.ideaLine.End).ToList();
+            List<KarambaIDEA.Core.Point> startpoints = joint.attachedMembers.Select(a => a.ideaLine.start).ToList();
+            List<KarambaIDEA.Core.Point> endpoints = joint.attachedMembers.Select(a => a.ideaLine.end).ToList();
             List<KarambaIDEA.Core.Point> points = startpoints.Union(endpoints).Distinct().ToList();
             foreach (KarambaIDEA.Core.Point p in points)
             {
@@ -137,15 +137,15 @@ namespace KarambaIDEA.IDEA
         {
 
             MatSteelEc2 matOM = new MatSteelEc2();
-            matOM.Id = material.id;
-            matOM.Name = material.name;
+            matOM.Id = material.Id;
+            matOM.Name = material.Name;
             matOM.E = 210000000;
             matOM.Poisson = 0.3;
             matOM.UnitMass = 7870 / 9.81;
-            matOM.fu = material.fu * Math.Pow(10, 6);// 430000000;
-            matOM.fy = material.fy * Math.Pow(10, 6);// 275000000;
-            matOM.fu40 = material.fu40 * Math.Pow(10, 6);// 410000000;
-            matOM.fy40 = material.fy40 * Math.Pow(10, 6);// 255000000;
+            matOM.fu = material.Fu * Math.Pow(10, 6);// 430000000;
+            matOM.fy = material.Fy * Math.Pow(10, 6);// 275000000;
+            matOM.fu40 = material.Fu40 * Math.Pow(10, 6);// 410000000;
+            matOM.fy40 = material.Fy40 * Math.Pow(10, 6);// 255000000;
             matOM.SpecificHeat = 0.49;
             matOM.ThermalConductivity = 50.2;
             matOM.ThermalExpansion = 0.000012;
@@ -159,17 +159,17 @@ namespace KarambaIDEA.IDEA
             {
                 case KarambaIDEA.Core.CrossSection.Shape.ISection:
                     {
-                        AddRolledCSS(crossSection);
+                        AddRolledcrossSection(crossSection);
                         return;
                     }
-                case KarambaIDEA.Core.CrossSection.Shape.HollowSection:
+                case KarambaIDEA.Core.CrossSection.Shape.SHSSection:
                     {
-                        AddHollowCSS(crossSection);
+                        AddSHScrossSection(crossSection);
                         return;
                     }
                 case KarambaIDEA.Core.CrossSection.Shape.CHSsection:
                     {
-                        AddchsCSS(crossSection);
+                        AddCHScrossSection(crossSection);
                         return;
                     }
                 default:
@@ -178,38 +178,12 @@ namespace KarambaIDEA.IDEA
                     }
             }
         }
-        private void AddHollowCSS(KarambaIDEA.Core.CrossSection crossSection)
-        {
-            CrossSectionParameter hollow = new CrossSectionParameter();
-            hollow.Id = crossSection.id;
-            MatSteel material = openModel.MatSteel.First(a => a.Id == crossSection.material.id);
-            hollow.Material = new ReferenceElement(material);
-            hollow.Name = crossSection.name;
-            double height = crossSection.height / 1000;
-            double width = crossSection.width / 1000;
-            double tweb = crossSection.thicknessWeb / 1000;
-            double tflange = crossSection.thicknessFlange / 1000;
-            double radius = crossSection.radius / 1000;
-            //CrossSectionFactory.FillCssRectangleHollow(hollow, width, height, tweb, tweb, tflange, tflange);
-            CrossSectionFactory.FillCssSteelRectangularHollow(hollow, height, width, tweb, tweb, 2 * tweb, tflange);
-            //height
-            //width
-            //thickness
-            //innerradius
-            //outerradius
-            //unkown
-            //CrossSectionFactory.FillCssSteelChannel(hollow, height, width, tweb, tflange, radius, radius, 0);
-
-            openModel.AddObject(hollow);
-
-
-        }
-        private void AddRolledCSS(KarambaIDEA.Core.CrossSection crossSection)
+        private void AddRolledcrossSection(KarambaIDEA.Core.CrossSection crossSection)
         {
             CrossSectionParameter crossSectionParameter = new CrossSectionParameter();
-            crossSectionParameter.Id = crossSection.id;
+            crossSectionParameter.Id = crossSection.Id;
             //find related material:
-            MatSteel material = openModel.MatSteel.First(a => a.Id == crossSection.material.id);
+            MatSteel material = openModel.MatSteel.First(a => a.Id == crossSection.material.Id);
             crossSectionParameter.Material = new ReferenceElement(material);
             //set cross section type
             crossSectionParameter.CrossSectionType = CrossSectionType.RolledI;
@@ -217,11 +191,27 @@ namespace KarambaIDEA.IDEA
             crossSectionParameter.Parameters.Add(new ParameterString() { Name = "UniqueName", Value = crossSection.name });
             openModel.AddObject(crossSectionParameter);
         }
-        private void AddchsCSS(KarambaIDEA.Core.CrossSection crossSection)
+        private void AddSHScrossSection(KarambaIDEA.Core.CrossSection crossSection)
+        {
+            CrossSectionParameter hollow = new CrossSectionParameter();
+            hollow.Id = crossSection.Id;
+            MatSteel material = openModel.MatSteel.First(a => a.Id == crossSection.material.Id);
+            hollow.Material = new ReferenceElement(material);
+            hollow.Name = crossSection.name;
+            double height = crossSection.height / 1000;
+            double width = crossSection.width / 1000;
+            double tweb = crossSection.thicknessWeb / 1000;
+            double tflange = crossSection.thicknessFlange / 1000;
+            double radius = crossSection.radius / 1000;
+            CrossSectionFactory.FillCssSteelRectangularHollow(hollow, height, width, tweb, tweb, 2 * tweb, tflange);
+            openModel.AddObject(hollow);
+        }
+        
+        private void AddCHScrossSection(KarambaIDEA.Core.CrossSection crossSection)
         {
             CrossSectionParameter chs = new CrossSectionParameter();
-            chs.Id = crossSection.id;
-            MatSteel material = openModel.MatSteel.First(a => a.Id == crossSection.material.id);
+            chs.Id = crossSection.Id;
+            MatSteel material = openModel.MatSteel.First(a => a.Id == crossSection.material.Id);
             chs.Material = new ReferenceElement(material);
             chs.Name = crossSection.name;
             double height = crossSection.height / 1000/2; //adjust to radius
@@ -265,10 +255,10 @@ namespace KarambaIDEA.IDEA
             //[A]=0=>[B]=1=>[C]
             if (first.isStartPoint == false && second.isStartPoint == true)
             {
-                pA = openModel.Point3D.First(a => a.Id == first.element.line.Start.id);
-                pB = openModel.Point3D.First(a => a.Id == first.element.line.End.id);
-                pB2 = openModel.Point3D.First(a => a.Id == second.element.line.Start.id);
-                pC = openModel.Point3D.First(a => a.Id == second.element.line.End.id);
+                pA = openModel.Point3D.First(a => a.Id == first.element.line.start.id);
+                pB = openModel.Point3D.First(a => a.Id == first.element.line.end.id);
+                pB2 = openModel.Point3D.First(a => a.Id == second.element.line.start.id);
+                pC = openModel.Point3D.First(a => a.Id == second.element.line.end.id);
 
                 List<Point3D> points = new List<Point3D>() { pA, pB, pB2, pC };
 
@@ -304,7 +294,7 @@ namespace KarambaIDEA.IDEA
 
                 el1.Name = "E" + el1.Id.ToString();
                 el1.Segment = new ReferenceElement(lineSegment1);
-                IdeaRS.OpenModel.CrossSection.CrossSection crossSection = openModel.CrossSection.First(a => a.Id == bearingMembers[0].element.crossSection.id);
+                IdeaRS.OpenModel.CrossSection.CrossSection crossSection = openModel.CrossSection.First(a => a.Id == bearingMembers[0].element.crossSection.Id);
                 el1.CrossSectionBegin = new ReferenceElement(crossSection);
                 el1.CrossSectionEnd = new ReferenceElement(crossSection);
                 //el1.RotationRx = bearingMembers[0].ElementRAZ.rotationLCS;
@@ -330,10 +320,10 @@ namespace KarambaIDEA.IDEA
                 
                 //Dit geval levert problemen op, de internekrachten worden verkeerd opgezet.
                 
-                pA = openModel.Point3D.First(a => a.Id == second.element.line.Start.id);
-                pB = openModel.Point3D.First(a => a.Id == second.element.line.End.id);
-                pB2 = openModel.Point3D.First(a => a.Id == first.element.line.Start.id);
-                pC = openModel.Point3D.First(a => a.Id == first.element.line.End.id);
+                pA = openModel.Point3D.First(a => a.Id == second.element.line.start.id);
+                pB = openModel.Point3D.First(a => a.Id == second.element.line.end.id);
+                pB2 = openModel.Point3D.First(a => a.Id == first.element.line.start.id);
+                pC = openModel.Point3D.First(a => a.Id == first.element.line.end.id);
                 /*
                 pA = openModel.Point3D.First(a => a.Id == first.element.line.End.id);
                 pB = openModel.Point3D.First(a => a.Id == first.element.line.Start.id);
@@ -376,7 +366,7 @@ namespace KarambaIDEA.IDEA
 
                 el1.Name = "E" + el1.Id.ToString();
                 el1.Segment = new ReferenceElement(lineSegment1);
-                IdeaRS.OpenModel.CrossSection.CrossSection crossSection = openModel.CrossSection.First(a => a.Id == bearingMembers[0].element.crossSection.id);
+                IdeaRS.OpenModel.CrossSection.CrossSection crossSection = openModel.CrossSection.First(a => a.Id == bearingMembers[0].element.crossSection.Id);
                 el1.CrossSectionBegin = new ReferenceElement(crossSection);
                 el1.CrossSectionEnd = new ReferenceElement(crossSection);
                 //el1.RotationRx = bearingMembers[0].ElementRAZ.rotationLCS;
@@ -442,8 +432,8 @@ namespace KarambaIDEA.IDEA
             Point3D pA = openModel.Point3D.First(a => a.Id == attachedMember.ideaLine.Start.id);
             Point3D pB = openModel.Point3D.First(a => a.Id == attachedMember.ideaLine.End.id);
             */
-            Point3D pA = openModel.Point3D.First(a => a.Id == attachedMember.element.line.Start.id);
-            Point3D pB = openModel.Point3D.First(a => a.Id == attachedMember.element.line.End.id);
+            Point3D pA = openModel.Point3D.First(a => a.Id == attachedMember.element.line.start.id);
+            Point3D pB = openModel.Point3D.First(a => a.Id == attachedMember.element.line.end.id);
 
             //create line segment
             LineSegment3D lineSegment = new LineSegment3D();
@@ -465,7 +455,7 @@ namespace KarambaIDEA.IDEA
             element1D.Name = "Element " + element1D.Id.ToString();
             element1D.Segment = new ReferenceElement(lineSegment);
 
-            IdeaRS.OpenModel.CrossSection.CrossSection crossSection = openModel.CrossSection.First(a => a.Id == attachedMember.element.crossSection.id);
+            IdeaRS.OpenModel.CrossSection.CrossSection crossSection = openModel.CrossSection.First(a => a.Id == attachedMember.element.crossSection.Id);
             element1D.CrossSectionBegin = new ReferenceElement(crossSection);
             element1D.CrossSectionEnd = new ReferenceElement(crossSection);
             //element1D.RotationRx = attachedMember.ElementRAZ.rotationLCS;
@@ -607,10 +597,6 @@ namespace KarambaIDEA.IDEA
                                     //Test set sign to -1 iso 1
                                     SetStartLoads(1, joint, GrassLCId, GrassId, resLoadCase, resSec);
                                 }
-
-                                
-                                
-
                             }
                             else//isEndPoint
                             {
@@ -629,7 +615,6 @@ namespace KarambaIDEA.IDEA
                         resMember.Results.Add(resSec);
                     }
                     resultIF.Members.Add(resMember);
-
                 }
             }
             openModelResult.ResultOnMembers.Add(resultIF);
@@ -696,7 +681,6 @@ namespace KarambaIDEA.IDEA
 
         public void SetLCS(AttachedMember attachedMember, LineSegment3D lineSegment)
         {
-            
             LocalCoordinateSystem lcs = attachedMember.element.localCoordinateSystem;
 
             var LocalCoordinateSystem = new CoordSystemByVector();

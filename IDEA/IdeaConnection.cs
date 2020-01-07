@@ -27,14 +27,12 @@ namespace KarambaIDEA.IDEA
     public class IdeaConnection
     {
         public Lazy<dynamic> dynLinkLazy;
-
         public OpenModelGenerator openModelGenerator;
-
         public Joint joint;
         private Guid ideaConnectionIdentifier = Guid.Empty;
 
 
-        public string filepath = "";
+        public string filePath = "";
         private static string IdeaInstallDir;
 
         /// <summary>
@@ -50,10 +48,10 @@ namespace KarambaIDEA.IDEA
 
             //2.create folder
             string folder = this.joint.project.projectFolderPath;
-            filepath = Path.Combine(folder, this.joint.Name);
-            if (!Directory.Exists(this.filepath))
+            filePath = Path.Combine(folder, this.joint.Name);
+            if (!Directory.Exists(this.filePath))
             {
-                Directory.CreateDirectory(this.filepath);
+                Directory.CreateDirectory(this.filePath);
             }
             
 
@@ -70,7 +68,7 @@ namespace KarambaIDEA.IDEA
 
 
             openModelGenerator = new OpenModelGenerator();
-            openModelGenerator.CreateOpenModelGenerator(joint, filepath);
+            openModelGenerator.CreateOpenModel(joint, filePath);
 
             // create IOM and results
             OpenModel example = openModelGenerator.openModel;
@@ -119,13 +117,11 @@ namespace KarambaIDEA.IDEA
         private static Assembly IdeaResolveEventHandler(object sender, ResolveEventArgs args)
         {
             AssemblyName asmName = new AssemblyName(args.Name);
-
             string assemblyFileName = System.IO.Path.Combine(IdeaInstallDir, asmName.Name + ".dll");
             if (System.IO.File.Exists(assemblyFileName))
             {
                 return Assembly.LoadFile(assemblyFileName);
             }
-
             return args.RequestingAssembly;
         }
     }

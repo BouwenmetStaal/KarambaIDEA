@@ -20,9 +20,10 @@ namespace KarambaIDEA.Core
         public CrossSection crossSection;
         public string groupname;
         public double rotationLCS;
-        public SawingCut startCut;
-        public SawingCut endCut;
         public LocalCoordinateSystem localCoordinateSystem = new LocalCoordinateSystem();
+        public SawingCuts.SawingCut startCut;
+        public SawingCuts.SawingCut endCut;
+        
 
 
         /// <summary>
@@ -55,13 +56,7 @@ namespace KarambaIDEA.Core
         {
 
         }
-        public enum SawingCut
-        {
-            NoCut = 0,
-            RightAngledCut = 1,
-            SingleMiterCut = 2,
-            DoubleMiterCut = 3
-        }
+        
 
         public void UpdateLocalCoordinateSystem()
         {
@@ -70,9 +65,9 @@ namespace KarambaIDEA.Core
                 throw new ArgumentNullException("The field line cannot be null");
             }
             //Defining LCS for First lineSegment
-            double xcor = this.line.vector.X;
-            double ycor = this.line.vector.Y;
-            double zcor = this.line.vector.Z;
+            double xcor = this.line.Vector.X;
+            double ycor = this.line.Vector.Y;
+            double zcor = this.line.Vector.Z;
 
             //Define LCS (local-y in XY plane) and unitize
             Vector vx = new Vector(xcor, ycor, zcor).Unitize();
@@ -101,8 +96,6 @@ namespace KarambaIDEA.Core
             this.localCoordinateSystem.Z = vz;
 
         }
-
-
         public string BeginThroatsElement()
         {
             string info = "";
@@ -144,7 +137,6 @@ namespace KarambaIDEA.Core
             }
             return info;
         }
-
         public string BeginPlatesElement()
         {
             string info = "";
@@ -160,7 +152,6 @@ namespace KarambaIDEA.Core
             }
             return info;
         }
-
         public string EndPlatesElement()
         {
             string info = "";
@@ -176,7 +167,5 @@ namespace KarambaIDEA.Core
             }
             return info;
         }
-
-
     }
 }

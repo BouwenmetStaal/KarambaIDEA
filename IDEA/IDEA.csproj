@@ -50,7 +50,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ConnectionTemplateGenerator.cs" />
     <Compile Include="HiddenCalculation.cs" />
     <Compile Include="IdeaConnection.cs" />
     <Compile Include="OpenModelGenerator.cs" />

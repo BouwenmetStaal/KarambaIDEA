@@ -154,7 +154,7 @@ namespace KarambaIDEA.IDEA
             var LocalCoordinateSystem = new CoordSystemByVector();
 
             //TODO: make definition that creates plate based on the LCS of the reference beam
-            Point movedPoint = Point.MovePointByVectorandLength(joint.centralNodeOfJoint, ele.line.vector, moveX);
+            Point movedPoint = Point.MovePointByVectorandLength(joint.centralNodeOfJoint, ele.line.Vector, moveX);
 
             openModel.Connections[0].Plates.Add(new IdeaRS.OpenModel.Connection.PlateData
             {

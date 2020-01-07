@@ -12,14 +12,14 @@ namespace KarambaIDEA.Core
     public class Line
     {
         public int id;
-        public Point Start;
-        public Point End;
-        //public Vector vectorq;
-        public Vector vector
+        public Point start;
+        public Point end;
+
+        public Vector Vector
         {
             get
             {
-                return new Vector(Start, End);
+                return new Vector(start, end);
             }
         }
 
@@ -40,24 +40,31 @@ namespace KarambaIDEA.Core
         public Line(int _id, Point _Start, Point _End)
         {
             this.id = _id;
-            this.Start = _Start;
-            this.End = _End;
+            this.start = _Start;
+            this.end = _End;
 
         }
         public Line(Point _Start, Point _End)
         {
            
-            this.Start = _Start;
-            this.End = _End;
+            this.start = _Start;
+            this.end = _End;
 
         }
 
         public static Line TranslateLineWithVector(Project _project, Line line, Vector translation)
         {
-            Point newStart = Point.CreateNewOrExisting(_project,line.Start.X + translation.X, line.Start.Y + translation.Y, line.Start.Z + translation.Z);
-            Point newEnd = Point.CreateNewOrExisting(_project,line.End.X + translation.X, line.End.Y + translation.Y, line.End.Z + translation.Z);
+            Point newStart = Point.CreateNewOrExisting(_project,line.start.X + translation.X, line.start.Y + translation.Y, line.start.Z + translation.Z);
+            Point newEnd = Point.CreateNewOrExisting(_project,line.end.X + translation.X, line.end.Y + translation.Y, line.end.Z + translation.Z);
             Line result = new Line(line.id, newStart, newEnd);
             return result;
+        }
+
+       
+
+        public static Line FlipLine(Line line)
+        {
+            return new Line(line.id, line.end, line.start);
         }
 
         /// <summary>
@@ -70,28 +77,22 @@ namespace KarambaIDEA.Core
         /// <returns></returns>
         public static Line FlipLineIfPointNotEqualStartPoint(double tol, Point point, Line line)
         {
-            if (Point.ArePointsEqual(tol, point, line.Start) == true)
+            if (Point.ArePointsEqual(tol, point, line.start) == true)
             {
                 return line;
             }
             else
             {
-                return new Line(line.id, line.End, line.Start);
+                return new Line(line.id, line.end, line.start);
             }
         }
 
-        public static Line FlipLine(Line line)
-        {
-            return new Line(line.id, line.End, line.Start);
-        }
-
-
         public static int ShouldEccentricityBeAssumedPOSOrNEG(double tol, Point point, Line line)
         {
-            if (Point.ArePointsEqual(tol, point, line.End) == true)
+            if (Point.ArePointsEqual(tol, point, line.end) == true)
             {
                 Line lijn2 = Line.FlipLineIfPointNotEqualStartPoint(tol, point, line);
-                if (lijn2.vector.Z > 0)
+                if (lijn2.Vector.Z > 0)
                 {
                     return -1;
                 }
@@ -103,7 +104,7 @@ namespace KarambaIDEA.Core
             }
             else
             {
-                if (line.vector.Z > 0)
+                if (line.Vector.Z > 0)
                 {
                     return -1;
                 }
@@ -122,16 +123,16 @@ namespace KarambaIDEA.Core
         /// <returns></returns>
         public static Line MoveLineToOrigin(Point centerpoint,Line line)
         {
-            Point start = Point.MovePointToOrigin(centerpoint, line.Start);
-            Point end = Point.MovePointToOrigin(centerpoint, line.End);
+            Point start = Point.MovePointToOrigin(centerpoint, line.start);
+            Point end = Point.MovePointToOrigin(centerpoint, line.end);
             Line newline = new Line(start, end);
             return newline;
         }
 
         public static double LengthLine(Line line)
         {
-            Point st = line.Start;
-            Point end = line.End;
+            Point st = line.start;
+            Point end = line.end;
             double length = Math.Pow(end.X - st.X, 2) + Math.Pow(end.Y - st.Y, 2) + Math.Pow(end.Z - st.Z, 2);
             return Math.Sqrt(length);
         }

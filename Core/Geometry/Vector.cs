@@ -15,7 +15,7 @@ namespace KarambaIDEA.Core
         public double Y = 0d;
         public double Z = 0d;
 
-        public double length
+        public double Length
         {
             get
             {
@@ -42,12 +42,11 @@ namespace KarambaIDEA.Core
             this.Y = _Y;
             this.Z = _Z;
         }
-
-        //public unitVector()
+        
 
         public Vector Unitize()
         {
-            double le = this.length;
+            double le = this.Length;
             this.X = this.X / le;
             this.Y = this.Y / le;
             this.Z = this.Z / le;
@@ -87,7 +86,7 @@ namespace KarambaIDEA.Core
 
         static public double AngleBetweenVectors(Vector first, Vector second)
         {
-            double ans = ((first.X * second.X) + (first.Y * second.Y) + (first.Z * second.Z)) / (first.length * second.length);
+            double ans = ((first.X * second.X) + (first.Y * second.Y) + (first.Z * second.Z)) / (first.Length * second.Length);
             //angle will be in most cases the smallest angle between the vectors.
             double angle = Math.Acos(ans);
             //reflexangle will be in most cases the largest angle between the vectors.
@@ -117,7 +116,12 @@ namespace KarambaIDEA.Core
             double scalar = a.X*b.X+a.Y*b.Y+a.Z*b.Z;
             return scalar;
         }
-
+        /// <summary>
+        /// Multiply vector with a scalar
+        /// </summary>
+        /// <param name="vec"></param>
+        /// <param name="scalar"></param>
+        /// <returns></returns>
         static public Vector VecScalMultiply(Vector vec, double scalar)
         {
             Vector vector = new Vector(vec.X * scalar, vec.Y * scalar, vec.Z * scalar);

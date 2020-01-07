@@ -30,8 +30,9 @@ namespace KarambaIDEA
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddLineParameter("Transport Element Line", "Element Line", "Element line", GH_ParamAccess.tree);
-            pManager.AddNumberParameter("Transport Element weights", "Element weights", "Element weight", GH_ParamAccess.tree);
+            pManager.AddLineParameter("Transport Element Lines", "Transport Element", "Lines of Transport elements", GH_ParamAccess.tree);
+            pManager.AddLineParameter("All Element Lines", "All Elements", "Lines of all element", GH_ParamAccess.tree);
+            pManager.AddNumberParameter("Transport Element weights", "All Element weights", "Element weight", GH_ParamAccess.tree);
 
         }
 
@@ -91,7 +92,7 @@ namespace KarambaIDEA
                 next:
                 foreach (Element ele1 in templist)
                 {
-                    double angle = Vector.AngleBetweenVectors(element.line.vector, ele1.line.vector);
+                    double angle = Vector.AngleBetweenVectors(element.line.Vector, ele1.line.Vector);
 
                     if (length > maxLength)//length is longer than maximum transport length, so cut element
                     {
@@ -101,7 +102,7 @@ namespace KarambaIDEA
                     }
 
 
-                    if (element.line.End == ele1.line.Start && angle < maxAngle)//Forward integration
+                    if (element.line.end == ele1.line.start && angle < maxAngle)//Forward integration
                     {
                         //add element to list
                         path = new GH_Path(a, b);
@@ -115,7 +116,7 @@ namespace KarambaIDEA
 
                         goto next;
                     }
-                    if (element.line.Start == ele1.line.End && angle < maxAngle)//Backward integration
+                    if (element.line.start == ele1.line.end && angle < maxAngle)//Backward integration
                     {
                         //add element to list
                         path = new GH_Path(a, b);

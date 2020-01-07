@@ -17,19 +17,20 @@ namespace KarambaIDEA.Core
         /// </summary>
 		public List<int> Ids = new List<int>();
         public WeldType weldType;
-        private double _size;
+        public double unitycheck;
+        private double size;
+
         public double Size
         {
             get
             {
-                return _size;
+                return size;
             }
             set
             {
-                _size = Math.Ceiling(value);
+                size = Math.Ceiling(value);
             }
         }
-        public double unitycheck;
 
         public enum WeldType
         {
@@ -45,7 +46,6 @@ namespace KarambaIDEA.Core
             double alpha = angle / 2;
             double x = Math.Tan(alpha) * throat;
             double surface = throat * x;
-
             return surface;
         }
 
@@ -58,17 +58,15 @@ namespace KarambaIDEA.Core
         /// <param name="cross">Cross-section of the connected member</param>
         /// <param name="angle">Angle between connected parts in degrees</param>
         /// <returns></returns>
-        static public double CalcFullStrengthFactor(CrossSection cross, double angle)
+        public static double CalcFullStrengthFactor(CrossSection cross, double angle)
         {
             //The full strenth factor returned is the factor for single fillet welds
-
             //Calculation is made per 1 mm length piece
-
             double angleHalve = (Math.PI / 180) * (0.5 * angle);//angle halved and converted to radians
-            double beta = cross.material.beta;
+            double beta = cross.material.Beta;
             double M2 = Project.gammaM2;
-            double fy = cross.material.fy;
-            double fu = cross.material.fu;
+            double fy = cross.material.Fy;
+            double fu = cross.material.Fu;
 
             //tuss is function for debugging purposes
             double tuss = (2 * Math.Pow(Math.Cos(angleHalve), 2) + 1);
@@ -86,62 +84,15 @@ namespace KarambaIDEA.Core
             {
                 //Hollow sections have a single weld. Therefore, no reduction.
             }
-            
-
             return fullStrengthFactor;
         }
 
-        static public void CalcFullStrengthWelds(ConnectingMember con)
+        public static void CalcFullStrengthWelds(ConnectingMember con)
         {
             CrossSection cross = con.element.crossSection;
             double factor = Weld.CalcFullStrengthFactor(cross, 90);//angle of 90 degrees
             con.webWeld.Size = cross.thicknessWeb * factor;
             con.flangeWeld.Size = cross.thicknessFlange * factor;
         }
-
-        static public double CalcDirFlangeThroat(MaterialSteel materialSteel, double angle, double N)
-        {
-            //The full strenth factor returned is the factor for single fillet welds
-            //In case of double fillet welds take halve of the factor
-            //Calculation is made per 1 mm length piece
-
-            double angleHalve = (Math.PI/180)* (0.5 * angle);//angle halved and converted to radians
-            double beta = materialSteel.beta;
-            double M2 = Project.gammaM2;
-            double fy = materialSteel.fy;
-            double fu = materialSteel.fu;
-
-            //tuss is function for debugging purposes
-            double tuss = (2 * Math.Pow(Math.Cos(angleHalve), 2) + 1);
-
-            double numerator = Math.Pow(beta, 2) * Math.Pow(M2, 2) * Math.Pow(N, 2) * (2 * Math.Pow(Math.Cos(angleHalve), 2) + 1);
-            double denominator = Math.Pow(fu, 2);
-            double throat = Math.Sqrt(numerator / denominator);
-
-            return throat;
-        }
-
-        static public double CalcDirWebThroat(MaterialSteel materialSteel, double angle, double N)
-        {
-            //The full strenth factor returned is the factor for single fillet welds
-            //In case of double fillet welds take halve of the factor
-            //Calculation is made per 1 mm length piece
-
-            double angleHalve = angle;//angle NOT halved
-            double beta = materialSteel.beta;
-            double M2 = Project.gammaM2;
-            double fy = materialSteel.fy;
-            double fu = materialSteel.fu;
-
-            double tuss = (2 * Math.Pow(Math.Cos(angleHalve), 2) + 1);
-
-            double numerator = Math.Pow(beta, 2) * Math.Pow(M2, 2) * Math.Pow(N, 2) * (Math.Pow(Math.Cos(angleHalve), 2) + 2);
-            double denominator = Math.Pow(fu, 2);
-            double throat = Math.Sqrt(numerator / denominator);
-
-            return throat;
-        }
-
-        
     }
 }

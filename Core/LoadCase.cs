@@ -11,31 +11,26 @@ namespace KarambaIDEA.Core
 {
     public class LoadCase
     {
-        
-        public List<LoadsPerLine> loadsPerLines = new List<LoadsPerLine>();
+             
+        public Project project;        
         public int id;
         public string name;
-        public Project project;
-
-        
-        //Er kunnen een x aantal loadcases voorkomen in het project. Hoe ga ik dit daarvoor Robuust maken.
+        public List<LoadsPerLine> loadsPerLines = new List<LoadsPerLine>();
+       
         public LoadCase(Project _project, int _id)
         {
             this.project = _project;
             _project.loadcases.Add(this);           
             this.id = _id;
-            
         }
     }
     
     public class LoadsPerLine
     {
-        
-        public Load startLoad;
-        public Load endLoad;
         public Element element;
         public LoadCase loadcase;
-
+        public Load startLoad;
+        public Load endLoad;
         
         public LoadsPerLine(Element _element, LoadCase _loadcase,Load _Start, Load _End)
         {

@@ -45,8 +45,8 @@ namespace KarambaIDEA.Core
         static public Rhino.Geometry.Line CastLineToRhino(Core.Line line)
         {
             Rhino.Geometry.Line rhiLine = new Rhino.Geometry.Line();
-            rhiLine.From = CastPointToRhino(line.Start);
-            rhiLine.To = CastPointToRhino(line.End);
+            rhiLine.From = CastPointToRhino(line.start);
+            rhiLine.To = CastPointToRhino(line.end);
             return rhiLine;
         }
 

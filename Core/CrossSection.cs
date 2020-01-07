@@ -10,25 +10,25 @@ namespace KarambaIDEA.Core
     public class CrossSection
     {
 
-        public int id
-        {
-            get
-            {
-                return this.project.crossSections.IndexOf(this)+1;//IDEA count from one
-            }
-        }
 
+        public Project project;
         public string name;
-        //public string shape;
+        public Shape shape;
         public MaterialSteel material;
+
         public double height;
         public double width;
         public double thicknessFlange;
         public double thicknessWeb;
         public double radius;
-        public Project project;
-        public Shape shape;
 
+        public int Id
+        {
+            get
+            {
+                return this.project.crossSections.IndexOf(this) + 1;//IDEA count from one
+            }
+        }
 
         public CrossSection()
         {
@@ -78,34 +78,8 @@ namespace KarambaIDEA.Core
         public enum Shape
         {
             ISection,
-            HollowSection,
+            SHSSection,
             CHSsection
         }
-
-        
-
-
-        //public double CrosssectionProperties(string name)
-        //{
-        //    _Application excel = new _Excel.Application();
-        //    Workbook wb;
-        //    Worksheet ws;
-
-        //    wb = excel.Workbooks.Open(@"C:\Users\raz\Google Drive\C#Grasshopper\TotalRayaan06-09\Translate3\CrossSectionValues.xlsx");
-        //    ws = wb.Worksheets[1];
-        //    for (int i=1; i < 7031; i++)
-        //    {
-        //        if (ws.Cells[i,4].Value2.Tostring()==name)
-        //        {
-        //            return ws.Cells[i, 6].Value2.Todouble();
-
-        //        }
-
-        //    }
-
-
-        //}
-
-
     }
 }

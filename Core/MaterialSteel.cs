@@ -11,7 +11,10 @@ namespace KarambaIDEA.Core
 {
     public class MaterialSteel
     {
-        public string name
+        public Project project;
+        public SteelGrade steelGrade = SteelGrade.S235;
+
+        public string Name
         {
             get
             {
@@ -38,7 +41,7 @@ namespace KarambaIDEA.Core
                 }
             }
         }
-        public int id
+        public int Id
         {
             get
             {
@@ -65,9 +68,7 @@ namespace KarambaIDEA.Core
                 }
             }
         }
-        public SteelGrade steelGrade = SteelGrade.S235;
-
-        public double fu
+        public double Fu
         {
             get
             {
@@ -94,7 +95,7 @@ namespace KarambaIDEA.Core
                 }
             }
         }
-        public double fy
+        public double Fy
         {
             get
             {
@@ -121,8 +122,7 @@ namespace KarambaIDEA.Core
                 }
             }
         }
-
-        public double fu40
+        public double Fu40
         {
             get
             {
@@ -149,7 +149,7 @@ namespace KarambaIDEA.Core
                 }
             }
         }
-        public double fy40
+        public double Fy40
         {
             get
             {
@@ -176,7 +176,7 @@ namespace KarambaIDEA.Core
                 }
             }
         }
-        public double beta
+        public double Beta
         {
             get
             {
@@ -203,17 +203,12 @@ namespace KarambaIDEA.Core
             }
         }
 
-    
-
         public MaterialSteel(Project _project,SteelGrade _steelGrade)
         {
             this.project = _project;
             _project.materials.Add(this);
             this.steelGrade = _steelGrade;
-            
         }
-
-        public Project project;
 
         public enum SteelGrade
         {
@@ -221,7 +216,6 @@ namespace KarambaIDEA.Core
             S275,
             S355,
             S435
-
         }
     }
 }

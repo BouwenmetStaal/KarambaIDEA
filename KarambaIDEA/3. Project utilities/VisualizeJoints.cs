@@ -69,8 +69,8 @@ namespace KarambaIDEA
                             Core.Point centerpoint = project.joints[b].centralNodeOfJoint;
                             Core.Line line = Core.Line.MoveLineToOrigin(centerpoint, oriline);
                             GH_Path path = new GH_Path(a, d);
-                            Point3d start = new Point3d(line.Start.X, line.Start.Y, line.Start.Z);
-                            Point3d end = new Point3d(line.End.X, line.End.Y, line.End.Z);
+                            Point3d start = new Point3d(line.start.X, line.start.Y, line.start.Z);
+                            Point3d end = new Point3d(line.end.X, line.end.Y, line.end.Z);
                             Rhino.Geometry.Line rhinoline = new Rhino.Geometry.Line(start, end);
                             linetree.Add(rhinoline, path);
                             

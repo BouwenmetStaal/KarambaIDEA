@@ -25,8 +25,6 @@ namespace KarambaIDEA.Core
         public string projectName = null;
         public string author;
         public double minthroat;
-#warning: below properties should be part of IDEA
-        
         public string projectFolderPath;
 
         public List<Point> points = new List<Point>();
@@ -59,91 +57,6 @@ namespace KarambaIDEA.Core
             this.elements = _elements;
             this.analysisMethod = _analysisMethod;
         }
-
-
-        public void SaveToXML(string fileName)
-        {
-            using (var stream = new FileStream(fileName, FileMode.Create))
-            {
-
-                var XML = new XmlSerializer(typeof(Project));
-                XML.Serialize(stream, this);
-                stream.Close();
-
-            }
-        }
-        /// <summary>
-        /// Brandnames of joints are defined to recognize similiar joints. 
-        /// The Brandname is defined based on the number of attached elements and their hierarchy. 
-        /// The integers of all occuring hierarchys are chronologically ordered, creating a string that defines the brandname
-        /// </summary>
-        /// <param name="project"></param>
-        public void SetBrandnames(Project project)
-        {
-            foreach (Joint joint in project.joints)
-            {
-                List<int> intlist = new List<int>();
-                foreach (AttachedMember atta in joint.attachedMembers)
-                {
-                    int number = atta.element.numberInHierarchy;
-                    intlist.Add(number);
-                }
-                intlist= intlist.OrderBy(x => x).ToList();
-                string str = "";
-                foreach (var s in intlist)
-                {
-                    str = str + s.ToString();
-                }
-
-                joint.brandName = str;
-            }
-        }
-
-        public static Project ReadProjectFromXML(string fileName)
-        {
-            using (var stream = new FileStream(fileName, FileMode.Open))
-            {
-                var XML = new XmlSerializer(typeof(Project));
-                return (Project)XML.Deserialize(stream);
-            }
-        }
-
-        /// <summary>
-        /// Create Folder to save IDEA files on location specified, or on default location
-        /// </summary>
-        /// <param name="userpath">folder specified by user</param>
-        public void CreateFolder(string userpath)
-        {
-            //create folder
-            String timeStamp = DateTime.Now.ToString("yyyyMMddHHmmss");
-            string pathlocation = "";
-            if (string.IsNullOrEmpty(userpath) || string.IsNullOrWhiteSpace(userpath))
-            {
-                pathlocation = @"C:\Data";
-            }
-            else
-            {
-                
-                pathlocation = userpath;
-               
-            }            
-                        
-            this.projectFolderPath = Path.Combine(pathlocation, timeStamp);
-            if (!Directory.Exists(this.projectFolderPath))
-            {
-                if (Uri.IsWellFormedUriString(projectFolderPath, UriKind.Absolute))
-                {
-                    Directory.CreateDirectory(this.projectFolderPath);
-                }
-                else
-                {
-                    //System.Windows.MessageBox.Show("Provided path is invalid, provided path:" + userpath, "Path invalid");
-                    //TODO include workerthread or progress bar
-                }
-
-            }
-        }
-
         /// <summary>
         /// All data is inventised and converted to seperate data needed to calculate individual joints 
         /// </summary>
@@ -172,16 +85,16 @@ namespace KarambaIDEA.Core
                 //iterate over all lines in project
                 foreach (Element element in elements)
                 {
-                                      
+
                     //STARTPoints
                     //If fromPoints or startPoints of line fall in the tolerancebox than add lines.
-                    if (Point.ArePointsEqual(tolbox, centerpoint, element.line.Start) && element.line.vector.length > tolbox)
+                    if (Point.ArePointsEqual(tolbox, centerpoint, element.line.start) && element.line.Vector.Length > tolbox)
                     {
                         Line line = element.line;
                         Vector distancevector = new Vector(0.0, 0.0, 0.0);
                         double localEccnetricty = 0.0;
-                        
-                        
+
+
 
                         ConnectingMember connectingMember = new ConnectingMember(element, distancevector, true, line, localEccnetricty);
 
@@ -190,14 +103,14 @@ namespace KarambaIDEA.Core
                     }
                     //ENDPoints
                     //If toPoints or endPoints of line fall in the tolerancebox than add lines.
-                    if (Point.ArePointsEqual(tolbox, centerpoint, element.line.End) && element.line.vector.length > tolbox)
+                    if (Point.ArePointsEqual(tolbox, centerpoint, element.line.end) && element.line.Vector.Length > tolbox)
                     {
-                        
+
                         Vector distancevector = new Vector(0.0, 0.0, 0.0);
                         double localEccnetricty = 0.0;
                         //IDEAline
                         Line idealine = Line.FlipLine(element.line);//in this case of endpoint line needs to be flipped
-                        
+
 
                         ConnectingMember connectingMember = new ConnectingMember(element, distancevector, false, idealine, localEccnetricty);
 
@@ -270,17 +183,17 @@ namespace KarambaIDEA.Core
                         }
                     }
 
-                    
+
                     //If there is more than one Bearing Member, IsContinues joint
                     List<BearingMember> BM = attachedMembers.OfType<BearingMember>().ToList();
-                    
+
                     if (BM.Count == 1)
                     {
                         IsContinues = false;
                     }
 
                 }
-                
+
                 //3. ADD JOINTS TO PROJECT
                 //CREATE JOINT ADD TO PROJECT
                 //Joint id starts from one, because IDEA counts from one
@@ -292,6 +205,73 @@ namespace KarambaIDEA.Core
 
         }
 
+
+        /// <summary>
+        /// Brandnames of joints are defined to recognize similiar joints. 
+        /// The Brandname is defined based on the number of attached elements and their hierarchy. 
+        /// The integers of all occuring hierarchys are chronologically ordered, creating a string that defines the brandname
+        /// </summary>
+        /// <param name="project"></param>
+        public void SetBrandnames(Project project)
+        {
+            foreach (Joint joint in project.joints)
+            {
+                List<int> intlist = new List<int>();
+                foreach (AttachedMember atta in joint.attachedMembers)
+                {
+                    int number = atta.element.numberInHierarchy;
+                    intlist.Add(number);
+                }
+                intlist= intlist.OrderBy(x => x).ToList();
+                string str = "";
+                foreach (var s in intlist)
+                {
+                    str = str + s.ToString();
+                }
+
+                joint.brandName = str;
+            }
+        }
+
+        
+
+        /// <summary>
+        /// Create Folder to save IDEA files on location specified, or on default location
+        /// </summary>
+        /// <param name="userpath">folder specified by user</param>
+        public void CreateFolder(string userpath)
+        {
+            //create folder
+            String timeStamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+            string pathlocation = "";
+            if (string.IsNullOrEmpty(userpath) || string.IsNullOrWhiteSpace(userpath))
+            {
+                pathlocation = @"C:\Data";
+            }
+            else
+            {
+                
+                pathlocation = userpath;
+               
+            }            
+                        
+            this.projectFolderPath = Path.Combine(pathlocation, timeStamp);
+            if (!Directory.Exists(this.projectFolderPath))
+            {
+                if (Uri.IsWellFormedUriString(projectFolderPath, UriKind.Absolute))
+                {
+                    Directory.CreateDirectory(this.projectFolderPath);
+                }
+                else
+                {
+                    //System.Windows.MessageBox.Show("Provided path is invalid, provided path:" + userpath, "Path invalid");
+                    //TODO include workerthread or progress bar
+                }
+
+            }
+        }
+
+        
 
         /// <summary>
         /// Set a specific minimum throat thickness to all welds in project
@@ -326,6 +306,26 @@ namespace KarambaIDEA.Core
             IdeaMethod
         }
 
+        public void SaveToXML(string fileName)
+        {
+            using (var stream = new FileStream(fileName, FileMode.Create))
+            {
+
+                var XML = new XmlSerializer(typeof(Project));
+                XML.Serialize(stream, this);
+                stream.Close();
+
+            }
+        }
+
+        public static Project ReadProjectFromXML(string fileName)
+        {
+            using (var stream = new FileStream(fileName, FileMode.Open))
+            {
+                var XML = new XmlSerializer(typeof(Project));
+                return (Project)XML.Deserialize(stream);
+            }
+        }
     }
 
 

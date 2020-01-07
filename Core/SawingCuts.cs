@@ -9,47 +9,55 @@ using System.Threading.Tasks;
 
 namespace KarambaIDEA.Core
 {
-    //public class SawingCuts
-    //{
-    //    public SawingCut sawingCut = SawingCut.NoCut;
-    //    public int Cuts
-    //    {
-    //        get
-    //        {
-    //            switch (this.sawingCut)
-    //            {
-    //                case SawingCut.NoCut:
-    //                    {
-    //                        return 0;
-                           
-    //                    }
-    //                case SawingCut.RightAngledCut:
-    //                    {
-    //                        return 1;
-    //                    }
-    //                case SawingCut.SingleMiterCut:
-    //                    {
-    //                        return 2;
-    //                    }
-    //                case SawingCut.DoubleMiterCut:
-    //                    {
-    //                        return 3;
-    //                    }
-    //                default:
-    //                    {
-    //                        return 0;
-    //                    }
-    //            }
-    //        }
-                       
-    //    }
+    public class SawingCuts
+    {
+        public enum SawingCut
+        {
+            NoCut = 0,
+            RightAngledCut = 1,
+            SingleMiterCut = 2,
+            DoubleMiterCut = 3
+        }
 
-    //    public SawingCuts(SawingCut _sawingCut)
-    //    {
-    //        this.sawingCut = _sawingCut;
-    //    }
-        
-        
+        public SawingCut sawingCut = SawingCut.NoCut;
+        public int Cuts
+        {
+            get
+            {
+                switch (this.sawingCut)
+                {
+                    case SawingCut.NoCut:
+                        {
+                            return 0;
 
-    //}
+                        }
+                    case SawingCut.RightAngledCut:
+                        {
+                            return 1;
+                        }
+                    case SawingCut.SingleMiterCut:
+                        {
+                            return 2;
+                        }
+                    case SawingCut.DoubleMiterCut:
+                        {
+                            return 3;
+                        }
+                    default:
+                        {
+                            return 0;
+                        }
+                }
+            }
+
+        }
+
+        public SawingCuts(SawingCut _sawingCut)
+        {
+            this.sawingCut = _sawingCut;
+        }
+
+
+
+    }
 }

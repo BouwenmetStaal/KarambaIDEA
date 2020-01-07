@@ -165,6 +165,8 @@ namespace KarambaIDEA.IDEA
             {
                 try
                 {
+                    //TODO: fix bug, script only works when IDEA StatiCa is opened by user.
+
                     Debug.WriteLine("Creating the instance of IdeaRS.ConnectionService.Service.ConnectionSrv");
 
                     // create the instance of the ConnectionSrv
@@ -230,7 +232,7 @@ namespace KarambaIDEA.IDEA
             string message = string.Empty;
             foreach (var r in result)
             {
-                message += r.Name + " " + r.UnityCheckMessage + " ";
+                message += r.Name + ": " + r.UnityCheckMessage + ", ";
             }
             joint.ResultsSummary.summary = message;
 

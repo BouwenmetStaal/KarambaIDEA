@@ -11,19 +11,22 @@ namespace KarambaIDEA.Core
     public class Joint
     {
         public Project project;
-        public int id;
-        public Point centralNodeOfJoint;
-        public double maxGlobalEccentricity;
-        public List<int> beamIDs;
-        public bool isWarrenEccentricJoint;
-        public Vector bearingMemberUnitVector;
-        public List<AttachedMember> attachedMembers;
-        // public IdeaConnection ideaConnection;
-        public bool IsContinues;
-        public double weldVolume;
-        public string brandName;
-        public EnumWorkshopOperations template;
         public string jointFilePath;
+        public int id;
+
+        public List<AttachedMember> attachedMembers;
+        public List<int> beamIDs;
+        public Point centralNodeOfJoint;
+        public bool IsContinuous;
+        public string brandName;
+
+        public Vector bearingMemberUnitVector;
+        public double maxGlobalEccentricity;
+        //public bool isWarrenEccentricJoint;
+        //public double weldVolume;
+
+        public EnumWorkshopOperations template;
+        
         public ResultsSummary ResultsSummary;
 
         public string Name
@@ -34,18 +37,6 @@ namespace KarambaIDEA.Core
             }
         }
 
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="_project"></param>
-        /// <param name="_id">starts from 1</param>
-        /// <param name="_beamIDs"></param>
-        /// <param name="_attachedMembers"></param>
-        /// <param name="_centralNodeOfJoint"></param>
-        /// <param name="_globaleccenticitylength">eccentricity in meters</param>
-        /// <param name="_isWarrenEccentricJoint"></param>
-        /// <param name="_bearingMemberUnitVector"></param>
-        /// <param name="_IsContinues">defines wether joint is continues or ended</param>
         public Joint()
         {
 
@@ -60,16 +51,8 @@ namespace KarambaIDEA.Core
             this.centralNodeOfJoint = _centralNodeOfJoint;
             this.maxGlobalEccentricity = _globaleccenticitylength;
             this.bearingMemberUnitVector = _bearingMemberUnitVector;
-            this.IsContinues = _IsContinues;
+            this.IsContinuous = _IsContinues;
         }
-
-        
-        public double GenerateWeldVolume()
-        {
-            return 0.0;
-        }
-
-        
         /// <summary>
         /// Fillet welds are assigned to Hollow sections, double fillet welds are assigned to Isections
         /// </summary>
@@ -77,7 +60,7 @@ namespace KarambaIDEA.Core
         {
             foreach (ConnectingMember CM in this.attachedMembers.OfType<ConnectingMember>())
             {
-                if (CM.element.crossSection.shape == CrossSection.Shape.HollowSection)
+                if (CM.element.crossSection.shape == CrossSection.Shape.SHSSection)
                 {
                     CM.flangeWeld.weldType = Weld.WeldType.Fillet;
                     CM.webWeld.weldType = Weld.WeldType.Fillet;
@@ -89,6 +72,5 @@ namespace KarambaIDEA.Core
                 }
             }
         }
-
     }
 }

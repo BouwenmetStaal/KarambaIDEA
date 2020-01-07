@@ -59,18 +59,17 @@ namespace KarambaIDEA
                                   
             if (startIDEA == true)
             {
-                //summary = KarambaIDEA.IDEA.HiddenCalculation(filepath);
+                //Run HiddenCalculation
                 Joint joint = new Joint();
                 joint.jointFilePath = filepath;
                 KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(joint);
 
+                //Retrieve results
                 analysis = joint.ResultsSummary.analysis;
                 plates = joint.ResultsSummary.plates;
                 welds = joint.ResultsSummary.welds;
                 buckling = joint.ResultsSummary.buckling;
                 summary = joint.ResultsSummary.summary;
-
-                //TODO: retun values
             }
             //link output
             DA.SetData(0, analysis);
