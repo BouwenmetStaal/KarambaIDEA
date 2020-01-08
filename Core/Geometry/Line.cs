@@ -136,5 +136,24 @@ namespace KarambaIDEA.Core
             double length = Math.Pow(end.X - st.X, 2) + Math.Pow(end.Y - st.Y, 2) + Math.Pow(end.Z - st.Z, 2);
             return Math.Sqrt(length);
         }
+        
+        public static List<Line> SplitLine(Line line, double length)
+        {
+            List<Line> lines = new List<Line>();
+            if (line.Length > length)
+            {
+                
+                Vector dir = line.Vector.Unitize();
+                Point midPoint = Point.MovePointByVectorandLength(line.start, dir, length);
+                lines.Add(new Line(line.start, midPoint));
+                lines.Add(new Line(midPoint, line.end));
+                
+            }
+            else
+            {
+                //NotImplementedException.();
+            }
+            return lines;
+        }
     }
 }
