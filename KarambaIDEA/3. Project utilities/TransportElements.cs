@@ -32,7 +32,7 @@ namespace KarambaIDEA
         {
             pManager.AddLineParameter("Transport Element Lines", "Transport Element", "Lines of Transport elements", GH_ParamAccess.tree);
             pManager.AddLineParameter("All Element Lines", "All Elements", "Lines of all element", GH_ParamAccess.tree);
-            pManager.AddNumberParameter("Transport Element weights", "All Element weights", "Element weight", GH_ParamAccess.tree);
+            //pManager.AddNumberParameter("Transport Element weights", "All Element weights", "Element weight", GH_ParamAccess.tree);
 
         }
 
@@ -55,116 +55,120 @@ namespace KarambaIDEA
             groupNames = ImportGrasshopperUtils.DeleteEnterCommandsInGHStrings(groupNamesDirty);
 
             //output variables
-            DataTree<Rhino.Geometry.Line> lines = new DataTree<Rhino.Geometry.Line>();
-            DataTree<double> weights = new DataTree<double>();
+            DataTree<Rhino.Geometry.Line> transportLines = new DataTree<Rhino.Geometry.Line>();
+            DataTree<Rhino.Geometry.Line> allLines = new DataTree<Rhino.Geometry.Line>();
+            //DataTree<double> weights = new DataTree<double>();
 
-            //List<List<Element>> data = new List<List<Element>>();
-
+            //variables for tree path
             int a = 0;
             int b = 0;
             GH_Path path = new GH_Path(a, b);
 
+            //PROCESS
             //Sort list elements based on hierarchy
             foreach (Hierarchy hierarchy in project.hierarchylist)
             {
-                foreach (string groupName in groupNames)
+                List<Line> hierarchydata = new List<Line>();
+                foreach (Element ele in project.elements)
                 {
-                    if (hierarchy.groupname == groupName)
+                    if (ele.numberInHierarchy == hierarchy.numberInHierarchy)
                     {
-                        List<Line> hierarchydata = new List<Line>();
-                        foreach (Element ele in project.elements)
+                        hierarchydata.Add(ele.line);
+                    }
+                }
+                if (groupNames.Contains(hierarchy.groupname))
+                {
+                    Line line = hierarchydata[0]; //start at first item of list 
+                    List<Line> templist = new List<Line>();//create temporary list
+                    templist = hierarchydata;//copy data
+                    templist.Remove(line);//remove first item
+                    double length = line.Length;//set length
+                    if (maxLength == 0.0)
+                    {
+                        break;
+                    }
+
+                next:
+                    double overLength = length - maxLength;
+                    if (overLength > 1e-6)//overlength is positive
+                    {
+                        //Splitline definition for forwards integration
+                        double alength = line.Length - overLength;
+                        List<Line> linesFromSplit = Line.SplitLine(line, alength);
+                        Line aline = linesFromSplit[0];//first piece
+                        Line bline = linesFromSplit[1];//second piece
+                        AddLineToTree(a, b, aline, transportLines);//add first piece
+                        AddLineToTree(a, b, aline, allLines);//add first piece
+                        b = b + 1;//go to next branch
+                        length = overLength;//Next part starts with the overlength part
+                        line = bline;//second piece become the line
+                        goto next;
+                        //TODO:add splitline definition for backwards integration
+                    }
+                    if (overLength < -1e-6)//overlength is negative
+                    {
+                        AddLineToTree(a, b, line, transportLines);//add element to list
+                        AddLineToTree(a, b, line, allLines);
+                    }
+                    else//line is equal to overlength
+                    {
+                        AddLineToTree(a, b, line, transportLines);//add element to list
+                        AddLineToTree(a, b, line, allLines);
+                        templist.Remove(line);//remove found element from templist
+                        length = 0;//reset length
+                        b = b + 1;//got to next branch
+                    }
+                    foreach (Line L1 in templist)
+                    {
+                        double angle = Vector.AngleBetweenVectors(line.Vector, L1.Vector);
+                        if (line.end == L1.start && angle < maxAngle)//Forward integration
                         {
-                            if (ele.numberInHierarchy == hierarchy.numberInHierarchy)
-                            {
-                                hierarchydata.Add(ele.line);
-                            }
-                        }
-                        //Now we have a list with all elements of a certain hierarchy
-                        Line line = hierarchydata[0]; //start at first item of list 
-                        AddLineToTree(a, b, line, lines);
-                        List<Line> templist = new List<Line>();
-                        
-                        templist = hierarchydata;
-                        
-                        //templist.Remove(line);
-                        double length = line.Length;
-                        next:
-                        templist.Remove(line);
-                        /*
-                        
-                        }
-                        */
-                        foreach (Line L1 in templist)
-                        {
-                            double angle = Vector.AngleBetweenVectors(line.Vector, L1.Vector);
-                            if (line.end == L1.start && angle < maxAngle)//Forward integration
-                            {
-                                //add element to list
-                                AddLineToTree(a, b, L1, lines);
-
-                                //continue with the found element;
-                                line = L1;
-
-                                //remove found element from templist
-                                templist.Remove(L1);
-                                length = length + line.Length;
-
-                                goto next;
-                            }
-                            if (line.start == L1.end && angle < maxAngle)//Backward integration
-                            {
-                                //add element to list
-                                AddLineToTree(a, b, L1, lines);
-
-                                //continue with the found element;
-                                line = L1;
-
-                                //remove found element from templist
-                                templist.Remove(L1);
-                                length = length + line.Length;
-                                goto next;
-                            }
-                            
-                        }
-                        if (templist.Count>0)
-                        {
-                            line = templist[0];
-                            //templist.Remove(L1);
-                            b = b + 1;
-                            //add element to list
-                            AddLineToTree(a, b, line, lines);
-                            length = length + line.Length;
+                            line = L1;//continue with the found element;                
+                            length = length + line.Length;//add length
+                            templist.Remove(L1);//remove found element from templist
                             goto next;
                         }
-                        a = a + 1;
+                        if (line.start == L1.end && angle < maxAngle)//Backward integration
+                        {
+                            line = L1;//continue with the found element;
+                            length = length + line.Length;//add length
+                            templist.Remove(L1);//remove found element from templist
+                            goto next;
+                        }
                     }
-                    else
+                    if (templist.Count > 0)
                     {
-                        //These elements will not be assesed in algorithm
-                        //and will therefor not be composed
+                        line = templist[0];//get first element of templist
+                        templist.Remove(line);//remove found element from templist
+                        b = b + 1;//change branch, make a new snake
+                        length = line.Length;//reset length
+                        goto next;
                     }
-
                 }
-
-
-                //
-                //Forward integration
-                //Backward integration
-                //assembling of two snakes
-
-                //Snake start point and Snake end point
-
-                //Cut snakes by length
-
-                DataTree<Rhino.Geometry.Line> lines2 = new DataTree<Rhino.Geometry.Line>();
-                lines2 = lines;
-
-                weights.Add(125, new GH_Path(0));
-
-                //link output
-                DA.SetDataTree(0, lines2);
-                DA.SetDataTree(2, weights); //visualize weldingvolume through brep
+                else
+                {
+                    foreach (Line line in hierarchydata)
+                    {
+                        AddLineToTree(a, b, line, allLines);
+                        b = b + 1;
+                    }
+                    //These elements will not be assesed in algorithm
+                    //and will therefor not be composed
+                }
+                a = a + 1;//different group, change brach
+                b = 0;//reset b
             }
+            //Forward integration
+            //Backward integration
+            //assembling of two snakes
+            //Snake start point and Snake end point
+            //where to start end of line or start of line?
+            //What if the length of the first line already exceeds the maxLenght?
+
+            //link output
+            DA.SetDataTree(0, transportLines);
+            DA.SetDataTree(1, allLines);
+            //DA.SetDataTree(2, weights); 
         }
         
         /// <summary>
@@ -185,52 +189,13 @@ namespace KarambaIDEA
             get { return new Guid("c9a16af6-596f-4633-a268-b493c136c0ba"); }
         }
 
-        public void AddLineToTree(int a, int b, Line line, DataTree<Rhino.Geometry.Line> lines)
+        public void AddLineToTree(int a, int b, Line line, DataTree<Rhino.Geometry.Line> transportLines)
         {
             GH_Path path = new GH_Path(a, b);
-            lines.Add(ImportGrasshopperUtils.CastLineToRhino(line), path);
+            transportLines.Add(ImportGrasshopperUtils.CastLineToRhino(line), path);
         }
 
-        public void SplitIfNeeded(int a, int b, double length, double maxLength, Line line, DataTree<Rhino.Geometry.Line> lines, List<Line> templist)
-        {
-            if (length > maxLength)//length is longer than maximum transport length, so cut element
-            {
-                double overLength = length - maxLength;
-
-                if (Math.Abs(overLength - line.Length) < 1e-6)
-                {
-                    //add element to list
-                    b = b + 1;
-                    AddLineToTree(a, b, line, lines);
-                    //remove found element from templist
-                    templist.Remove(line);
-                    length = length + line.Length;
-                    //goto next;
-                }
-                else
-                {
-                    List<Line> linesFromSplit = Line.SplitLine(line, overLength);
-                    Line aline = linesFromSplit[0];
-                    Line bline = linesFromSplit[1];
-
-                    //add element to list
-                    AddLineToTree(a, b, aline, lines);
-
-
-                    //where to start end of line or start of line?
-                    //What if the length of the first line already exceeds the maxLenght?
-                    b = b + 1;
-                    //add element to list
-                    AddLineToTree(a, b, bline, lines);
-
-                    //remove found element from templist
-                    templist.Remove(line);
-
-                    //TODO: make script for lines instead of elements
-                    length = overLength;//Next part starts with the overlength part
-                                        //goto next;
-                }
-            }
-        }
+            
+        
     }
 }

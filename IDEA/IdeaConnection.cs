@@ -56,8 +56,8 @@ namespace KarambaIDEA.IDEA
             
 
 
-            //IdeaInstallDir = KarambaIDEA.Properties.Settings.Default.IdeaInstallDir;
-            IdeaInstallDir = @"C:\Program Files\IDEA StatiCa\StatiCa 10.1";
+            IdeaInstallDir = IDEA.Properties.Settings.Default.IdeaInstallDir;
+            //IdeaInstallDir = @"C:\Program Files\IDEA StatiCa\StatiCa 10.1";
 
             Console.WriteLine("IDEA StatiCa installation directory is '{0}'", IdeaInstallDir);
 

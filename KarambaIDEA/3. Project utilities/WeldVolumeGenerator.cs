@@ -30,8 +30,7 @@ namespace KarambaIDEA
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddNumberParameter("Weld volume [cm3]", "Weld volume [cm3]", "Total weld volume of the joint in cm3", GH_ParamAccess.list);
-            pManager.AddBrepParameter("Brep weld volume", "Brep weld volume", "Brep weld volume", GH_ParamAccess.tree);
-
+            //pManager.AddBrepParameter("Brep weld volume", "Brep weld volume", "Brep weld volume", GH_ParamAccess.tree);
             pManager.AddTextParameter("Throats Begin of Element", "ThroatsBegin", "ThroatFlange and ThroatWeb at Start of Element", GH_ParamAccess.list);
             pManager.AddTextParameter("Throats End of Element", "ThroatsEnd", "ThroatFlange and ThroatWeb at End of Element", GH_ParamAccess.list);
 
@@ -47,8 +46,6 @@ namespace KarambaIDEA
 
             //output variables
             List<double> weldVolumes = new List<double>();
-            DataTree<Brep> brepVolumes = new DataTree<Brep>();
-
             List<string> throatBegin = new List<string>();
             List<string> throatEnd = new List<string>();
 
@@ -77,10 +74,8 @@ namespace KarambaIDEA
 
             //link output
             DA.SetDataList(0, weldVolumes);
-            DA.SetDataTree(1, brepVolumes); //visualize weldingvolume through brep
-
-            DA.SetDataList(2, throatBegin);
-            DA.SetDataList(3, throatEnd);
+            DA.SetDataList(1, throatBegin);
+            DA.SetDataList(2, throatEnd);
         }
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.
