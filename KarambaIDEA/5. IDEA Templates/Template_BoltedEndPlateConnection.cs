@@ -26,8 +26,8 @@ namespace KarambaIDEA
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("BrandNames", "BrandNames", "BrandNames to apply template to", GH_ParamAccess.list);
-
+            //pManager.AddTextParameter("BrandNames", "BrandNames", "BrandNames to apply template to", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Thickness endplate", "Thickness endplate", "", GH_ParamAccess.item);
             // Assign default BrandName.
             Param_String param0 = (Param_String)pManager[0];
             param0.PersistentData.Append(new GH_String(""));
@@ -42,12 +42,13 @@ namespace KarambaIDEA
         {
 
             //Input variables            
-
+            double tplate = new double();
             List<GH_String> brandNamesDirty = new List<GH_String>();
             List<string> brandNames = new List<string>();
 
             //Link input
-            DA.GetDataList(0, brandNamesDirty);
+            //DA.GetDataList(0, brandNamesDirty);
+            DA.GetData(0, ref tplate);
 
             //process
             if (brandNamesDirty.Where(x => x != null && !string.IsNullOrWhiteSpace(x.Value)).Count() > 0)
@@ -57,6 +58,7 @@ namespace KarambaIDEA
             }
 
             EnumWorkshopOperations operation = EnumWorkshopOperations.BoltedEndPlateConnection;
+            //IDEA.Templates.BoltedEndplateConnection(var, var, 10);
 
             //link output
             DA.SetData(0, operation);

@@ -43,29 +43,19 @@ namespace KarambaIDEA.IDEA
         {
             //1.set joint
             joint = _joint;
-
-            //TODO: make sure only one folder is created now two folders are created.
-
-            //2.create folder
+            
+            //2.create folder for joint
             string folder = this.joint.project.projectFolderPath;
             filePath = Path.Combine(folder, this.joint.Name);
             if (!Directory.Exists(this.filePath))
             {
                 Directory.CreateDirectory(this.filePath);
             }
-            
-
 
             IdeaInstallDir = IDEA.Properties.Settings.Default.IdeaInstallDir;
-            //IdeaInstallDir = @"C:\Program Files\IDEA StatiCa\StatiCa 10.1";
-
-            Console.WriteLine("IDEA StatiCa installation directory is '{0}'", IdeaInstallDir);
 
             AppDomain currentDomain = AppDomain.CurrentDomain;
             currentDomain.AssemblyResolve += new ResolveEventHandler(IdeaResolveEventHandler);
-
-            Console.WriteLine("Start generate example of IOM...");
-
 
             openModelGenerator = new OpenModelGenerator();
             openModelGenerator.CreateOpenModel(joint, filePath);
@@ -74,11 +64,23 @@ namespace KarambaIDEA.IDEA
             OpenModel example = openModelGenerator.openModel;
             OpenModelResult result = openModelGenerator.openModelResult;
 
-            
+            //add template to openmodel
+            if (joint.template == EnumWorkshopOperations.NoOperation)
+            {
+
+            }
+            if (joint.template == EnumWorkshopOperations.BoltedEndPlateConnection)
+            {
+                Templates.BoltedEndplateConnection(example, joint,0.01);
+            }
+            if (joint.template == EnumWorkshopOperations.WeldAllMembers)
+            {
+                Templates.WeldAllMembers(example);
+            }
 
             // save to the files
-            result.SaveToXmlFile(Path.Combine(folder, joint.Name, "example.xmlR"));
-            example.SaveToXmlFile(Path.Combine(folder, joint.Name, "example.xml"));
+            result.SaveToXmlFile(Path.Combine(folder, joint.Name, "IOMresults.xml"));
+            example.SaveToXmlFile(Path.Combine(folder, joint.Name, "IOM.xml"));
 
             string filename = joint.Name + ".ideaCon";
 
@@ -103,15 +105,6 @@ namespace KarambaIDEA.IDEA
 			array[1] = result;
 			array[2] = fileConnFileNameFromLocal;
 			methodImport.Invoke(obj, array);
-
-			Console.WriteLine("Writing Idea connection project to file '{0}'", fileConnFileNameFromLocal);
-
-            // end console application
-            Console.WriteLine("Done. Press any key to exit.");
-
-           
-            
-
         }
 
         private static Assembly IdeaResolveEventHandler(object sender, ResolveEventArgs args)

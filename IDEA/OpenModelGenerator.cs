@@ -99,6 +99,7 @@ namespace KarambaIDEA.IDEA
             //enumerator
             //Delicate
 
+            /*
             if(joint.template == EnumWorkshopOperations.NoOperation)
             {
 
@@ -111,7 +112,7 @@ namespace KarambaIDEA.IDEA
             {
                 Templates.WeldAllMembers(openModel);
             }
-            
+            */
 
 
             //8.create IOMresults

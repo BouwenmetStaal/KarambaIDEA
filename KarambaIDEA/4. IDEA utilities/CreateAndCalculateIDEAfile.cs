@@ -17,9 +17,9 @@ using Grasshopper.Kernel.Types;
 
 namespace KarambaIDEA
 {
-    public class CreateIDEAfile : GH_Component
+    public class CreateAndCalculateIDEAfile : GH_Component
     {
-        public CreateIDEAfile() : base("Create IDEA File", "Create IDEA File", "Create IDEA file", "KarambaIDEA", "4. IDEA utilities")
+        public CreateAndCalculateIDEAfile() : base("Create IDEA File", "Create IDEA File", "Create IDEA file", "KarambaIDEA", "4. IDEA utilities")
         {
 
         }
@@ -29,7 +29,7 @@ namespace KarambaIDEA
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
             pManager.AddTextParameter("Output folder ", "Output folder", "Save location of IDEA Statica Connection output file. For example: 'C:\\Data'", GH_ParamAccess.item);
             pManager.AddGenericParameter("Template", "Template", "Template", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("RunAllJoints", "RunAllJoints", "If true run all joints, if false run ChooseJoint joint", GH_ParamAccess.item);
+            //pManager.AddBooleanParameter("RunAllJoints", "RunAllJoints", "If true run all joints, if false run ChooseJoint joint", GH_ParamAccess.item);
             pManager.AddIntegerParameter("ChooseJoint", "ChooseJoint", "Specify the joint that will be calculated in IDEA. Note: starts at zero.", GH_ParamAccess.item);
             pManager.AddBooleanParameter("RunIDEA", "RunIDEA", "Bool for running IDEA Statica Connection", GH_ParamAccess.item);
 
@@ -42,6 +42,11 @@ namespace KarambaIDEA
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddLineParameter("Selected Joint", "Selected Joint", "Lines of selected Joint", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Analysis", "Analysis", "", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Plates", "Plates", "", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Welds", "Welds", "", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Buckling", "Buckling", "", GH_ParamAccess.item);
+            pManager.AddTextParameter("Summary", "Summary", "", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -51,27 +56,32 @@ namespace KarambaIDEA
             Project project = new Project();
             string outputfolderpath = null;
             EnumWorkshopOperations workshopOperations = EnumWorkshopOperations.NoOperation;
-            bool calculateAllJoints = false;
             int createThisJoint = 0;
             bool startIDEA = false;
-                   
+
 
             //Link input
             DA.GetData(0, ref project);
             DA.GetData(1, ref outputfolderpath);
 
-            
+
             DA.GetData(2, ref workshopOperations);
 
-            DA.GetData(3, ref calculateAllJoints);
+            //DA.GetData(3, ref calculateAllJoints);
 
-            DA.GetData(4, ref createThisJoint);
-            DA.GetData(5, ref startIDEA);
-            
+            DA.GetData(3, ref createThisJoint);
+            DA.GetData(4, ref startIDEA);
+
 
             //output variables
             List<Rhino.Geometry.Line> lines = new List<Rhino.Geometry.Line>();
             List<Rhino.Geometry.Line> jointlines = new List<Rhino.Geometry.Line>();
+            //output variables
+            double analysis = new double();
+            double plates = new double();
+            double welds = new double();
+            double buckling = new double();
+            string summary = string.Empty;
 
             //Adjust out of bounds index calculateThisJoint
             createThisJoint = createThisJoint % project.joints.Count;
@@ -79,22 +89,22 @@ namespace KarambaIDEA
             if (startIDEA == true)
             {
                 project.CreateFolder(outputfolderpath);
-                if (calculateAllJoints == true)
-                {
-                    foreach(Joint joint in project.joints)
-                    {
-                        joint.template = workshopOperations;
-                        IdeaConnection ideaConnection = new IdeaConnection(joint);
-                    }
-                }
-                else
-                {
-                    Joint joint = project.joints[createThisJoint];
-                    joint.template = workshopOperations;
-                    IdeaConnection ideaConnection = new IdeaConnection(joint);
-                }              
-                
-                
+                Joint joint = project.joints[createThisJoint];
+                joint.template = workshopOperations;
+                IdeaConnection ideaConnection = new IdeaConnection(joint);
+
+                //Run HiddenCalculation
+                joint.JointFilePath = "xx";
+                KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(joint);
+
+                //Retrieve results
+                analysis = joint.ResultsSummary.analysis;
+                plates = joint.ResultsSummary.plates;
+                welds = joint.ResultsSummary.welds;
+                buckling = joint.ResultsSummary.buckling;
+                summary = joint.ResultsSummary.summary;
+
+
             }
 
             //export lines of joint for visualisation purposes
@@ -104,10 +114,15 @@ namespace KarambaIDEA
                 Rhino.Geometry.Line rhiline = ImportGrasshopperUtils.CastLineToRhino(line);
                 jointlines.Add(rhiline);
             }
-            
+
 
             //link output
             DA.SetDataList(0, jointlines);
+            DA.SetData(1, analysis);
+            DA.SetData(2, plates);
+            DA.SetData(3, welds);
+            DA.SetData(4, buckling);
+            DA.SetData(5, summary);
         }
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.
@@ -124,7 +139,7 @@ namespace KarambaIDEA
         }
         public override Guid ComponentGuid
         {
-            get { return new Guid("52308472-3ab8-4f23-89d0-d3746ed013f6"); }
+            get { return new Guid("8fbcb8c2-4700-443b-8ab1-3269e2ab0358"); }
         }
 
 

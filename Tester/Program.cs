@@ -9,7 +9,7 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
 using KarambaIDEA;
-
+using System.IO;
 
 namespace Tester
 {
@@ -21,36 +21,46 @@ namespace Tester
         [STAThread]
         static void Main()
         {
-
+            /*
             Joint joint = new Joint();
             joint.jointFilePath = "C:\\Data\\20191115214919\\C12-brandname\\APIproduced File - NotCorrect.ideaCon";
             KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(joint);
+            */
             
-            /*
             Tester.GenerateTestJoint testrun = new GenerateTestJoint();
 
             //Define testjoint
-            Joint joint = testrun.Testjoint2();
+            Joint joint = testrun.Testjoint();
 
 
             //Define workshop operations
-            joint.template = EnumWorkshopOperations.WeldAllMembers;
+            joint.template = EnumWorkshopOperations.BoltedEndPlateConnection;
             
-            //Define save path
-            //joint.project.CreateFolder(@"C:\Data\");
+            //Set Project folder path
             string folderpath = @"C:\Data\";
             joint.project.CreateFolder(folderpath);
+
+            //Set Joint folder path
+            //string filepath = joint.project.projectFolderPath + ".ideaCon";
+            //string fileName = joint.Name + ".ideaCon";
+            //string jointFilePath = Path.Combine(joint.project.projectFolderPath, joint.Name, fileName);
+            //joint.JointFilePath = jointFilePath;
+            joint.JointFilePath = "xx";
+
             // Initialize idea references, before calling code.
             AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
 
             //Create IDEA file
             IdeaConnection ideaConnection = new IdeaConnection(joint);
-            string filepath = ideaConnection.filepath+".ideaCon";
-            KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(filepath);
-            */
 
-        }
+            //Calculate
+            KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(joint);
+
+            //Results
+            string results = joint.ResultsSummary.summary;
+
+       }
         
     }
 }

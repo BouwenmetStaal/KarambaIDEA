@@ -4,6 +4,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.IO;
 
 namespace KarambaIDEA.Core
 {
@@ -11,7 +12,7 @@ namespace KarambaIDEA.Core
     public class Joint
     {
         public Project project;
-        public string jointFilePath;
+        private string jointFilePath;
         public int id;
 
         public List<AttachedMember> attachedMembers;
@@ -34,6 +35,27 @@ namespace KarambaIDEA.Core
             get
             {
                 return "C" + this.id+"-brandname"+this.brandName;
+            }
+        }
+
+        public string JointFilePath
+        {
+            get
+            {
+                return jointFilePath;
+            }
+            set
+            {
+                if(this.project.projectFolderPath!= null)
+                {
+                    string fileName = this.Name + ".ideaCon";
+                    jointFilePath = Path.Combine(this.project.projectFolderPath, this.Name, fileName);
+                }
+                else
+                {
+                    jointFilePath = value;
+                }
+                
             }
         }
 

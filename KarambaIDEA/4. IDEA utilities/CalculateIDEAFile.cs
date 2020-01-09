@@ -61,7 +61,7 @@ namespace KarambaIDEA
             {
                 //Run HiddenCalculation
                 Joint joint = new Joint();
-                joint.jointFilePath = filepath;
+                joint.JointFilePath = filepath;
                 KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(joint);
 
                 //Retrieve results

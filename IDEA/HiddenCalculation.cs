@@ -158,7 +158,7 @@ namespace KarambaIDEA.IDEA
        /// <param name="filepath">full filepath of .IdeaCon file</param>
         public void OpenAndCalculate(Joint joint) //RAZ: open the IDEA-file
         {
-            string filepath = joint.jointFilePath;
+            string filepath = joint.JointFilePath;
             //OpenFileDialog openFileDialog = new OpenFileDialog();
             //openFileDialog.Filter = "IdeaConnection | *.ideacon";
             if (filepath != null)
@@ -179,9 +179,9 @@ namespace KarambaIDEA.IDEA
                     // open idea connection project file
                     serviceDynamic.OpenIdeaConProjectFile(filepath, 0);
 
-                    List<ConnectionVM> connectionsVm = GetConnectionViewModels();
+                    //List<ConnectionVM> connectionsVm = GetConnectionViewModels();
 
-                    this.Connections = new ObservableCollection<ConnectionVM>(connectionsVm);
+                    //this.Connections = new ObservableCollection<ConnectionVM>(connectionsVm);
                                        
                     // calculate all connections in the project
                     var projectData = serviceDynamic.ConDataContract;

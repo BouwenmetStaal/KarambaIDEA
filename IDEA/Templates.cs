@@ -70,8 +70,14 @@ namespace KarambaIDEA.IDEA
             }
             return openModel;
         }
-
-        static public OpenModel BoltedEndplateConnection(OpenModel openModel, Joint joint)
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="openModel"></param>
+        /// <param name="joint"></param>
+        /// <param name="tplate">plate thickness in meters</param>
+        /// <returns></returns>
+        static public OpenModel BoltedEndplateConnection(OpenModel openModel, Joint joint, double tplate)
         {
             //CreatePlateForBeam(openModel,joint, 0, 0.5, 0.24, -0.01);
             //CreatePlateForBeam(openModel,joint, 1, 0.5, 0.24, 0.01);
@@ -81,8 +87,8 @@ namespace KarambaIDEA.IDEA
             double w1 = joint.attachedMembers[1].element.crossSection.width / 1000;
             double h1 = joint.attachedMembers[1].element.crossSection.height / 1000;
 
-            CreatePlateForBeam(openModel, joint, 0, w0, h0, -0.01);
-            CreatePlateForBeam(openModel, joint, 1, w1, h1, 0.01);
+            CreatePlateForBeam(openModel, joint, 0, w0, h0, tplate);
+            CreatePlateForBeam(openModel, joint, 1, w1, h1, tplate);
 
             CutBeamByPlate(openModel, 0, 0);
             CutBeamByPlate(openModel, 1, 1);
@@ -119,7 +125,7 @@ namespace KarambaIDEA.IDEA
 
 
 
-        static public OpenModel CreatePlateForBeam(OpenModel openModel, Joint joint, int refBeam, double width, double height, double moveX)
+        static public OpenModel CreatePlateForBeam(OpenModel openModel, Joint joint, int refBeam, double width, double height, double tplate)
         {
             double w = 0.5 * width;
             double h = 0.5 * height;
@@ -131,6 +137,7 @@ namespace KarambaIDEA.IDEA
             stringlist.Add(Lineto(-w, -h));
 
             string region = Combine(stringlist);
+            //thickness
 
 
             //string region = "M "+-w+" 0 L " + width + " 0 L " + width + " " + height + " L 0 " + height + " L 0 0";
@@ -148,18 +155,25 @@ namespace KarambaIDEA.IDEA
             int number = 1 + openModel.Connections[0].Plates.Count;
             BeamData beam = openModel.Connections[0].Beams[refBeam];
             Element ele = joint.project.elements.First(a => a.id == (beam.Id-1));
+            AttachedMember at = joint.attachedMembers.First(a => a.element.id == (beam.Id - 1));
 
             
             CoordSystem coor = openModel.LineSegment3D[refBeam].LocalCoordinateSystem;//based on integer of linesegments not of plates
             var LocalCoordinateSystem = new CoordSystemByVector();
 
+            double distanceXloc = tplate * 0.5;
+            if (at.isStartPoint == false)
+            {
+                distanceXloc = -distanceXloc;
+            }
+            
             //TODO: make definition that creates plate based on the LCS of the reference beam
-            Point movedPoint = Point.MovePointByVectorandLength(joint.centralNodeOfJoint, ele.line.Vector, moveX);
+            Point movedPoint = Point.MovePointByVectorandLength(joint.centralNodeOfJoint, ele.line.Vector, distanceXloc);
 
             openModel.Connections[0].Plates.Add(new IdeaRS.OpenModel.Connection.PlateData
             {
                 Name = "P"+number,
-                Thickness = 0.02,
+                Thickness = tplate,
                 
                 
                 Id = number,

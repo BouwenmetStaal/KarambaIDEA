@@ -26,7 +26,8 @@ namespace Tester
 {
     public class GenerateTestJoint
     {
-       public Joint Testjoint()
+        //for bolted connection
+        public Joint Testjoint()
         {
             //info: Octopus-joint, all start points
 
@@ -41,7 +42,7 @@ namespace Tester
 
             KarambaIDEA.Core.MaterialSteel steel = new MaterialSteel(project2, MaterialSteel.SteelGrade.S355);
             KarambaIDEA.Core.CrossSection.CreateNewOrExisting(project2, "HEA100", KarambaIDEA.Core.CrossSection.Shape.ISection, steel, 20, 20, 20, 20, 20);
-            KarambaIDEA.Core.CrossSection.CreateNewOrExisting(project2, "HEA160", KarambaIDEA.Core.CrossSection.Shape.ISection, steel, 20, 20, 20, 20, 20);
+            KarambaIDEA.Core.CrossSection.CreateNewOrExisting(project2, "HEA160", KarambaIDEA.Core.CrossSection.Shape.ISection, steel, 200, 200, 10,10,10);
             //CrossSection cross = new CrossSection(project2, "HEA100", "I", steel, 20, 20, 20, 20, 20);
 
             new Element(project2, 0, new Line(0, puntA, puntB), project2.crossSections[1], "Column", 1,0.0);
@@ -60,8 +61,8 @@ namespace Tester
             project2.hierarchylist.Add(new Hierarchy(4, "Diagonal"));
 
             LoadCase lc1 = new LoadCase(project2, 1);
-            new LoadsPerLine(project2.elements[0], lc1, new Load(5, 5, 5, 5, 5, 5), new Load(10, 10, 10, 10, 10, 10));
-            new LoadsPerLine(project2.elements[1], lc1, new Load(5, 5, 5, 5, 5, 5), new Load(10, 10, 10, 10, 10, 10));
+            new LoadsPerLine(project2.elements[0], lc1, new Load(100, 0, 0, 0, 0, 0), new Load(100, 0, 0, 0, 0, 0));
+            new LoadsPerLine(project2.elements[1], lc1, new Load(100, 0, 0, 0, 0, 0), new Load(100, 0, 0, 0, 0, 0));
 
 
 
@@ -73,7 +74,8 @@ namespace Tester
             return joint;
         }
 
-       public Joint Testjoint2()
+        // weld all members
+        public Joint Testjoint2()
         {
             //info: Octopus-joint, all start points
 

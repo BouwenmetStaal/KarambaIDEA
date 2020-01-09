@@ -104,6 +104,7 @@
   <ItemGroup>
     <Compile Include="3. Project utilities\CheckLocalCoordinateSystem.cs" />
     <Compile Include="4. IDEA utilities\CalculateIDEAFile.cs" />
+    <Compile Include="4. IDEA utilities\CreateAndCalculateIDEAfile.cs" />
     <Compile Include="4. IDEA utilities\CreateIDEAfile.cs" />
     <Compile Include="4. IDEA utilities\OptimizePlates.cs" />
     <Compile Include="ImportGrasshopperUtils.cs" />

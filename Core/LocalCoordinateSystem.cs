@@ -11,7 +11,5 @@ namespace KarambaIDEA.Core
         public Vector X = new Vector();
         public Vector Y = new Vector();
         public Vector Z = new Vector();
-
     }
-    
 }
