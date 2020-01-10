@@ -21,12 +21,25 @@ namespace Tester
         [STAThread]
         static void Main()
         {
-            /*
+            //TESTCalculate();
+            TESTCreateAndCalculate();
+       }
+
+        static void TESTCalculate()
+        {
+            // Initialize idea references, before calling code.
+            AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
+            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
+
+
             Joint joint = new Joint();
-            joint.jointFilePath = "C:\\Data\\20191115214919\\C12-brandname\\APIproduced File - NotCorrect.ideaCon";
+            joint.JointFilePath = "C:\\Data\\20191115214919\\C12-brandname\\APIproduced File - NotCorrect.ideaCon";
             KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(joint);
-            */
-            
+            //Results
+            string results = joint.ResultsSummary.summary;
+        }
+        static void TESTCreateAndCalculate()
+        {
             Tester.GenerateTestJoint testrun = new GenerateTestJoint();
 
             //Define testjoint
@@ -35,7 +48,7 @@ namespace Tester
 
             //Define workshop operations
             joint.template = EnumWorkshopOperations.BoltedEndPlateConnection;
-            
+
             //Set Project folder path
             string folderpath = @"C:\Data\";
             joint.project.CreateFolder(folderpath);
@@ -59,8 +72,11 @@ namespace Tester
 
             //Results
             string results = joint.ResultsSummary.summary;
+        }
 
-       }
-        
+
+
+
+
     }
 }

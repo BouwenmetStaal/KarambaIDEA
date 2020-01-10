@@ -19,36 +19,44 @@ namespace KarambaIDEA
 {
     public class Template_BoltedEndPlateConnection : GH_Component
     {
-        public Template_BoltedEndPlateConnection() : base("Bolted endplate connection", "Bolted endplate connection", "Bolted endplate connection", "KarambaIDEA", "5. IDEA Templates")
+        public Template_BoltedEndPlateConnection() : base("Template: Bolted endplate connection", "Template: Bolted endplate connection", "Template: Bolted endplate connection", "KarambaIDEA", "5. IDEA Templates")
         {
 
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            //pManager.AddTextParameter("BrandNames", "BrandNames", "BrandNames to apply template to", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Thickness endplate", "Thickness endplate", "", GH_ParamAccess.item);
+
+            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddTextParameter("BrandNames", "BrandNames", "BrandNames to apply template to", GH_ParamAccess.list);
             // Assign default BrandName.
             Param_String param0 = (Param_String)pManager[0];
             param0.PersistentData.Append(new GH_String(""));
+
+            pManager.AddNumberParameter("Thickness endplate", "Thickness endplate", "", GH_ParamAccess.item);
+            
+            
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Template: Bolted endplate connection", "Template: Bolted endplate connection", "Bolted endplate connection", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            //pManager.AddGenericParameter("Template: Bolted endplate connection", "Template: Bolted endplate connection", "Bolted endplate connection", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
 
-            //Input variables            
+            //Input variables      
+            Project project = new Project();
             double tplate = new double();
             List<GH_String> brandNamesDirty = new List<GH_String>();
             List<string> brandNames = new List<string>();
 
             //Link input
-            //DA.GetDataList(0, brandNamesDirty);
-            DA.GetData(0, ref tplate);
+            DA.GetData(0, ref project);
+            DA.GetDataList(1, brandNamesDirty);
+            DA.GetData(2, ref tplate);
 
             //process
             if (brandNamesDirty.Where(x => x != null && !string.IsNullOrWhiteSpace(x.Value)).Count() > 0)
@@ -57,11 +65,16 @@ namespace KarambaIDEA
                 brandNames = ImportGrasshopperUtils.DeleteEnterCommandsInGHStrings(brandNamesDirtyString);
             }
 
-            EnumWorkshopOperations operation = EnumWorkshopOperations.BoltedEndPlateConnection;
+            foreach(Joint joint in project.joints)
+            {
+                joint.template = EnumWorkshopOperations.BoltedEndPlateConnection;
+                //TODO: add class template, add class plates, write tplate to class plates. 
+            }
+            
             //IDEA.Templates.BoltedEndplateConnection(var, var, 10);
 
             //link output
-            DA.SetData(0, operation);
+            DA.SetData(0, project);
         }
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.

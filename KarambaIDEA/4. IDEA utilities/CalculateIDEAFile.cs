@@ -34,6 +34,7 @@ namespace KarambaIDEA
         {
             pManager.AddNumberParameter("Analysis", "Analysis", "", GH_ParamAccess.item);
             pManager.AddNumberParameter("Plates", "Plates", "", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Bolts", "Bolts", "", GH_ParamAccess.item);
             pManager.AddNumberParameter("Welds", "Welds", "", GH_ParamAccess.item);
             pManager.AddNumberParameter("Buckling", "Buckling", "", GH_ParamAccess.item);
             pManager.AddTextParameter("Summary", "Summary", "", GH_ParamAccess.item);
@@ -53,6 +54,7 @@ namespace KarambaIDEA
             //output variables
             double analysis = new double();
             double plates = new double();
+            double bolts = new double();
             double welds = new double();
             double buckling = new double();
             string summary = string.Empty;
@@ -67,6 +69,7 @@ namespace KarambaIDEA
                 //Retrieve results
                 analysis = joint.ResultsSummary.analysis;
                 plates = joint.ResultsSummary.plates;
+                bolts = joint.ResultsSummary.bolts;
                 welds = joint.ResultsSummary.welds;
                 buckling = joint.ResultsSummary.buckling;
                 summary = joint.ResultsSummary.summary;
@@ -74,9 +77,10 @@ namespace KarambaIDEA
             //link output
             DA.SetData(0, analysis);
             DA.SetData(1, plates);
-            DA.SetData(2, welds);
-            DA.SetData(3, buckling);
-            DA.SetData(4, summary);
+            DA.SetData(2, bolts);
+            DA.SetData(3, welds);
+            DA.SetData(4, buckling);
+            DA.SetData(5, summary);
         }
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.

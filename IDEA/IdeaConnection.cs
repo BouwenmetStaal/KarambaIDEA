@@ -78,6 +78,7 @@ namespace KarambaIDEA.IDEA
                 Templates.WeldAllMembers(example);
             }
 
+
             // save to the files
             result.SaveToXmlFile(Path.Combine(folder, joint.Name, "IOMresults.xml"));
             example.SaveToXmlFile(Path.Combine(folder, joint.Name, "IOM.xml"));

@@ -19,7 +19,7 @@ namespace KarambaIDEA
 {
     public class CreateAndCalculateIDEAfile : GH_Component
     {
-        public CreateAndCalculateIDEAfile() : base("Create IDEA File", "Create IDEA File", "Create IDEA file", "KarambaIDEA", "4. IDEA utilities")
+        public CreateAndCalculateIDEAfile() : base("Create and Calculate IDEA File", "Create and Calculate IDEA File", "Create and Calculate IDEA file", "KarambaIDEA", "4. IDEA utilities")
         {
 
         }
@@ -44,6 +44,7 @@ namespace KarambaIDEA
             pManager.AddLineParameter("Selected Joint", "Selected Joint", "Lines of selected Joint", GH_ParamAccess.list);
             pManager.AddNumberParameter("Analysis", "Analysis", "", GH_ParamAccess.item);
             pManager.AddNumberParameter("Plates", "Plates", "", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Bolts", "Bolts", "", GH_ParamAccess.item);
             pManager.AddNumberParameter("Welds", "Welds", "", GH_ParamAccess.item);
             pManager.AddNumberParameter("Buckling", "Buckling", "", GH_ParamAccess.item);
             pManager.AddTextParameter("Summary", "Summary", "", GH_ParamAccess.item);
@@ -79,6 +80,7 @@ namespace KarambaIDEA
             //output variables
             double analysis = new double();
             double plates = new double();
+            double bolts = new double();
             double welds = new double();
             double buckling = new double();
             string summary = string.Empty;
@@ -100,10 +102,10 @@ namespace KarambaIDEA
                 //Retrieve results
                 analysis = joint.ResultsSummary.analysis;
                 plates = joint.ResultsSummary.plates;
+                bolts = joint.ResultsSummary.bolts;
                 welds = joint.ResultsSummary.welds;
                 buckling = joint.ResultsSummary.buckling;
                 summary = joint.ResultsSummary.summary;
-
 
             }
 
@@ -120,9 +122,10 @@ namespace KarambaIDEA
             DA.SetDataList(0, jointlines);
             DA.SetData(1, analysis);
             DA.SetData(2, plates);
-            DA.SetData(3, welds);
-            DA.SetData(4, buckling);
-            DA.SetData(5, summary);
+            DA.SetData(3, bolts);
+            DA.SetData(4, welds);
+            DA.SetData(5, buckling);
+            DA.SetData(6, summary);
         }
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.

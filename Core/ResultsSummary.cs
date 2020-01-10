@@ -9,6 +9,7 @@ namespace KarambaIDEA.Core
     {
         public double analysis;
         public double plates;
+        public double bolts;
         public double welds;
         public double buckling;
         public string summary;

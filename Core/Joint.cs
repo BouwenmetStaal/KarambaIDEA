@@ -46,10 +46,13 @@ namespace KarambaIDEA.Core
             }
             set
             {
-                if(this.project.projectFolderPath!= null)
+                if(this.project!= null)
                 {
-                    string fileName = this.Name + ".ideaCon";
-                    jointFilePath = Path.Combine(this.project.projectFolderPath, this.Name, fileName);
+                    if (this.project.projectFolderPath != null)
+                    {
+                        string fileName = this.Name + ".ideaCon";
+                        jointFilePath = Path.Combine(this.project.projectFolderPath, this.Name, fileName);
+                    }
                 }
                 else
                 {

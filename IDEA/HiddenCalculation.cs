@@ -59,8 +59,9 @@ namespace KarambaIDEA.IDEA
                 StatusMessage = string.Format("ERROR IdeaStatiCa doesn't exist in '{0}'", ideaStatiCaDir);
             }
 
-            this.OpenAndCalculate(joint);
-            
+            ConnectionResultsData cbfemResults = OpenAndCalculate(joint);
+            SaveResultsSummary(joint, cbfemResults);
+
             //this.Calculate(filepath);
             /*
             OpenProjectCmd = new CustomCommand(this.CanOpen, this.Open);//RAZ: openen van IDEA bestand
@@ -152,12 +153,13 @@ namespace KarambaIDEA.IDEA
             return (IsIdea && Service == null);
         }
 
-       /// <summary>
-       /// 
-       /// </summary>
-       /// <param name="filepath">full filepath of .IdeaCon file</param>
-        public void OpenAndCalculate(Joint joint) //RAZ: open the IDEA-file
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="joint">joint contains a filepath, results are saved in joint</param>
+        public ConnectionResultsData OpenAndCalculate(Joint joint) //RAZ: open the IDEA-file
         {
+            ConnectionResultsData cbfemResults = new ConnectionResultsData();
             string filepath = joint.JointFilePath;
             //OpenFileDialog openFileDialog = new OpenFileDialog();
             //openFileDialog.Filter = "IdeaConnection | *.ideacon";
@@ -195,10 +197,9 @@ namespace KarambaIDEA.IDEA
                     }
                    
                     object resData = serviceDynamic.CalculateProject(connectionId);
-                    ConnectionResultsData cbfemResults = (ConnectionResultsData)resData;
-                    //SaveResultsSummary(joint, cbfemResults);
+                    cbfemResults = (ConnectionResultsData)resData;
                     
-                    SaveResultsSummary(joint, cbfemResults);
+                    
 
                     //close file
                     serviceDynamic.CloseServices();
@@ -218,21 +219,34 @@ namespace KarambaIDEA.IDEA
                     }
                 }
             }
+            return cbfemResults;
         }
 
         public void SaveResultsSummary(Joint joint, ConnectionResultsData cbfemResults)
         {
-            List<CheckResSummary> result = cbfemResults.ConnectionCheckRes[0].CheckResSummary;
+            List<CheckResSummary> results = cbfemResults.ConnectionCheckRes[0].CheckResSummary;
             joint.ResultsSummary = new ResultsSummary();
 
-            joint.ResultsSummary.analysis = result[0].CheckValue;
-            joint.ResultsSummary.plates = result[1].CheckValue;
-            joint.ResultsSummary.welds = result[2].CheckValue;
-            joint.ResultsSummary.buckling = result[3].CheckValue;
-            string message = string.Empty;
-            foreach (var r in result)
+            if(results.Count == 4)//No bolts in connections. Hence, no results for bolts.
             {
-                message += r.Name + ": " + r.UnityCheckMessage + ", ";
+                joint.ResultsSummary.analysis = results[0].CheckValue;
+                joint.ResultsSummary.plates = results[1].CheckValue;
+                joint.ResultsSummary.welds = results[2].CheckValue;
+                joint.ResultsSummary.buckling = results[3].CheckValue;
+            }
+            else//Bolts in connection.
+            {
+                joint.ResultsSummary.analysis = results[0].CheckValue;
+                joint.ResultsSummary.plates = results[1].CheckValue;
+                joint.ResultsSummary.bolts = results[2].CheckValue;
+                joint.ResultsSummary.welds = results[3].CheckValue;
+                joint.ResultsSummary.buckling = results[4].CheckValue;
+            }
+            
+            string message = string.Empty;
+            foreach (var result in results)
+            {
+                message += result.Name + ": " + result.UnityCheckMessage + ", ";
             }
             joint.ResultsSummary.summary = message;
 
