@@ -212,7 +212,7 @@ namespace KarambaIDEA.Core
         /// The integers of all occuring hierarchys are chronologically ordered, creating a string that defines the brandname
         /// </summary>
         /// <param name="project"></param>
-        public void SetBrandnames(Project project)
+        public void SetBrandNames(Project project)
         {
             foreach (Joint joint in project.joints)
             {

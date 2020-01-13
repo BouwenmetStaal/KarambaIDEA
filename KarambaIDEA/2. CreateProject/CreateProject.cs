@@ -265,6 +265,9 @@ namespace KarambaIDEA.Grasshopper
             double tol = 1e-6;
             project.CreateJoints(tol, eccentricity, punten, project.elements, project.hierarchylist);
 
+            //DEFINE BRANDNAMES PER JOINT
+            project.SetBrandNames(project);
+
             //Link output
             DA.SetData(0, project);
         }

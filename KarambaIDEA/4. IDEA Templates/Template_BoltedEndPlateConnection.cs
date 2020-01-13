@@ -19,7 +19,7 @@ namespace KarambaIDEA
 {
     public class Template_BoltedEndPlateConnection : GH_Component
     {
-        public Template_BoltedEndPlateConnection() : base("Template: Bolted endplate connection", "Template: Bolted endplate connection", "Template: Bolted endplate connection", "KarambaIDEA", "5. IDEA Templates")
+        public Template_BoltedEndPlateConnection() : base("Template: Bolted endplate connection", "Template: Bolted endplate connection", "Template: Bolted endplate connection", "KarambaIDEA", "4. IDEA Templates")
         {
 
         }
@@ -30,10 +30,10 @@ namespace KarambaIDEA
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
             pManager.AddTextParameter("BrandNames", "BrandNames", "BrandNames to apply template to", GH_ParamAccess.list);
             // Assign default BrandName.
-            Param_String param0 = (Param_String)pManager[0];
+            Param_String param0 = (Param_String)pManager[1];
             param0.PersistentData.Append(new GH_String(""));
 
-            pManager.AddNumberParameter("Thickness endplate", "Thickness endplate", "", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Thickness endplate [mm]", "Thickness endplate [mm]", "", GH_ParamAccess.item);
             
             
         }
@@ -41,6 +41,7 @@ namespace KarambaIDEA
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.list);
             //pManager.AddGenericParameter("Template: Bolted endplate connection", "Template: Bolted endplate connection", "Bolted endplate connection", GH_ParamAccess.item);
         }
 
@@ -53,6 +54,9 @@ namespace KarambaIDEA
             List<GH_String> brandNamesDirty = new List<GH_String>();
             List<string> brandNames = new List<string>();
 
+            //Output variables
+            List<string> messages = new List<string>();
+
             //Link input
             DA.GetData(0, ref project);
             DA.GetDataList(1, brandNamesDirty);
@@ -64,17 +68,53 @@ namespace KarambaIDEA
                 List<string> brandNamesDirtyString = brandNamesDirty.Select(x => x.Value.ToString()).ToList();
                 brandNames = ImportGrasshopperUtils.DeleteEnterCommandsInGHStrings(brandNamesDirtyString);
             }
-
-            foreach(Joint joint in project.joints)
-            {
-                joint.template = EnumWorkshopOperations.BoltedEndPlateConnection;
-                //TODO: add class template, add class plates, write tplate to class plates. 
-            }
             
-            //IDEA.Templates.BoltedEndplateConnection(var, var, 10);
+            //TODO: make a message "BrandName 011 is linked to BoltedEndPlateConnection"
+            if (brandNames != null)
+            {
+                foreach (string brandName in brandNames)
+                {
+                    foreach(Joint joint in project.joints)
+                    {
+                        if (brandName == joint.brandName)
+                        {
+                            joint.template = new Template();
+                            joint.template.workshopOperations = Template.WorkshopOperations.BoltedEndPlateConnection;
+                            joint.template.plate = new Plate();
+                            joint.template.plate.thickness = tplate;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (Joint joint in project.joints)
+                {
+                    joint.template = new Template();
+                    joint.template.workshopOperations = Template.WorkshopOperations.BoltedEndPlateConnection;
+                    joint.template.plate = new Plate();
+                    joint.template.plate.thickness = tplate;
+                }
+            }
+
+
+            List<string> uniqueBrandNames = project.joints.Select(a => a.brandName).Distinct().ToList();
+            
+            foreach (string brandName in uniqueBrandNames)
+            {
+                foreach (Joint joint in project.joints.Where(a=>a.brandName==brandName))
+                {
+                    if(brandName == joint.brandName)
+                    {
+                        //TODO: add only first will be added
+                        messages.Add("BrandName " + brandName + " is linked to " + joint.template.workshopOperations.ToString());
+                    }
+                }
+            }
 
             //link output
             DA.SetData(0, project);
+            DA.SetDataList(1, messages);
         }
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.

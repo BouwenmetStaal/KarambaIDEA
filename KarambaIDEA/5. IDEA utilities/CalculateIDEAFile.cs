@@ -17,9 +17,9 @@ using Grasshopper.Kernel.Types;
 
 namespace KarambaIDEA
 {
-    public class OptimizePlates : GH_Component
+    public class CalculateIDEAFile : GH_Component
     {
-        public OptimizePlates() : base("Optimize plates", "Optimize plates", "Optimize plates of IDEA file", "KarambaIDEA", "4. IDEA utilities")
+        public CalculateIDEAFile() : base("Calculate IDEA File", "Calculate IDEA File", "Calculate IDEA file", "KarambaIDEA", "5. IDEA utilities")
         {
 
         }
@@ -32,14 +32,19 @@ namespace KarambaIDEA
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddNumberParameter("Message", "Message", "", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Analysis", "Analysis", "", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Plates", "Plates", "", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Bolts", "Bolts", "", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Welds", "Welds", "", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Buckling", "Buckling", "", GH_ParamAccess.item);
+            pManager.AddTextParameter("Summary", "Summary", "", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
 
             //Input variables
-            string filepath = null;
+            string filepath = null;            
             bool startIDEA = false;
 
             //Link input
@@ -47,23 +52,35 @@ namespace KarambaIDEA
             DA.GetData(1, ref startIDEA);
 
             //output variables
-            string message = string.Empty;
-
-            //process
+            double analysis = new double();
+            double plates = new double();
+            double bolts = new double();
+            double welds = new double();
+            double buckling = new double();
+            string summary = string.Empty;
+                                  
             if (startIDEA == true)
             {
                 //Run HiddenCalculation
                 Joint joint = new Joint();
                 joint.JointFilePath = filepath;
                 KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(joint);
-                
 
-                //TODO: add plate optmization process
+                //Retrieve results
+                analysis = joint.ResultsSummary.analysis;
+                plates = joint.ResultsSummary.plates;
+                bolts = joint.ResultsSummary.bolts;
+                welds = joint.ResultsSummary.welds;
+                buckling = joint.ResultsSummary.buckling;
+                summary = joint.ResultsSummary.summary;
             }
-
             //link output
-            DA.SetData(0, message);
-           
+            DA.SetData(0, analysis);
+            DA.SetData(1, plates);
+            DA.SetData(2, bolts);
+            DA.SetData(3, welds);
+            DA.SetData(4, buckling);
+            DA.SetData(5, summary);
         }
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.
@@ -78,7 +95,7 @@ namespace KarambaIDEA
         }
         public override Guid ComponentGuid
         {
-            get { return new Guid("2ac4d20f-82e8-4a75-82c1-fee709a83455"); }
+            get { return new Guid("b563fd17-0555-4194-8308-a785e127d406"); }
         }
 
 

@@ -47,7 +47,7 @@ namespace Tester
 
 
             //Define workshop operations
-            joint.template = EnumWorkshopOperations.BoltedEndPlateConnection;
+            joint.template.workshopOperations = Template.WorkshopOperations.BoltedEndPlateConnection;
 
             //Set Project folder path
             string folderpath = @"C:\Data\";

@@ -44,7 +44,6 @@
     <Compile Include="AttachedMember.cs" />
     <Compile Include="CrossSection.cs" />
     <Compile Include="Element.cs" />
-    <Compile Include="EnumWorkshopOperations.cs" />
     <Compile Include="Hierarchy.cs" />
     <Compile Include="Joint.cs" />
     <Compile Include="Geometry\Line.cs" />
@@ -52,11 +51,13 @@
     <Compile Include="LocalCoordinateSystem.cs" />
     <Compile Include="MaterialSteel.cs" />
     <Compile Include="Geometry\Point.cs" />
+    <Compile Include="Plate.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResultsSummary.cs" />
     <Compile Include="SawingCuts.cs" />
     <Compile Include="Geometry\Vector.cs" />
+    <Compile Include="Template.cs" />
     <Compile Include="Weld.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />

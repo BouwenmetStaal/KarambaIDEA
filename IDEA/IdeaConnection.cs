@@ -65,18 +65,27 @@ namespace KarambaIDEA.IDEA
             OpenModelResult result = openModelGenerator.openModelResult;
 
             //add template to openmodel
-            if (joint.template == EnumWorkshopOperations.NoOperation)
+            if(joint.template!= null)
             {
+                if (joint.template.workshopOperations == Template.WorkshopOperations.NoOperation)
+                {
 
+                }
+                if (joint.template.workshopOperations == Template.WorkshopOperations.BoltedEndPlateConnection)
+                {
+                    if (joint.template.plate != null)
+                    {
+                        double platethickness = joint.template.plate.thickness/1000;
+                        Templates.BoltedEndplateConnection(example, joint, platethickness);
+                    }
+                    
+                }
+                if (joint.template.workshopOperations == Template.WorkshopOperations.WeldAllMembers)
+                {
+                    Templates.WeldAllMembers(example);
+                }
             }
-            if (joint.template == EnumWorkshopOperations.BoltedEndPlateConnection)
-            {
-                Templates.BoltedEndplateConnection(example, joint,0.01);
-            }
-            if (joint.template == EnumWorkshopOperations.WeldAllMembers)
-            {
-                Templates.WeldAllMembers(example);
-            }
+            
 
 
             // save to the files

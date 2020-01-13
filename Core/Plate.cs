@@ -6,10 +6,9 @@ using System.Threading.Tasks;
 
 namespace KarambaIDEA.Core
 {
-    public enum EnumWorkshopOperations
+    public class Plate
     {
-        NoOperation,
-        BoltedEndPlateConnection,
-        WeldAllMembers
+        public int id;
+        public double thickness;
     }
 }

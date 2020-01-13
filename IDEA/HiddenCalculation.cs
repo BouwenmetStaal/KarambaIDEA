@@ -227,6 +227,9 @@ namespace KarambaIDEA.IDEA
             List<CheckResSummary> results = cbfemResults.ConnectionCheckRes[0].CheckResSummary;
             joint.ResultsSummary = new ResultsSummary();
 
+            //TODO:include message when singilarity occurs
+            //TODO:include message when bolts and welds are conflicting
+
             if(results.Count == 4)//No bolts in connections. Hence, no results for bolts.
             {
                 joint.ResultsSummary.analysis = results[0].CheckValue;
@@ -246,7 +249,7 @@ namespace KarambaIDEA.IDEA
             string message = string.Empty;
             foreach (var result in results)
             {
-                message += result.Name + ": " + result.UnityCheckMessage + ", ";
+                message += result.Name + ": " + result.UnityCheckMessage + " ";
             }
             joint.ResultsSummary.summary = message;
 

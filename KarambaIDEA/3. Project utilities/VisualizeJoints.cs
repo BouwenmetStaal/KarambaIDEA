@@ -36,10 +36,8 @@ namespace KarambaIDEA
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-
             //Input variables
             Project project = new Project();
-            
 
             //Link input
             DA.GetData(0, ref project);
@@ -50,7 +48,7 @@ namespace KarambaIDEA
             DataTree<Rhino.Geometry.Point3d> centerPoints = new DataTree<Rhino.Geometry.Point3d>();
 
             //Define Brandnames and assemble tree
-            project.SetBrandnames(project);
+            //project.SetBrandNames(project);
 
             //select unique brandName   
             var lstBrand = project.joints.Select(a => a.brandName).Distinct().ToList();
@@ -73,7 +71,6 @@ namespace KarambaIDEA
                             Point3d end = new Point3d(line.end.X, line.end.Y, line.end.Z);
                             Rhino.Geometry.Line rhinoline = new Rhino.Geometry.Line(start, end);
                             linetree.Add(rhinoline, path);
-                            
                         }
                         brandNames.Add(project.joints[b].brandName, new GH_Path(a, d));
                         centerPoints.Add(new Point3d(0.0,0.0,0.0), new GH_Path(a, d));

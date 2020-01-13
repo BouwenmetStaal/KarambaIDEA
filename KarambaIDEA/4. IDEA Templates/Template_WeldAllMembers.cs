@@ -19,48 +19,54 @@ namespace KarambaIDEA
 {
     public class Template_WeldAllMembers : GH_Component
     {
-        public Template_WeldAllMembers() : base("Weld all members", "Weld all members", "Weld all members", "KarambaIDEA", "5. IDEA Templates")
+        public Template_WeldAllMembers() : base("Template: Weld all members", "Template: Weld all members", "All members in joint will be connected by weld according to the hierarchy", "KarambaIDEA", "4. IDEA Templates")
         {
 
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            
+
+            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
             pManager.AddTextParameter("BrandNames", "BrandNames", "BrandNames to apply template to", GH_ParamAccess.list);
             // Assign default BrandName.
-            Param_String param0 = (Param_String)pManager[0];
+            Param_String param0 = (Param_String)pManager[1];
             param0.PersistentData.Append(new GH_String(""));
             
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Template: Weld all members", "Template: Weld all members", "All members in joint will be connected by weld according to the hierarchy", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            
+
             //Input variables            
-            
+            Project project = new Project();
             List<GH_String> brandNamesDirty = new List<GH_String>();
             List<string> brandNames = new List<string>();
 
             //Link input
-            DA.GetDataList(0, brandNamesDirty);
+            DA.GetData(0, ref project);
+            DA.GetDataList(1, brandNamesDirty);
 
             //process
             if (brandNamesDirty.Where(x=> x!=null&& !string.IsNullOrWhiteSpace(x.Value)).Count() > 0)
             {
                 List<string> brandNamesDirtyString = brandNamesDirty.Select(x => x.Value.ToString()).ToList();
                 brandNames = ImportGrasshopperUtils.DeleteEnterCommandsInGHStrings(brandNamesDirtyString);
-            }       
-
-            EnumWorkshopOperations operation = EnumWorkshopOperations.WeldAllMembers;
+            }   
+            
+            foreach(Joint joint in project.joints)
+            {
+                joint.template = new Template();
+                joint.template.workshopOperations = Template.WorkshopOperations.WeldAllMembers;
+            }
 
             //link output
-            DA.SetData(0, operation);
+            DA.SetData(0, project);
         }
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.
