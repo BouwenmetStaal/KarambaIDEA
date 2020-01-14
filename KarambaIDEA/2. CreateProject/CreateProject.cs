@@ -87,7 +87,6 @@ namespace KarambaIDEA.Grasshopper
             List<GH_String> h_Strings = new List<GH_String>();
             List<string> hierarchy = new List<string>();
 
-
             List<Point3d> centerpoints = new List<Point3d>();
             List<Rhino.Geometry.Line> lines = new List<Rhino.Geometry.Line>();
             List<double> rotationLCS = new List<double>();

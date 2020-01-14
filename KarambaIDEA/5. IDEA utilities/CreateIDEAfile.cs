@@ -29,7 +29,7 @@ namespace KarambaIDEA
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
             pManager.AddTextParameter("Output folder ", "Output folder", "Save location of IDEA Statica Connection output file. For example: 'C:\\Data'", GH_ParamAccess.item);
             //pManager.AddGenericParameter("Template", "Template", "Template", GH_ParamAccess.item);
-            pManager.AddBooleanParameter("RunAllJoints", "RunAllJoints", "If true run all joints, if false run ChooseJoint joint", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("CreateAllJoints", "CreateAllJoints", "If true create all joints, if false create only the selected joint", GH_ParamAccess.item);
             pManager.AddIntegerParameter("ChooseJoint", "ChooseJoint", "Specify the joint that will be calculated in IDEA. Note: starts at zero.", GH_ParamAccess.item);
             pManager.AddBooleanParameter("RunIDEA", "RunIDEA", "Bool for running IDEA Statica Connection", GH_ParamAccess.item);
             /*
@@ -47,28 +47,19 @@ namespace KarambaIDEA
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-
             //Input variables
             Project project = new Project();
             string outputfolderpath = null;
-            //Template.WorkshopOperations workshopOperations = Template.WorkshopOperations.NoOperation;
             bool createAllJoints = false;
             int createThisJoint = 0;
             bool startIDEA = false;
-                   
 
             //Link input
             DA.GetData(0, ref project);
             DA.GetData(1, ref outputfolderpath);
-
-            
-            //DA.GetData(2, ref workshopOperations);
-
             DA.GetData(2, ref createAllJoints);
-
             DA.GetData(3, ref createThisJoint);
             DA.GetData(4, ref startIDEA);
-            
 
             //output variables
             List<Rhino.Geometry.Line> lines = new List<Rhino.Geometry.Line>();
@@ -101,7 +92,6 @@ namespace KarambaIDEA
                 Rhino.Geometry.Line rhiline = ImportGrasshopperUtils.CastLineToRhino(line);
                 jointlines.Add(rhiline);
             }
-            
 
             //link output
             DA.SetDataList(0, jointlines);
@@ -123,8 +113,5 @@ namespace KarambaIDEA
         {
             get { return new Guid("52308472-3ab8-4f23-89d0-d3746ed013f6"); }
         }
-
-
     }
-
 }

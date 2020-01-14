@@ -125,7 +125,7 @@ namespace KarambaIDEA.Core
                 bool IsContinues = true;
                 //Redistribute attachedMemTemp over BearingMember and ConnectingMember
                 //iterate over hierarchy rank to make sure list is created in a orded way
-                if (!hierarchy.Any())
+                if (!hierarchy.Any())//if there is no hierarchy
                 {
                     //no hierarchy, first member found is an ended bearing member
                     IsContinues = false;
@@ -139,10 +139,11 @@ namespace KarambaIDEA.Core
                         attachedMembers.Add(attachedMemTemp[b]);
                     }
                 }
-                else
+                else//if there is a hierarchy
                 {
                     //hierarchy determined, list will be build based on hierarchy
                     //If only one hierarchy entry defined
+                    /*
                     if (hierarchy.Count == 1)
                     {
                         IsContinues = false;
@@ -156,11 +157,26 @@ namespace KarambaIDEA.Core
                             attachedMembers.Add(attachedMemTemp[b]);
                         }
                     }
-                    else
+                    */
+                    if (attachedMemTemp.Count == 2)//if joint has two attached members. First is bearing, Second is attached.
                     {
+                        //TODO: christalyze method
+                        IsContinues = false;
+                        //First member is bearing
+                        AttachedMember w = attachedMemTemp.First();
+                        BearingMember bearing = new BearingMember(w.element, w.distanceVector, w.isStartPoint, w.ideaLine);
+                        attachedMembers.Add(bearing);
+                        //Rest of members are connecting members
+                        for (int b = 1; b < attachedMemTemp.Count; b++)
+                        {
+                            attachedMembers.Add(attachedMemTemp[b]);
+                        }
+                    }
+                    else//there is a hierarchy, thus set bearingmembers according to hierarchy
+                    {
+                        //TODO:include warning if not all available hierarchies are defined in hierarchylist
                         for (int rank = 0; rank < 1 + hierarchy.Max(a => a.numberInHierarchy); rank++)
                         {
-
                             //iterate over attachedMembers of every joint
                             //List<AttachedMember> templist = new List<AttachedMember>();
 
@@ -242,7 +258,7 @@ namespace KarambaIDEA.Core
         public void CreateFolder(string userpath)
         {
             //create folder
-            String timeStamp = DateTime.Now.ToString("yyyyMMddHHmmss");
+            String timeStamp = DateTime.Now.ToString("yyyy MM dd HHmmss");
             string pathlocation = "";
             if (string.IsNullOrEmpty(userpath) || string.IsNullOrWhiteSpace(userpath))
             {
@@ -250,9 +266,7 @@ namespace KarambaIDEA.Core
             }
             else
             {
-                
                 pathlocation = userpath;
-               
             }            
                         
             this.projectFolderPath = Path.Combine(pathlocation, timeStamp);
@@ -267,8 +281,31 @@ namespace KarambaIDEA.Core
                     //System.Windows.MessageBox.Show("Provided path is invalid, provided path:" + userpath, "Path invalid");
                     //TODO include workerthread or progress bar
                 }
-
             }
+        }
+
+        /// <summary>
+        /// Make a list with messages
+        /// These messages will tell the which templates are applied to the joint brand names available in the project.
+        /// </summary>
+        /// <returns></returns>
+        public List<string> MakeTemplateJointMessage()
+        {
+            List<string> messages = new List<string>();
+            List<string> uniqueBrandNames = this.joints.Select(a => a.brandName).Distinct().ToList();
+            foreach (string brandName in uniqueBrandNames)
+            {
+                foreach (Joint joint in this.joints.Where(a => a.brandName == brandName))
+                {
+                    if (brandName == joint.brandName)
+                    {
+                        messages.Add("BrandName '" + brandName + "' is linked to " + joint.template.workshopOperations.ToString());
+                        goto here;
+                    }
+                }
+            here:;
+            }
+            return messages;
         }
 
         

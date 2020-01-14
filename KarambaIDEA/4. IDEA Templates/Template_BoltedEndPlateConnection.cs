@@ -70,7 +70,7 @@ namespace KarambaIDEA
             }
             
             //TODO: make a message "BrandName 011 is linked to BoltedEndPlateConnection"
-            if (brandNames != null)
+            if (brandNames.Count != 0)
             {
                 foreach (string brandName in brandNames)
                 {
@@ -97,20 +97,7 @@ namespace KarambaIDEA
                 }
             }
 
-
-            List<string> uniqueBrandNames = project.joints.Select(a => a.brandName).Distinct().ToList();
-            
-            foreach (string brandName in uniqueBrandNames)
-            {
-                foreach (Joint joint in project.joints.Where(a=>a.brandName==brandName))
-                {
-                    if(brandName == joint.brandName)
-                    {
-                        //TODO: add only first will be added
-                        messages.Add("BrandName " + brandName + " is linked to " + joint.template.workshopOperations.ToString());
-                    }
-                }
-            }
+            messages = project.MakeTemplateJointMessage();            
 
             //link output
             DA.SetData(0, project);
@@ -125,8 +112,7 @@ namespace KarambaIDEA
             get
             {
 
-                return Properties.Resources.KarambaIDEA_logo;
-
+                return Properties.Resources.TempBoltedEndplateConnection;
             }
         }
         public override Guid ComponentGuid

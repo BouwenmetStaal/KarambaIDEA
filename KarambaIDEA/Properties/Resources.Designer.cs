@@ -129,5 +129,25 @@ namespace KarambaIDEA.Properties {
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap TempBoltedEndplateConnection {
+            get {
+                object obj = ResourceManager.GetObject("TempBoltedEndplateConnection", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap TempWeldAllMembers {
+            get {
+                object obj = ResourceManager.GetObject("TempWeldAllMembers", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
     }
 }

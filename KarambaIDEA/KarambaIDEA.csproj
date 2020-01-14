@@ -154,6 +154,8 @@
     <Content Include="Resources\continues2members.contemp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\TempWeldAllMembers.png" />
+    <None Include="Resources\TempBoltedEndplateConnection.png" />
     <None Include="Resources\KarambaIDEA_logo_JointVector.png" />
     <None Include="Resources\KarambaIDEA_logo.png" />
     <None Include="Resources\KarambaIDEA_logo_viewer.png" />

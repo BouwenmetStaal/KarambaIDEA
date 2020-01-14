@@ -79,9 +79,6 @@ namespace KarambaIDEA.IDEA
         /// <returns></returns>
         static public OpenModel BoltedEndplateConnection(OpenModel openModel, Joint joint, double tplate)
         {
-            //CreatePlateForBeam(openModel,joint, 0, 0.5, 0.24, -0.01);
-            //CreatePlateForBeam(openModel,joint, 1, 0.5, 0.24, 0.01);
-#warning: add method that makes plate based on the member, now plate[0] is not matched with beam[0]
             double w0 = joint.attachedMembers[0].element.crossSection.width/1000;
             double h0 = joint.attachedMembers[0].element.crossSection.height / 1000;
             double w1 = joint.attachedMembers[1].element.crossSection.width / 1000;
@@ -93,7 +90,6 @@ namespace KarambaIDEA.IDEA
             CutBeamByPlate(openModel, 0, 0);
             CutBeamByPlate(openModel, 1, 1);
             CreateBoltgrid(openModel, 0, 1, w0-0.1,h0-0.1);
-
        
             return openModel;
         }

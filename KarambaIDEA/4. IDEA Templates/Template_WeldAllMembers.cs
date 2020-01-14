@@ -38,6 +38,7 @@ namespace KarambaIDEA
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -48,6 +49,9 @@ namespace KarambaIDEA
             List<GH_String> brandNamesDirty = new List<GH_String>();
             List<string> brandNames = new List<string>();
 
+            //Output variables
+            List<string> messages = new List<string>();
+
             //Link input
             DA.GetData(0, ref project);
             DA.GetDataList(1, brandNamesDirty);
@@ -57,16 +61,35 @@ namespace KarambaIDEA
             {
                 List<string> brandNamesDirtyString = brandNamesDirty.Select(x => x.Value.ToString()).ToList();
                 brandNames = ImportGrasshopperUtils.DeleteEnterCommandsInGHStrings(brandNamesDirtyString);
-            }   
-            
-            foreach(Joint joint in project.joints)
-            {
-                joint.template = new Template();
-                joint.template.workshopOperations = Template.WorkshopOperations.WeldAllMembers;
             }
+            if (brandNames.Count != 0)
+            {
+                foreach (string brandName in brandNames)
+                {
+                    foreach (Joint joint in project.joints)
+                    {
+                        if (brandName == joint.brandName)
+                        {
+                            joint.template = new Template();
+                            joint.template.workshopOperations = Template.WorkshopOperations.WeldAllMembers;
+                        }
+                    }
+                }
+            }
+            else
+            {
+                foreach (Joint joint in project.joints)
+                {
+                    joint.template = new Template();
+                    joint.template.workshopOperations = Template.WorkshopOperations.WeldAllMembers;
+                }
+            }
+
+            messages = project.MakeTemplateJointMessage();
 
             //link output
             DA.SetData(0, project);
+            DA.SetDataList(1, messages);
         }
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.
@@ -77,7 +100,7 @@ namespace KarambaIDEA
             get
             {
 
-                return Properties.Resources.KarambaIDEA_logo;
+                return Properties.Resources.TempWeldAllMembers;
 
             }
         }
