@@ -13,7 +13,7 @@ namespace KarambaIDEA
 {
     public class TransportElements : GH_Component
     {
-        public TransportElements() : base("Transport Elements Generator", "Transport Elements generator", "Generate 1D internal transport elements", "KarambaIDEA", "3. Project utilities")
+        public TransportElements() : base("Transport Elements Generator", "Transport Elements generator", "Generate 1D internal transport elements", "KarambaIDEA", "7. Cost calculation")
         {
 
         }
@@ -24,8 +24,6 @@ namespace KarambaIDEA
             pManager.AddTextParameter("GroupNames", "GroupNames", "GroupNames/Hierarchies that will be asseset in algorithm", GH_ParamAccess.list);
             pManager.AddNumberParameter("Max Length", "Max Length", "Maximum length of 1D element", GH_ParamAccess.item);
             pManager.AddNumberParameter("Max Angle [rad]", "Max Angle [rad]", "Maximum angle in radians between elements", GH_ParamAccess.item);
-            //TODO: add hierarchy, only members of the set hierarchies will be asseset
-
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -33,7 +31,6 @@ namespace KarambaIDEA
             pManager.AddLineParameter("Transport Element Lines", "Transport Element", "Lines of Transport elements", GH_ParamAccess.tree);
             pManager.AddLineParameter("All Element Lines", "All Elements", "Lines of all element", GH_ParamAccess.tree);
             //pManager.AddNumberParameter("Transport Element weights", "All Element weights", "Element weight", GH_ParamAccess.tree);
-
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -180,7 +177,7 @@ namespace KarambaIDEA
             get
             {
 
-                return Properties.Resources.KarambaIDEA_logo;
+                return Properties.Resources.TransportElements;
 
             }
         }

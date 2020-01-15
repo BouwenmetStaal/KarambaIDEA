@@ -35,11 +35,11 @@ namespace KarambaIDEA.Grasshopper
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            
+
             //Input needed for creating Joints                 
             pManager.AddTextParameter("Hierarchy", "Hierarchy", "List of hierarchy on with joints are made", GH_ParamAccess.list);
+            pManager[0].Optional = true;
             pManager.AddPointParameter("Points", "Points", "Points of connections", GH_ParamAccess.list);
-
             
             //Input elements
             pManager.AddLineParameter("Lines", "Lines", "Lines of geometry", GH_ParamAccess.list);
@@ -67,15 +67,12 @@ namespace KarambaIDEA.Grasshopper
             // Assign default Hierarchy.
             Param_String param0 = (Param_String)pManager[0];
             param0.PersistentData.Append(new GH_String(""));
-
-
         }
+
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
-            
-
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -84,7 +81,7 @@ namespace KarambaIDEA.Grasshopper
             string projectnameFromGH = null;
             double eccentricity = 0.0;
 
-            List<GH_String> h_Strings = new List<GH_String>();
+            List<GH_String> hierarchyDirty = new List<GH_String>();
             List<string> hierarchy = new List<string>();
 
             List<Point3d> centerpoints = new List<Point3d>();
@@ -119,7 +116,11 @@ namespace KarambaIDEA.Grasshopper
 
             //Link Input
             #region GrasshopperInput
-            DA.GetDataList(0, h_Strings);
+            DA.GetDataList(0, hierarchyDirty);
+            if (hierarchyDirty.Count == 0)
+            {
+                hierarchyDirty.Add(new GH_String("NoHierarchy"));
+            }
             DA.GetDataList(1, centerpoints);
             DA.GetDataList(2, lines);
             DA.GetDataList(3, rotationLCS);
@@ -145,9 +146,9 @@ namespace KarambaIDEA.Grasshopper
             #endregion
 
             //cast Grassshopper string list to string list
-            if (h_Strings.Where(x => x != null && !string.IsNullOrWhiteSpace(x.Value)).Count() > 0)
+            if (hierarchyDirty.Where(x => x != null && !string.IsNullOrWhiteSpace(x.Value)).Count() > 0)
             {
-                hierarchy = h_Strings.Select(x => x.Value.ToString()).ToList();
+                hierarchy = hierarchyDirty.Select(x => x.Value.ToString()).ToList();
             }
 
 

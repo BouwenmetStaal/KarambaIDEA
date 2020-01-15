@@ -17,7 +17,7 @@ namespace KarambaIDEA.Grasshopper
 {
     public class JointVector : GH_Component
     {
-        public JointVector() : base("JointVector", "Id", "Define normal vector of the joint", "KarambaIDEA", "0. Utilities")
+        public JointVector() : base("JointVector", "JVector", "Define normal vector of the joint", "KarambaIDEA", "0. Utilities")
         {
 
         }
@@ -30,8 +30,7 @@ namespace KarambaIDEA.Grasshopper
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddVectorParameter("Vec", "Vec", "JointVector", GH_ParamAccess.list);
-
+            pManager.AddVectorParameter("Vec", "Vec", "JointVector per joint", GH_ParamAccess.list);
         }
         
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -80,13 +79,13 @@ namespace KarambaIDEA.Grasshopper
                 List<Vector3d> vecs = new List<Vector3d>();
                 Vector3d vector = new Vector3d();
 
-                foreach (Line lijn in tree.Branch(i))
+                foreach (Line line1 in tree.Branch(i))
                 {
                     if (tree.Branch(i).Count == 1)
                     {
-                        double xvec = lijn.Direction.X;
-                        double yvec = lijn.Direction.Y;
-                        double zvec = lijn.Direction.Z;
+                        double xvec = line1.Direction.X;
+                        double yvec = line1.Direction.Y;
+                        double zvec = line1.Direction.Z;
                         
                         //Define LCS (local-y in XY plane) 
                         if (xvec == 0.0 && yvec == 0.0)
@@ -102,12 +101,12 @@ namespace KarambaIDEA.Grasshopper
                     }
                     else
                     {
-                        Vector3d v1 = lijn.Direction;
+                        Vector3d v1 = line1.Direction;
                         Vector3d a = new Vector3d(v1.X / v1.Length, v1.Y / v1.Length, v1.Z / v1.Length);
 
-                        foreach (Line lijn2 in tree.Branch(i))
+                        foreach (Line line2 in tree.Branch(i))
                         {
-                            Vector3d v2 = lijn2.Direction;
+                            Vector3d v2 = line2.Direction;
                             Vector3d b = new Vector3d(v2.X / v2.Length, v2.Y / v2.Length, v2.Z / v2.Length);
 
                             //Kruisproduct

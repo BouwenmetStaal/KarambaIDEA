@@ -15,17 +15,17 @@ using KarambaIDEA.Core;
 
 namespace KarambaIDEA.Grasshopper
 {
-    public class CreateLinesFromNodes : GH_Component
+    public class LinesSCIA : GH_Component
     {
-        public CreateLinesFromNodes() : base("LinesFromNodeNames", "LinesFromNodeNames", "Create lines from PointNames", "KarambaIDEA", "0. Utilities")
+        public LinesSCIA() : base("SCIA Lines", "SCIA Lines", "Create lines from SCIA PointNames", "KarambaIDEA", "0. Utilities")
         {
 
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Name Point", "Name Point", "Name of point", GH_ParamAccess.list);
-            pManager.AddPointParameter("Point", "Point", "Point", GH_ParamAccess.list);
+            pManager.AddTextParameter("Point names", "Point names", "Names of point", GH_ParamAccess.list);
+            pManager.AddPointParameter("Points", "Points", "Points", GH_ParamAccess.list);
 
             pManager.AddTextParameter("Name StartPoint", "Name StartPoint", "Name of startpoint", GH_ParamAccess.list);
             pManager.AddTextParameter("Name EndPoint", "Name EndPoint", "Name of startpoint", GH_ParamAccess.list);
@@ -81,9 +81,7 @@ namespace KarambaIDEA.Grasshopper
         {
             get
             {
-
                 return Properties.Resources.KarambaIDEA_logo_LinesFromNodes;
-
             }
         }
         public override Guid ComponentGuid

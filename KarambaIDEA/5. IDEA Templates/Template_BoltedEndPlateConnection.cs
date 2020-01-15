@@ -17,9 +17,9 @@ using Grasshopper.Kernel.Types;
 
 namespace KarambaIDEA
 {
-    public class Template_WeldAllMembers : GH_Component
+    public class Template_BoltedEndPlateConnection : GH_Component
     {
-        public Template_WeldAllMembers() : base("Template: Weld all members", "Template: Weld all members", "All members in joint will be connected by weld according to the hierarchy", "KarambaIDEA", "4. IDEA Templates")
+        public Template_BoltedEndPlateConnection() : base("Template: Bolted endplate connection", "Template: Bolted endplate connection", "Template: Bolted endplate connection", "KarambaIDEA", "5. IDEA Templates")
         {
 
         }
@@ -28,11 +28,9 @@ namespace KarambaIDEA
         {
 
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
-            pManager.AddTextParameter("BrandNames", "BrandNames", "BrandNames to apply template to", GH_ParamAccess.list);
-            // Assign default BrandName.
-            Param_String param0 = (Param_String)pManager[1];
-            param0.PersistentData.Append(new GH_String(""));
-            
+            pManager.AddTextParameter("BrandNames", "BrandNames", "BrandNames to apply template to", GH_ParamAccess.list,"");
+            pManager.AddNumberParameter("Thickness endplate [mm]", "Thickness endplate [mm]", "", GH_ParamAccess.item, 10.0);
+            pManager[1].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -44,8 +42,9 @@ namespace KarambaIDEA
         protected override void SolveInstance(IGH_DataAccess DA)
         {
 
-            //Input variables            
+            //Input variables      
             Project project = new Project();
+            double tplate = new double();
             List<GH_String> brandNamesDirty = new List<GH_String>();
             List<string> brandNames = new List<string>();
 
@@ -55,23 +54,28 @@ namespace KarambaIDEA
             //Link input
             DA.GetData(0, ref project);
             DA.GetDataList(1, brandNamesDirty);
+            DA.GetData(2, ref tplate);
 
             //process
-            if (brandNamesDirty.Where(x=> x!=null&& !string.IsNullOrWhiteSpace(x.Value)).Count() > 0)
+            if (brandNamesDirty.Where(x => x != null && !string.IsNullOrWhiteSpace(x.Value)).Count() > 0)
             {
                 List<string> brandNamesDirtyString = brandNamesDirty.Select(x => x.Value.ToString()).ToList();
                 brandNames = ImportGrasshopperUtils.DeleteEnterCommandsInGHStrings(brandNamesDirtyString);
             }
+            
+            //TODO: make a message "BrandName 011 is linked to BoltedEndPlateConnection"
             if (brandNames.Count != 0)
             {
                 foreach (string brandName in brandNames)
                 {
-                    foreach (Joint joint in project.joints)
+                    foreach(Joint joint in project.joints)
                     {
                         if (brandName == joint.brandName)
                         {
                             joint.template = new Template();
-                            joint.template.workshopOperations = Template.WorkshopOperations.WeldAllMembers;
+                            joint.template.workshopOperations = Template.WorkshopOperations.BoltedEndPlateConnection;
+                            joint.template.plate = new Plate();
+                            joint.template.plate.thickness = tplate;
                         }
                     }
                 }
@@ -81,11 +85,13 @@ namespace KarambaIDEA
                 foreach (Joint joint in project.joints)
                 {
                     joint.template = new Template();
-                    joint.template.workshopOperations = Template.WorkshopOperations.WeldAllMembers;
+                    joint.template.workshopOperations = Template.WorkshopOperations.BoltedEndPlateConnection;
+                    joint.template.plate = new Plate();
+                    joint.template.plate.thickness = tplate;
                 }
             }
 
-            messages = project.MakeTemplateJointMessage();
+            messages = project.MakeTemplateJointMessage();            
 
             //link output
             DA.SetData(0, project);
@@ -100,13 +106,12 @@ namespace KarambaIDEA
             get
             {
 
-                return Properties.Resources.TempWeldAllMembers;
-
+                return Properties.Resources.TempBoltedEndplateConnection;
             }
         }
         public override Guid ComponentGuid
         {
-            get { return new Guid("4052f7f6-024f-47de-85fe-33f67cb31130"); }
+            get { return new Guid("c87e4243-ed21-492f-9d25-a599454de06f"); }
         }
 
 

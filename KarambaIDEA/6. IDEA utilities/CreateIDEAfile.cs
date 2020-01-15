@@ -19,7 +19,7 @@ namespace KarambaIDEA
 {
     public class CreateIDEAfile : GH_Component
     {
-        public CreateIDEAfile() : base("Create IDEA File", "Create IDEA File", "Create IDEA file", "KarambaIDEA", "5. IDEA utilities")
+        public CreateIDEAfile() : base("Create IDEA File", "Create IDEA File", "Create IDEA file", "KarambaIDEA", "6. IDEA utilities")
         {
 
         }
@@ -28,16 +28,9 @@ namespace KarambaIDEA
         {
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
             pManager.AddTextParameter("Output folder ", "Output folder", "Save location of IDEA Statica Connection output file. For example: 'C:\\Data'", GH_ParamAccess.item);
-            //pManager.AddGenericParameter("Template", "Template", "Template", GH_ParamAccess.item);
             pManager.AddBooleanParameter("CreateAllJoints", "CreateAllJoints", "If true create all joints, if false create only the selected joint", GH_ParamAccess.item);
             pManager.AddIntegerParameter("ChooseJoint", "ChooseJoint", "Specify the joint that will be calculated in IDEA. Note: starts at zero.", GH_ParamAccess.item);
             pManager.AddBooleanParameter("RunIDEA", "RunIDEA", "Bool for running IDEA Statica Connection", GH_ParamAccess.item);
-            /*
-            // Assign default Workshop Operation.
-            Param_GenericObject param0 = (Param_GenericObject)pManager[2];
-            param0.PersistentData.Append(new GH_ObjectWrapper(Template.WorkshopOperations.NoOperation));
-            */
-
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -105,7 +98,7 @@ namespace KarambaIDEA
             get
             {
 
-                return Properties.Resources.KarambaIDEA_logo;
+                return Properties.Resources.IDEAlogo;
 
             }
         }

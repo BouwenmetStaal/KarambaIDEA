@@ -19,7 +19,7 @@ namespace KarambaIDEA
 {
     public class CreateAndCalculateIDEAfile : GH_Component
     {
-        public CreateAndCalculateIDEAfile() : base("Create and Calculate IDEA File", "Create and Calculate IDEA File", "Create and Calculate IDEA file", "KarambaIDEA", "5. IDEA utilities")
+        public CreateAndCalculateIDEAfile() : base("Create and Calculate IDEA File", "Create and Calculate IDEA File", "Create and Calculate IDEA file", "KarambaIDEA", "6. IDEA utilities")
         {
 
         }
@@ -129,7 +129,7 @@ namespace KarambaIDEA
             get
             {
 
-                return Properties.Resources.KarambaIDEA_logo;
+                return Properties.Resources.IDEAlogo;
 
             }
         }

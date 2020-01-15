@@ -61,6 +61,26 @@ namespace KarambaIDEA.Properties {
         }
         
         /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ATempMomentResistingConnection {
+            get {
+                object obj = ResourceManager.GetObject("ATempMomentResistingConnection", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap ATempMomentResistingConnection2 {
+            get {
+                object obj = ResourceManager.GetObject("ATempMomentResistingConnection2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized resource of type System.Byte[].
         /// </summary>
         internal static byte[] continues2members {
@@ -77,6 +97,16 @@ namespace KarambaIDEA.Properties {
             get {
                 object obj = ResourceManager.GetObject("ended2members", resourceCulture);
                 return ((byte[])(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap IDEAlogo {
+            get {
+                object obj = ResourceManager.GetObject("IDEAlogo", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
             }
         }
         
@@ -146,6 +176,36 @@ namespace KarambaIDEA.Properties {
         internal static System.Drawing.Bitmap TempWeldAllMembers {
             get {
                 object obj = ResourceManager.GetObject("TempWeldAllMembers", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap TransportElements {
+            get {
+                object obj = ResourceManager.GetObject("TransportElements", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap Weight {
+            get {
+                object obj = ResourceManager.GetObject("Weight", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap WeldingVolume {
+            get {
+                object obj = ResourceManager.GetObject("WeldingVolume", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
