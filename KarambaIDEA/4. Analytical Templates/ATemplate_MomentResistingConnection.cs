@@ -38,11 +38,19 @@ namespace KarambaIDEA
         {
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
             pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.list);
+
+            pManager.AddNumberParameter("start Sj", "Sj", "", GH_ParamAccess.list);
+            pManager.AddNumberParameter("end Sj", "Sj", "", GH_ParamAccess.list);
+
+            pManager.AddNumberParameter("start Mj,Rd", "Mj,Rd", "", GH_ParamAccess.list);
+            pManager.AddNumberParameter("start Mj,Rd", "Mj,Rd", "", GH_ParamAccess.list);
+
+            pManager.AddBrepParameter("Plate", "Plate", "Plate", GH_ParamAccess.item);
+
             pManager.AddTextParameter("Classification", "Classification", "", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Sj", "Sj", "", GH_ParamAccess.list);
             pManager.AddNumberParameter("SjP", "SjP", "", GH_ParamAccess.list);
             pManager.AddNumberParameter("SjR", "SjR", "", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Mj,Rd", "Mj,Rd", "", GH_ParamAccess.list);
+            
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -59,6 +67,11 @@ namespace KarambaIDEA
 
             //Output variables
             List<string> messages = new List<string>();
+            Brep brep = new Brep();
+            List<double> startSjs = new List<double>();
+            List<double> endSjs = new List<double>();
+            List<double> startMjrds = new List<double>();
+            List<double> endMjrds = new List<double>();
 
             //Link input
             DA.GetData(0, ref project);
@@ -98,11 +111,39 @@ namespace KarambaIDEA
                 }
             }
 
+            foreach(Element ele in project.elements)
+            {
+                startSjs.Add(ele.startProperties.Sj);
+                startMjrds.Add(ele.startProperties.Mjrd);
+
+                endSjs.Add(ele.endProperties.Sj);
+                endMjrds.Add(ele.endProperties.Mjrd);
+
+                if (ele.startProperties != null)
+                {
+                    
+                }
+                if(ele.endProperties != null)
+                {
+                    
+                }
+            }
+
             //messages = project.MakeTemplateJointMessage();
+
+            BoundingBox bbox = new BoundingBox(new Point3d(0, 0, 0), new Point3d(0.1, 0.2, 0.05));
+            Plane plane = new Plane(new Point3d(0, 2, 0), new Vector3d(0, 3, 3));
+            Box box = new Box(plane, bbox);
+            brep = box.ToBrep();
+
 
             //link output
             DA.SetData(0, project);
             DA.SetDataList(1, messages);
+            DA.SetDataList(2, startSjs);
+            DA.SetDataList(3, endSjs);
+            DA.SetDataList(4, startMjrds);
+            DA.SetDataList(5, endMjrds);
         }
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.
@@ -132,9 +173,9 @@ namespace KarambaIDEA
             double z = heightHaunch + con.element.crossSection.height;
             double E = 210000;
             double Lb = con.element.line.Length*1000;//from m to mm
-            double Ib = 5000;//TODO: Iyy missing include Karamba3D Crosssection dataset in KarambaIDEA
+            double Ib = con.element.crossSection.Iyy();//TODO: Iyy missing include Karamba3D Crosssection dataset in KarambaIDEA
             //calculate SjP
-            double Sjp = (0.5 * E * Ib) / Lb;
+            double SjH = (0.5 * E * Ib) / Lb;
             //calculate SjR
             double SjR = (k * E * Ib) / Lb;
             //Calculate Sj,approx according to Maarten Steenhuis method
@@ -144,11 +185,28 @@ namespace KarambaIDEA
             double yM0 = 1.0;
             double MjRd = (ks * fy * z * Math.Pow(bear.element.crossSection.thicknessFlange, 2)) / yM0;
 
+            ConnectionProperties conProp = new ConnectionProperties();
+            conProp.Sj = Sj * Math.Pow(10, -6);
+            conProp.SjH = SjH * Math.Pow(10, -6);
+            conProp.SjR = SjR * Math.Pow(10, -6);
+            conProp.Mjrd = MjRd*Math.Pow(10,-6);
+
+            if (con.isStartPoint == true)
+            {
+                con.element.startProperties = conProp;
+            }
+            else
+            {
+                con.element.endProperties = conProp;
+            }
+
+            
 
             joint.template = new Template();
             joint.template.workshopOperations = Template.WorkshopOperations.BoltedEndPlateConnection;
-            joint.template.plate = new Plate();
-            joint.template.plate.thickness = heightHaunch;
+            Plate plate = new Plate();
+            plate.thickness = heightHaunch;
+            joint.template.plates.Add(plate);
         }
 
     }

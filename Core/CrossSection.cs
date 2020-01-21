@@ -30,6 +30,13 @@ namespace KarambaIDEA.Core
             }
         }
 
+        public enum Shape
+        {
+            ISection,
+            SHSSection,
+            CHSsection
+        }
+
         public CrossSection()
         {
 
@@ -75,11 +82,44 @@ namespace KarambaIDEA.Core
             return p;
         }
 
-        public enum Shape
+        
+
+        public double Iyy()
         {
-            ISection,
-            SHSSection,
-            CHSsection
+            if (this.shape.Equals(Shape.ISection) | this.shape.Equals(Shape.SHSSection))
+            {
+                double a = Inertia(this.width, this.height);
+                double b = Inertia(this.width - this.thicknessWeb, this.height-2*this.thicknessFlange);
+                return a - b;                   
+            }
+            else
+            {
+                throw new ArgumentNullException("Iyy for this Cross-section not implemented");
+            }
         }
+        public double Area()
+        {
+            if (this.shape.Equals(Shape.ISection))
+            {
+                double a = this.width * this.height;
+                double b = (this.width - 2 * this.thicknessWeb) * (this.height -this.thicknessFlange);
+                return a - b;
+            }
+            if (this.shape.Equals(Shape.SHSSection))
+            {
+                double a = this.width*this.height;
+                double b = (this.width-2*this.thicknessWeb) * (this.height-2*this.thicknessFlange);
+                return a - b;
+            }
+            else
+            {
+                throw new ArgumentNullException("Iyy for this Cross-section not implemented");
+            }
+        }
+        public double Inertia(double b, double h)
+        {
+            return (1 / 12) * b * Math.Pow(h, 2);
+        }
+        
     }
 }

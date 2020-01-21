@@ -90,7 +90,7 @@ namespace KarambaIDEA
         {
             get
             {
-                return Properties.Resources.IDEAlogo;
+                return Properties.Resources.IDEAlogo_safe;
             }
         }
         public override Guid ComponentGuid

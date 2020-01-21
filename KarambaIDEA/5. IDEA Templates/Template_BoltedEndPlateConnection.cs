@@ -74,8 +74,9 @@ namespace KarambaIDEA
                         {
                             joint.template = new Template();
                             joint.template.workshopOperations = Template.WorkshopOperations.BoltedEndPlateConnection;
-                            joint.template.plate = new Plate();
-                            joint.template.plate.thickness = tplate;
+                            Plate plate = new Plate();
+                            plate.thickness = tplate;
+                            joint.template.plates.Add(plate);
                         }
                     }
                 }
@@ -86,8 +87,9 @@ namespace KarambaIDEA
                 {
                     joint.template = new Template();
                     joint.template.workshopOperations = Template.WorkshopOperations.BoltedEndPlateConnection;
-                    joint.template.plate = new Plate();
-                    joint.template.plate.thickness = tplate;
+                    Plate plate = new Plate();
+                    plate.thickness = tplate;
+                    joint.template.plates.Add(plate);
                 }
             }
 

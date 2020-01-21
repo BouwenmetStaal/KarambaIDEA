@@ -103,11 +103,15 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="3. Project utilities\CheckLocalCoordinateSystem.cs" />
+    <Compile Include="3. Project utilities\RetrieveLinesPoints.cs" />
+    <Compile Include="3. Project utilities\RetrieveConnectionProperties.cs" />
     <Compile Include="4. Analytical Templates\ATemplate_MomentResistingConnection.cs" />
     <Compile Include="6. IDEA utilities\CalculateIDEAFile.cs" />
     <Compile Include="6. IDEA utilities\CreateAndCalculateIDEAfile.cs" />
     <Compile Include="6. IDEA utilities\CreateIDEAfile.cs" />
     <Compile Include="6. IDEA utilities\OptimizePlates.cs" />
+    <Compile Include="7. Cost calculation\CostCalculator.cs" />
+    <Compile Include="7. Cost calculation\TotalWeight.cs" />
     <Compile Include="ImportGrasshopperUtils.cs" />
     <Compile Include="0. Utilities\LinesSCIA.cs" />
     <Compile Include="3. Project utilities\JointEquilibrium.cs" />
@@ -152,6 +156,10 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\StiffnessDiagram2.png" />
+    <None Include="Resources\StiffnessDiagram.png" />
+    <None Include="Resources\IDEAlogo_safe.png" />
+    <None Include="Resources\Costs.png" />
     <None Include="Resources\IDEAlogo.png" />
     <None Include="Resources\TransportElements.png" />
     <None Include="Resources\WeldingVolume.png" />

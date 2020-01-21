@@ -23,6 +23,8 @@ namespace KarambaIDEA.Core
         public LocalCoordinateSystem localCoordinateSystem = new LocalCoordinateSystem();
         public SawingCuts.SawingCut startCut;
         public SawingCuts.SawingCut endCut;
+        public ConnectionProperties startProperties = new ConnectionProperties();
+        public ConnectionProperties endProperties = new ConnectionProperties();
         
 
 

@@ -44,8 +44,8 @@
         <Member type="Field">public LocalCoordinateSystem localCoordinateSystem</Member>
         <Member type="Field">public SawingCut startCut</Member>
         <Member type="Field">public SawingCut endCut</Member>
-        <Member type="Field">public RotationalStiffness startStiffness</Member>
-        <Member type="Field">public RotationalStiffness endStiffness</Member>
+        <Member type="Field">public ConnectionProperties startProperties</Member>
+        <Member type="Field">public ConnectionProperties endProperties</Member>
         <Member type="Method">public void UpdateLocalCoordinateSystem()</Member>
         <Member type="Method">public string BeginThroatsElement()</Member>
         <Member type="Method">public string EndThroatsElement()</Member>
@@ -177,7 +177,7 @@
       <Entity type="Class">
         <Name>IdeaConnection</Name>
         <Access>Public</Access>
-        <Location left="2645" top="314" />
+        <Location left="2944" top="181" />
         <Size width="277" height="451" />
         <Collapsed>False</Collapsed>
         <Member type="Field">public OpenModelGenerator openModelGenerator</Member>
@@ -294,7 +294,7 @@
       <Entity type="Enum">
         <Name>WeldType</Name>
         <Access>Public</Access>
-        <Location left="2137" top="1237" />
+        <Location left="1642" top="1272" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Value>NotSpecified</Value>
@@ -333,7 +333,7 @@
       <Entity type="Class">
         <Name>OpenModelGenerator</Name>
         <Access>Public</Access>
-        <Location left="2645" top="859" />
+        <Location left="2944" top="694" />
         <Size width="295" height="276" />
         <Collapsed>False</Collapsed>
         <Member type="Field">public OpenModel openModel</Member>
@@ -385,7 +385,7 @@
       <Entity type="Class">
         <Name>Plate</Name>
         <Access>Public</Access>
-        <Location left="2268" top="824" />
+        <Location left="2538" top="831" />
         <Size width="202" height="216" />
         <Collapsed>False</Collapsed>
         <Member type="Field">public double id</Member>
@@ -403,7 +403,9 @@
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Member type="Field">public WorkshopOperations workshopoperations</Member>
-        <Member type="Field">public Plate plate</Member>
+        <Member type="Field">public List&lt;Plate&gt; plates</Member>
+        <Member type="Field">public List&lt;BoltGrid&gt; boltGrids</Member>
+        <Member type="Field">public List&lt;Weld&gt; welds</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Enum">
@@ -417,28 +419,84 @@
         <Value>WeldAllmembers</Value>
       </Entity>
       <Entity type="Class">
-        <Name>RotationalStiffness</Name>
+        <Name>ConnectionProperties</Name>
         <Access>Public</Access>
-        <Location left="1352" top="656" />
+        <Location left="1321" top="752" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
+        <Member type="Field">public Classification classification</Member>
+        <Member type="Field">public double Sj</Member>
+        <Member type="Field">public double SjR</Member>
+        <Member type="Field">public double SjH</Member>
+        <Member type="Field">public double MjRd</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>Bolt</Name>
         <Access>Public</Access>
-        <Location left="2578" top="1203" />
+        <Location left="2686" top="1083" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
+        <Member type="Field">public Boltsize boltsize</Member>
+        <Member type="Field">public BoltSteelgrade boltSteelgrade</Member>
         <Modifier>None</Modifier>
       </Entity>
       <Entity type="Class">
         <Name>BoltGrid</Name>
         <Access>Public</Access>
-        <Location left="2364" top="1141" />
+        <Location left="2429" top="1083" />
         <Size width="162" height="216" />
         <Collapsed>False</Collapsed>
         <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Enum">
+        <Name>Classification</Name>
+        <Access>Public</Access>
+        <Location left="1523" top="908" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Value>Rigid</Value>
+        <Value>SemiRigid</Value>
+        <Value>Hinged</Value>
+      </Entity>
+      <Entity type="Class">
+        <Name>Weld</Name>
+        <Access>Public</Access>
+        <Location left="2224" top="1286" />
+        <Size width="162" height="247" />
+        <Collapsed>False</Collapsed>
+        <Member type="Field">public List&lt;int&gt; ids</Member>
+        <Member type="Field">public WeldType weldType</Member>
+        <Member type="Field">public double unitycheck</Member>
+        <Member type="Field">double size</Member>
+        <Member type="Field">public Plate firstPlate</Member>
+        <Member type="Field">public Plate secondPlate</Member>
+        <Member type="Property">public double Size { get; }</Member>
+        <Member type="Method">public static double CalcWeldSurface()</Member>
+        <Member type="Method">public static double CalcFullStrengthFactor()</Member>
+        <Member type="Method">public static void CalcFullStrengthWelds()</Member>
+        <Modifier>None</Modifier>
+      </Entity>
+      <Entity type="Enum">
+        <Name>WeldType</Name>
+        <Access>Public</Access>
+        <Location left="2474" top="1380" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Value>NotSpecified</Value>
+        <Value>Fillet</Value>
+        <Value>DoubleFillet</Value>
+        <Value>FilletRear</Value>
+        <Value>Bevel</Value>
+      </Entity>
+      <Entity type="Enum">
+        <Name>Boltsize</Name>
+        <Access>Public</Access>
+        <Location left="2912" top="1103" />
+        <Size width="162" height="216" />
+        <Collapsed>False</Collapsed>
+        <Value>M16</Value>
+        <Value>M20</Value>
       </Entity>
     </Entities>
     <Relationships>
@@ -702,8 +760,8 @@
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
         <BendPoint relativeToStartShape="False">
-          <X>2683</X>
-          <Y>831</Y>
+          <X>2982</X>
+          <Y>666</Y>
         </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
@@ -755,6 +813,10 @@
         </Label>
         <StartOrientation>Vertical</StartOrientation>
         <EndOrientation>Vertical</EndOrientation>
+        <BendPoint relativeToStartShape="False">
+          <X>2412</X>
+          <Y>797</Y>
+        </BendPoint>
         <Direction>Unidirectional</Direction>
         <AssociationType>Association</AssociationType>
       </Relationship>
@@ -781,6 +843,36 @@
         <AssociationType>Association</AssociationType>
       </Relationship>
       <Relationship type="Association" first="28" second="29">
+        <Label>
+        </Label>
+        <StartOrientation>Horizontal</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="30" second="27">
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Horizontal</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="31" second="25">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="29" second="25">
+        <Label>
+        </Label>
+        <StartOrientation>Vertical</StartOrientation>
+        <EndOrientation>Vertical</EndOrientation>
+        <Direction>Unidirectional</Direction>
+        <AssociationType>Association</AssociationType>
+      </Relationship>
+      <Relationship type="Association" first="32" second="31">
         <Label>
         </Label>
         <StartOrientation>Horizontal</StartOrientation>

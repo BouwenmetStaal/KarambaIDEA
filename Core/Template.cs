@@ -9,7 +9,7 @@ namespace KarambaIDEA.Core
     public class Template
     {
         public WorkshopOperations workshopOperations = WorkshopOperations.NoOperation;
-        public Plate plate;
+        public List<Plate> plates = new List<Plate>();
 
         public enum WorkshopOperations
         {

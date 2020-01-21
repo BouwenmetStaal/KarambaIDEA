@@ -73,9 +73,9 @@ namespace KarambaIDEA.IDEA
                 }
                 if (joint.template.workshopOperations == Template.WorkshopOperations.BoltedEndPlateConnection)
                 {
-                    if (joint.template.plate != null)
+                    if (joint.template.plates.First() != null)
                     {
-                        double platethickness = joint.template.plate.thickness/1000;
+                        double platethickness = joint.template.plates[0].thickness/1000;
                         Templates.BoltedEndplateConnection(example, joint, platethickness);
                     }
                     

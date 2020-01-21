@@ -21,7 +21,7 @@ namespace KarambaIDEA
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
-            pManager.AddTextParameter("GroupNames", "GroupNames", "GroupNames/Hierarchies that will be asseset in algorithm", GH_ParamAccess.list);
+            pManager.AddTextParameter("GroupNames", "GroupNames", "GroupNames/Hierarchies that will be asseset in algorithm", GH_ParamAccess.list," ");
             pManager.AddNumberParameter("Max Length", "Max Length", "Maximum length of 1D element", GH_ParamAccess.item);
             pManager.AddNumberParameter("Max Angle [rad]", "Max Angle [rad]", "Maximum angle in radians between elements", GH_ParamAccess.item);
         }
