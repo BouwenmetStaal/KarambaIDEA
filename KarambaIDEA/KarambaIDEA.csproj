@@ -105,7 +105,10 @@
     <Compile Include="3. Project utilities\CheckLocalCoordinateSystem.cs" />
     <Compile Include="3. Project utilities\RetrieveLinesPoints.cs" />
     <Compile Include="3. Project utilities\RetrieveConnectionProperties.cs" />
+    <Compile Include="3. Project utilities\SaveData.cs" />
+    <Compile Include="4. Analytical Templates\ATemplate_FinplateConnection.cs" />
     <Compile Include="4. Analytical Templates\ATemplate_MomentResistingConnection.cs" />
+    <Compile Include="4. Analytical Templates\ATemplate_WeldAllMembers.cs" />
     <Compile Include="6. IDEA utilities\CalculateIDEAFile.cs" />
     <Compile Include="6. IDEA utilities\CreateAndCalculateIDEAfile.cs" />
     <Compile Include="6. IDEA utilities\CreateIDEAfile.cs" />

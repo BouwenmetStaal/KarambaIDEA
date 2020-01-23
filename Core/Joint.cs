@@ -25,7 +25,7 @@ namespace KarambaIDEA.Core
         public double maxGlobalEccentricity;
         //public bool isWarrenEccentricJoint;
         //public double weldVolume;
-        public Template template = new Template();
+        public Template template=null;
 
         //public EnumWorkshopOperations template;
         

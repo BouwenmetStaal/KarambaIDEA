@@ -27,9 +27,9 @@ namespace KarambaIDEA
             pManager.AddNumberParameter("Total weight [kg]", "Total weight [kg]", "Total weight", GH_ParamAccess.list, 0.0);
             pManager.AddNumberParameter("Total welding volume [cm3]", "Total welding volume [cm3]", "Total welding volume", GH_ParamAccess.list, 0.0);
             pManager.AddNumberParameter("Total number of elements", "Total number of elements", "Total number of elements", GH_ParamAccess.list, 0.0);
-            pManager.AddNumberParameter("Steel: Price per kg", "Steel: Price per kg", "Steel: Price per kg", GH_ParamAccess.item, 1.0);
-            pManager.AddNumberParameter("Welding: Price per cm3", "Welding: Price per cm3", "Welding: Price per cm3", GH_ParamAccess.item, 2.6);
-            pManager.AddNumberParameter("Transport: Price per element", "Transport: Price per element", "Transport: Price per element", GH_ParamAccess.item, 2.6);
+            pManager.AddNumberParameter("Steel: Price per kg", "Steel: Price per kg", "Price of steel per kg, default price is €1,- per kg", GH_ParamAccess.item, 1.0);
+            pManager.AddNumberParameter("Welding: Price per cm3", "Welding: Price per cm3", "Price of welding per cm3, default price is €2.60 per cm3", GH_ParamAccess.item, 2.6);
+            pManager.AddNumberParameter("Transport: Price per element", "Transport: Price per element", "Price of transport per element, default price is €20,-", GH_ParamAccess.item, 20);
 
         }
 
@@ -62,9 +62,9 @@ namespace KarambaIDEA
             double totalCosts = new double();
             List<double> weightElements = new List<double>();
 
-            totalCosts =+ totalWeights.Sum() * priceSteel;
-            totalCosts =+ totalWeldingVolumes.Sum()*priceWelding;
-            totalCosts = +elements.Sum() * priceTransport;
+            totalCosts =totalCosts+ totalWeights.Sum() * priceSteel;
+            totalCosts = totalCosts + totalWeldingVolumes.Sum()*priceWelding;
+            totalCosts = totalCosts + elements.Sum() * priceTransport;
 
 
 

@@ -10,6 +10,7 @@ namespace KarambaIDEA.Core
     {
         public WorkshopOperations workshopOperations = WorkshopOperations.NoOperation;
         public List<Plate> plates = new List<Plate>();
+        public List<Weld> welds = new List<Weld>();
 
         public enum WorkshopOperations
         {

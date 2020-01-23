@@ -9,8 +9,6 @@ namespace KarambaIDEA.Core
 {
     public class CrossSection
     {
-
-
         public Project project;
         public string name;
         public Shape shape;
@@ -97,6 +95,10 @@ namespace KarambaIDEA.Core
                 throw new ArgumentNullException("Iyy for this Cross-section not implemented");
             }
         }
+        /// <summary>
+        /// Calculate area in mm2
+        /// </summary>
+        /// <returns></returns>
         public double Area()
         {
             if (this.shape.Equals(Shape.ISection))
@@ -113,7 +115,7 @@ namespace KarambaIDEA.Core
             }
             else
             {
-                throw new ArgumentNullException("Iyy for this Cross-section not implemented");
+                throw new ArgumentNullException("Area for this Cross-section not implemented");
             }
         }
         public double Inertia(double b, double h)

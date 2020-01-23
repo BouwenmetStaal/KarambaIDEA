@@ -29,11 +29,7 @@ namespace KarambaIDEA
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddNumberParameter("Weld volume [cm3]", "Weld volume [cm3]", "Total weld volume of the joint in cm3", GH_ParamAccess.list);
-            //pManager.AddBrepParameter("Brep weld volume", "Brep weld volume", "Brep weld volume", GH_ParamAccess.tree);
-            pManager.AddTextParameter("Throats Begin of Element", "ThroatsBegin", "ThroatFlange and ThroatWeb at Start of Element", GH_ParamAccess.list);
-            pManager.AddTextParameter("Throats End of Element", "ThroatsEnd", "ThroatFlange and ThroatWeb at End of Element", GH_ParamAccess.list);
-
+            pManager.AddNumberParameter("Weld volume [cm3]", "Weld volume [cm3]", "Retrieve welding volume per joint in project", GH_ParamAccess.tree);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -45,37 +41,30 @@ namespace KarambaIDEA
             DA.GetData(0, ref project);
 
             //output variables
-            List<double> weldVolumes = new List<double>();
+            DataTree<double> weldVolumes = new DataTree<double>();
             List<string> throatBegin = new List<string>();
             List<string> throatEnd = new List<string>();
 
+            int a = 0;
             foreach (Joint joint in project.joints)
             {
-                double weldVolumeJoint = new double();
-                //Ignore highest hierarchy members by only taking connectingmembers
-                foreach (ConnectingMember con in joint.attachedMembers.OfType<ConnectingMember>())
+                GH_Path path = new GH_Path(a);
+                if (joint.template != null)
                 {
-                    //Define weldsize
-                    Weld.CalcFullStrengthWelds(con);
-                    //Generate volume
-                    double weldVolume = new double();
-                    weldVolume = ConnectingMember.CalculateWeldVolumeSimplified(con);
-                    weldVolumeJoint = weldVolumeJoint+weldVolume;
+                    if (joint.template.welds != null)
+                    {
+                        foreach (Weld weld in joint.template.welds)
+                        {
+                            double weldVolume = weld.volume * Math.Pow(10, -3); //conversion from mm3 to cm3
+                            weldVolumes.Add(weldVolume, path);
+                        }
+                    }
                 }
-                weldVolumeJoint = weldVolumeJoint / 1000.0; //conversion from mm3 to cm3
-                weldVolumes.Add(weldVolumeJoint);
+                a = a + 1;
             }
-
-            foreach (Element ele in project.elements)
-            {
-                throatBegin.Add(ele.BeginThroatsElement());
-                throatEnd.Add(ele.EndThroatsElement());
-            }
-
+            
             //link output
-            DA.SetDataList(0, weldVolumes);
-            DA.SetDataList(1, throatBegin);
-            DA.SetDataList(2, throatEnd);
+            DA.SetDataTree(0, weldVolumes);
         }
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.

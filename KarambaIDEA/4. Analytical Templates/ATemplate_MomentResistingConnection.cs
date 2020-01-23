@@ -37,25 +37,12 @@ namespace KarambaIDEA
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
-            pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.list);
-
-            pManager.AddNumberParameter("start Sj", "Sj", "", GH_ParamAccess.list);
-            pManager.AddNumberParameter("end Sj", "Sj", "", GH_ParamAccess.list);
-
-            pManager.AddNumberParameter("start Mj,Rd", "Mj,Rd", "", GH_ParamAccess.list);
-            pManager.AddNumberParameter("start Mj,Rd", "Mj,Rd", "", GH_ParamAccess.list);
-
-            pManager.AddBrepParameter("Plate", "Plate", "Plate", GH_ParamAccess.item);
-
-            pManager.AddTextParameter("Classification", "Classification", "", GH_ParamAccess.list);
-            pManager.AddNumberParameter("SjP", "SjP", "", GH_ParamAccess.list);
-            pManager.AddNumberParameter("SjR", "SjR", "", GH_ParamAccess.list);
-            
+            pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.list);            
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            //Design rules
+            
 
             //Input variables      
             Project project = new Project();
@@ -68,10 +55,6 @@ namespace KarambaIDEA
             //Output variables
             List<string> messages = new List<string>();
             Brep brep = new Brep();
-            List<double> startSjs = new List<double>();
-            List<double> endSjs = new List<double>();
-            List<double> startMjrds = new List<double>();
-            List<double> endMjrds = new List<double>();
 
             //Link input
             DA.GetData(0, ref project);
@@ -111,24 +94,6 @@ namespace KarambaIDEA
                 }
             }
 
-            foreach(Element ele in project.elements)
-            {
-                startSjs.Add(ele.startProperties.Sj);
-                startMjrds.Add(ele.startProperties.Mjrd);
-
-                endSjs.Add(ele.endProperties.Sj);
-                endMjrds.Add(ele.endProperties.Mjrd);
-
-                if (ele.startProperties != null)
-                {
-                    
-                }
-                if(ele.endProperties != null)
-                {
-                    
-                }
-            }
-
             //messages = project.MakeTemplateJointMessage();
 
             BoundingBox bbox = new BoundingBox(new Point3d(0, 0, 0), new Point3d(0.1, 0.2, 0.05));
@@ -140,10 +105,6 @@ namespace KarambaIDEA
             //link output
             DA.SetData(0, project);
             DA.SetDataList(1, messages);
-            DA.SetDataList(2, startSjs);
-            DA.SetDataList(3, endSjs);
-            DA.SetDataList(4, startMjrds);
-            DA.SetDataList(5, endMjrds);
         }
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.
@@ -200,13 +161,75 @@ namespace KarambaIDEA
                 con.element.endProperties = conProp;
             }
 
-            
+            //DESIGN RULES
+            //tstiffener = tbeam,flange
+            //tendplate = tcolumn,flange
+            //tweb,haunch = tweb,beam
+            //tflange,haunch= tflange,beam
+
+            //Generate plates and welds for cost analyses
+            CrossSection column = bear.element.crossSection;
+            CrossSection beam = con.element.crossSection;
+            MaterialSteel mat = column.material;
+
+            double overSize = 50;//oversize needed for top row bolts 
+            double tendplate = column.thicknessFlange;
 
             joint.template = new Template();
-            joint.template.workshopOperations = Template.WorkshopOperations.BoltedEndPlateConnection;
-            Plate plate = new Plate();
-            plate.thickness = heightHaunch;
-            joint.template.plates.Add(plate);
+
+            //add plate
+            joint.template.plates.Add(new Plate("Endplate", z + overSize, beam.width, column.thicknessFlange));
+            //add welds of beam
+            double weldsizeB1 = Weld.CalWeldSizeFullStrenth90deg(tendplate, beam.thicknessFlange, mat, Weld.WeldType.DoubleFillet);
+            joint.template.welds.Add(new Weld("TopflangeBeam_endplate", Weld.WeldType.DoubleFillet, weldsizeB1, beam.width));
+            double weldsizeB2 = Weld.CalWeldSizeFullStrenth90deg(tendplate, beam.thicknessWeb, mat, Weld.WeldType.DoubleFillet);
+            joint.template.welds.Add(new Weld("BottomflangeBeam_endplate", Weld.WeldType.DoubleFillet, weldsizeB2, beam.width));
+            double weldsizeB3 = Weld.CalWeldSizeFullStrenth90deg(tendplate, beam.thicknessWeb, mat, Weld.WeldType.DoubleFillet);
+            joint.template.welds.Add(new Weld("WebBeam_endplate", Weld.WeldType.DoubleFillet, weldsizeB3, beam.height-(2*beam.thicknessFlange)));
+            
+            if (heightHaunch != 0.0)
+            {
+                //haunch dimensions
+                double haunchRatio = 2.0;
+                double haunchLength = heightHaunch * haunchRatio;
+                double lenHaunchFlange = Math.Sqrt(Math.Pow(heightHaunch, 2) + Math.Pow(haunchRatio * heightHaunch, 2));
+                //add plates of haunch
+                joint.template.plates.Add(new Plate("HaunchWeb", haunchLength, column.width, beam.thicknessWeb, true));
+                joint.template.plates.Add(new Plate("HaunchFlange", lenHaunchFlange, column.width, beam.thicknessFlange));
+                //add welds of haunch
+                double weldsize1 = Weld.CalWeldSizeFullStrenth90deg(beam.thicknessFlange, beam.thicknessWeb, mat, Weld.WeldType.DoubleFillet);
+                joint.template.welds.Add(new Weld("Haunchweb_Bottomflange", Weld.WeldType.DoubleFillet, weldsize1, haunchLength));
+                double weldsize5 = Weld.CalWeldSizeFullStrenth90deg(column.thicknessFlange, beam.thicknessWeb, mat, Weld.WeldType.DoubleFillet);
+                joint.template.welds.Add(new Weld("Haunchweb_ColumnFlange", Weld.WeldType.DoubleFillet, weldsize5, heightHaunch));
+                double weldsize2 = Weld.CalWeldSizeFullStrenth90deg(beam.thicknessFlange, beam.thicknessWeb, mat, Weld.WeldType.DoubleFillet);
+                joint.template.welds.Add(new Weld("Haunchweb_Haunchflange", Weld.WeldType.DoubleFillet, weldsize2, lenHaunchFlange));
+                double weldsize3 = Weld.CalWeldSizeFullStrenth90deg(beam.thicknessFlange, column.thicknessFlange, mat, Weld.WeldType.Fillet);
+                joint.template.welds.Add(new Weld("Haunchflange_Beamflange", Weld.WeldType.Fillet, weldsize3, beam.width));
+                double weldsize4 = Weld.CalWeldSizeFullStrenth90deg(beam.thicknessFlange, beam.thicknessFlange, mat, Weld.WeldType.Fillet);
+                joint.template.welds.Add(new Weld("Haunchflange_Endplate", Weld.WeldType.Fillet, weldsize4, beam.width));
+            }
+            
+            //Add stiffeners if true
+            if (stiffeners == true)
+            {
+                double len = bear.element.crossSection.height - (2 * bear.element.crossSection.thicknessFlange);
+                double wid = (bear.element.crossSection.width - bear.element.crossSection.thicknessWeb) / 2;
+                double tstiffener = con.element.crossSection.thicknessFlange;
+                for(int i = 1; i <= 4; i++)
+                {
+                    //add plates 
+                    joint.template.plates.Add(new Plate("Stiffener" + i, len, wid, tstiffener));
+                    //add welds
+                    double weldsizeS1 = Weld.CalWeldSizeFullStrenth90deg(tstiffener, column.thicknessWeb, mat, Weld.WeldType.DoubleFillet);
+                    joint.template.welds.Add(new Weld("Stiffener_Beamweb", Weld.WeldType.DoubleFillet, weldsizeS1, column.height-(2*column.thicknessFlange)));
+                    for(int b = 1; b <= 2; b++)
+                    {
+                        double weldsizeS2 = Weld.CalWeldSizeFullStrenth90deg(beam.thicknessFlange, beam.thicknessFlange, mat, Weld.WeldType.DoubleFillet);
+                        joint.template.welds.Add(new Weld("Stiffener_Beamflange", Weld.WeldType.DoubleFillet, weldsizeS2, (column.width-column.thicknessWeb)/2));
+                    }
+                }
+            }
+            
         }
 
     }

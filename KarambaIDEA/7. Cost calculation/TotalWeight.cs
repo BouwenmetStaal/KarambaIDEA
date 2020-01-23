@@ -44,12 +44,13 @@ namespace KarambaIDEA
             //output variables
             List<double> weightElements = new List<double>();
             DataTree<double> weightPlates = new DataTree<double>();
+            weightPlates.Clear();
 
-            double massSteel = 7850;
+            double massSteel = Project.massSteel;
 
             foreach(Element ele in project.elements)
             {
-                double area = ele.crossSection.Area();
+                double area = ele.crossSection.Area()*Math.Pow(10,-6);//convert mm2 to m2
                 double len = ele.line.Length;
                 weightElements.Add(area * len * massSteel);
             }
@@ -58,9 +59,17 @@ namespace KarambaIDEA
             foreach (Joint joint in project.joints)
             {
                 GH_Path path = new GH_Path(a);
-                foreach(Plate plate in joint.template.plates)
+                if (joint.template != null)
                 {
-                    weightPlates.Add(10, path);
+                    if (joint.template.plates != null)
+                    {
+                        foreach (Plate plate in joint.template.plates)
+                        {
+                            double volM2 = plate.volume * Math.Pow(10, -9);//convert mm3 to m3
+                            double mass = volM2 * massSteel;
+                            weightPlates.Add(mass, path);
+                        }
+                    }
                 }
                 a = a + 1;
             }

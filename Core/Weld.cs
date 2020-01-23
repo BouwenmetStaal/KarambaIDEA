@@ -16,8 +16,11 @@ namespace KarambaIDEA.Core
         /// Weld Ids, to be set according to Idea. 
         /// </summary>
 		public List<int> Ids = new List<int>();
+        public string name;
         public WeldType weldType;
         public double unitycheck;
+        public double length;
+        public double volume;
         private double size;
 
         public double Size
@@ -39,6 +42,51 @@ namespace KarambaIDEA.Core
             FilletRear,
             DoubleFillet,
             Bevel
+        }
+        public Weld()
+        {
+
+        }
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="_name"></param>
+        /// <param name="_weldType"></param>
+        /// <param name="_size">weldsize in mm</param>
+        /// <param name="_length">length in mm</param>
+        public Weld(string _name, WeldType _weldType, double _size, double _length)
+        {
+            this.name = _name;
+            this.weldType = _weldType;
+            this.size = _size;
+            this.length = _length;
+            this.volume = Math.Pow(_size, 2) * _length;
+        }
+
+        /// <summary>
+        /// Set weldvolume in mm3
+        /// </summary>
+        private void SetVolume()
+        {
+            double vol = Math.Pow(this.size, 2) * this.length;
+            if (this.weldType == WeldType.Fillet){this.volume = vol;}else{this.volume = 2 * vol;}
+        }
+
+        static public double CalWeldSizeFullStrenth90deg(double t1, double t2, MaterialSteel mat, WeldType weldType)
+        {
+            double tmin = Math.Min(t1, t2);
+            double sigmac = mat.Fu / (mat.Beta * Project.gammaM2);
+            double weldSize = (mat.Fy/(sigmac*Math.Sqrt(2)))*tmin;
+            if (weldType == WeldType.DoubleFillet)
+            {
+                return weldSize;
+            }
+            else//single weld, double size
+            {
+                return 2 * weldSize;
+            }
+            
         }
 
         static public double CalcWeldSurface(double angle, double throat)

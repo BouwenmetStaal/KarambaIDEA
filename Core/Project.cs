@@ -40,6 +40,8 @@ namespace KarambaIDEA.Core
 
         public static double tolerance = 1e-6;
         public static double gammaM2 = 1.25;
+        public static double EmodulusSteel = 210000;//N/mm2
+        public static double massSteel = 7850;//kg/m3
 
         public Project()
         {
