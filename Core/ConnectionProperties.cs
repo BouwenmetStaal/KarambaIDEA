@@ -9,7 +9,7 @@ namespace KarambaIDEA.Core
     public class ConnectionProperties
     {
         Classification classification;
-        public double Sj=double.NaN;
+        public double Sj=0.0;
         public double SjR;
         public double SjH;
         public double Mjrd=double.NaN;
@@ -47,7 +47,7 @@ namespace KarambaIDEA.Core
             double E = Project.EmodulusSteel;
             double Ib = element.crossSection.Iyy();
             double Lb = element.line.Length;
-            this.SjH = (0.5 * E * Ib) / Lb;
+            this.SjH = ((0.5 * E * Ib) / Lb )* Math.Pow(10, -6);
         }
         /// <summary>
         /// Set Eurocode boundary criteria for rigid connections
@@ -59,7 +59,7 @@ namespace KarambaIDEA.Core
             double E = Project.EmodulusSteel;
             double Ib = element.crossSection.Iyy();
             double Lb = element.line.Length;
-            this.SjR = (k * E * Ib) / Lb;
+            this.SjR = ((k * E * Ib) / Lb) * Math.Pow(10, -6);
         }
         /// <summary>
         /// Define the classification of the connection based on the initial stiffness and the boundary criteria

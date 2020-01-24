@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AttachedMember.cs" />
+    <Compile Include="Bolt.cs" />
     <Compile Include="ConnectionProperties.cs" />
     <Compile Include="CrossSection.cs" />
     <Compile Include="Element.cs" />

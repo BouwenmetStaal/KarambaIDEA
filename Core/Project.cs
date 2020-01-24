@@ -53,7 +53,7 @@ namespace KarambaIDEA.Core
             this.projectName = _projectName;
             
         }
-
+       
         public Project(string projectname, List<Hierarchy> hierarchylist, List<Element> _elements, AnalysisMethod _analysisMethod = AnalysisMethod.FullStrengthMethod)
         {
             this.elements = _elements;
@@ -165,7 +165,7 @@ namespace KarambaIDEA.Core
                         //TODO: christalyze method
                         IsContinues = false;
                         //First member is bearing
-                        AttachedMember w = attachedMemTemp.First();
+                        AttachedMember w = attachedMemTemp.FirstOrDefault();
                         BearingMember bearing = new BearingMember(w.element, w.distanceVector, w.isStartPoint, w.ideaLine);
                         attachedMembers.Add(bearing);
                         //Rest of members are connecting members
@@ -191,7 +191,7 @@ namespace KarambaIDEA.Core
                                     BearingMember bearing = new BearingMember(w.element, w.distanceVector, w.isStartPoint, w.ideaLine);
                                     attachedMembers.Add(bearing);
                                 }
-                                if (w.element.numberInHierarchy == rank && rank != attachedMemTemp.Min(a => a.element.numberInHierarchy))
+                                else if (w.element.numberInHierarchy == rank && rank != attachedMemTemp.Min(a => a.element.numberInHierarchy))
                                 {
                                     attachedMembers.Add(w);
                                     //temp

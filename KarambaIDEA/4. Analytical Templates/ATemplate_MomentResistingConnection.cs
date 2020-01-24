@@ -70,8 +70,6 @@ namespace KarambaIDEA
                 List<string> brandNamesDirtyString = brandNamesDirty.Select(x => x.Value.ToString()).ToList();
                 brandNames = ImportGrasshopperUtils.DeleteEnterCommandsInGHStrings(brandNamesDirtyString);
             }
-
-            //TODO: make a message "BrandName 011 is linked to BoltedEndPlateConnection"
             if (brandNames.Count != 0)
             {
                 foreach (string brandName in brandNames)
@@ -93,7 +91,22 @@ namespace KarambaIDEA
                     }
                 }
             }
-
+            else
+            {
+                foreach (Joint joint in project.joints)
+                {
+                    if (joint.attachedMembers.OfType<ConnectingMember>().ToList().Count == 1)
+                    {
+                        SetMomentResitingConnection(joint, heightHaunch, stiffeners, unbraced);
+                    }
+                    else
+                    {
+                        //more than one connectingmembers in connection
+                        //TODO: include warning
+                    }
+                }
+            }
+            
             //messages = project.MakeTemplateJointMessage();
 
             BoundingBox bbox = new BoundingBox(new Point3d(0, 0, 0), new Point3d(0.1, 0.2, 0.05));
@@ -101,56 +114,30 @@ namespace KarambaIDEA
             Box box = new Box(plane, bbox);
             brep = box.ToBrep();
 
-
             //link output
             DA.SetData(0, project);
             DA.SetDataList(1, messages);
         }
-        /// <summary>
-        /// Provides an Icon for every component that will be visible in the User Interface.
-        /// Icons need to be 24x24 pixels.
-        /// </summary>
-        protected override System.Drawing.Bitmap Icon
-        {
-            get
-            {
-
-                return Properties.Resources.ATempMomentResistingConnection;
-            }
-        }
-        public override Guid ComponentGuid
-        {
-            get { return new Guid("e8467348-e28f-40e0-991a-fcf88f652aba"); }
-        }
-        public void SetMomentResitingConnection(Joint joint,double heightHaunch, bool stiffeners, bool unbraced)
+        private static void SetMomentResitingConnection(Joint joint, double heightHaunch, bool stiffeners, bool unbraced)
         {
             ConnectingMember con = joint.attachedMembers.OfType<ConnectingMember>().ToList().First();
             BearingMember bear = joint.attachedMembers.OfType<BearingMember>().ToList().First();
+
             int k = 25;
             if (unbraced == true) { k = 8; }
             double kf = 13;
             if (stiffeners == true) { kf = 8.5; }
             int ks = 5;
+            //Calculate Sj  
             double z = heightHaunch + con.element.crossSection.height;
-            double E = 210000;
-            double Lb = con.element.line.Length*1000;//from m to mm
-            double Ib = con.element.crossSection.Iyy();//TODO: Iyy missing include Karamba3D Crosssection dataset in KarambaIDEA
-            //calculate SjP
-            double SjH = (0.5 * E * Ib) / Lb;
-            //calculate SjR
-            double SjR = (k * E * Ib) / Lb;
-            //Calculate Sj,approx according to Maarten Steenhuis method
-            double Sj = (E * Math.Pow(z, 2) * bear.element.crossSection.thicknessFlange) / kf;
+            double E = Project.EmodulusSteel;
+            double Sj = ((E * Math.Pow(z, 2) * bear.element.crossSection.thicknessFlange) / kf) * Math.Pow(10, -6);
             //Calculate Mj,Rd,approx
             double fy = con.element.crossSection.material.Fy;
             double yM0 = 1.0;
-            double MjRd = (ks * fy * z * Math.Pow(bear.element.crossSection.thicknessFlange, 2)) / yM0;
+            double MjRd = ((ks * fy * z * Math.Pow(bear.element.crossSection.thicknessFlange, 2)) / yM0) * Math.Pow(10, -6);
 
-            ConnectionProperties conProp = new ConnectionProperties();
-            conProp.Sj = Sj * Math.Pow(10, -6);
-            conProp.SjH = SjH * Math.Pow(10, -6);
-            conProp.SjR = SjR * Math.Pow(10, -6);
-            conProp.Mjrd = MjRd*Math.Pow(10,-6);
+            ConnectionProperties conProp = new ConnectionProperties(con.element, Sj, MjRd, k);
 
             if (con.isStartPoint == true)
             {
@@ -185,8 +172,8 @@ namespace KarambaIDEA
             double weldsizeB2 = Weld.CalWeldSizeFullStrenth90deg(tendplate, beam.thicknessWeb, mat, Weld.WeldType.DoubleFillet);
             joint.template.welds.Add(new Weld("BottomflangeBeam_endplate", Weld.WeldType.DoubleFillet, weldsizeB2, beam.width));
             double weldsizeB3 = Weld.CalWeldSizeFullStrenth90deg(tendplate, beam.thicknessWeb, mat, Weld.WeldType.DoubleFillet);
-            joint.template.welds.Add(new Weld("WebBeam_endplate", Weld.WeldType.DoubleFillet, weldsizeB3, beam.height-(2*beam.thicknessFlange)));
-            
+            joint.template.welds.Add(new Weld("WebBeam_endplate", Weld.WeldType.DoubleFillet, weldsizeB3, beam.height - (2 * beam.thicknessFlange)));
+
             if (heightHaunch != 0.0)
             {
                 //haunch dimensions
@@ -208,29 +195,46 @@ namespace KarambaIDEA
                 double weldsize4 = Weld.CalWeldSizeFullStrenth90deg(beam.thicknessFlange, beam.thicknessFlange, mat, Weld.WeldType.Fillet);
                 joint.template.welds.Add(new Weld("Haunchflange_Endplate", Weld.WeldType.Fillet, weldsize4, beam.width));
             }
-            
+
             //Add stiffeners if true
             if (stiffeners == true)
             {
                 double len = bear.element.crossSection.height - (2 * bear.element.crossSection.thicknessFlange);
                 double wid = (bear.element.crossSection.width - bear.element.crossSection.thicknessWeb) / 2;
                 double tstiffener = con.element.crossSection.thicknessFlange;
-                for(int i = 1; i <= 4; i++)
+                for (int i = 1; i <= 4; i++)
                 {
                     //add plates 
                     joint.template.plates.Add(new Plate("Stiffener" + i, len, wid, tstiffener));
                     //add welds
                     double weldsizeS1 = Weld.CalWeldSizeFullStrenth90deg(tstiffener, column.thicknessWeb, mat, Weld.WeldType.DoubleFillet);
-                    joint.template.welds.Add(new Weld("Stiffener_Beamweb", Weld.WeldType.DoubleFillet, weldsizeS1, column.height-(2*column.thicknessFlange)));
-                    for(int b = 1; b <= 2; b++)
+                    joint.template.welds.Add(new Weld("Stiffener_Beamweb", Weld.WeldType.DoubleFillet, weldsizeS1, column.height - (2 * column.thicknessFlange)));
+                    for (int b = 1; b <= 2; b++)
                     {
                         double weldsizeS2 = Weld.CalWeldSizeFullStrenth90deg(beam.thicknessFlange, beam.thicknessFlange, mat, Weld.WeldType.DoubleFillet);
-                        joint.template.welds.Add(new Weld("Stiffener_Beamflange", Weld.WeldType.DoubleFillet, weldsizeS2, (column.width-column.thicknessWeb)/2));
+                        joint.template.welds.Add(new Weld("Stiffener_Beamflange", Weld.WeldType.DoubleFillet, weldsizeS2, (column.width - column.thicknessWeb) / 2));
                     }
                 }
             }
-            
+
         }
+        /// <summary>
+        /// Provides an Icon for every component that will be visible in the User Interface.
+        /// Icons need to be 24x24 pixels.
+        /// </summary>
+        protected override System.Drawing.Bitmap Icon
+        {
+            get
+            {
+
+                return Properties.Resources.ATempMomentResistingConnection;
+            }
+        }
+        public override Guid ComponentGuid
+        {
+            get { return new Guid("e8467348-e28f-40e0-991a-fcf88f652aba"); }
+        }
+        
 
     }
 }

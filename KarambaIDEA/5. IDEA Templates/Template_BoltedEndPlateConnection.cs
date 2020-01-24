@@ -72,11 +72,7 @@ namespace KarambaIDEA
                     {
                         if (brandName == joint.brandName)
                         {
-                            joint.template = new Template();
-                            joint.template.workshopOperations = Template.WorkshopOperations.BoltedEndPlateConnection;
-                            Plate plate = new Plate();
-                            plate.thickness = tplate;
-                            joint.template.plates.Add(plate);
+                            SetTemplate(tplate, joint);
                         }
                     }
                 }
@@ -85,11 +81,7 @@ namespace KarambaIDEA
             {
                 foreach (Joint joint in project.joints)
                 {
-                    joint.template = new Template();
-                    joint.template.workshopOperations = Template.WorkshopOperations.BoltedEndPlateConnection;
-                    Plate plate = new Plate();
-                    plate.thickness = tplate;
-                    joint.template.plates.Add(plate);
+                    SetTemplate(tplate, joint);
                 }
             }
 
@@ -99,6 +91,16 @@ namespace KarambaIDEA
             DA.SetData(0, project);
             DA.SetDataList(1, messages);
         }
+
+        private static void SetTemplate(double tplate, Joint joint)
+        {
+            joint.template = new Template();
+            joint.template.workshopOperations = Template.WorkshopOperations.BoltedEndPlateConnection;
+            Plate plate = new Plate();
+            plate.thickness = tplate;
+            joint.template.plates.Add(plate);
+        }
+
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.
         /// Icons need to be 24x24 pixels.

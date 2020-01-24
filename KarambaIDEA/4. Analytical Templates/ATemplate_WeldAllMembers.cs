@@ -65,7 +65,7 @@ namespace KarambaIDEA
                 brandNames = ImportGrasshopperUtils.DeleteEnterCommandsInGHStrings(brandNamesDirtyString);
             }
 
-            //TODO: make a message "BrandName 011 is linked to BoltedEndPlateConnection"
+            
             if (brandNames.Count != 0)
             {
                 foreach (string brandName in brandNames)
@@ -74,64 +74,16 @@ namespace KarambaIDEA
                     {
                         if (brandName == joint.brandName)
                         {
-                            if (joint.attachedMembers.OfType<ConnectingMember>().ToList().Count == 1)
-                            {
-                                
-                            }
-                            else
-                            {
-                                //more than one connectingmembers in connection
-                                //TODO: include warning
-                            }
+                            SetAnaTemplate(joint);
                         }
                     }
                 }
             }
-            foreach (Joint joint in project.joints)
+            else
             {
-                joint.template = new Template();
-                //Ignore highest hierarchy members by only taking connectingmembers
-                foreach (ConnectingMember con in joint.attachedMembers.OfType<ConnectingMember>())
+                foreach (Joint joint in project.joints)
                 {
-                    CrossSection cross = con.element.crossSection;
-                    MaterialSteel mat = cross.material;
-                    if (cross.shape == CrossSection.Shape.CHSsection)
-                    {
-                        double radius = 0.5 * cross.height;
-                        double perimeter = 2 * Math.PI * radius;
-
-                        double weldSizeW = Weld.CalWeldSizeFullStrenth90deg(cross.thicknessWeb, cross.thicknessWeb, mat, Weld.WeldType.Fillet);
-                        joint.template.welds.Add(new Weld("WebWeldCHS", Weld.WeldType.Fillet, weldSizeW, perimeter));
-
-                        con.flangeWeld.Size = weldSizeW;
-                        con.webWeld.Size = weldSizeW;
-                    }
-
-                    if (cross.shape == CrossSection.Shape.SHSSection)
-                    {
-                        double perimeter = 2 * cross.width + 2 * cross.height;
-
-                        double weldSizeW = Weld.CalWeldSizeFullStrenth90deg(cross.thicknessWeb, cross.thicknessWeb, mat, Weld.WeldType.Fillet);
-                        joint.template.welds.Add(new Weld("WebWeldSHS", Weld.WeldType.Fillet, weldSizeW, perimeter));
-
-                        con.flangeWeld.Size = weldSizeW;
-                        con.webWeld.Size = weldSizeW;
-                    }
-                    if (cross.shape == CrossSection.Shape.ISection)
-                    {
-                        double weldSizeF = Weld.CalWeldSizeFullStrenth90deg(cross.thicknessFlange, cross.thicknessFlange, mat, Weld.WeldType.DoubleFillet);
-                        joint.template.welds.Add(new Weld("FlangeWeldTop", Weld.WeldType.DoubleFillet, weldSizeF, cross.width));
-                        joint.template.welds.Add(new Weld("FlangeWeldBottom", Weld.WeldType.DoubleFillet, weldSizeF, cross.width));
-                        double weldSizeW = Weld.CalWeldSizeFullStrenth90deg(cross.thicknessFlange, cross.thicknessFlange, mat, Weld.WeldType.DoubleFillet);
-                        joint.template.welds.Add(new Weld("WebWeld", Weld.WeldType.DoubleFillet, weldSizeW, cross.height-2*cross.thicknessFlange));
-
-                        con.flangeWeld.Size = weldSizeF;
-                        con.webWeld.Size = weldSizeW;
-                    }
-                    else
-                    {
-                        //TODO: include warning, cross-sections not recognized
-                    }
+                    SetAnaTemplate(joint);
                 }
             }
 
@@ -149,6 +101,55 @@ namespace KarambaIDEA
             DA.SetDataList(2, throatBegin);
             DA.SetDataList(3, throatEnd);
         }
+
+        private static void SetAnaTemplate(Joint joint)
+        {
+            joint.template = new Template();
+            //Ignore highest hierarchy members by only taking connectingmembers
+            foreach (ConnectingMember con in joint.attachedMembers.OfType<ConnectingMember>())
+            {
+                CrossSection cross = con.element.crossSection;
+                MaterialSteel mat = cross.material;
+                if (cross.shape == CrossSection.Shape.CHSsection)
+                {
+                    double radius = 0.5 * cross.height;
+                    double perimeter = 2 * Math.PI * radius;
+
+                    double weldSizeW = Weld.CalWeldSizeFullStrenth90deg(cross.thicknessWeb, cross.thicknessWeb, mat, Weld.WeldType.Fillet);
+                    joint.template.welds.Add(new Weld("WebWeldCHS", Weld.WeldType.Fillet, weldSizeW, perimeter));
+
+                    con.flangeWeld.Size = weldSizeW;
+                    con.webWeld.Size = weldSizeW;
+                }
+
+                if (cross.shape == CrossSection.Shape.SHSSection)
+                {
+                    double perimeter = 2 * cross.width + 2 * cross.height;
+
+                    double weldSizeW = Weld.CalWeldSizeFullStrenth90deg(cross.thicknessWeb, cross.thicknessWeb, mat, Weld.WeldType.Fillet);
+                    joint.template.welds.Add(new Weld("WebWeldSHS", Weld.WeldType.Fillet, weldSizeW, perimeter));
+
+                    con.flangeWeld.Size = weldSizeW;
+                    con.webWeld.Size = weldSizeW;
+                }
+                if (cross.shape == CrossSection.Shape.ISection)
+                {
+                    double weldSizeF = Weld.CalWeldSizeFullStrenth90deg(cross.thicknessFlange, cross.thicknessFlange, mat, Weld.WeldType.DoubleFillet);
+                    joint.template.welds.Add(new Weld("FlangeWeldTop", Weld.WeldType.DoubleFillet, weldSizeF, cross.width));
+                    joint.template.welds.Add(new Weld("FlangeWeldBottom", Weld.WeldType.DoubleFillet, weldSizeF, cross.width));
+                    double weldSizeW = Weld.CalWeldSizeFullStrenth90deg(cross.thicknessFlange, cross.thicknessFlange, mat, Weld.WeldType.DoubleFillet);
+                    joint.template.welds.Add(new Weld("WebWeld", Weld.WeldType.DoubleFillet, weldSizeW, cross.height - 2 * cross.thicknessFlange));
+
+                    con.flangeWeld.Size = weldSizeF;
+                    con.webWeld.Size = weldSizeW;
+                }
+                else
+                {
+                    //TODO: include warning, cross-sections not recognized
+                }
+            }
+        }
+
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.
         /// Icons need to be 24x24 pixels.

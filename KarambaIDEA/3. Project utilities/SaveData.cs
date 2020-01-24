@@ -17,6 +17,7 @@ namespace KarambaIDEA
 {
     public class SaveData : GH_Component
     {
+        static List<double> vs;
         public SaveData() : base("SaveData", "SaveData", "SaveData", "KarambaIDEA", "3. Project utilities")
         {
 
@@ -45,15 +46,18 @@ namespace KarambaIDEA
 
 
             //output variables
-            List<double> stiffImp = new List<double>();
+            if (vs == null)
+            {
+                vs = new List<double>();
+            }
 
             if (refresh == true)
             {
-                stiffImp = stiffCalc;
+                vs = stiffCalc;
             }
 
             //link output
-            DA.SetDataList(0, stiffImp);
+            DA.SetDataList(0, vs);
         }
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.

@@ -33,11 +33,11 @@ namespace KarambaIDEA
         {
             pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.list);
 
-            pManager.AddNumberParameter("start Sj", "Sj", "", GH_ParamAccess.list);
-            pManager.AddNumberParameter("end Sj", "Sj", "", GH_ParamAccess.list);
+            pManager.AddNumberParameter("start Sj", "start Sj", "", GH_ParamAccess.list);
+            pManager.AddNumberParameter("end Sj", "end Sj", "", GH_ParamAccess.list);
 
-            pManager.AddNumberParameter("start Mj,Rd", "Mj,Rd", "", GH_ParamAccess.list);
-            pManager.AddNumberParameter("start Mj,Rd", "Mj,Rd", "", GH_ParamAccess.list);
+            pManager.AddNumberParameter("start Mj,Rd", "start Mj,Rd", "", GH_ParamAccess.list);
+            pManager.AddNumberParameter("end Mj,Rd", "end Mj,Rd", "", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
