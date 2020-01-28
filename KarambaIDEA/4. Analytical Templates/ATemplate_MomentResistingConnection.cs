@@ -6,6 +6,7 @@ using System.Linq;
 using System.Collections.Generic;
 
 using Rhino.Geometry;
+using Rhino;
 
 using Grasshopper;
 using Grasshopper.Kernel;
@@ -37,7 +38,8 @@ namespace KarambaIDEA
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
-            pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.list);            
+            pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.list);
+            pManager.AddBrepParameter("Brep", "Brep","", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -54,7 +56,7 @@ namespace KarambaIDEA
 
             //Output variables
             List<string> messages = new List<string>();
-            Brep brep = new Brep();
+            List<Brep> breps = new List<Brep>();
 
             //Link input
             DA.GetData(0, ref project);
@@ -80,7 +82,7 @@ namespace KarambaIDEA
                         {
                             if (joint.attachedMembers.OfType<ConnectingMember>().ToList().Count == 1)
                             {
-                                SetMomentResitingConnection(joint, heightHaunch, stiffeners, unbraced);
+                                SetMomentResitingConnection(joint, heightHaunch, stiffeners, unbraced,breps);
                             }
                             else
                             {
@@ -97,7 +99,7 @@ namespace KarambaIDEA
                 {
                     if (joint.attachedMembers.OfType<ConnectingMember>().ToList().Count == 1)
                     {
-                        SetMomentResitingConnection(joint, heightHaunch, stiffeners, unbraced);
+                        SetMomentResitingConnection(joint, heightHaunch, stiffeners, unbraced, breps);
                     }
                     else
                     {
@@ -109,16 +111,14 @@ namespace KarambaIDEA
             
             //messages = project.MakeTemplateJointMessage();
 
-            BoundingBox bbox = new BoundingBox(new Point3d(0, 0, 0), new Point3d(0.1, 0.2, 0.05));
-            Plane plane = new Plane(new Point3d(0, 2, 0), new Vector3d(0, 3, 3));
-            Box box = new Box(plane, bbox);
-            brep = box.ToBrep();
+           
 
             //link output
             DA.SetData(0, project);
             DA.SetDataList(1, messages);
+            DA.SetDataList(2, breps);
         }
-        private static void SetMomentResitingConnection(Joint joint, double heightHaunch, bool stiffeners, bool unbraced)
+        private static void SetMomentResitingConnection(Joint joint, double heightHaunch, bool stiffeners, bool unbraced, List<Brep> breps)
         {
             ConnectingMember con = joint.attachedMembers.OfType<ConnectingMember>().ToList().First();
             BearingMember bear = joint.attachedMembers.OfType<BearingMember>().ToList().First();
@@ -153,7 +153,7 @@ namespace KarambaIDEA
             //tendplate = tcolumn,flange
             //tweb,haunch = tweb,beam
             //tflange,haunch= tflange,beam
-
+            double haunchRatio = 2.0;
             //Generate plates and welds for cost analyses
             CrossSection column = bear.element.crossSection;
             CrossSection beam = con.element.crossSection;
@@ -177,7 +177,7 @@ namespace KarambaIDEA
             if (heightHaunch != 0.0)
             {
                 //haunch dimensions
-                double haunchRatio = 2.0;
+                
                 double haunchLength = heightHaunch * haunchRatio;
                 double lenHaunchFlange = Math.Sqrt(Math.Pow(heightHaunch, 2) + Math.Pow(haunchRatio * heightHaunch, 2));
                 //add plates of haunch
@@ -215,6 +215,60 @@ namespace KarambaIDEA
                         joint.template.welds.Add(new Weld("Stiffener_Beamflange", Weld.WeldType.DoubleFillet, weldsizeS2, (column.width - column.thicknessWeb) / 2));
                     }
                 }
+            }
+
+            //Brep
+            double moveX = (bear.element.crossSection.height) / 2;
+            Core.Point p = new Core.Point();
+            Vector vX = new Vector();
+            
+            if (con.isStartPoint == true)
+            {
+                p = (con.element.line.start);
+                vX = (con.element.line.Vector);
+            }
+            else
+            {
+                p = (con.element.line.end);
+                vX = (con.element.line.Vector.FlipVector());
+            }
+            //BREP: endplate
+            Point3d pointA = new Point3d(-(beam.width) / 2000, -(beam.height)/2000-(heightHaunch/1000), -(column.thicknessFlange) / 2000);
+            Point3d pointB = new Point3d((beam.width) / 2000, (beam.height) / 2000, (column.thicknessFlange) / 2000);
+            BoundingBox bbox = new BoundingBox(pointA,pointB);
+            Point3d point = ImportGrasshopperUtils.CastPointToRhino(p);
+            Vector3d vector = ImportGrasshopperUtils.CastVectorToRhino(vX);
+            Plane plane = new Plane(point, vector);
+            Box box = new Box(plane, bbox);
+            breps.Add(box.ToBrep());
+            //BREP: haunchflange
+            Vector vZ = con.element.localCoordinateSystem.Z.FlipVector();
+            Core.Point p1 = Core.Point.MovePointByVectorandLength(p, vZ, beam.height / 2000);
+            Core.Point p2 = Core.Point.MovePointByVectorandLength(p, vZ, (beam.height / 2000) + (heightHaunch / 1000));
+            Core.Point p3 = Core.Point.MovePointByVectorandLength(p1, vX, (heightHaunch * haunchRatio) / 1000);
+
+            if (heightHaunch != 0.0)
+            {
+                
+                Rhino.Geometry.LineCurve line = new Rhino.Geometry.LineCurve(ImportGrasshopperUtils.CastPointToRhino(p2), ImportGrasshopperUtils.CastPointToRhino(p3));
+                Vector vYmove = Vector.VecScalMultiply(con.element.localCoordinateSystem.Y.FlipVector().Unitize(), beam.width / 2000);
+                Transform transform = Transform.Translation(ImportGrasshopperUtils.CastVectorToRhino(vYmove));
+                line.Transform(transform);
+                Vector vYwidth = Vector.VecScalMultiply(con.element.localCoordinateSystem.Y.Unitize(), beam.width / 1000);
+                Surface sur = Surface.CreateExtrusion(line, ImportGrasshopperUtils.CastVectorToRhino(vYwidth));
+                Brep brep = Brep.CreateFromSurface(sur);
+                breps.Add(brep);
+            }
+            //BREP:haunchweb
+            if (heightHaunch != 0.0)
+            {
+                List<Point3d> hwp = new List<Point3d>();
+                hwp.Add(ImportGrasshopperUtils.CastPointToRhino(p1));
+                hwp.Add(ImportGrasshopperUtils.CastPointToRhino(p2));
+                hwp.Add(ImportGrasshopperUtils.CastPointToRhino(p3));
+                NurbsSurface plate = NurbsSurface.CreateFromCorners(hwp[0], hwp[1], hwp[2]);
+                Brep plateB = plate.ToBrep();
+                breps.Add(plateB);
             }
 
         }

@@ -113,6 +113,9 @@ namespace KarambaIDEA
                     }
                 }
                 //Step II - selecting bolt size
+                Bolt bolt = new Bolt(Bolt.BoltType.M20, Bolt.BoltSteelgrade.b8_8);
+
+                
                 //Step III - evaluation of different design possibilities
                 //Step IV - finplate dimensions
                 //Step V - weld dimensions

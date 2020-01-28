@@ -49,6 +49,14 @@ namespace KarambaIDEA.Core
             rhiLine.To = CastPointToRhino(line.end);
             return rhiLine;
         }
+        static public Rhino.Geometry.Vector3d CastVectorToRhino(Core.Vector vector)
+        {
+            Rhino.Geometry.Vector3d rhiVec = new Rhino.Geometry.Vector3d();
+            rhiVec.X = vector.X;
+            rhiVec.Y = vector.Y;
+            rhiVec.Z = vector.Z;
+            return rhiVec;
+        }
 
         
     }

@@ -149,7 +149,14 @@ namespace KarambaIDEA.Core
             Vector vector = new Vector(p1.X + p2.X + p3.X, p1.Y + p2.Y + p3.Y, p1.Z + p2.Z + p3.Z);
             
             return vector;
-          
+        }
+        public Vector FlipVector()
+        {
+            Vector vector = new Vector();
+            vector.X = -this.X;
+            vector.Y = -this.Y;
+            vector.Z = -this.Z;
+            return vector;
         }
 
         

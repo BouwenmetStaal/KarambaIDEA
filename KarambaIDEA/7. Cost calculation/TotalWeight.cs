@@ -70,6 +70,14 @@ namespace KarambaIDEA
                             weightPlates.Add(mass, path);
                         }
                     }
+                    else
+                    {
+                        weightPlates.Add(0.0, path);
+                    }
+                }
+                else
+                {
+                    weightPlates.Add(0.0, path);
                 }
                 a = a + 1;
             }

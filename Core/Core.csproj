@@ -42,7 +42,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AttachedMember.cs" />
-    <Compile Include="Bolt.cs" />
+    <Compile Include="JointTemplate\Bolt.cs" />
+    <Compile Include="JointTemplate\BoltGrid.cs" />
     <Compile Include="ConnectionProperties.cs" />
     <Compile Include="CrossSection.cs" />
     <Compile Include="Element.cs" />
@@ -53,14 +54,14 @@
     <Compile Include="LocalCoordinateSystem.cs" />
     <Compile Include="MaterialSteel.cs" />
     <Compile Include="Geometry\Point.cs" />
-    <Compile Include="Plate.cs" />
+    <Compile Include="JointTemplate\Plate.cs" />
     <Compile Include="Project.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="ResultsSummary.cs" />
     <Compile Include="SawingCuts.cs" />
     <Compile Include="Geometry\Vector.cs" />
-    <Compile Include="Template.cs" />
-    <Compile Include="Weld.cs" />
+    <Compile Include="JointTemplate\Template.cs" />
+    <Compile Include="JointTemplate\Weld.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

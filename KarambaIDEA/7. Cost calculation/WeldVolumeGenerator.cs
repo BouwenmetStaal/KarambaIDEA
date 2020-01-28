@@ -51,7 +51,7 @@ namespace KarambaIDEA
                 GH_Path path = new GH_Path(a);
                 if (joint.template != null)
                 {
-                    if (joint.template.welds != null)
+                    if (joint.template.welds.Count != 0)
                     {
                         foreach (Weld weld in joint.template.welds)
                         {
@@ -59,6 +59,14 @@ namespace KarambaIDEA
                             weldVolumes.Add(weldVolume, path);
                         }
                     }
+                    else
+                    {
+                        weldVolumes.Add(0.0, path);
+                    }
+                }
+                else
+                {
+                    weldVolumes.Add(0.0, path);
                 }
                 a = a + 1;
             }

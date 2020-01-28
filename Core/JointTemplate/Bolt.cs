@@ -10,6 +10,13 @@ namespace KarambaIDEA.Core
     {
         public Project project;
         public BoltType boltType;
+        public BoltSteelgrade boltSteelgrade = BoltSteelgrade.b8_8;
+
+        public Bolt(BoltType _boltType, BoltSteelgrade _boltSteelgrade)
+        {
+            this.boltType = _boltType;
+            this.boltSteelgrade = _boltSteelgrade;
+        }
 
         public Bolt(string name, double _holediameter, double _shankArea, double coreArea)
         {
@@ -114,6 +121,42 @@ namespace KarambaIDEA.Core
             M42,
             M48,
             M52
+        }
+
+        public enum BoltSteelgrade
+        {
+            b4_6,
+            b4_8,
+            b5_6,
+            b6_8,
+            b8_8,
+            b10_9
+        }
+
+
+        public double ShearResistance()
+        {
+            double A = this.CoreArea;
+            double fub = 640;
+            double alphaV = 0.5;
+            if(this.boltSteelgrade==BoltSteelgrade.b8_8|| this.boltSteelgrade == BoltSteelgrade.b5_6|| this.boltSteelgrade == BoltSteelgrade.b4_6)
+            {
+                alphaV = 0.6;
+            }
+            double FvRd = (alphaV*fub*A)/Project.gammaM2;
+            return FvRd;
+        }
+        public double TensionResistance()
+        {
+            double As = this.ShankArea;
+            double k2 = 0.9;
+            double fub = 640;
+            double FtRd = k2 * fub * As / Project.gammaM2;
+            return FtRd;
+        }
+        public double CombinedShearandTension(double FvEd, double FtEd)
+        {
+            return FvEd / this.ShearResistance() + FtEd / (1.4 * this.TensionResistance());
         }
     }
 }
