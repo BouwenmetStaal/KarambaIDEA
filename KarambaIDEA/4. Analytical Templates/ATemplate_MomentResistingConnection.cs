@@ -218,7 +218,7 @@ namespace KarambaIDEA
             }
 
             //Brep
-            double moveX = (bear.element.crossSection.height) / 2;
+            double moveX = (bear.element.crossSection.height) / 2000;
             Core.Point p = new Core.Point();
             Vector vX = new Vector();
             
@@ -232,21 +232,21 @@ namespace KarambaIDEA
                 p = (con.element.line.end);
                 vX = (con.element.line.Vector.FlipVector());
             }
+            Core.Point pmove = Core.Point.MovePointByVectorandLength(p, vX, moveX);
             //BREP: endplate
             Point3d pointA = new Point3d(-(beam.width) / 2000, -(beam.height)/2000-(heightHaunch/1000), -(column.thicknessFlange) / 2000);
             Point3d pointB = new Point3d((beam.width) / 2000, (beam.height) / 2000, (column.thicknessFlange) / 2000);
             BoundingBox bbox = new BoundingBox(pointA,pointB);
-            Point3d point = ImportGrasshopperUtils.CastPointToRhino(p);
+            Point3d point = ImportGrasshopperUtils.CastPointToRhino(pmove);
             Vector3d vector = ImportGrasshopperUtils.CastVectorToRhino(vX);
             Plane plane = new Plane(point, vector);
             Box box = new Box(plane, bbox);
             breps.Add(box.ToBrep());
             //BREP: haunchflange
             Vector vZ = con.element.localCoordinateSystem.Z.FlipVector();
-            Core.Point p1 = Core.Point.MovePointByVectorandLength(p, vZ, beam.height / 2000);
-            Core.Point p2 = Core.Point.MovePointByVectorandLength(p, vZ, (beam.height / 2000) + (heightHaunch / 1000));
+            Core.Point p1 = Core.Point.MovePointByVectorandLength(pmove, vZ, beam.height / 2000);
+            Core.Point p2 = Core.Point.MovePointByVectorandLength(pmove, vZ, (beam.height / 2000) + (heightHaunch / 1000));
             Core.Point p3 = Core.Point.MovePointByVectorandLength(p1, vX, (heightHaunch * haunchRatio) / 1000);
-
             if (heightHaunch != 0.0)
             {
                 
@@ -270,7 +270,25 @@ namespace KarambaIDEA
                 Brep plateB = plate.ToBrep();
                 breps.Add(plateB);
             }
+            //BREP:Stiffeners
+            if (stiffeners == true)
+            {
+                //dependend on direction of column
+                Point3d pointAs = new Point3d(-(column.width) / 2000, -(column.height) / 2000, -(beam.thicknessFlange) / 2000);
+                Point3d pointBs = new Point3d((column.width) / 2000, (column.height) / 2000, (beam.thicknessFlange) / 2000);
+                BoundingBox bboxstif = new BoundingBox(pointAs, pointBs);
+                Vector vXb = bear.element.localCoordinateSystem.X;
 
+                Core.Point topP = Core.Point.MovePointByVectorandLength(p, vXb, (beam.height / 2000));
+                Plane planeTop = new Plane(ImportGrasshopperUtils.CastPointToRhino(topP), ImportGrasshopperUtils.CastVectorToRhino(vXb));
+                Box topStiff = new Box(planeTop, bboxstif);
+                breps.Add(topStiff.ToBrep());
+
+                Core.Point botP = Core.Point.MovePointByVectorandLength(p, vXb, (-beam.height / 2000) - (heightHaunch / 1000));
+                Plane planeBot = new Plane(ImportGrasshopperUtils.CastPointToRhino(botP), ImportGrasshopperUtils.CastVectorToRhino(vXb));
+                Box botStiff = new Box(planeBot, bboxstif);
+                breps.Add(botStiff.ToBrep());
+            }
         }
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.

@@ -169,6 +169,7 @@
     <None Include="Resources\Weight.png" />
     <None Include="Resources\ATempMomentResistingConnection.png" />
     <None Include="Resources\ATempMomentResistingConnection2.png" />
+    <None Include="Resources\ATempFinPlate.png" />
     <Content Include="Resources\continues2members.contemp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>

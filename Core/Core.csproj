@@ -50,6 +50,7 @@
     <Compile Include="Hierarchy.cs" />
     <Compile Include="Joint.cs" />
     <Compile Include="Geometry\Line.cs" />
+    <Compile Include="JointTemplate\BoltSteelGrade.cs" />
     <Compile Include="LoadCase.cs" />
     <Compile Include="LocalCoordinateSystem.cs" />
     <Compile Include="MaterialSteel.cs" />

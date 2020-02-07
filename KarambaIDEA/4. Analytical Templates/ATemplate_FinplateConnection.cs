@@ -93,6 +93,7 @@ namespace KarambaIDEA
             joint.template = new Template();
             foreach(ConnectingMember con in joint.attachedMembers)
             {
+                
                 //Step I - retrieve loads
                 List<double> vloads = new List<double>();
                 foreach(LoadCase lc in joint.project.loadcases)
@@ -112,13 +113,46 @@ namespace KarambaIDEA
                         }
                     }
                 }
+                double vload = vloads.Max();
                 //Step II - selecting bolt size
-                Bolt bolt = new Bolt(Bolt.BoltType.M20, Bolt.BoltSteelgrade.b8_8);
+                List<Bolt> bolts = Bolt.CreateBoltsList(BoltSteelGrade.Steelgrade.b8_8);
 
-                
                 //Step III - evaluation of different design possibilities
+                CrossSection beam = con.element.crossSection;
+                double h = beam.height - 2 * (beam.thicknessFlange + beam.radius);//Straight portion of the web
+
+                foreach (Bolt bolt in bolts)
+                {
+                    double e1 = 1.2 * bolt.HoleDiameter;//Edge distance longitudinal direction
+                    double p1 = 2.2 * bolt.HoleDiameter;//Inner distance longitudinal direction
+                    double e2 = 1.2 * bolt.HoleDiameter;//Edge distance transversal direction
+                    double gap = 20;
+                    for (int n = 2; n < 4; n++)
+                    {
+                        if (h > e1 * 2 + bolt.HoleDiameter * n + p1 * (n - 1))//if configuration fits within the beam
+                        {
+                            //Check shear
+                            if (vload > n*bolt.ShearResistance())
+                            {
+                                goto increaseN;
+                            }
+                            //Check bearing
+                            double tweb = beam.thicknessWeb;
+
+
+
+                            double leverarm = gap + e2 + 0.5 * bolt.HoleDiameter;
+                            double M = leverarm * vload;
+                        }
+
+                    increaseN:;
+                    }
+
+                }
                 //Step IV - finplate dimensions
                 //Step V - weld dimensions
+
+                //Define data for costanalyses
             }
         }
 
@@ -131,7 +165,7 @@ namespace KarambaIDEA
             get
             {
 
-                return Properties.Resources.KarambaIDEA_logo;
+                return Properties.Resources.ATempFinPlate;
             }
         }
         public override Guid ComponentGuid

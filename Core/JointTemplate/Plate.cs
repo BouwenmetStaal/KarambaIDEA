@@ -31,6 +31,8 @@ namespace KarambaIDEA.Core
             SetVolume();
         }
 
+        
+
         public void SetVolume()
         {
             double vol = this.length * this.width * this.thickness;
