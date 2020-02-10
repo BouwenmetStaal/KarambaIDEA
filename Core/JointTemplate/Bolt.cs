@@ -14,7 +14,7 @@ namespace KarambaIDEA.Core
         public double HoleDiameter;
         public double ShankArea;
         public double CoreArea;
-        public BoltSteelGrade BoltSteelGrade;
+        public BoltSteelGrade BoltSteelGrade = new BoltSteelGrade();
 
         
 
@@ -51,7 +51,7 @@ namespace KarambaIDEA.Core
         public double ShearResistance()
         {
             double A = this.CoreArea;
-            double fub = 640;//TODO: include properties
+            double fub = this.BoltSteelGrade.Fub;
             double alphaV = 0.5;
             if(this.BoltSteelGrade.steelgrade== BoltSteelGrade.Steelgrade.b8_8|| this.BoltSteelGrade.steelgrade == BoltSteelGrade.Steelgrade.b5_6|| this.BoltSteelGrade.steelgrade == BoltSteelGrade.Steelgrade.b4_6)
             {
@@ -64,7 +64,7 @@ namespace KarambaIDEA.Core
         {
             double As = this.ShankArea;
             double k2 = 0.9;
-            double fub = 640;//TODO: include properties
+            double fub = this.BoltSteelGrade.Fub;
             double FtRd = k2 * fub * As / Project.gammaM2;
             return FtRd;
         }
@@ -76,34 +76,44 @@ namespace KarambaIDEA.Core
         }
 
         /// <summary>
-        /// 
+        /// Positioning of holes for bolts NEN-EN-1993 1-8 Table 3.4
         /// </summary>
-        /// <param name="EdgeboltOrtho"></param>
-        /// <param name="EdgeboltPerp"></param>
-        /// <param name="bolt"></param>
-        /// <param name="t"></param>
-        /// <param name="mat"></param>
-        /// <param name="e1"></param>
-        /// <param name="p1"></param>
-        /// <param name="e2"></param>
-        /// <param name="p2"></param>
+        /// <param name="EdgeboltOrtho">(e1,p1) Is the bolt an edge bolt in the direction of the force? If False it is an inner bolt.</param>
+        /// <param name="EdgeboltPerp">(e2,p2) Is the bolt an edge bolt in the direction perpendicular to the force? If False it is an inner bolt. </param>
+        /// <param name="bolt">boltsize</param>
+        /// <param name="t">thickness plate</param>
+        /// <param name="mat">material of plate</param>
+        /// <param name="e1">NEN-EN-1993 1-8, art 3.5 Figure 3.1</param>
+        /// <param name="p1">NEN-EN-1993 1-8, art 3.5 Figure 3.1</param>
+        /// <param name="e2">NEN-EN-1993 1-8, art 3.5 Figure 3.1</param>
+        /// <param name="p2">NEN-EN-1993 1-8, art 3.5 Figure 3.1</param>
         /// <returns></returns>
         public double BearingRestance(bool EdgeboltOrtho, bool EdgeboltPerp, Bolt bolt, double t, MaterialSteel mat, double e1, double p1, double e2, double p2)
         {
+            double d0 = bolt.HoleDiameter;
             //alpahD: inner or edge bolt force direction
-            //k1: inner of edge bolt perpendicular to force direction
-            if (EdgeboltPerp == true)
+            double alphaB = Math.Min(bolt.BoltSteelGrade.Fub / mat.Fu, 1.0);
+            if (EdgeboltOrtho == true)
             {
-                k1 = Math.Min(2, 8 * (e2 / bolt.HoleDiameter) - 1.7,0.000);//TODO:finish this part
+                alphaB = Math.Min(alphaB, e1/(3*d0));
             }
             else
             {
-
+                alphaB = Math.Min(alphaB, p1 / (3 * d0) - (1 / 4));
             }
-            double k1 = 0.0;
-            double alphaB = Math.Min(bolt.BoltSteelGrade.Fub/mat.Fu,1.0);
+            //k1: inner of edge bolt perpendicular to force direction
+            double k1 = 2.5;
+            if (EdgeboltPerp == true)
+            {
+                k1 =Math.Min(Math.Min(2.8 * (e2 / d0) - 1.7, 1.4*(p2/d0)-1.7),2.5);
+            }
+            else
+            {
+                k1 = Math.Min(1.4 * (p2 / d0) - 1.7, 2.5);
+            }            
+            
             double d = bolt.Diameter;
-            double FbRd = (k1 * alphaB * d * t) / Project.gammaM2;
+            double FbRd = (k1 * alphaB *mat.Fu*d * t) / Project.gammaM2;
             return FbRd;
         }
 

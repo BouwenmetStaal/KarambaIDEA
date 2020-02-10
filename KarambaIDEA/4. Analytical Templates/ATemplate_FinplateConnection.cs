@@ -34,7 +34,8 @@ namespace KarambaIDEA
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
-            pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.list);            
+            pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.list);
+            pManager.AddBrepParameter("Brep", "Brep", "", GH_ParamAccess.list);
 
         }
 
@@ -47,6 +48,7 @@ namespace KarambaIDEA
 
             //Output variables
             List<string> messages = new List<string>();
+            List<Brep> breps = new List<Brep>();
 
             //Link input
             DA.GetData(0, ref project);
@@ -69,7 +71,7 @@ namespace KarambaIDEA
                     {
                         if (brandName == joint.brandName)
                         {
-                            SetAnaTemplate(joint);
+                            SetAnaTemplate(joint, breps);
                         }
                     }
                 }
@@ -78,7 +80,7 @@ namespace KarambaIDEA
             {
                 foreach (Joint joint in project.joints)
                 {
-                    SetAnaTemplate(joint);
+                    SetAnaTemplate(joint, breps);
                 }
             }
 
@@ -86,12 +88,13 @@ namespace KarambaIDEA
             //link output
             DA.SetData(0, project);
             DA.SetDataList(1, messages);
+            DA.SetDataList(2, breps);
         }
 
-        private static void SetAnaTemplate(Joint joint)
+        private static void SetAnaTemplate(Joint joint, List<Brep> breps)
         {
             joint.template = new Template();
-            foreach(ConnectingMember con in joint.attachedMembers)
+            foreach(ConnectingMember con in joint.attachedMembers.OfType<ConnectingMember>().ToList())
             {
                 
                 //Step I - retrieve loads
@@ -104,55 +107,117 @@ namespace KarambaIDEA
                         {
                             if (con.isStartPoint == true)
                             {
-                                vloads.Add(Math.Abs(loadsPerLine.startLoad.Vy));
+                                vloads.Add(Math.Abs(loadsPerLine.startLoad.Vz));
                             }
                             else
                             {
-                                vloads.Add(Math.Abs(loadsPerLine.endLoad.Vy));
+                                vloads.Add(Math.Abs(loadsPerLine.endLoad.Vz));
                             }
                         }
                     }
                 }
-                double vload = vloads.Max();
-                //Step II - selecting bolt size
+                double vload = vloads.Max()*1000;
+                //Step II - Create bolts list
                 List<Bolt> bolts = Bolt.CreateBoltsList(BoltSteelGrade.Steelgrade.b8_8);
-
-                //Step III - evaluation of different design possibilities
+                //Step III - determine maximum finplate height
                 CrossSection beam = con.element.crossSection;
-                double h = beam.height - 2 * (beam.thicknessFlange + beam.radius);//Straight portion of the web
-
+                double hmax = beam.height - 2 * (beam.thicknessFlange + beam.radius);//Straight portion of the web
+                double gap = 20;//TODO: update
+                double tplate = Math.Ceiling(beam.thicknessWeb / 5) * 5;                
+                double wplate = new double();
+                double hplate = new double();
+                //Step IV - evaluation of different bolt configurations
                 foreach (Bolt bolt in bolts)
                 {
-                    double e1 = 1.2 * bolt.HoleDiameter;//Edge distance longitudinal direction
-                    double p1 = 2.2 * bolt.HoleDiameter;//Inner distance longitudinal direction
-                    double e2 = 1.2 * bolt.HoleDiameter;//Edge distance transversal direction
-                    double gap = 20;
+                    double d0 = bolt.HoleDiameter;
+
+                    double e1 = 1.2 * d0;//Edge distance longitudinal direction
+                    double p1 = 2.2 * d0;//Inner distance longitudinal direction
+                    double e2 = 1.2 * d0;//Edge distance transversal direction
+                    double p2 = 2.2 * d0;//single row, so actually not needed
+
+                    wplate = gap +d0+ 2 * e2;
+
                     for (int n = 2; n < 4; n++)
                     {
-                        if (h > e1 * 2 + bolt.HoleDiameter * n + p1 * (n - 1))//if configuration fits within the beam
+                        if (hmax > e1 * 2 + d0 * n + p1 * (n - 1))//if configuration fits within the beam
                         {
-                            //Check shear
-                            if (vload > n*bolt.ShearResistance())
+                            //Check Bolts in shear
+                            double vRd = n * bolt.ShearResistance();
+                            if (vload > vRd)//If Ved>Vrd
                             {
                                 goto increaseN;
                             }
-                            //Check bearing
+                            //Check Plate in bearing
                             double tweb = beam.thicknessWeb;
-
-
-
-                            double leverarm = gap + e2 + 0.5 * bolt.HoleDiameter;
-                            double M = leverarm * vload;
+                            MaterialSteel mat = beam.material;
+                            double Vrd1= bolt.BearingRestance(true, true, bolt,tweb, mat, e1, p1, e2, p2);//edge bolt
+                            double Vrd2 = bolt.BearingRestance(false, true, bolt, tweb, mat, e1, p1, e2, p2);//inner bolt
+                            if (vload > Math.Min(Vrd1, Vrd2))
+                            {
+                                goto increaseN;
+                            }
+                            //Check beamWeb in shear
+                            if (vload > (tweb * (hmax - n * d0) * (beam.material.Fy / Math.Sqrt(3) ))/ 1.0)
+                            {
+                                goto increaseN;
+                            }
+                            //Check Plate in bending         
+                            double leverarm = gap + e2 + 0.5 * d0;
+                            double Med = leverarm * vload;
+                            if (Med > (1 / 6) * tplate * Math.Pow(hmax, 2))
+                            {
+                                //if this check fails it will be a dead end
+                                //TODO: include message
+                            }
+                            hplate = e1 * 2 + d0 * n + p1 * (n - 1);
+                            BoltGrid boltGrid = new BoltGrid(bolt, n, 1);
+                            joint.template.boltGrids.Add(boltGrid);
+                            //TODO:include message
+                            //3x M20 is chosen after x iterions
+                            goto finish;
                         }
 
                     increaseN:;
                     }
-
                 }
-                //Step IV - finplate dimensions
-                //Step V - weld dimensions
+                finish:;
+                //Step V - Define data for cost analyses
+                BearingMember bear = joint.attachedMembers.OfType<BearingMember>().ToList().First();
+                double weldsize = Weld.CalWeldSizeFullStrenth90deg(bear.element.crossSection.thicknessFlange, tplate, beam.material, Weld.WeldType.DoubleFillet);
+                Weld weld = new Weld("Finplateweld", Weld.WeldType.DoubleFillet, weldsize, hplate);
+                joint.template.welds.Add(weld);
+                Plate finplate = new Plate("Finplate", hplate, wplate, tplate);
+                joint.template.plates.Add(finplate);
+                //Step VI - create Brep for visiualisation
+                double moveX = (bear.element.crossSection.height) / 2000;
+                Core.Point p = new Core.Point();
+                Vector vX = new Vector();
+                Vector vY = con.element.localCoordinateSystem.Y;
+                double sign = 1;
 
-                //Define data for costanalyses
+                if (con.isStartPoint == true)
+                {
+                    p = (con.element.line.start);
+                    vX = (con.element.line.Vector);
+                }
+                else
+                {
+                    p = (con.element.line.end);
+                    vX = (con.element.line.Vector.FlipVector());
+                    sign = -1;
+                }
+                Core.Point pmove = Core.Point.MovePointByVectorandLength(p, vX, moveX);
+                //BREP: Finplate
+                Point3d pointA = new Point3d( -(hplate) / 2000, 0, 0);
+                Point3d pointB = new Point3d( (hplate) / 2000, sign*(wplate) / 1000, (tplate) / 1000);
+                BoundingBox bbox = new BoundingBox(pointA, pointB);
+                Point3d point = ImportGrasshopperUtils.CastPointToRhino(pmove);
+                Vector3d vector = ImportGrasshopperUtils.CastVectorToRhino(vY);
+                Plane plane = new Plane(point, vector);
+                Box box = new Box(plane, bbox);
+                breps.Add(box.ToBrep());
+
             }
         }
 
