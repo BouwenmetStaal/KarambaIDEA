@@ -96,6 +96,10 @@ namespace KarambaIDEA
             joint.template = new Template();
             int a = joint.id;
             int b = 0;
+            joint.template.plates.Clear();
+            joint.template.welds.Clear();
+            joint.template.boltGrids.Clear();
+
             foreach(ConnectingMember con in joint.attachedMembers.OfType<ConnectingMember>().ToList())
             {
                 GH_Path path = new GH_Path(a,b);
@@ -142,7 +146,7 @@ namespace KarambaIDEA
 
                     wplate = gap +d0+ 2 * e2;
 
-                    for (int n = 2; n < 6; n++)
+                    for (int n = 2; n < 5; n++)
                     {
                         retry:;
                         double hmin = e1 * 2 + d0 * n + p1 * (n - 1);
@@ -167,13 +171,15 @@ namespace KarambaIDEA
                             if (vload > Vrd1)
                             {
                                 messages.Add(info + ": Beamweb fails in bearing (edge bolt)", path);
-                                e1 = e1+50;//
-                                goto retry;
+                                e1 = e1*1.5;//
+                                //goto retry;
+                                goto increaseN;
                             }
                             double Vrd2 = bolt.BearingRestance(false, true, bolt, tweb, mat, e1, p1, e2, p2);//inner bolt
                             if (vload > Vrd2)
                             {
                                 messages.Add(info + ": Beamweb fails in bearing (inner bolt)",path);
+                                p1 = p1 * 1.5;
                                 goto increaseN;
                             }
                             //Check beamWeb in shear
@@ -207,7 +213,7 @@ namespace KarambaIDEA
 
                             }
                             
-                            BoltGrid boltGrid = new BoltGrid(bolt, n, 1, e1, e2);
+                            BoltGrid boltGrid = new BoltGrid(bolt, n, 1, e1, e2,p1,p2);
                             joint.template.boltGrids.Add(boltGrid);
                             //TODO:include message
                             //3x M20 is chosen after x iterions
@@ -221,6 +227,11 @@ namespace KarambaIDEA
                         increaseN:;
                     }
                 }
+                messages.Add("No solution found", path);
+                joint.template.plates.Clear();
+                joint.template.welds.Clear();
+                joint.template.boltGrids.Clear();
+
                 finish:;
                 //Step V - Define data for cost analyses
                 BearingMember bear = joint.attachedMembers.OfType<BearingMember>().ToList().First();
@@ -263,17 +274,17 @@ namespace KarambaIDEA
                     breps.Add(plate);
                     Brep tubes = new Brep();
                     double rows = joint.template.boltGrids.FirstOrDefault().rows;
-                    double e1 = joint.template.boltGrids.FirstOrDefault().e1;
+                    double p1 = joint.template.boltGrids.FirstOrDefault().p1;
                     for (int ba = 0; ba < rows; ba++)
                     {
-                        double topmm = (0.5 * (rows - 1)*e1 / 1000) - ((e1 * ba) / 1000);
+                        double d0 = joint.template.boltGrids.FirstOrDefault().bolttype.HoleDiameter;
+                        double topmm = (0.5 * (rows - 1)*(p1+d0) / 1000) - (((p1+d0) * ba) / 1000);
                         Vector3d locX = plane.XAxis;
                         locX.Unitize();
                         Transform transform= Transform.Translation(Vector3d.Multiply(topmm, locX));
                         Plane plane2 = plane;
                         plane2.Transform(transform);
-                        double dia = joint.template.boltGrids.FirstOrDefault().bolttype.HoleDiameter / 1000;
-                        Circle circle = new Circle(plane2, dia);
+                        Circle circle = new Circle(plane2, d0 / 2000);//Radius 
                         Surface sur = Surface.CreateExtrusion(circle.ToNurbsCurve(), vector);
                         Brep tube = sur.ToBrep().CapPlanarHoles(tol);
                         breps.Add(tube);

@@ -10,7 +10,7 @@ using Rhino.Geometry;
 using Grasshopper;
 using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
-using KarambaIDEA.Core;
+using Grasshopper.Kernel.Types;
 
 
 namespace KarambaIDEA
@@ -25,7 +25,7 @@ namespace KarambaIDEA
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddNumberParameter("Total weight [kg]", "Total weight [kg]", "Total weight", GH_ParamAccess.list, 0.0);
-            pManager.AddNumberParameter("Total welding volume [cm3]", "Total welding volume [cm3]", "Total welding volume", GH_ParamAccess.list, 0.0);
+            pManager.AddNumberParameter("Total welding volume [cm3]", "Total welding volume [cm3]", "Total welding volume", GH_ParamAccess.tree, 0.0);
             pManager.AddNumberParameter("Total number of elements", "Total number of elements", "Total number of elements", GH_ParamAccess.list, 0.0);
             pManager.AddNumberParameter("Steel: Price per kg", "Steel: Price per kg", "Price of steel per kg, default price is €1,- per kg", GH_ParamAccess.item, 1.0);
             pManager.AddNumberParameter("Welding: Price per cm3", "Welding: Price per cm3", "Price of welding per cm3, default price is €2.60 per cm3", GH_ParamAccess.item, 2.6);
@@ -35,7 +35,8 @@ namespace KarambaIDEA
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddNumberParameter("Total costs [€]", "Total costs [€]", "Total costs [€]", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Costs elements [€]", "Costs elements [€]", "Costs elements [€]", GH_ParamAccess.item);
+            pManager.AddTextParameter("Costs per Joint [€]", "Total costs [€]", "Total costs [€]", GH_ParamAccess.list);
 
         }
 
@@ -43,15 +44,17 @@ namespace KarambaIDEA
         {
             //Input variables
             List<double> totalWeights = new List<double>();
-            List<double> totalWeldingVolumes = new List<double>();
+            //List<double> totalWeldingVolumes = new List<double>();
             List<double> elements = new List<double>();
             double priceSteel = new double();
             double priceWelding = new double();
             double priceTransport = new double();
 
+            GH_Structure<GH_Number> totalWeldingVolumes = new GH_Structure<GH_Number>();
+
             //Link input
             DA.GetDataList(0, totalWeights);
-            DA.GetDataList(1, totalWeldingVolumes);
+            DA.GetDataTree(1, out totalWeldingVolumes);
             DA.GetDataList(2, elements);
 
             DA.GetData(3,ref priceSteel);
@@ -59,17 +62,38 @@ namespace KarambaIDEA
             DA.GetData(5, ref priceTransport);
 
             //output variables
-            double totalCosts = new double();
-            List<double> weightElements = new List<double>();
+            double materialCosts = new double();
+            List<string> jointCosts = new List<string>();
 
-            totalCosts =totalCosts+ totalWeights.Sum() * priceSteel;
-            totalCosts = totalCosts + totalWeldingVolumes.Sum()*priceWelding;
-            totalCosts = totalCosts + elements.Sum() * priceTransport;
+            for(int a=0; a < totalWeldingVolumes.Branches.Count; a++)
+            {
+                //totalWeldingVolumes[a].Sum();
+                double n = new double();
+
+                foreach (GH_Number number in totalWeldingVolumes[a])
+                {
+                    n = n + number.Value;
+                }
+                string result = string.Empty;
+                if (n != 0)
+                {
+                    result = n.ToString();
+                }
+
+                jointCosts.Add(result);
+            }
+
+            //totalWeldingVolumes.Branches
+
+            materialCosts =materialCosts+ totalWeights.Sum() * priceSteel;
+            //totalCosts = totalCosts + totalWeldingVolumes.Sum()*priceWelding;
+            materialCosts = materialCosts + elements.Sum() * priceTransport;
 
 
 
             //link output
-            DA.SetData(0, totalCosts);
+            DA.SetData(0, materialCosts);
+            DA.SetDataList(1, jointCosts);
         }
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.
