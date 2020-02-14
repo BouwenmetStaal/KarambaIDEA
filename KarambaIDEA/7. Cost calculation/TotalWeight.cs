@@ -53,6 +53,16 @@ namespace KarambaIDEA
                 double area = ele.crossSection.Area()*Math.Pow(10,-6);//convert mm2 to m2
                 double len = ele.line.Length;
                 weightElements.Add(area * len * massSteel);
+
+                //TODO: add BREP
+                //TODO: add calculation on BREP linelength
+                Vector vY = ele.localCoordinateSystem.Y;
+                Vector vZ = ele.localCoordinateSystem.Z;
+                Vector3d vecY = ImportGrasshopperUtils.CastVectorToRhino(vY);
+                Vector3d vecZ = ImportGrasshopperUtils.CastVectorToRhino(vZ);
+                KarambaIDEA.Core.Point startPoint = ele.line.start;
+                Point3d point = ImportGrasshopperUtils.CastPointToRhino(startPoint);
+                Plane plane = new Plane(point, vecY, vecZ);
             }
             int a = 0;
             
