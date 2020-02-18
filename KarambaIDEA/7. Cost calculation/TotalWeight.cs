@@ -31,6 +31,7 @@ namespace KarambaIDEA
         {
             pManager.AddNumberParameter("Weight elements [kg]", "Weight elements [kg]", "Total weight per element", GH_ParamAccess.list);
             pManager.AddNumberParameter("Weight plates [kg]", "Weight plates [kg]", "Total weight of plates per joint", GH_ParamAccess.tree);
+            pManager.AddBrepParameter("Brep", "Brep", "", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -45,6 +46,7 @@ namespace KarambaIDEA
             List<double> weightElements = new List<double>();
             DataTree<double> weightPlates = new DataTree<double>();
             weightPlates.Clear();
+            List<Brep> breps = new List<Brep>();
 
             double massSteel = Project.massSteel;
 
@@ -56,13 +58,84 @@ namespace KarambaIDEA
 
                 //TODO: add BREP
                 //TODO: add calculation on BREP linelength
+                //TODO: test rotation LCS
+                //CREATE PLANE
                 Vector vY = ele.localCoordinateSystem.Y;
                 Vector vZ = ele.localCoordinateSystem.Z;
+                Vector vX = ele.localCoordinateSystem.X.Unitize();
+                vX = Vector.VecScalMultiply(vX, len);
                 Vector3d vecY = ImportGrasshopperUtils.CastVectorToRhino(vY);
                 Vector3d vecZ = ImportGrasshopperUtils.CastVectorToRhino(vZ);
+                Vector3d vecX = ImportGrasshopperUtils.CastVectorToRhino(vX);
+
                 KarambaIDEA.Core.Point startPoint = ele.line.start;
+                CrossSection c = ele.crossSection;
                 Point3d point = ImportGrasshopperUtils.CastPointToRhino(startPoint);
                 Plane plane = new Plane(point, vecY, vecZ);
+                NurbsCurve nurbsCurve = new Polyline().ToNurbsCurve();
+                if (c.shape == CrossSection.Shape.ISection)
+                {
+                    Point3d P1 = new Point3d(-c.width / 2000, c.height / 2000, 0);
+
+                    Point3d P2 = new Point3d(-c.width / 2000, c.height / 2000-c.thicknessFlange/1000, 0);
+                    Point3d P3 = new Point3d(-c.thicknessWeb / 2000, c.height / 2000 - c.thicknessFlange / 1000, 0);
+                    Point3d P4 = new Point3d(-c.thicknessWeb / 2000, -c.height / 2000 + c.thicknessFlange / 1000, 0);
+                    Point3d P5 = new Point3d(-c.width / 2000, -c.height / 2000 + c.thicknessFlange / 1000, 0);
+
+                    Point3d P6 = new Point3d(-c.width / 2000, -c.height / 2000, 0);
+                    Point3d P7 = new Point3d(c.width / 2000, -c.height / 2000, 0);
+
+                    Point3d P8 = new Point3d(c.width / 2000, -c.height / 2000 + c.thicknessFlange / 1000, 0);
+                    Point3d P9 = new Point3d(c.thicknessWeb / 2000, -c.height / 2000 + c.thicknessFlange / 1000, 0);
+                    Point3d P10 = new Point3d(c.thicknessWeb / 2000, c.height / 2000 - c.thicknessFlange / 1000, 0);
+                    Point3d P11= new Point3d(c.width / 2000, c.height / 2000 - c.thicknessFlange / 1000, 0);
+
+                    Point3d P12 = new Point3d(c.width / 2000, c.height / 2000, 0);
+                    IEnumerable<Point3d> points = new Point3d[] { P1,P2,P3,P4,P5, P6, P7,P8,P9,P10,P11, P12, P1 };
+                    Polyline poly = new Polyline(points);
+                    nurbsCurve = poly.ToNurbsCurve();
+                }
+
+                if (c.shape == CrossSection.Shape.SHSSection)
+                {
+                    Point3d P1 = new Point3d(-c.width / 2000, c.height / 2000,0);
+                    Point3d P6 = new Point3d(-c.width / 2000, -c.height / 2000,0);
+                    Point3d P7 = new Point3d(c.width / 2000, -c.height / 2000,0);
+                    Point3d P12 = new Point3d(c.width / 2000, c.height / 2000,0);
+                    IEnumerable<Point3d> points = new Point3d[] { P1, P6,P7,P12,P1 };
+                    Polyline poly = new Polyline(points);
+                    nurbsCurve = poly.ToNurbsCurve();
+                }
+
+                if (c.shape == CrossSection.Shape.CHSsection)
+                {
+                    Circle circle = new Circle(plane, c.height / 2000);
+                    nurbsCurve = circle.ToNurbsCurve();
+                }
+
+                Transform transform = Transform.PlaneToPlane(Plane.WorldXY, plane);
+                nurbsCurve.Transform(transform);
+                Surface sur = Surface.CreateExtrusion(nurbsCurve, vecX);
+                double tol = 0.001;
+                breps.Add(sur.ToBrep().CapPlanarHoles(tol));
+
+                //CREATE BOUNDING BOX
+
+                Interval interA = new Interval(-c.width / 2000, c.width / 2000);
+                Interval interB = new Interval(-c.height / 2000, c.height / 2000);
+                Rhino.Geometry.PlaneSurface planeSurface = new PlaneSurface(plane, interA, interB);
+                //EXTRUDE SURFACE
+                //breps.Add(planeSurface.ToBrep());
+                
+                //BOUNDING BOX
+                Point3d pointAs = new Point3d(-(c.width) / 2000, -(c.height) / 2000, -(c.thicknessFlange) / 2000);
+                Point3d pointBs = new Point3d((c.width) / 2000, (c.height) / 2000, (c.thicknessFlange) / 2000);
+                BoundingBox bboxstif = new BoundingBox(pointAs, pointBs);
+                Box botStiff = new Box(plane, bboxstif);
+                //breps.Add(botStiff.ToBrep());
+
+
+
             }
             int a = 0;
             
@@ -95,6 +168,7 @@ namespace KarambaIDEA
             //link output
             DA.SetDataList(0, weightElements);
             DA.SetDataTree(1, weightPlates);
+            DA.SetDataList(2, breps);
         }
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.
