@@ -17,6 +17,7 @@ namespace KarambaIDEA.Core
         public int id;
         public int numberInHierarchy;
         public Line line;
+        public Line brepLine;
         public CrossSection crossSection;
         public string groupname;
         public double rotationLCS;
@@ -46,6 +47,7 @@ namespace KarambaIDEA.Core
             _project.elements.Add(this);
             this.id = _id;
             this.line = _line?? throw new ArgumentNullException("The argument _line cannot be null");
+            this.brepLine = _line;
             this.crossSection = _crossSection;
             this.groupname = _groupname;
             this.numberInHierarchy = _numberInHierarchy;

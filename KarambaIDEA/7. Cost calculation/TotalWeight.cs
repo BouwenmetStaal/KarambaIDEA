@@ -53,7 +53,7 @@ namespace KarambaIDEA
             foreach(Element ele in project.elements)
             {
                 double area = ele.crossSection.Area()*Math.Pow(10,-6);//convert mm2 to m2
-                double len = ele.line.Length;
+                double len = ele.brepLine.Length;
                 weightElements.Add(area * len * massSteel);
 
                 //TODO: add BREP
@@ -68,7 +68,7 @@ namespace KarambaIDEA
                 Vector3d vecZ = ImportGrasshopperUtils.CastVectorToRhino(vZ);
                 Vector3d vecX = ImportGrasshopperUtils.CastVectorToRhino(vX);
 
-                KarambaIDEA.Core.Point startPoint = ele.line.start;
+                KarambaIDEA.Core.Point startPoint = ele.brepLine.start;
                 CrossSection c = ele.crossSection;
                 Point3d point = ImportGrasshopperUtils.CastPointToRhino(startPoint);
                 Plane plane = new Plane(point, vecY, vecZ);

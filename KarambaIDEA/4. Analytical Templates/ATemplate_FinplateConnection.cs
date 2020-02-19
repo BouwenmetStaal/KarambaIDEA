@@ -133,6 +133,8 @@ namespace KarambaIDEA
                 double tplate = Math.Ceiling(beam.thicknessWeb / 5) * 5;                
                 double wplate = new double();
                 double hplate = new double();
+                
+
                 //Step IV - evaluation of different bolt configurations
                 int it = 0;
                 foreach (Bolt bolt in bolts)
@@ -240,6 +242,9 @@ namespace KarambaIDEA
                 joint.template.welds.Add(weld);
                 Plate finplate = new Plate("Finplate", hplate, wplate, tplate);
                 joint.template.plates.Add(finplate);
+
+                
+
                 //Step VI - create Brep for visiualisation
                 double moveX = (bear.element.crossSection.height) / 2000+(wplate)/2000;
                 Core.Point p = new Core.Point();
@@ -299,6 +304,30 @@ namespace KarambaIDEA
                     }
                     */
                     
+                }
+
+                //Step VII - modify beam brepline
+                List<BearingMember> bearlist = joint.attachedMembers.OfType<BearingMember>().ToList();
+                BearingMember column = bearlist.First();
+                if (bearlist.Count == 1)
+                {
+                    if (column.isStartPoint == true)
+                    {
+                        column.element.brepLine = KarambaIDEA.Core.Line.ExtendLine(con.element.brepLine, beam.height / 2000, true);
+                    }
+                    else
+                    {
+                        column.element.brepLine = KarambaIDEA.Core.Line.ExtendLine(con.element.brepLine, beam.height / 2000, false);
+                    }
+                }
+                double length = column.element.crossSection.height / 2000 + gap / 1000;
+                if (con.isStartPoint == true)
+                {
+                    con.element.brepLine = KarambaIDEA.Core.Line.ExtendLine(con.element.brepLine, -length, true);
+                }
+                else
+                {
+                    con.element.brepLine = KarambaIDEA.Core.Line.ExtendLine(con.element.brepLine, -length, false);
                 }
             }
         }

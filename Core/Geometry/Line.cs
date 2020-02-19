@@ -155,5 +155,18 @@ namespace KarambaIDEA.Core
             }
             return lines;
         }
+
+        public static Line ExtendLine(Line line, double length, bool atStart)
+        {
+            if (atStart == true)
+            {
+                line.start = Point.MovePointByVectorandLength(line.start, line.Vector.FlipVector(), length);
+            }
+            else
+            {
+                line.end = Point.MovePointByVectorandLength(line.end, line.Vector, length);
+            }
+            return line;
+        }
     }
 }
