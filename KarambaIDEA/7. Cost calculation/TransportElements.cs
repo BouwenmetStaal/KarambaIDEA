@@ -70,7 +70,7 @@ namespace KarambaIDEA
                 {
                     if (ele.numberInHierarchy == hierarchy.numberInHierarchy)
                     {
-                        hierarchydata.Add(ele.line);
+                        hierarchydata.Add(ele.Line);
                     }
                 }
                 if (groupNames.Contains(hierarchy.groupname))

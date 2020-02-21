@@ -55,7 +55,7 @@ namespace KarambaIDEA
            
             foreach (Element ele in project.elements)
             {
-                Core.Line line = ele.line;
+                Core.Line line = ele.Line;
                 Rhino.Geometry.Line rhiline = ImportGrasshopperUtils.CastLineToRhino(line);
                 lines.Add(rhiline);
 

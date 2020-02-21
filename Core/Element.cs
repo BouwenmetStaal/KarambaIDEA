@@ -16,7 +16,14 @@ namespace KarambaIDEA.Core
         public Project project;
         public int id;
         public int numberInHierarchy;
-        public Line line;
+        private readonly Line line;
+        public Line Line
+        {
+            get
+            {
+                return line;
+            }
+        }
         public Line brepLine;
         public CrossSection crossSection;
         public string groupname;
@@ -55,23 +62,18 @@ namespace KarambaIDEA.Core
             this.UpdateLocalCoordinateSystem();
 
         }
-
-        public Element()
-        {
-
-        }
         
 
         public void UpdateLocalCoordinateSystem()
         {
-            if (this.line == null)
+            if (this.Line == null)
             {
                 throw new ArgumentNullException("The field line cannot be null");
             }
             //Defining LCS for First lineSegment
-            double xcor = this.line.Vector.X;
-            double ycor = this.line.Vector.Y;
-            double zcor = this.line.Vector.Z;
+            double xcor = this.Line.Vector.X;
+            double ycor = this.Line.Vector.Y;
+            double zcor = this.Line.Vector.Z;
 
             //Define LCS (local-y in XY plane) and unitize
             Vector vx = new Vector(xcor, ycor, zcor).Unitize();

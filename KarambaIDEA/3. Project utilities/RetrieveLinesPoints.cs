@@ -47,7 +47,7 @@ namespace KarambaIDEA
 
             foreach(Element ele in project.elements)
             {
-                lines.Add(ImportGrasshopperUtils.CastLineToRhino(ele.line));
+                lines.Add(ImportGrasshopperUtils.CastLineToRhino(ele.Line));
             }
             foreach(KarambaIDEA.Core.Point point in project.points)
             {

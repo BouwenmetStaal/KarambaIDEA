@@ -105,7 +105,7 @@ namespace KarambaIDEA
             //export lines of joint for visualisation purposes
             foreach (int i in project.joints[createAndCalculateThisJoint].beamIDs)
             {
-                Core.Line line = project.elements[i].line;
+                Core.Line line = project.elements[i].Line;
                 Rhino.Geometry.Line rhiline = ImportGrasshopperUtils.CastLineToRhino(line);
                 jointlines.Add(rhiline);
             }

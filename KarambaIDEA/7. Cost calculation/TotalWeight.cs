@@ -116,8 +116,7 @@ namespace KarambaIDEA
                 Transform transform = Transform.PlaneToPlane(Plane.WorldXY, plane);
                 nurbsCurve.Transform(transform);
                 Surface sur = Surface.CreateExtrusion(nurbsCurve, vecX);
-                double tol = 0.001;
-                breps.Add(sur.ToBrep().CapPlanarHoles(tol));
+                breps.Add(sur.ToBrep().CapPlanarHoles(Project.tolerance));
 
                 //CREATE BOUNDING BOX
 

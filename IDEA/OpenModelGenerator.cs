@@ -256,10 +256,10 @@ namespace KarambaIDEA.IDEA
             //[A]=0=>[B]=1=>[C]
             if (first.isStartPoint == false && second.isStartPoint == true)
             {
-                pA = openModel.Point3D.First(a => a.Id == first.element.line.start.id);
-                pB = openModel.Point3D.First(a => a.Id == first.element.line.end.id);
-                pB2 = openModel.Point3D.First(a => a.Id == second.element.line.start.id);
-                pC = openModel.Point3D.First(a => a.Id == second.element.line.end.id);
+                pA = openModel.Point3D.First(a => a.Id == first.element.Line.start.id);
+                pB = openModel.Point3D.First(a => a.Id == first.element.Line.end.id);
+                pB2 = openModel.Point3D.First(a => a.Id == second.element.Line.start.id);
+                pC = openModel.Point3D.First(a => a.Id == second.element.Line.end.id);
 
                 List<Point3D> points = new List<Point3D>() { pA, pB, pB2, pC };
 
@@ -321,10 +321,10 @@ namespace KarambaIDEA.IDEA
                 
                 //Dit geval levert problemen op, de internekrachten worden verkeerd opgezet.
                 
-                pA = openModel.Point3D.First(a => a.Id == second.element.line.start.id);
-                pB = openModel.Point3D.First(a => a.Id == second.element.line.end.id);
-                pB2 = openModel.Point3D.First(a => a.Id == first.element.line.start.id);
-                pC = openModel.Point3D.First(a => a.Id == first.element.line.end.id);
+                pA = openModel.Point3D.First(a => a.Id == second.element.Line.start.id);
+                pB = openModel.Point3D.First(a => a.Id == second.element.Line.end.id);
+                pB2 = openModel.Point3D.First(a => a.Id == first.element.Line.start.id);
+                pC = openModel.Point3D.First(a => a.Id == first.element.Line.end.id);
                 /*
                 pA = openModel.Point3D.First(a => a.Id == first.element.line.End.id);
                 pB = openModel.Point3D.First(a => a.Id == first.element.line.Start.id);
@@ -433,8 +433,8 @@ namespace KarambaIDEA.IDEA
             Point3D pA = openModel.Point3D.First(a => a.Id == attachedMember.ideaLine.Start.id);
             Point3D pB = openModel.Point3D.First(a => a.Id == attachedMember.ideaLine.End.id);
             */
-            Point3D pA = openModel.Point3D.First(a => a.Id == attachedMember.element.line.start.id);
-            Point3D pB = openModel.Point3D.First(a => a.Id == attachedMember.element.line.end.id);
+            Point3D pA = openModel.Point3D.First(a => a.Id == attachedMember.element.Line.start.id);
+            Point3D pB = openModel.Point3D.First(a => a.Id == attachedMember.element.Line.end.id);
 
             //create line segment
             LineSegment3D lineSegment = new LineSegment3D();

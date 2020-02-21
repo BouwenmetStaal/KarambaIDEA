@@ -76,6 +76,7 @@ namespace KarambaIDEA
                     }
                 }
             }
+            /*
             else
             {
                 foreach (Joint joint in project.joints)
@@ -83,6 +84,7 @@ namespace KarambaIDEA
                     SetAnaTemplate(joint, breps, messages);
                 }
             }
+            */
 
 
             //link output
@@ -100,17 +102,21 @@ namespace KarambaIDEA
             joint.template.welds.Clear();
             joint.template.boltGrids.Clear();
 
-            foreach(ConnectingMember con in joint.attachedMembers.OfType<ConnectingMember>().ToList())
+            List<BearingMember> bearlist = joint.attachedMembers.OfType<BearingMember>().ToList();
+            BearingMember column = bearlist.First();
+            double maxBeamHeight = 0.0;
+
+            foreach (ConnectingMember con in joint.attachedMembers.OfType<ConnectingMember>().ToList())
             {
-                GH_Path path = new GH_Path(a,b);
+                GH_Path path = new GH_Path(a, b);
                 b++;
                 //Step I - retrieve loads
                 List<double> vloads = new List<double>();
-                foreach(LoadCase lc in joint.project.loadcases)
+                foreach (LoadCase lc in joint.project.loadcases)
                 {
-                    foreach(LoadsPerLine loadsPerLine in lc.loadsPerLines)
+                    foreach (LoadsPerLine loadsPerLine in lc.loadsPerLines)
                     {
-                        if(loadsPerLine.element == con.element)
+                        if (loadsPerLine.element == con.element)
                         {
                             if (con.isStartPoint == true)
                             {
@@ -123,17 +129,17 @@ namespace KarambaIDEA
                         }
                     }
                 }
-                double vload = vloads.Max()*1000;
+                double vload = vloads.Max() * 1000;
                 //Step II - Create bolts list
                 List<Bolt> bolts = Bolt.CreateBoltsList(BoltSteelGrade.Steelgrade.b8_8);
                 //Step III - determine maximum finplate height
                 CrossSection beam = con.element.crossSection;
                 double hmax = beam.height - 2 * (beam.thicknessFlange + beam.radius);//Straight portion of the web
                 double gap = 20;//TODO: update
-                double tplate = Math.Ceiling(beam.thicknessWeb / 5) * 5;                
+                double tplate = Math.Ceiling(beam.thicknessWeb / 5) * 5;
                 double wplate = new double();
                 double hplate = new double();
-                
+
 
                 //Step IV - evaluation of different bolt configurations
                 int it = 0;
@@ -146,11 +152,11 @@ namespace KarambaIDEA
                     double e2 = 1.2 * d0;//Edge distance transversal direction
                     double p2 = 2.2 * d0;//single row, so actually not needed
 
-                    wplate = gap +d0+ 2 * e2;
+                    wplate = gap + d0 + 2 * e2;
 
                     for (int n = 2; n < 5; n++)
                     {
-                        retry:;
+                    retry:;
                         double hmin = e1 * 2 + d0 * n + p1 * (n - 1);
 
                         if (hmax > hmin)//if configuration fits within the beam
@@ -163,24 +169,24 @@ namespace KarambaIDEA
                             double vRdShearBolts = n * bolt.ShearResistance();
                             if (vload > vRdShearBolts)//If Ved>Vrd
                             {
-                                messages.Add(info + ": Bolts fail in shear",path);
+                                messages.Add(info + ": Bolts fail in shear", path);
                                 goto increaseN;
                             }
                             //Check Plate in bearing
                             double tweb = beam.thicknessWeb;
                             MaterialSteel mat = beam.material;
-                            double Vrd1= bolt.BearingRestance(true, true, bolt,tweb, mat, e1, p1, e2, p2);//edge bolt
+                            double Vrd1 = bolt.BearingRestance(true, true, bolt, tweb, mat, e1, p1, e2, p2);//edge bolt
                             if (vload > Vrd1)
                             {
                                 messages.Add(info + ": Beamweb fails in bearing (edge bolt)", path);
-                                e1 = e1*1.5;//
+                                e1 = e1 * 1.5;//
                                 //goto retry;
                                 goto increaseN;
                             }
                             double Vrd2 = bolt.BearingRestance(false, true, bolt, tweb, mat, e1, p1, e2, p2);//inner bolt
                             if (vload > Vrd2)
                             {
-                                messages.Add(info + ": Beamweb fails in bearing (inner bolt)",path);
+                                messages.Add(info + ": Beamweb fails in bearing (inner bolt)", path);
                                 p1 = p1 * 1.5;
                                 goto increaseN;
                             }
@@ -188,21 +194,21 @@ namespace KarambaIDEA
                             double vRdShearWeb = (tweb * (hmin - n * d0) * (beam.material.Fy / Math.Sqrt(3))) / 1.0;
                             if (vload > vRdShearWeb)
                             {
-                                messages.Add(info + ": Beamweb fails in shear",path);
+                                messages.Add(info + ": Beamweb fails in shear", path);
                                 goto increaseN;
                             }
                             //Check Plate in bending         
                             double leverarm = gap + e2 + 0.5 * d0;
                             double Med = leverarm * vload;
-                            double MRd = (tplate * Math.Pow(hmin, 2) * mat.Fy)/6;
+                            double MRd = (tplate * Math.Pow(hmin, 2) * mat.Fy) / 6;
                             if (Med > MRd)
                             {
-                                messages.Add(info + ": Finplate fails in bending",path);
+                                messages.Add(info + ": Finplate fails in bending", path);
                                 //if this check fails it will be a dead end
                                 //TODO: redesign height plate
                                 //double hbending = Math.Sqrt(Med / ((1 / 6) * b * mat.Fy));
-                                
-                                if (hplate+100 < hmax)
+
+                                if (hplate + 100 < hmax)
                                 {
                                     e1 = e1 + 50;
                                     goto retry;
@@ -211,22 +217,22 @@ namespace KarambaIDEA
                                 {
                                     //messages.Add(info + ": Finplate fails in bending", path);
                                 }
-                                
+
 
                             }
-                            
-                            BoltGrid boltGrid = new BoltGrid(bolt, n, 1, e1, e2,p1,p2);
+
+                            BoltGrid boltGrid = new BoltGrid(bolt, n, 1, e1, e2, p1, p2);
                             joint.template.boltGrids.Add(boltGrid);
                             //TODO:include message
                             //3x M20 is chosen after x iterions
-                            messages.Add(info + " is chosen after " + it + " iterations.",path);
+                            messages.Add(info + " is chosen after " + it + " iterations.", path);
                             goto finish;
                         }
                         else
                         {
                             //no else commands
                         }
-                        increaseN:;
+                    increaseN:;
                     }
                 }
                 messages.Add("No solution found", path);
@@ -234,7 +240,7 @@ namespace KarambaIDEA
                 joint.template.welds.Clear();
                 joint.template.boltGrids.Clear();
 
-                finish:;
+            finish:;
                 //Step V - Define data for cost analyses
                 BearingMember bear = joint.attachedMembers.OfType<BearingMember>().ToList().First();
                 double weldsize = Weld.CalWeldSizeFullStrenth90deg(bear.element.crossSection.thicknessFlange, tplate, beam.material, Weld.WeldType.DoubleFillet);
@@ -243,30 +249,31 @@ namespace KarambaIDEA
                 Plate finplate = new Plate("Finplate", hplate, wplate, tplate);
                 joint.template.plates.Add(finplate);
 
-                
+
 
                 //Step VI - create Brep for visiualisation
-                double moveX = (bear.element.crossSection.height) / 2000+(wplate)/2000;
+                double moveX = (bear.element.crossSection.height) / 2000 + (wplate) / 2000;
                 Core.Point p = new Core.Point();
                 Vector vX = new Vector();
                 Vector vY = new Vector();
 
                 if (con.isStartPoint == true)
                 {
-                    p = (con.element.line.start);
-                    vX = (con.element.line.Vector);
+                    p = (con.element.Line.start);
+                    vX = (con.element.Line.Vector);
                     vY = con.element.localCoordinateSystem.Y;
                 }
                 else
                 {
-                    p = (con.element.line.end);
-                    vX = (con.element.line.Vector.FlipVector());
+                    p = (con.element.Line.end);
+                    vX = (con.element.Line.Vector.FlipVector());
                     vY = con.element.localCoordinateSystem.Y.FlipVector();
                 }
                 Core.Point pmove = Core.Point.MovePointByVectorandLength(p, vX, moveX);
                 //BREP: Finplate
                 if (joint.template.boltGrids.Count != 0)
                 {
+                    //Create plate
                     double tol = 0.001;
                     Point3d pointA = new Point3d((-hplate) / 2000, (-wplate) / 2000, 0);
                     Point3d pointB = new Point3d((hplate) / 2000, (wplate) / 2000, (tplate) / 1000);
@@ -276,61 +283,41 @@ namespace KarambaIDEA
                     Plane plane = new Plane(point, vector);
                     Box box = new Box(plane, bbox);
                     Brep plate = box.ToBrep();
-                    breps.Add(plate);
+
+                    //Create Holes
                     Brep tubes = new Brep();
                     double rows = joint.template.boltGrids.FirstOrDefault().rows;
                     double p1 = joint.template.boltGrids.FirstOrDefault().p1;
                     for (int ba = 0; ba < rows; ba++)
                     {
                         double d0 = joint.template.boltGrids.FirstOrDefault().bolttype.HoleDiameter;
-                        double topmm = (0.5 * (rows - 1)*(p1+d0) / 1000) - (((p1+d0) * ba) / 1000);
+                        double topmm = (0.5 * (rows - 1) * (p1 + d0) / 1000) - (((p1 + d0) * ba) / 1000);
                         Vector3d locX = plane.XAxis;
                         locX.Unitize();
-                        Transform transform= Transform.Translation(Vector3d.Multiply(topmm, locX));
+                        Transform transform = Transform.Translation(Vector3d.Multiply(topmm, locX));
                         Plane plane2 = plane;
                         plane2.Transform(transform);
                         Circle circle = new Circle(plane2, d0 / 2000);//Radius 
                         Surface sur = Surface.CreateExtrusion(circle.ToNurbsCurve(), vector);
                         Brep tube = sur.ToBrep().CapPlanarHoles(tol);
-                        breps.Add(tube);
+                        plate = Brep.CreateBooleanDifference(plate, tube, tol).ToList().First();
 
                     }
+                    //Add plate with holes
+                    breps.Add(plate);
 
-                    /*
-                    Brep[] b00 = Brep.CreateBooleanDifference(plate, tube, tol);
-                    foreach (Brep bab in b00)
-                    {
-                        breps.Add(bab);
-                    }
-                    */
-                    
                 }
 
                 //Step VII - modify beam brepline
-                List<BearingMember> bearlist = joint.attachedMembers.OfType<BearingMember>().ToList();
-                BearingMember column = bearlist.First();
-                if (bearlist.Count == 1)
-                {
-                    if (column.isStartPoint == true)
-                    {
-                        column.element.brepLine = KarambaIDEA.Core.Line.ExtendLine(con.element.brepLine, beam.height / 2000, true);
-                    }
-                    else
-                    {
-                        column.element.brepLine = KarambaIDEA.Core.Line.ExtendLine(con.element.brepLine, beam.height / 2000, false);
-                    }
-                }
-                double length = column.element.crossSection.height / 2000 + gap / 1000;
-                if (con.isStartPoint == true)
-                {
-                    con.element.brepLine = KarambaIDEA.Core.Line.ExtendLine(con.element.brepLine, -length, true);
-                }
-                else
-                {
-                    con.element.brepLine = KarambaIDEA.Core.Line.ExtendLine(con.element.brepLine, -length, false);
-                }
+                KarambaIDEA.Core.Line.ModifyBeamBrepLine(column, con, gap);
+                maxBeamHeight = Math.Max(maxBeamHeight, beam.height);
             }
+
+            //Step VIII - modify column brepline
+            KarambaIDEA.Core.Line.ModifyColumnBrepLine(bearlist, maxBeamHeight);
         }
+
+       
 
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.

@@ -90,9 +90,9 @@ namespace KarambaIDEA.Core
 
                     //STARTPoints
                     //If fromPoints or startPoints of line fall in the tolerancebox than add lines.
-                    if (Point.ArePointsEqual(tolbox, centerpoint, element.line.start) && element.line.Vector.Length > tolbox)
+                    if (Point.ArePointsEqual(tolbox, centerpoint, element.Line.start) && element.Line.Vector.Length > tolbox)
                     {
-                        Line line = element.line;
+                        Line line = element.Line;
                         Vector distancevector = new Vector(0.0, 0.0, 0.0);
                         double localEccnetricty = 0.0;
 
@@ -105,13 +105,13 @@ namespace KarambaIDEA.Core
                     }
                     //ENDPoints
                     //If toPoints or endPoints of line fall in the tolerancebox than add lines.
-                    if (Point.ArePointsEqual(tolbox, centerpoint, element.line.end) && element.line.Vector.Length > tolbox)
+                    if (Point.ArePointsEqual(tolbox, centerpoint, element.Line.end) && element.Line.Vector.Length > tolbox)
                     {
 
                         Vector distancevector = new Vector(0.0, 0.0, 0.0);
                         double localEccnetricty = 0.0;
                         //IDEAline
-                        Line idealine = Line.FlipLine(element.line);//in this case of endpoint line needs to be flipped
+                        Line idealine = Line.FlipLine(element.Line);//in this case of endpoint line needs to be flipped
 
 
                         ConnectingMember connectingMember = new ConnectingMember(element, distancevector, false, idealine, localEccnetricty);

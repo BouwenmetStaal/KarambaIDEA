@@ -46,7 +46,7 @@ namespace KarambaIDEA.Core
         {
             double E = Project.EmodulusSteel;
             double Ib = element.crossSection.Iyy();
-            double Lb = element.line.Length;
+            double Lb = element.Line.Length;
             this.SjH = ((0.5 * E * Ib) / Lb )* Math.Pow(10, -6);
         }
         /// <summary>
@@ -58,7 +58,7 @@ namespace KarambaIDEA.Core
         {
             double E = Project.EmodulusSteel;
             double Ib = element.crossSection.Iyy();
-            double Lb = element.line.Length;
+            double Lb = element.Line.Length;
             this.SjR = ((k * E * Ib) / Lb) * Math.Pow(10, -6);
         }
         /// <summary>

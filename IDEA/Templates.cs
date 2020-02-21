@@ -164,7 +164,7 @@ namespace KarambaIDEA.IDEA
             }
             
             //TODO: make definition that creates plate based on the LCS of the reference beam
-            Point movedPoint = Point.MovePointByVectorandLength(joint.centralNodeOfJoint, ele.line.Vector, distanceXloc);
+            Point movedPoint = Point.MovePointByVectorandLength(joint.centralNodeOfJoint, ele.Line.Vector, distanceXloc);
 
             openModel.Connections[0].Plates.Add(new IdeaRS.OpenModel.Connection.PlateData
             {

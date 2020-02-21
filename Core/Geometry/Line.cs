@@ -156,17 +156,48 @@ namespace KarambaIDEA.Core
             return lines;
         }
 
-        public static Line ExtendLine(Line line, double length, bool atStart)
+        public static Point ExtendLine(Line line, double length, bool atStart)
         {
+            Point point = new Point();
             if (atStart == true)
             {
-                line.start = Point.MovePointByVectorandLength(line.start, line.Vector.FlipVector(), length);
+                point = Point.MovePointByVectorandLength(line.start, line.Vector.FlipVector(), length);
             }
             else
             {
-                line.end = Point.MovePointByVectorandLength(line.end, line.Vector, length);
+                point = Point.MovePointByVectorandLength(line.end, line.Vector, length);
             }
-            return line;
+            return point;
+        }
+
+        public static void ModifyColumnBrepLine(List<BearingMember> bearlist, double maxBeamHeight)
+        {
+            BearingMember column = bearlist.First();
+            if (bearlist.Count == 1)
+            {
+                if (column.isStartPoint == true)
+                {
+
+                    column.element.brepLine.start = KarambaIDEA.Core.Line.ExtendLine(column.element.Line, maxBeamHeight / 2000, true);
+                }
+                else
+                {
+                    column.element.brepLine.end = KarambaIDEA.Core.Line.ExtendLine(column.element.Line, maxBeamHeight / 2000, false);
+                }
+            }
+        }
+
+        public static void ModifyBeamBrepLine(BearingMember column, ConnectingMember con, double gap)
+        {
+            double length = column.element.crossSection.height / 2000 + gap / 1000;
+            if (con.isStartPoint == true)
+            {
+                con.element.brepLine.start = KarambaIDEA.Core.Line.ExtendLine(con.element.Line, -length, true);
+            }
+            else
+            {
+                con.element.brepLine.end = KarambaIDEA.Core.Line.ExtendLine(con.element.Line, -length, false);
+            }
         }
     }
 }
