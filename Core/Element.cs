@@ -54,7 +54,7 @@ namespace KarambaIDEA.Core
             _project.elements.Add(this);
             this.id = _id;
             this.line = _line?? throw new ArgumentNullException("The argument _line cannot be null");
-            this.brepLine = _line;
+            this.brepLine = new Line(_line.start,_line.end);
             this.crossSection = _crossSection;
             this.groupname = _groupname;
             this.numberInHierarchy = _numberInHierarchy;

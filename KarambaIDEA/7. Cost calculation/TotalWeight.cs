@@ -143,7 +143,7 @@ namespace KarambaIDEA
                 GH_Path path = new GH_Path(a);
                 if (joint.template != null)
                 {
-                    if (joint.template.plates != null)
+                    if (joint.template.plates.Count!=0)
                     {
                         foreach (Plate plate in joint.template.plates)
                         {

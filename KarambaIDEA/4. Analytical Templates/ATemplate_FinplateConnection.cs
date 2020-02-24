@@ -152,7 +152,7 @@ namespace KarambaIDEA
                     double e2 = 1.2 * d0;//Edge distance transversal direction
                     double p2 = 2.2 * d0;//single row, so actually not needed
 
-                    wplate = gap + d0 + 2 * e2;
+                    wplate = d0 + 2 * e2;
 
                     for (int n = 2; n < 5; n++)
                     {
@@ -236,6 +236,7 @@ namespace KarambaIDEA
                     }
                 }
                 messages.Add("No solution found", path);
+                goto nosolution;
                 joint.template.plates.Clear();
                 joint.template.welds.Clear();
                 joint.template.boltGrids.Clear();
@@ -246,13 +247,13 @@ namespace KarambaIDEA
                 double weldsize = Weld.CalWeldSizeFullStrenth90deg(bear.element.crossSection.thicknessFlange, tplate, beam.material, Weld.WeldType.DoubleFillet);
                 Weld weld = new Weld("Finplateweld", Weld.WeldType.DoubleFillet, weldsize, hplate);
                 joint.template.welds.Add(weld);
-                Plate finplate = new Plate("Finplate", hplate, wplate, tplate);
+                Plate finplate = new Plate("Finplate", hplate, wplate+gap, tplate);
                 joint.template.plates.Add(finplate);
 
 
 
                 //Step VI - create Brep for visiualisation
-                double moveX = (bear.element.crossSection.height) / 2000 + (wplate) / 2000;
+                double moveX = (bear.element.crossSection.height) / 2000 +(gap/1000)+ (wplate / 2000);
                 Core.Point p = new Core.Point();
                 Vector vX = new Vector();
                 Vector vY = new Vector();
@@ -275,12 +276,15 @@ namespace KarambaIDEA
                 {
                     //Create plate
                     double tol = 0.001;
-                    Point3d pointA = new Point3d((-hplate) / 2000, (-wplate) / 2000, 0);
+                    Point3d pointA = new Point3d((-hplate) / 2000, (-wplate) / 2000-(gap/1000), 0);
                     Point3d pointB = new Point3d((hplate) / 2000, (wplate) / 2000, (tplate) / 1000);
                     BoundingBox bbox = new BoundingBox(pointA, pointB);
                     Point3d point = ImportGrasshopperUtils.CastPointToRhino(pmove);
                     Vector3d vector = ImportGrasshopperUtils.CastVectorToRhino(vY);
-                    Plane plane = new Plane(point, vector);
+                    Vector3d vecZ = ImportGrasshopperUtils.CastVectorToRhino(con.element.localCoordinateSystem.Z);
+                    Vector3d vecX = ImportGrasshopperUtils.CastVectorToRhino(vX);
+                    //Plane plane = new Plane(point, vector);
+                    Plane plane = new Plane(point, vecZ,vecX);
                     Box box = new Box(plane, bbox);
                     Brep plate = box.ToBrep();
 
@@ -315,9 +319,11 @@ namespace KarambaIDEA
 
             //Step VIII - modify column brepline
             KarambaIDEA.Core.Line.ModifyColumnBrepLine(bearlist, maxBeamHeight);
+
+            nosolution:;
         }
 
-       
+      
 
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.

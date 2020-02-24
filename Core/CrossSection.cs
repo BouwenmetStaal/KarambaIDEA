@@ -113,6 +113,12 @@ namespace KarambaIDEA.Core
                 double b = (this.width-2*this.thicknessWeb) * (this.height-2*this.thicknessFlange);
                 return a - b;
             }
+            if (this.shape.Equals(Shape.CHSsection))
+            {
+                double a = Math.PI*Math.Pow(this.height,2)/4;
+                double b = Math.PI * Math.Pow(this.height-2*this.thicknessWeb, 2) / 4;
+                return a - b;
+            }
             else
             {
                 throw new ArgumentNullException("Area for this Cross-section not implemented");
