@@ -37,6 +37,7 @@ namespace KarambaIDEA
         {
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
             pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.list);
+            pManager.AddBrepParameter("Brep", "Brep", "", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -50,6 +51,7 @@ namespace KarambaIDEA
 
             //Output variables
             List<string> messages = new List<string>();
+            List<Brep> breps = new List<Brep>();
 
             //Link input
             DA.GetData(0, ref project);
@@ -72,7 +74,7 @@ namespace KarambaIDEA
                     {
                         if (brandName == joint.brandName)
                         {
-                            SetTemplate(tplate, joint);
+                            SetTemplate(tplate, joint, breps);
                         }
                     }
                 }
@@ -81,7 +83,7 @@ namespace KarambaIDEA
             {
                 foreach (Joint joint in project.joints)
                 {
-                    SetTemplate(tplate, joint);
+                    SetTemplate(tplate, joint, breps);
                 }
             }
 
@@ -90,15 +92,73 @@ namespace KarambaIDEA
             //link output
             DA.SetData(0, project);
             DA.SetDataList(1, messages);
+            DA.SetDataList(2, breps);
         }
 
-        private static void SetTemplate(double tplate, Joint joint)
+        private static void SetTemplate(double tplate, Joint joint, List<Brep> breps)
         {
             joint.template = new Template();
+            
+
+            Core.CrossSection beam = joint.attachedMembers.First().element.crossSection;
+            Plate plateA = new Plate("endplateA", beam.height, beam.width, tplate);
+            Plate plateB = new Plate("endplateB", beam.height, beam.width, tplate);
+            
+            joint.template.plates.Add(plateA);
+            joint.template.plates.Add(plateB);
+
             joint.template.workshopOperations = Template.WorkshopOperations.BoltedEndPlateConnection;
-            Plate plate = new Plate();
-            plate.thickness = tplate;
-            joint.template.plates.Add(plate);
+            foreach(AttachedMember at in joint.attachedMembers)
+            {
+                double weldsize = Weld.CalWeldSizeFullStrenth90deg(tplate, beam.thicknessFlange, beam.material, Weld.WeldType.DoubleFillet);
+                joint.template.welds.Add(new Weld("FlangeweldTop", Weld.WeldType.DoubleFillet, weldsize, beam.width));
+                joint.template.welds.Add(new Weld("FlangeweldBot", Weld.WeldType.DoubleFillet, weldsize, beam.width));
+                double weldsizeWeb = Weld.CalWeldSizeFullStrenth90deg(tplate, beam.thicknessWeb, beam.material, Weld.WeldType.DoubleFillet);
+                joint.template.welds.Add(new Weld("Webweld", Weld.WeldType.DoubleFillet, weldsizeWeb, beam.height));
+
+
+
+                //BREP beam
+                Point3d point = new Point3d();
+                Vector vX = new Vector();
+                if (at.isStartPoint == true)
+                {
+                    at.element.brepLine.start = KarambaIDEA.Core.Line.ExtendLine(at.element.Line, -tplate / 1000, true);
+                    point = ImportGrasshopperUtils.CastPointToRhino(at.element.Line.start);
+                    vX =(at.element.localCoordinateSystem.X);
+                }
+                else
+                {
+                    at.element.brepLine.end = KarambaIDEA.Core.Line.ExtendLine(at.element.Line, -tplate / 1000, false);
+                    point = ImportGrasshopperUtils.CastPointToRhino(at.element.Line.end);
+                    vX = (at.element.localCoordinateSystem.X.FlipVector());
+                }
+
+                //BREP add plate
+                if (tplate != 0.0)
+                {
+                    CrossSection c = at.element.crossSection;
+
+                    Vector3d vecZ = ImportGrasshopperUtils.CastVectorToRhino(at.element.localCoordinateSystem.Z);
+                    Vector3d vecY = ImportGrasshopperUtils.CastVectorToRhino(at.element.localCoordinateSystem.Y);
+                    Vector3d vecX = ImportGrasshopperUtils.CastVectorToRhino(Vector.VecScalMultiply(vX.Unitize(), (tplate / 1000)));
+
+                    Plane plane = new Plane(point, vecZ, vecY);
+
+                    Point3d P1 = new Point3d(-c.width / 2000, c.height / 2000, 0);
+                    Point3d P6 = new Point3d(-c.width / 2000, -c.height / 2000, 0);
+                    Point3d P7 = new Point3d(c.width / 2000, -c.height / 2000, 0);
+                    Point3d P12 = new Point3d(c.width / 2000, c.height / 2000, 0);
+                    IEnumerable<Point3d> points = new Point3d[] { P1, P6, P7, P12, P1 };
+                    Polyline poly = new Polyline(points);
+                    NurbsCurve nurbsCurve = poly.ToNurbsCurve();
+
+                    Transform transform = Transform.PlaneToPlane(Plane.WorldXY, plane);
+                    nurbsCurve.Transform(transform);
+                    Surface sur = Surface.CreateExtrusion(nurbsCurve, vecX);
+                    breps.Add(sur.ToBrep().CapPlanarHoles(Project.tolerance));
+                }
+            }
         }
 
         /// <summary>

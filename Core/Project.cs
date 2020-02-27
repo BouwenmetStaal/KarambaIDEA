@@ -301,7 +301,11 @@ namespace KarambaIDEA.Core
                 {
                     if (brandName == joint.brandName)
                     {
-                        messages.Add("BrandName '" + brandName + "' is linked to " + joint.template.workshopOperations.ToString());
+                        if (joint.template != null)
+                        {
+                            messages.Add("BrandName '" + brandName + "' is linked to " + joint.template.workshopOperations.ToString());
+
+                        }
                         goto here;
                     }
                 }

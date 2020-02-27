@@ -38,9 +38,10 @@ namespace KarambaIDEA.IDEA
             return openModel;
         }
 
-        static public OpenModel CutBeamByPlate(OpenModel openModel, int cuttingobject, int modifiedObject)
+        static public OpenModel CutBeamByPlate(OpenModel openModel, Joint joint, int cuttingobject, int modifiedObject)
         {
-
+            
+            
             // add cut
             if (openModel.Connections[0].CutBeamByBeams == null)
             {
@@ -54,6 +55,7 @@ namespace KarambaIDEA.IDEA
                 ModifiedObject = new ReferenceElement(openModel.Connections[0].Beams[modifiedObject]),
                 IsWeld = true,
             });
+            
             return openModel;
         }
 
@@ -87,8 +89,10 @@ namespace KarambaIDEA.IDEA
             CreatePlateForBeam(openModel, joint, 0, w0, h0, tplate);
             CreatePlateForBeam(openModel, joint, 1, w1, h1, tplate);
 
-            CutBeamByPlate(openModel, 0, 0);
-            CutBeamByPlate(openModel, 1, 1);
+            
+
+            CutBeamByPlate(openModel,joint, 0, 0);
+            CutBeamByPlate(openModel,joint, 1, 1);
             CreateBoltgrid(openModel, 0, 1, w0-0.1,h0-0.1);
        
             return openModel;
@@ -123,6 +127,8 @@ namespace KarambaIDEA.IDEA
 
         static public OpenModel CreatePlateForBeam(OpenModel openModel, Joint joint, int refBeam, double width, double height, double tplate)
         {
+            joint.template.plates.Add(new Plate("Kopplaat", width, height, tplate));
+
             double w = 0.5 * width;
             double h = 0.5 * height;
             List<string> stringlist = new List<string>();
