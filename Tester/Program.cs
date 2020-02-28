@@ -43,7 +43,7 @@ namespace Tester
             Tester.GenerateTestJoint testrun = new GenerateTestJoint();
 
             //Define testjoint
-            Joint joint = testrun.Testjoint();
+            Joint joint = testrun.Testjoint2();
 
 
             //Define workshop operations
