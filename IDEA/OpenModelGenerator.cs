@@ -140,9 +140,9 @@ namespace KarambaIDEA.IDEA
             MatSteelEc2 matOM = new MatSteelEc2();
             matOM.Id = material.Id;
             matOM.Name = material.Name;
-            matOM.E = 210000000;
+            matOM.E = 210000000000.00003;// 210000000;
             matOM.Poisson = 0.3;
-            matOM.UnitMass = 7870 / 9.81;
+            matOM.UnitMass = 7850;
             matOM.fu = material.Fu * Math.Pow(10, 6);// 430000000;
             matOM.fy = material.Fy * Math.Pow(10, 6);// 275000000;
             matOM.fu40 = material.Fu40 * Math.Pow(10, 6);// 410000000;
