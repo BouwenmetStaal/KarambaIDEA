@@ -9,7 +9,7 @@ namespace KarambaIDEA.Core
     public class ConnectionProperties
     {
         Classification classification;
-        public double Sj=0.0;
+        public double Sj=double.NaN;
         public double SjR;
         public double SjH;
         public double Mjrd=double.NaN;

@@ -250,9 +250,19 @@ namespace KarambaIDEA
                 Plate finplate = new Plate("Finplate", hplate, wplate+gap, tplate);
                 joint.template.plates.Add(finplate);
 
+                //Step VI - Set mechanical properties to hinged
+                ConnectionProperties conProp = new ConnectionProperties(con.element, 0.0, 0.0, 0);
 
+                if (con.isStartPoint == true)
+                {
+                    con.element.startProperties = conProp;
+                }
+                else
+                {
+                    con.element.endProperties = conProp;
+                }
 
-                //Step VI - create Brep for visiualisation
+                //Step VII - create Brep for visiualisation
                 double moveX = (bear.element.crossSection.height) / 2000 +(gap/1000)+ (wplate / 2000);
                 Core.Point p = new Core.Point();
                 Vector vX = new Vector();
@@ -312,12 +322,12 @@ namespace KarambaIDEA
 
                 }
 
-                //Step VII - modify beam brepline
+                //Step VIII - modify beam brepline
                 KarambaIDEA.Core.Line.ModifyBeamBrepLine(column, con, gap);
                 maxBeamHeight = Math.Max(maxBeamHeight, beam.height);
             }
 
-            //Step VIII - modify column brepline
+            //Step IIX - modify column brepline
             KarambaIDEA.Core.Line.ModifyColumnBrepLine(bearlist, maxBeamHeight);
 
             nosolution:;
