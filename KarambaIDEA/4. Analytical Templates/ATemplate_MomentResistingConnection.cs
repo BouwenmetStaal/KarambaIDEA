@@ -316,14 +316,16 @@ namespace KarambaIDEA
                     Point3d pointBs = new Point3d((column.width) / 2000, (column.height) / 2000, (beam.thicknessFlange) / 2000);
                     BoundingBox bboxstif = new BoundingBox(pointAs, pointBs);
                     Vector vXb = bear.element.localCoordinateSystem.X;
+                    Vector vYb = bear.element.localCoordinateSystem.Y;
+                    Vector vZb = bear.element.localCoordinateSystem.Z;
 
                     Core.Point topP = Core.Point.MovePointByVectorandLength(p, vXb, (beam.height / 2000));
-                    Plane planeTop = new Plane(ImportGrasshopperUtils.CastPointToRhino(topP), ImportGrasshopperUtils.CastVectorToRhino(vXb));
+                    Plane planeTop = new Plane(ImportGrasshopperUtils.CastPointToRhino(topP), ImportGrasshopperUtils.CastVectorToRhino(vYb), ImportGrasshopperUtils.CastVectorToRhino(vZb));
                     Box topStiff = new Box(planeTop, bboxstif);
                     breps.Add(topStiff.ToBrep());
 
                     Core.Point botP = Core.Point.MovePointByVectorandLength(p, vXb, (-beam.height / 2000) - (heightHaunch / 1000));
-                    Plane planeBot = new Plane(ImportGrasshopperUtils.CastPointToRhino(botP), ImportGrasshopperUtils.CastVectorToRhino(vXb));
+                    Plane planeBot = new Plane(ImportGrasshopperUtils.CastPointToRhino(botP), ImportGrasshopperUtils.CastVectorToRhino(vYb), ImportGrasshopperUtils.CastVectorToRhino(vZb));
                     Box botStiff = new Box(planeBot, bboxstif);
                     breps.Add(botStiff.ToBrep());
                 }
