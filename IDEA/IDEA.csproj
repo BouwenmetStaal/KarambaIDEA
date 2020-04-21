@@ -31,15 +31,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IdeaRS.OpenModel">
-      <HintPath>..\..\..\..\Program Files\IDEA StatiCa\StatiCa 10.1\IdeaRS.OpenModel.dll</HintPath>
+    <Reference Include="IdeaRS.OpenModel, Version=10.1.99.54266, Culture=neutral, PublicKeyToken=b195254c3273d5c1, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\..\..\Release_20_UT_x64_2020-04-20_23-28_20.0.139\IdeaRS.OpenModel.dll</HintPath>
     </Reference>
-    <Reference Include="IdeaStatiCa.IOMToConnection">
-      <HintPath>..\..\..\..\Program Files\IDEA StatiCa\StatiCa 10.1\IdeaStatiCa.IOMToConnection.dll</HintPath>
+    <Reference Include="IdeaStatiCa.Plugin">
+      <HintPath>..\..\..\..\Release_20_UT_x64_2020-04-20_23-28_20.0.139\IdeaStatiCa.Plugin.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
     <Reference Include="System.Windows" />
     <Reference Include="System.Windows.Forms" />
     <Reference Include="System.Xml.Linq" />

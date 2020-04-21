@@ -80,6 +80,115 @@ namespace KarambaIDEA.IDEA
         #endregion
         */
         #region Properties
+        
+
+        /// <summary>
+        /// 
+        /// </summary>
+        /// <param name="joint">joint contains a filepath, results are saved in joint</param>
+        public ConnectionResultsData OpenAndCalculate(Joint joint) //RAZ: open the IDEA-file
+        {
+            ConnectionResultsData cbfemResults = new ConnectionResultsData();
+            string filepath = joint.JointFilePath;
+            //OpenFileDialog openFileDialog = new OpenFileDialog();
+            //openFileDialog.Filter = "IdeaConnection | *.ideacon";
+            if (filepath != null)
+            {
+                try
+                {
+                    //TODO: fix bug, script only works when IDEA StatiCa is opened by user.
+
+                    Debug.WriteLine("Creating the instance of IdeaRS.ConnectionService.Service.ConnectionSrv");
+
+                    // create the instance of the ConnectionSrv
+                    Service = conLinkAssembly.CreateInstance("IdeaRS.ConnectionService.Service.ConnectionSrv");
+                    serviceDynamic = Service;
+
+                    // open idea connection project file
+                    Debug.WriteLine("Opening the project file '{0}'", filepath);
+
+                    // open idea connection project file
+                    serviceDynamic.OpenIdeaConProjectFile(filepath, 0);
+
+                    //List<ConnectionVM> connectionsVm = GetConnectionViewModels();
+
+                    //this.Connections = new ObservableCollection<ConnectionVM>(connectionsVm);
+                                       
+                    // calculate all connections in the project
+                    var projectData = serviceDynamic.ConDataContract;
+                    //var con2 = projectData.Connections[0];
+
+                    Guid connectionId = new Guid();
+                    
+                    foreach (var con in projectData.Connections.Values)
+                    {
+                        connectionId = (Guid)(con.Header.ConnectionID);
+                    }
+                   
+                    object resData = serviceDynamic.CalculateProject(connectionId);
+                    cbfemResults = (ConnectionResultsData)resData;
+                    
+                    
+
+                    //close file
+                    serviceDynamic.CloseServices();
+                    serviceDynamic = null;
+                    Service = null;
+                    Results = string.Empty;
+                    Connections.Clear();
+                }
+                catch (Exception e)
+                {
+                    Debug.Assert(false, e.Message);
+                    StatusMessage = e.Message;
+                    if (Service != null)
+                    {
+                        ((IDisposable)Service)?.Dispose();
+                        Service = null;
+                    }
+                }
+            }
+            return cbfemResults;
+        }
+
+        /// <summary>
+        /// Save ResultSummary from IDEA StatiCa back into Core 
+        /// </summary>
+        /// <param name="joint">joint instance</param>
+        /// <param name="cbfemResults">summary results retrieved from IDEA StatiCa</param>
+        public void SaveResultsSummary(Joint joint, ConnectionResultsData cbfemResults)
+        {
+            List<CheckResSummary> results = cbfemResults.ConnectionCheckRes[0].CheckResSummary;
+            joint.ResultsSummary = new ResultsSummary();
+
+            //TODO:include message when singilarity occurs
+            //TODO:include message when bolts and welds are conflicting
+
+            if(results.Count == 4)//No bolts in connections. Hence, no results for bolts.
+            {
+                joint.ResultsSummary.analysis = results[0].CheckValue;
+                joint.ResultsSummary.plates = results[1].CheckValue;
+                joint.ResultsSummary.welds = results[2].CheckValue;
+                joint.ResultsSummary.buckling = results[3].CheckValue;
+            }
+            else//Bolts in connection.
+            {
+                joint.ResultsSummary.analysis = results[0].CheckValue;
+                joint.ResultsSummary.plates = results[1].CheckValue;
+                joint.ResultsSummary.bolts = results[2].CheckValue;
+                joint.ResultsSummary.welds = results[3].CheckValue;
+                joint.ResultsSummary.buckling = results[4].CheckValue;
+            }
+            
+            string message = string.Empty;
+            foreach (var result in results)
+            {
+                message += result.Name + ": " + result.UnityCheckMessage + " ";
+            }
+            joint.ResultsSummary.summary = message;
+
+        }
+
         public object Service
         {
             get => service;
@@ -151,108 +260,6 @@ namespace KarambaIDEA.IDEA
         public bool CanOpen(object param)
         {
             return (IsIdea && Service == null);
-        }
-
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="joint">joint contains a filepath, results are saved in joint</param>
-        public ConnectionResultsData OpenAndCalculate(Joint joint) //RAZ: open the IDEA-file
-        {
-            ConnectionResultsData cbfemResults = new ConnectionResultsData();
-            string filepath = joint.JointFilePath;
-            //OpenFileDialog openFileDialog = new OpenFileDialog();
-            //openFileDialog.Filter = "IdeaConnection | *.ideacon";
-            if (filepath != null)
-            {
-                try
-                {
-                    //TODO: fix bug, script only works when IDEA StatiCa is opened by user.
-
-                    Debug.WriteLine("Creating the instance of IdeaRS.ConnectionService.Service.ConnectionSrv");
-
-                    // create the instance of the ConnectionSrv
-                    Service = conLinkAssembly.CreateInstance("IdeaRS.ConnectionService.Service.ConnectionSrv");
-                    serviceDynamic = Service;
-
-                    // open idea connection project file
-                    Debug.WriteLine("Opening the project file '{0}'", filepath);
-
-                    // open idea connection project file
-                    serviceDynamic.OpenIdeaConProjectFile(filepath, 0);
-
-                    //List<ConnectionVM> connectionsVm = GetConnectionViewModels();
-
-                    //this.Connections = new ObservableCollection<ConnectionVM>(connectionsVm);
-                                       
-                    // calculate all connections in the project
-                    var projectData = serviceDynamic.ConDataContract;
-                    //var con2 = projectData.Connections[0];
-
-                    Guid connectionId = new Guid();
-                    
-                    foreach (var con in projectData.Connections.Values)
-                    {
-                        connectionId = (Guid)(con.Header.ConnectionID);
-                    }
-                   
-                    object resData = serviceDynamic.CalculateProject(connectionId);
-                    cbfemResults = (ConnectionResultsData)resData;
-                    
-                    
-
-                    //close file
-                    serviceDynamic.CloseServices();
-                    serviceDynamic = null;
-                    Service = null;
-                    Results = string.Empty;
-                    Connections.Clear();
-                }
-                catch (Exception e)
-                {
-                    Debug.Assert(false, e.Message);
-                    StatusMessage = e.Message;
-                    if (Service != null)
-                    {
-                        ((IDisposable)Service)?.Dispose();
-                        Service = null;
-                    }
-                }
-            }
-            return cbfemResults;
-        }
-
-        public void SaveResultsSummary(Joint joint, ConnectionResultsData cbfemResults)
-        {
-            List<CheckResSummary> results = cbfemResults.ConnectionCheckRes[0].CheckResSummary;
-            joint.ResultsSummary = new ResultsSummary();
-
-            //TODO:include message when singilarity occurs
-            //TODO:include message when bolts and welds are conflicting
-
-            if(results.Count == 4)//No bolts in connections. Hence, no results for bolts.
-            {
-                joint.ResultsSummary.analysis = results[0].CheckValue;
-                joint.ResultsSummary.plates = results[1].CheckValue;
-                joint.ResultsSummary.welds = results[2].CheckValue;
-                joint.ResultsSummary.buckling = results[3].CheckValue;
-            }
-            else//Bolts in connection.
-            {
-                joint.ResultsSummary.analysis = results[0].CheckValue;
-                joint.ResultsSummary.plates = results[1].CheckValue;
-                joint.ResultsSummary.bolts = results[2].CheckValue;
-                joint.ResultsSummary.welds = results[3].CheckValue;
-                joint.ResultsSummary.buckling = results[4].CheckValue;
-            }
-            
-            string message = string.Empty;
-            foreach (var result in results)
-            {
-                message += result.Name + ": " + result.UnityCheckMessage + " ";
-            }
-            joint.ResultsSummary.summary = message;
-
         }
 
         /// <summary>

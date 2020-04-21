@@ -10,6 +10,7 @@ using IdeaRS.OpenModel.Connection;
 using IdeaRS.OpenModel;
 using IdeaRS.OpenModel.Result;
 
+using IdeaStatiCa.Plugin;//V20
 
 using System.Diagnostics;
 using System.IO;
@@ -52,7 +53,16 @@ namespace KarambaIDEA.IDEA
                 Directory.CreateDirectory(this.filePath);
             }
 
-            IdeaInstallDir = IDEA.Properties.Settings.Default.IdeaInstallDir;
+            //IdeaInstallDir = IDEA.Properties.Settings.Default.IdeaInstallDir;
+            IdeaInstallDir = @"C:\Release_20_UT_x64_2020-04-20_23-28_20.0.139";
+            if (!Directory.Exists(IdeaInstallDir))
+            {
+                Console.WriteLine("IDEA StatiCa installation was not found in '{0}'", IdeaInstallDir);
+                return;
+            }
+            Console.WriteLine("IDEA StatiCa installation directory is '{0}'", IdeaInstallDir);
+            Console.WriteLine("Start generate example of IOM...");
+
 
             AppDomain currentDomain = AppDomain.CurrentDomain;
             currentDomain.AssemblyResolve += new ResolveEventHandler(IdeaResolveEventHandler);
@@ -85,19 +95,42 @@ namespace KarambaIDEA.IDEA
                     Templates.WeldAllMembers(example);
                 }
             }
-            
 
+            string iomFileName = Path.Combine(folder, joint.Name, "IOM.xml");
+            string iomResFileName = Path.Combine(folder, joint.Name, "IOMresults.xml");
 
             // save to the files
-            result.SaveToXmlFile(Path.Combine(folder, joint.Name, "IOMresults.xml"));
-            example.SaveToXmlFile(Path.Combine(folder, joint.Name, "IOM.xml"));
+            example.SaveToXmlFile(iomFileName);
+            result.SaveToXmlFile(iomResFileName);
 
             string filename = joint.Name + ".ideaCon";
 
             //var desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
             var fileConnFileNameFromLocal = Path.Combine(folder,joint.Name, filename);
 
-			string ideaConLinkFullPath = System.IO.Path.Combine(IdeaInstallDir, "IdeaStatiCa.IOMToConnection.dll");
+            var calcFactory = new ConnHiddenClientFactory(IdeaInstallDir);//V20
+
+            var client = calcFactory.Create();
+            try
+            {
+                // it creates connection project from IOM 
+                Console.WriteLine("Creating Idea connection project ");
+                client.CreateConProjFromIOM(iomFileName, iomResFileName, fileConnFileNameFromLocal);
+                Console.WriteLine("Generated project was saved to the file '{0}'", fileConnFileNameFromLocal);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine("Error '{0}'", e.Message);
+            }
+            finally
+            {
+                if (client != null)
+                {
+                    client.Close();
+                }
+            }
+            /*
+            string ideaConLinkFullPath = System.IO.Path.Combine(IdeaInstallDir, "IdeaStatiCa.IOMToConnection.dll");
 			var conLinkAssembly = Assembly.LoadFrom(ideaConLinkFullPath);
 			object obj = conLinkAssembly.CreateInstance("IdeaStatiCa.IOMToConnection.IOMToConnection");
 			dynamic d = obj;
@@ -115,6 +148,7 @@ namespace KarambaIDEA.IDEA
 			array[1] = result;
 			array[2] = fileConnFileNameFromLocal;
 			methodImport.Invoke(obj, array);
+            */
         }
 
         private static Assembly IdeaResolveEventHandler(object sender, ResolveEventArgs args)
