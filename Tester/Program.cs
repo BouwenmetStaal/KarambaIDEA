@@ -34,7 +34,7 @@ namespace Tester
 
             Joint joint = new Joint();
             joint.JointFilePath = "C:\\Data\\20191115214919\\C12-brandname\\APIproduced File - NotCorrect.ideaCon";
-            KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(joint);
+            HiddenCalculationV20.Calculate(joint);
             //Results
             string results = joint.ResultsSummary.summary;
         }

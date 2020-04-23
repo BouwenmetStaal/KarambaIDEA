@@ -26,7 +26,6 @@ namespace KarambaIDEA
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
             pManager.AddTextParameter("BrandNames", "BrandNames", "BrandNames to apply template to", GH_ParamAccess.list,"");
             pManager.AddNumberParameter("Thickness endplate [mm]", "Thickness endplate [mm]", "", GH_ParamAccess.item, 10.0);

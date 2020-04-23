@@ -26,6 +26,7 @@ namespace KarambaIDEA.Core
         //public bool isWarrenEccentricJoint;
         //public double weldVolume;
         public Template template=null;
+        public string ideaTemplateLocation=null;
 
         //public EnumWorkshopOperations template;
         

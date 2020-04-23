@@ -1,19 +1,9 @@
 ﻿using IdeaRS.OpenModel.Connection;
 using IdeaStatiCa.Plugin;
 using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.ComponentModel;
-using System.Globalization;
-using System.IO;
-using System.Threading;
-using System.Windows.Input;
+
 
 using KarambaIDEA.Core;
-using IdeaStatiCa.ConnectionClient.Commands;
-
-using IdeaStatiCa.ConnectionClient.Model;
-using System.Diagnostics;
-using System;
 using System.Linq;
 
 namespace KarambaIDEA.IDEA
@@ -28,7 +18,6 @@ namespace KarambaIDEA.IDEA
         {
             string path = IdeaConnection.IdeaInstallDir;//path to idea
             string pathToFile = joint.JointFilePath;//ideafile path
-            //string pathToTemplate = "";
             var calcFactory = new ConnHiddenClientFactory(path);
             ConnectionResultsData conRes=null;
             var client = calcFactory.Create();
@@ -42,15 +31,19 @@ namespace KarambaIDEA.IDEA
                     // get detail about idea connection project
                     var projInfo = client.GetProjectInfo();
                     var connection = projInfo.Connections.FirstOrDefault();
+                    if (joint.ideaTemplateLocation != null)
+                    {
+                        client.ApplyTemplate(connection.Identifier, joint.ideaTemplateLocation, null);
+                        client.SaveAsProject(pathToFile);
+                    }
 
-                    //client.ApplyTemplate(connection.Identifier, pathToTemplate, null);
-                    //client.SaveAsProject(pathToFile);
+
                     conRes = client.Calculate(connection.Identifier);
 
                     //projInfo.Connections.Count()
                     if (projInfo != null && projInfo.Connections != null)
                     {
-                        conRes = client.Calculate(Guid.Empty.ToString());
+                        
                         /*
                         // iterate all connections in the project
                         foreach (var con in projInfo.Connections)

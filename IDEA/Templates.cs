@@ -19,6 +19,34 @@ namespace KarambaIDEA.IDEA
 {
     public class Templates
     {
+
+        /// <summary>
+        /// Predefined programmed idea templates can be added to the OpenModel
+        /// </summary>
+        /// <param name="openModel">open model</param>
+        /// <param name="joint">joint instance</param>
+        public static void ApplyProgrammedIDEAtemplate(OpenModel openModel, Joint joint)
+        {
+            //TODOL add templatefile location
+            if (joint.template.workshopOperations == Template.WorkshopOperations.NoOperation)
+            {
+
+            }
+            if (joint.template.workshopOperations == Template.WorkshopOperations.BoltedEndPlateConnection)
+            {
+                if (joint.template.plates.First() != null)
+                {
+                    double platethickness = joint.template.plates[0].thickness / 1000;
+                    Templates.BoltedEndplateConnection(openModel, joint, platethickness);
+                }
+
+            }
+            if (joint.template.workshopOperations == Template.WorkshopOperations.WeldAllMembers)
+            {
+                Templates.WeldAllMembers(openModel);
+            }
+        }
+
         static public OpenModel CutBeamByBeam(OpenModel openModel, int cuttingobject, int modifiedObject)
         {
 
