@@ -69,7 +69,8 @@ namespace Tester
             IdeaConnection ideaConnection = new IdeaConnection(joint);
 
             //Calculate
-            KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(joint);
+            HiddenCalculationV20.Calculate(joint);
+            //KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(joint);
 
             //Results
             string results = joint.ResultsSummary.summary;

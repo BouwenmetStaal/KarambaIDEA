@@ -32,12 +32,11 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IdeaRS.OpenModel, Version=10.1.99.54266, Culture=neutral, PublicKeyToken=b195254c3273d5c1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Release_20_UT_x64_2020-04-20_23-28_20.0.139\IdeaRS.OpenModel.dll</HintPath>
+    <Reference Include="IdeaRS.OpenModel, Version=20.0.3.0, Culture=neutral, PublicKeyToken=b195254c3273d5c1, processorArchitecture=MSIL">
+      <HintPath>..\packages\IdeaStatiCa.OpenModel.20.0.3\lib\net45\IdeaRS.OpenModel.dll</HintPath>
     </Reference>
-    <Reference Include="IdeaStatiCa.Plugin">
-      <HintPath>..\..\..\..\Release_20_UT_x64_2020-04-20_23-28_20.0.139\IdeaStatiCa.Plugin.dll</HintPath>
+    <Reference Include="IdeaStatiCa.Plugin, Version=20.0.14.0, Culture=neutral, PublicKeyToken=b195254c3273d5c1, processorArchitecture=MSIL">
+      <HintPath>..\packages\IdeaStatiCa.Plugin.20.0.14\lib\net48\IdeaStatiCa.Plugin.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -51,6 +50,7 @@
     <Reference Include="System.Data" />
     <Reference Include="System.Net.Http" />
     <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Commands\CustomCommand.cs" />
@@ -87,6 +87,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>
       <LastGenOutput>Settings.Designer.cs</LastGenOutput>

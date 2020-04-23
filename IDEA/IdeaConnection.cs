@@ -34,7 +34,7 @@ namespace KarambaIDEA.IDEA
 
 
         public string filePath = "";
-        private static string IdeaInstallDir;
+        public static string IdeaInstallDir;
 
         /// <summary>
         /// Constructor for an IdeaConnection based on a joint
