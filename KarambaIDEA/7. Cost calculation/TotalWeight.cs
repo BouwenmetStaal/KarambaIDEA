@@ -113,6 +113,37 @@ namespace KarambaIDEA
                     nurbsCurve = circle.ToNurbsCurve();
                 }
 
+                if (c.shape == CrossSection.Shape.Tsection)
+                {
+                    Point3d P1 = new Point3d(-c.width / 2000, c.height / 2000, 0);
+
+                    Point3d P2 = new Point3d(-c.width / 2000, c.height / 2000 - c.thicknessFlange / 1000, 0);
+                    Point3d P3 = new Point3d(-c.thicknessWeb / 2000, c.height / 2000 - c.thicknessFlange / 1000, 0);
+
+                    Point3d P4 = new Point3d(-c.thicknessWeb / 2000, 0, 0);                    
+                    Point3d P9 = new Point3d(c.thicknessWeb / 2000, 0, 0);
+
+                    Point3d P10 = new Point3d(c.thicknessWeb / 2000, c.height / 2000 - c.thicknessFlange / 1000, 0);
+                    Point3d P11 = new Point3d(c.width / 2000, c.height / 2000 - c.thicknessFlange / 1000, 0);
+
+                    Point3d P12 = new Point3d(c.width / 2000, c.height / 2000, 0);
+                    IEnumerable<Point3d> points = new Point3d[] { P1, P2, P3, P4, P9, P10, P11, P12, P1 };
+                    Polyline poly = new Polyline(points);
+                    nurbsCurve = poly.ToNurbsCurve();
+                    //TODO: move centerline T-section to gravity center
+                }
+
+                if (c.shape == CrossSection.Shape.Strip)
+                {
+                    Point3d P1 = new Point3d(-c.width / 2000, c.height / 2000, 0);
+                    Point3d P6 = new Point3d(-c.width / 2000, -c.height / 2000, 0);
+                    Point3d P7 = new Point3d(c.width / 2000, -c.height / 2000, 0);
+                    Point3d P12 = new Point3d(c.width / 2000, c.height / 2000, 0);
+                    IEnumerable<Point3d> points = new Point3d[] { P1, P6, P7, P12, P1 };
+                    Polyline poly = new Polyline(points);
+                    nurbsCurve = poly.ToNurbsCurve();
+                }
+
                 Transform transform = Transform.PlaneToPlane(Plane.WorldXY, plane);
                 nurbsCurve.Transform(transform);
                 Surface sur = Surface.CreateExtrusion(nurbsCurve, vecX);

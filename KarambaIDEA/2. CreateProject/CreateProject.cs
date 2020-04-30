@@ -193,9 +193,21 @@ namespace KarambaIDEA.Grasshopper
                 {
                     shape = CrossSection.Shape.SHSSection;
                 }
-                else
+                else if (shapes[i].StartsWith("()"))
                 {
                     shape = CrossSection.Shape.CHSsection;
+                }
+                else if (shapes[i].StartsWith("T"))
+                {
+                    shape = CrossSection.Shape.Tsection;
+                }
+                else if (shapes[i].StartsWith("V"))
+                {
+                    shape = CrossSection.Shape.Strip;
+                }
+                else
+                {
+                    throw new ArgumentNullException(shapes[i]+" Cross-section not implemented");
                 }
                 if (crosssection == null)
                 {

@@ -22,6 +22,8 @@ namespace KarambaIDEA.Core
 {
     public class Project
     {
+        public static bool copyProject = false;
+
         public string projectName = null;
         public string author;
         public double minthroat;
@@ -38,10 +40,10 @@ namespace KarambaIDEA.Core
 
         public AnalysisMethod analysisMethod = AnalysisMethod.FullStrengthMethod;
 
-        public static double tolerance = 1e-6;
-        public static double gammaM2 = 1.25;
-        public static double EmodulusSteel = 210000;//N/mm2
-        public static double massSteel = 7850;//kg/m3
+        public static readonly double tolerance = 1e-6;
+        public static readonly double gammaM2 = 1.25;
+        public static readonly double EmodulusSteel = 210000;//N/mm2
+        public static readonly double massSteel = 7850;//kg/m3
 
         public Project()
         {
@@ -368,6 +370,13 @@ namespace KarambaIDEA.Core
                 var XML = new XmlSerializer(typeof(Project));
                 return (Project)XML.Deserialize(stream);
             }
+        }
+
+        public Project Clone()
+        {
+            Project clone = new Project();
+            clone.CopyPropertiesFromSource(this);
+            return clone;
         }
     }
 

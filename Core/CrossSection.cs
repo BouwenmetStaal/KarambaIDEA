@@ -32,7 +32,9 @@ namespace KarambaIDEA.Core
         {
             ISection,
             SHSSection,
-            CHSsection
+            CHSsection,
+            Tsection,
+            Strip
         }
 
         public CrossSection()
@@ -118,6 +120,17 @@ namespace KarambaIDEA.Core
                 double a = Math.PI*Math.Pow(this.height,2)/4;
                 double b = Math.PI * Math.Pow(this.height-2*this.thicknessWeb, 2) / 4;
                 return a - b;
+            }
+            if (this.shape.Equals(Shape.Tsection))
+            {
+                double a = this.width * this.height;
+                double b = (this.width - 2 * this.thicknessWeb) * (this.height - this.thicknessFlange);
+                return (a - b)/2;
+            }
+            if (this.shape.Equals(Shape.Strip))
+            {
+                double a = this.width * this.height;
+                return a;
             }
             else
             {

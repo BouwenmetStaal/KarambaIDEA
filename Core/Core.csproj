@@ -42,6 +42,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AttachedMember.cs" />
+    <Compile Include="Extensions.cs" />
     <Compile Include="JointTemplate\Bolt.cs" />
     <Compile Include="JointTemplate\BoltGrid.cs" />
     <Compile Include="ConnectionProperties.cs" />

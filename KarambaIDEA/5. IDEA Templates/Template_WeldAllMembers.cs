@@ -44,7 +44,7 @@ namespace KarambaIDEA
         {
 
             //Input variables            
-            Project project = new Project();
+            Project sourceProject = new Project();
             List<GH_String> brandNamesDirty = new List<GH_String>();
             List<string> brandNames = new List<string>();
 
@@ -52,8 +52,13 @@ namespace KarambaIDEA
             List<string> messages = new List<string>();
 
             //Link input
-            DA.GetData(0, ref project);
+            DA.GetData(0, ref sourceProject);
             DA.GetDataList(1, brandNamesDirty);
+
+            //Clone project
+            Project project = null;
+            if (Project.copyProject == true) { project = sourceProject.Clone(); }
+            else { project = sourceProject; }
 
             //process
             if (brandNamesDirty.Where(x=> x!=null&& !string.IsNullOrWhiteSpace(x.Value)).Count() > 0)

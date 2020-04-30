@@ -173,6 +173,16 @@ namespace KarambaIDEA.IDEA
                         AddCHScrossSection(crossSection);
                         return;
                     }
+                case KarambaIDEA.Core.CrossSection.Shape.Tsection:
+                    {
+                        AddTcrossSection(crossSection);
+                        return;
+                    }
+                case KarambaIDEA.Core.CrossSection.Shape.Strip:
+                    {
+                        AddStripcrossSection(crossSection);
+                        return;
+                    }
                 default:
                     {
                         throw new NotImplementedException();
@@ -206,8 +216,7 @@ namespace KarambaIDEA.IDEA
             double radius = crossSection.radius / 1000;
             CrossSectionFactory.FillCssSteelRectangularHollow(hollow, height, width, tweb, tweb, 2 * tweb, tflange);
             openModel.AddObject(hollow);
-        }
-        
+        }        
         private void AddCHScrossSection(KarambaIDEA.Core.CrossSection crossSection)
         {
             CrossSectionParameter chs = new CrossSectionParameter();
@@ -218,9 +227,39 @@ namespace KarambaIDEA.IDEA
             double height = crossSection.height / 1000/2; //adjust to radius
             double width = crossSection.width / 1000;
             double tweb = crossSection.thicknessWeb / 1000;
+            CrossSectionFactory.FillOHollow(chs, height, tweb);
+            openModel.AddObject(chs);
+        }
+        private void AddTcrossSection(KarambaIDEA.Core.CrossSection crossSection)
+        {
+            CrossSectionParameter tSec = new CrossSectionParameter();
+            tSec.Id = crossSection.Id;
+            MatSteel material = openModel.MatSteel.First(a => a.Id == crossSection.material.Id);
+            tSec.Material = new ReferenceElement(material);
+            tSec.Name = crossSection.name;
+            double height = crossSection.height / 1000; 
+            double width = crossSection.width / 1000;
+            double tweb = crossSection.thicknessWeb / 1000;
+            double tflange = crossSection.thicknessFlange / 1000;
+            double radius = crossSection.radius / 1000;
+            //CrossSectionFactory.FillShapeT(tSec, width, height, tflange,tweb);
+            CrossSectionFactory.FillWeldedT(tSec, width, height, tweb, tflange);
+            openModel.AddObject(tSec);
+        }
+        private void AddStripcrossSection(KarambaIDEA.Core.CrossSection crossSection)
+        {
+            CrossSectionParameter chs = new CrossSectionParameter();
+            chs.Id = crossSection.Id;
+            MatSteel material = openModel.MatSteel.First(a => a.Id == crossSection.material.Id);
+            chs.Material = new ReferenceElement(material);
+            chs.Name = crossSection.name;
+            double height = crossSection.height / 1000 ; 
+            double width = crossSection.width / 1000;
+            double tweb = crossSection.thicknessWeb / 1000;
             double tflange = crossSection.thicknessFlange / 1000;
             double radius = crossSection.radius / 1000;
             CrossSectionFactory.FillOHollow(chs, height, tweb);
+            //TODO: find crossectionfactory for strip
             openModel.AddObject(chs);
         }
         private void AddPointsToOpenModel(Point point)
