@@ -22,7 +22,6 @@ namespace KarambaIDEA.Core
                 return new Vector(start, end);
             }
         }
-
         public double Length
         {
             get
@@ -30,8 +29,6 @@ namespace KarambaIDEA.Core
                 return LengthLine(this); 
             }
         }
-
-
         public Line()
         {
 
@@ -59,14 +56,10 @@ namespace KarambaIDEA.Core
             Line result = new Line(line.id, newStart, newEnd);
             return result;
         }
-
-       
-
         public static Line FlipLine(Line line)
         {
             return new Line(line.id, line.end, line.start);
         }
-
         /// <summary>
         /// In this method the startpoint of the line is compared to the point. IF ther are equal the original line is returned. 
         /// If not the line will be flipped. Where startpoint and endpoint
@@ -86,7 +79,6 @@ namespace KarambaIDEA.Core
                 return new Line(line.id, line.end, line.start);
             }
         }
-
         public static int ShouldEccentricityBeAssumedPOSOrNEG(double tol, Point point, Line line)
         {
             if (Point.ArePointsEqual(tol, point, line.end) == true)
@@ -114,7 +106,6 @@ namespace KarambaIDEA.Core
                 }
             }
         }
-
         /// <summary>
         /// Move line to 0,0,0 based on given point
         /// </summary>
@@ -128,7 +119,6 @@ namespace KarambaIDEA.Core
             Line newline = new Line(start, end);
             return newline;
         }
-
         public static double LengthLine(Line line)
         {
             Point st = line.start;
@@ -136,7 +126,6 @@ namespace KarambaIDEA.Core
             double length = Math.Pow(end.X - st.X, 2) + Math.Pow(end.Y - st.Y, 2) + Math.Pow(end.Z - st.Z, 2);
             return Math.Sqrt(length);
         }
-        
         public static List<Line> SplitLine(Line line, double length)
         {
             List<Line> lines = new List<Line>();
@@ -155,7 +144,6 @@ namespace KarambaIDEA.Core
             }
             return lines;
         }
-
         public static Point ExtendLine(Line line, double length, bool atStart)
         {
             Point point = new Point();
@@ -169,7 +157,6 @@ namespace KarambaIDEA.Core
             }
             return point;
         }
-
         public static void ModifyColumnBrepLine(List<BearingMember> bearlist, double maxBeamHeight)
         {
             BearingMember column = bearlist.First();
@@ -186,7 +173,6 @@ namespace KarambaIDEA.Core
                 }
             }
         }
-
         public static void ModifyBeamBrepLine(BearingMember column, ConnectingMember con, double gap)
         {
             double length = column.element.crossSection.height / 2000 + gap / 1000;

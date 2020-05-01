@@ -19,7 +19,6 @@ namespace KarambaIDEA.Core
         public double thicknessFlange;
         public double thicknessWeb;
         public double radius;
-
         public int Id
         {
             get
@@ -41,7 +40,6 @@ namespace KarambaIDEA.Core
         {
 
         }
-
         public CrossSection(Project _project,string _name, Shape _shape, MaterialSteel _material, double _height, double _width, double _thicknessFlange, double _thicknessWeb, double _radius)
         {
             this.name = _name;
@@ -81,9 +79,7 @@ namespace KarambaIDEA.Core
                 p = new CrossSection(_project, _name, _shape, _material, _height, _width, _thicknessFlange, _thicknessWeb, _radius);
             return p;
         }
-
         
-
         public double Iyy()
         {
             if (this.shape.Equals(Shape.ISection) | this.shape.Equals(Shape.SHSSection))

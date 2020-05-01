@@ -47,6 +47,7 @@ namespace KarambaIDEA.IDEA
             }
         }
 
+        #region: combined commands
         static public OpenModel CutBeamByBeam(OpenModel openModel, int cuttingobject, int modifiedObject)
         {
 
@@ -65,7 +66,6 @@ namespace KarambaIDEA.IDEA
             });
             return openModel;
         }
-
         static public OpenModel CutBeamByPlate(OpenModel openModel, Joint joint, int cuttingobject, int modifiedObject)
         {
             
@@ -86,7 +86,6 @@ namespace KarambaIDEA.IDEA
             
             return openModel;
         }
-
         static public OpenModel WeldAllMembers(OpenModel openModel)
         {
             
@@ -100,13 +99,9 @@ namespace KarambaIDEA.IDEA
             }
             return openModel;
         }
-        /// <summary>
-        /// 
-        /// </summary>
-        /// <param name="openModel"></param>
-        /// <param name="joint"></param>
-        /// <param name="tplate">plate thickness in meters</param>
-        /// <returns></returns>
+        #endregion
+        
+        #region: primitive commands
         static public OpenModel BoltedEndplateConnection(OpenModel openModel, Joint joint, double tplate)
         {
             double w0 = joint.attachedMembers[0].element.crossSection.width/1000;
@@ -125,34 +120,6 @@ namespace KarambaIDEA.IDEA
        
             return openModel;
         }
-
-        /// <summary>
-        /// SVG path code absolute move
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        static public string Moveto(double x, double y)
-        {
-            return string.Format("M {0} {1}", x, y);
-        }
-        /// <summary>
-        /// SVG path code absolute line
-        /// </summary>
-        /// <param name="x"></param>
-        /// <param name="y"></param>
-        /// <returns></returns>
-        static public string Lineto(double x, double y)
-        {
-            return string.Format("L {0} {1}", x, y);
-        }
-        static public string Combine(List<string> list)
-        {
-             return String.Join(" ", list.ToArray());
-        }
-
-
-
         static public OpenModel CreatePlateForBeam(OpenModel openModel, Joint joint, int refBeam, double width, double height, double tplate)
         {
             joint.template.plates.Add(new Plate("Kopplaat", width, height, tplate));
@@ -251,7 +218,6 @@ namespace KarambaIDEA.IDEA
 
             return openModel;
         }
-
         static public OpenModel CreatePlate(OpenModel openModel, double height, double width, double moveX)
         {
 
@@ -304,8 +270,6 @@ namespace KarambaIDEA.IDEA
             });
             return openModel;
         }
-
-
         static public OpenModel CreateBoltgrid(OpenModel openModel, int firstPlate, int secondPlate, double width, double height)
         {
             PlateData plateData = openModel.Connections[0].Plates[firstPlate];
@@ -381,6 +345,35 @@ namespace KarambaIDEA.IDEA
             //(openModel.Connections[0].BoltGrids ?? (openModel.Connections[0].BoltGrids = new List<IdeaRS.OpenModel.Connection.BoltGrid>())).Add(boltGrid);
             return openModel;
         }
+        #endregion
+
+        #region: SVG path commands
+        /// <summary>
+        /// SVG path code absolute move
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        static public string Moveto(double x, double y)
+        {
+            return string.Format("M {0} {1}", x, y);
+        }
+        /// <summary>
+        /// SVG path code absolute line
+        /// </summary>
+        /// <param name="x"></param>
+        /// <param name="y"></param>
+        /// <returns></returns>
+        static public string Lineto(double x, double y)
+        {
+            return string.Format("L {0} {1}", x, y);
+        }
+        static public string Combine(List<string> list)
+        {
+            return String.Join(" ", list.ToArray());
+        }
+        #endregion
+
 
     }
 }

@@ -125,15 +125,6 @@ namespace KarambaIDEA.IDEA
             return strFil;
         }
 
-
-        /// <summary>
-        /// Serializes the openmodel  object and returns it as a memory stream
-        /// </summary>
-        /// <returns>memory stream containing the openmodel  serialized in xml format</returns>
-
-
-        
-
         private void AddMaterialSteelToOpenModel(MaterialSteel material)
         {
 
@@ -189,6 +180,7 @@ namespace KarambaIDEA.IDEA
                     }
             }
         }
+        #region: crosssection methods
         private void AddRolledcrossSection(KarambaIDEA.Core.CrossSection crossSection)
         {
             CrossSectionParameter crossSectionParameter = new CrossSectionParameter();
@@ -262,6 +254,7 @@ namespace KarambaIDEA.IDEA
             //TODO: find crossectionfactory for strip
             openModel.AddObject(chs);
         }
+        #endregion
         private void AddPointsToOpenModel(Point point)
         {
             Point3D p = new Point3D();
@@ -582,6 +575,7 @@ namespace KarambaIDEA.IDEA
             combi.Items.Add(it);
             openModel.AddObject(combi);
         }
+
         private void CreateIDEAOpenModelResults(Joint joint)
         {
             Project project = joint.project;
@@ -659,7 +653,6 @@ namespace KarambaIDEA.IDEA
             }
             openModelResult.ResultOnMembers.Add(resultIF);
         }
-
         public void SetStartLoads(int sign,Joint joint, int GrassLCId, int GrassId, ResultOfInternalForces resLoadCase, ResultOnSection resSec)
         {
             double conv = -1;
@@ -718,7 +711,6 @@ namespace KarambaIDEA.IDEA
 
             resSec.Results.Add(resLoadCase);
         }
-
         public void SetLCS(AttachedMember attachedMember, LineSegment3D lineSegment)
         {
             LocalCoordinateSystem lcs = attachedMember.element.localCoordinateSystem;

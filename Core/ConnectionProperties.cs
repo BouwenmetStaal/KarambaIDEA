@@ -20,7 +20,6 @@ namespace KarambaIDEA.Core
         {
 
         }
-
         /// <summary>
         /// Create a ConnectionProperties instance
         /// </summary>
@@ -37,7 +36,6 @@ namespace KarambaIDEA.Core
             SetClassification();
             //Set message
         }
-
         /// <summary>
         /// Set Eurocode boundary criteria for hinged connections
         /// </summary>

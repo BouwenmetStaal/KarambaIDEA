@@ -22,7 +22,7 @@ namespace KarambaIDEA.Core
 {
     public class Project
     {
-        public static bool copyProject = false;
+        public static bool copyProject = true;
 
         public string projectName = null;
         public string author;
@@ -374,8 +374,8 @@ namespace KarambaIDEA.Core
 
         public Project Clone()
         {
-            Project clone = new Project();
-            clone.CopyPropertiesFromSource(this);
+            Project clone = this.Deepclone() as Project;
+            //clone.CopyPropertiesFromSource(this);
             return clone;
         }
     }

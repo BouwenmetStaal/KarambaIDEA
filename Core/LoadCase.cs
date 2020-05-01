@@ -11,12 +11,10 @@ namespace KarambaIDEA.Core
 {
     public class LoadCase
     {
-             
         public Project project;        
         public int id;
         public string name;
         public List<LoadsPerLine> loadsPerLines = new List<LoadsPerLine>();
-       
         public LoadCase(Project _project, int _id)
         {
             this.project = _project;
@@ -31,7 +29,6 @@ namespace KarambaIDEA.Core
         public LoadCase loadcase;
         public Load startLoad;
         public Load endLoad;
-        
         public LoadsPerLine(Element _element, LoadCase _loadcase,Load _Start, Load _End)
         {
 
@@ -41,7 +38,6 @@ namespace KarambaIDEA.Core
             this.loadcase = _loadcase;
             _loadcase.loadsPerLines.Add(this);
         }
-
         public LoadsPerLine(Load _Start, Load _End)
         {
             this.startLoad = _Start;

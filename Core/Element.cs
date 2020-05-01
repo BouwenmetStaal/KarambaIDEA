@@ -8,9 +8,6 @@ using System.Linq;
 
 namespace KarambaIDEA.Core
 {
-
-
-
     public class Element
     {
         public Project project;
@@ -33,8 +30,6 @@ namespace KarambaIDEA.Core
         public SawingCuts.SawingCut endCut;
         public ConnectionProperties startProperties = new ConnectionProperties();
         public ConnectionProperties endProperties = new ConnectionProperties();
-        
-
 
         /// <summary>
         /// Construct element for project
@@ -62,7 +57,6 @@ namespace KarambaIDEA.Core
             this.UpdateLocalCoordinateSystem();
 
         }
-        
 
         public void UpdateLocalCoordinateSystem()
         {
