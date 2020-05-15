@@ -83,6 +83,7 @@ namespace KarambaIDEA
                     }
                 }
             }
+            /*
             else
             {
                 foreach (Joint joint in project.joints)
@@ -90,6 +91,7 @@ namespace KarambaIDEA
                     SetTemplate(tplate, joint, breps);
                 }
             }
+            */
 
             messages = project.MakeTemplateJointMessage();            
 

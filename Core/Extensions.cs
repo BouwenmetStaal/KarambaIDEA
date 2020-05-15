@@ -1,13 +1,16 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Text;
 using System.Threading.Tasks;
 
 namespace KarambaIDEA.Core
 {
-    internal static class Extensions
+    public static class Extensions
     {
         /// <summary>
         /// Copy all properties accesible from Source To this
@@ -27,42 +30,25 @@ namespace KarambaIDEA.Core
                 }
             }
         }
-        public static object Deepclone(this object objSource)
-
+        public static T Clone<T>(this T source)
         {
-            //Get the type of source object and create a new instance of that type
-            Type typeSource = objSource.GetType();
-            object objTarget = Activator.CreateInstance(typeSource);
-            //Get all the properties of source object type
-            PropertyInfo[] propertyInfo = typeSource.GetProperties(BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-            //Assign all source property to taget object 's properties
-            foreach (PropertyInfo property in propertyInfo)
+            if (!typeof(T).IsSerializable)
             {
-                //Check whether property can be written to
-                if (property.CanWrite)
-                {
-                    //check whether property type is value type, enum or string type
-                    if (property.PropertyType.IsValueType || property.PropertyType.IsEnum || property.PropertyType.Equals(typeof(System.String)))
-                    {
-                        property.SetValue(objTarget, property.GetValue(objSource, null), null);
-                    }
-                    //else property type is object/complex types, so need to recursively call this method until the end of the tree is reached
-                    else
-                    {
-                        object objPropertyValue = property.GetValue(objSource, null);
-                        if (objPropertyValue == null)
-                        {
-                            property.SetValue(objTarget, null, null);
-                        }
-                        else
-                        {
-
-                            property.SetValue(objTarget, objPropertyValue.Deepclone(), null);
-                        }
-                    }
-                }
+                throw new ArgumentException("The type must be serializable.", nameof(source));
             }
-            return objTarget;
+            // Don't serialize a null object, simply return the default for that object
+            if (Object.ReferenceEquals(source, null))
+            {
+                return default(T);
+            }
+            IFormatter formatter = new BinaryFormatter();
+            Stream stream = new MemoryStream();
+            using (stream)
+            {
+                formatter.Serialize(stream, source);
+                stream.Seek(0, SeekOrigin.Begin);
+                return (T)formatter.Deserialize(stream);
+            }
         }
     }
 }

@@ -81,6 +81,7 @@ namespace KarambaIDEA
                     }
                 }
             }
+            /*
             else
             {
                 foreach (Joint joint in project.joints)
@@ -88,8 +89,8 @@ namespace KarambaIDEA
                     SetTemplate(ideaTemplateLocation, joint, breps);
                 }
             }
-
-            messages = project.MakeTemplateJointMessage();
+            */
+            messages = project.MakeTemplateJointMessage(ideaTemplateLocation);
 
             //link output
             DA.SetData(0, project);
@@ -100,7 +101,8 @@ namespace KarambaIDEA
         private static void SetTemplate(string ideaTemplateLocation, Joint joint, List<Brep> breps)
         {
             joint.ideaTemplateLocation = ideaTemplateLocation;
-
+            joint.template = new Template();
+            joint.template.workshopOperations = Template.WorkshopOperations.TemplateByFile;
             //BREP add sphere
             Point3d p = ImportGrasshopperUtils.CastPointToRhino(joint.centralNodeOfJoint);
             double radius = 200; //radius in mm

@@ -94,27 +94,6 @@ namespace KarambaIDEA.IDEA
                 AddLoadCaseToOpenModel(loadcase);
             }
 
-            //WORKSHOP operations
-            //WorkshopOperations.WeldAllMembers(openModel);
-            //enumerator
-            //Delicate
-
-            /*
-            if(joint.template == EnumWorkshopOperations.NoOperation)
-            {
-
-            }
-            if (joint.template == EnumWorkshopOperations.BoltedEndPlateConnection)
-            {
-                Templates.BoltedEndplateConnection(openModel, joint);
-            }
-            if (joint.template == EnumWorkshopOperations.WeldAllMembers)
-            {
-                Templates.WeldAllMembers(openModel);
-            }
-            */
-
-
             //8.create IOMresults
             CreateIDEAOpenModelResults(joint);
 
@@ -240,19 +219,16 @@ namespace KarambaIDEA.IDEA
         }
         private void AddStripcrossSection(KarambaIDEA.Core.CrossSection crossSection)
         {
-            CrossSectionParameter chs = new CrossSectionParameter();
-            chs.Id = crossSection.Id;
+            CrossSectionParameter strip = new CrossSectionParameter();
+            strip.Id = crossSection.Id;
             MatSteel material = openModel.MatSteel.First(a => a.Id == crossSection.material.Id);
-            chs.Material = new ReferenceElement(material);
-            chs.Name = crossSection.name;
+            strip.Material = new ReferenceElement(material);
+            strip.Name = crossSection.name;
             double height = crossSection.height / 1000 ; 
             double width = crossSection.width / 1000;
-            double tweb = crossSection.thicknessWeb / 1000;
-            double tflange = crossSection.thicknessFlange / 1000;
-            double radius = crossSection.radius / 1000;
-            CrossSectionFactory.FillOHollow(chs, height, tweb);
+            CrossSectionFactory.FillRectangle(strip, height, width);
             //TODO: find crossectionfactory for strip
-            openModel.AddObject(chs);
+            openModel.AddObject(strip);
         }
         #endregion
         private void AddPointsToOpenModel(Point point)

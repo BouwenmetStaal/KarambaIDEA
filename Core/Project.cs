@@ -22,23 +22,23 @@ namespace KarambaIDEA.Core
 {
     public class Project
     {
-        public static bool copyProject = true;
+        public static bool copyProject = false;
 
-        public string projectName = null;
-        public string author;
-        public double minthroat;
-        public string projectFolderPath;
+        public string projectName { get; set; } = null;
+        public string author { get; set; }
+        public double minthroat { get; set; }
+        public string projectFolderPath { get; set; }
 
-        public List<Point> points = new List<Point>();
-        public List<Element> elements = new List<Element>();
-        public List<LoadCase> loadcases = new List<LoadCase>();
-        public List<Joint> joints = new List<Joint>();
-        public List<Hierarchy> hierarchylist = new List<Hierarchy>();
-        public List<CrossSection> crossSections = new List<CrossSection>();
-        public List<MaterialSteel> materials = new List<MaterialSteel>();
+        public List<Point> points { get; set; } = new List<Point>();
+        public List<Element> elements { get; set; } = new List<Element>();
+        public List<LoadCase> loadcases { get; set; } = new List<LoadCase>();
+        public List<Joint> joints { get; set; } = new List<Joint>();
+        public List<Hierarchy> hierarchylist { get; set; } = new List<Hierarchy>();
+        public List<CrossSection> crossSections { get; set; } = new List<CrossSection>();
+        public List<MaterialSteel> materials { get; set; } = new List<MaterialSteel>();
 
 
-        public AnalysisMethod analysisMethod = AnalysisMethod.FullStrengthMethod;
+        public AnalysisMethod analysisMethod { get; set; } = AnalysisMethod.FullStrengthMethod;
 
         public static readonly double tolerance = 1e-6;
         public static readonly double gammaM2 = 1.25;
@@ -293,7 +293,7 @@ namespace KarambaIDEA.Core
         /// These messages will tell the which templates are applied to the joint brand names available in the project.
         /// </summary>
         /// <returns></returns>
-        public List<string> MakeTemplateJointMessage()
+        public List<string> MakeTemplateJointMessage(string filepath = null)
         {
             List<string> messages = new List<string>();
             List<string> uniqueBrandNames = this.joints.Select(a => a.brandName).Distinct().ToList();
@@ -305,7 +305,7 @@ namespace KarambaIDEA.Core
                     {
                         if (joint.template != null)
                         {
-                            messages.Add("BrandName '" + brandName + "' is linked to " + joint.template.workshopOperations.ToString());
+                            messages.Add("BrandName '" + brandName + "' is linked to " + joint.template.workshopOperations.ToString()+" "+filepath);
 
                         }
                         goto here;
@@ -374,7 +374,8 @@ namespace KarambaIDEA.Core
 
         public Project Clone()
         {
-            Project clone = this.Deepclone() as Project;
+            Project clone = this.Clone();
+            //Project clone = this.Clone() as Project;
             //clone.CopyPropertiesFromSource(this);
             return clone;
         }

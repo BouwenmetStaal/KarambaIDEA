@@ -17,7 +17,8 @@ namespace KarambaIDEA.Core
         {
             NoOperation,
             BoltedEndPlateConnection,
-            WeldAllMembers
+            WeldAllMembers,
+            TemplateByFile
         }
     }
 }

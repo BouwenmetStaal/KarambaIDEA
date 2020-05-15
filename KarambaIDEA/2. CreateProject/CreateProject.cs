@@ -193,7 +193,7 @@ namespace KarambaIDEA.Grasshopper
                 {
                     shape = CrossSection.Shape.SHSSection;
                 }
-                else if (shapes[i].StartsWith("()"))
+                else if (shapes[i].StartsWith("()")|| shapes[i].StartsWith("O"))
                 {
                     shape = CrossSection.Shape.CHSsection;
                 }

@@ -8,9 +8,10 @@ using System.Linq;
 
 namespace KarambaIDEA.Core
 {
+    [Serializable]
     public class Element
     {
-        public Project project;
+        internal Project project;
         public int id;
         public int numberInHierarchy;
         private readonly Line line;
@@ -23,7 +24,7 @@ namespace KarambaIDEA.Core
         }
         public Line brepLine;
         public CrossSection crossSection;
-        public string groupname;
+        public string groupname { get; set; }
         public double rotationLCS;
         public LocalCoordinateSystem localCoordinateSystem = new LocalCoordinateSystem();
         public SawingCuts.SawingCut startCut;

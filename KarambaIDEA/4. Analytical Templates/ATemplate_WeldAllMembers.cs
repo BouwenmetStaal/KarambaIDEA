@@ -84,6 +84,7 @@ namespace KarambaIDEA
                     }
                 }
             }
+            /*
             else
             {
                 foreach (Joint joint in project.joints)
@@ -91,7 +92,7 @@ namespace KarambaIDEA
                     SetAnaTemplate(joint);
                 }
             }
-
+            */
 
             foreach (Element ele in project.elements)
             {

@@ -28,7 +28,7 @@ namespace KarambaIDEA.IDEA
         public static void ApplyProgrammedIDEAtemplate(OpenModel openModel, Joint joint)
         {
             //TODOL add templatefile location
-            if (joint.template.workshopOperations == Template.WorkshopOperations.NoOperation)
+            if (joint.template.workshopOperations == Template.WorkshopOperations.NoOperation||joint.template.workshopOperations == Template.WorkshopOperations.TemplateByFile)
             {
 
             }
