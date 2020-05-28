@@ -139,4 +139,46 @@
   <data name="KarambaIDEA_logo_JointVector" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\KarambaIDEA_logo_JointVector.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="TempBoltedEndplateConnection" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TempBoltedEndplateConnection.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TempWeldAllMembers" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TempWeldAllMembers.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ATempMomentResistingConnection" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ATempMomentResistingConnection.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ATempMomentResistingConnection2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ATempMomentResistingConnection2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IDEAlogo" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\IDEAlogo.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TransportElements" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TransportElements.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Weight" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Weight.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="WeldingVolume" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\WeldingVolume.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="Costs" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Costs.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="IDEAlogo_safe" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\IDEAlogo_safe.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="StiffnessDiagram" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\StiffnessDiagram.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="StiffnessDiagram2" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\StiffnessDiagram2.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ATempFinPlate" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ATempFinPlate.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TemplateFromFilePath" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TemplateFromFilePath.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

@@ -5,7 +5,7 @@
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
     <ProjectGuid>{C3C4325A-131E-4666-BB48-A170A5DDB0E6}</ProjectGuid>
-    <OutputType>WinExe</OutputType>
+    <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>KarambaIDEA</RootNamespace>
     <AssemblyName>KarambaIDEA</AssemblyName>
@@ -29,6 +29,8 @@
     <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
     <UseApplicationTrust>false</UseApplicationTrust>
     <BootstrapperEnabled>true</BootstrapperEnabled>
+    <NuGetPackageImportStamp>
+    </NuGetPackageImportStamp>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <PlatformTarget>AnyCPU</PlatformTarget>
@@ -57,33 +59,29 @@
   <PropertyGroup>
     <AssemblyOriginatorKeyFile>..\..\Common\StrongKey\ideastaticasnk.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
+  <PropertyGroup>
+    <StartupObject />
+  </PropertyGroup>
   <ItemGroup>
-    <Reference Include="GH_IO, Version=6.10.18311.20531, Culture=neutral, PublicKeyToken=6a29997d2e6b4f97, processorArchitecture=MSIL">
-      <HintPath>..\..\..\..\Program Files\Rhino 6\Plug-ins\Grasshopper\GH_IO.dll</HintPath>
-      <SpecificVersion>False</SpecificVersion>
-      <Private>False</Private>
+    <Reference Include="Eto, Version=2.5.0.0, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
+      <HintPath>..\packages\RhinoCommon.6.18.19266.14201\lib\net45\Eto.dll</HintPath>
+    </Reference>
+    <Reference Include="GH_IO, Version=6.18.19266.14200, Culture=neutral, PublicKeyToken=6a29997d2e6b4f97, processorArchitecture=MSIL">
+      <HintPath>..\packages\Grasshopper.6.18.19266.14201\lib\net45\GH_IO.dll</HintPath>
+      <Private>True</Private>
+    </Reference>
+    <Reference Include="Grasshopper, Version=6.18.19266.14200, Culture=neutral, PublicKeyToken=dda4f5ec2cd80803, processorArchitecture=MSIL">
+      <HintPath>..\packages\Grasshopper.6.18.19266.14201\lib\net45\Grasshopper.dll</HintPath>
       <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
-    <Reference Include="Grasshopper">
-      <HintPath>..\..\..\..\Program Files\Rhino 6\Plug-ins\Grasshopper\Grasshopper.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="Microsoft.CSharp">
+      <EmbedInteropTypes>False</EmbedInteropTypes>
     </Reference>
-    <Reference Include="IdeaRS.Connections, Version=9.1.51.51750, Culture=neutral, PublicKeyToken=b195254c3273d5c1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files\IDEAStatiCa\StatiCa10\IdeaRS.Connections.dll</HintPath>
+    <Reference Include="Rhino.UI, Version=6.18.19266.14200, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
+      <HintPath>..\packages\RhinoCommon.6.18.19266.14201\lib\net45\Rhino.UI.dll</HintPath>
     </Reference>
-    <Reference Include="IdeaRS.OpenModel, Version=9.1.51.51750, Culture=neutral, PublicKeyToken=b195254c3273d5c1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files\IDEAStatiCa\StatiCa10\IdeaRS.OpenModel.dll</HintPath>
-    </Reference>
-    <Reference Include="IdeaStatiCa.ConnectionBasicTypes, Version=9.1.51.51750, Culture=neutral, PublicKeyToken=b195254c3273d5c1, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\Program Files\IDEAStatiCa\StatiCa10\IdeaStatiCa.ConnectionBasicTypes.dll</HintPath>
-    </Reference>
-    <Reference Include="Microsoft.CSharp" />
-    <Reference Include="RhinoCommon">
-      <HintPath>..\..\..\..\Program Files\Rhino 6\System\RhinoCommon.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="RhinoCommon, Version=6.18.19266.14200, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
+      <HintPath>..\packages\RhinoCommon.6.18.19266.14201\lib\net45\RhinoCommon.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Data" />
@@ -104,72 +102,48 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <ApplicationDefinition Include="App.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </ApplicationDefinition>
-    <Compile Include="Core\AttachedMember.cs" />
-    <Compile Include="Core\CrossSection.cs" />
-    <Compile Include="Core\ElementRAZ.cs" />
-    <Compile Include="Core\Hierarchy.cs" />
-    <Compile Include="Core\ImportGrasshopperUtils.cs" />
-    <Compile Include="Core\Joint.cs" />
-    <Compile Include="Core\LineRAZ.cs" />
-    <Compile Include="Core\LoadcaseRAZ.cs" />
-    <Compile Include="Core\MaterialSteel.cs" />
-    <Compile Include="Core\PointRAZ.cs" />
-    <Compile Include="Core\Project.cs" />
-    <Compile Include="Core\SawingCuts.cs" />
-    <Compile Include="Core\VectorRAZ.cs" />
-    <Compile Include="Core\Weld.cs" />
-    <Compile Include="Grasshopper\CreateLinesFromNodes.cs" />
-    <Compile Include="Grasshopper\JointExporter.cs" />
-    <Compile Include="Grasshopper\JointVector.cs" />
-    <Compile Include="Grasshopper\JointViewer.cs" />
-    <Compile Include="Grasshopper\KarambaConversion.cs" />
-    <Compile Include="Grasshopper\LoadsToLoadsTrees.cs" />
-    <Compile Include="Grasshopper\LoadsToLoadsTrees2.cs" />
-    <Compile Include="Grasshopper\RotateVector.cs" />
-    <Compile Include="IDEA\ConnectionTemplateGenerator.cs" />
-    <Compile Include="IDEA\IdeaConnection.cs" />
-    <Compile Include="IDEA\OpenModelGenerator.cs" />
+    <Compile Include="3. Project utilities\CheckLocalCoordinateSystem.cs" />
+    <Compile Include="3. Project utilities\RetrieveLinesPoints.cs" />
+    <Compile Include="3. Project utilities\RetrieveConnectionProperties.cs" />
+    <Compile Include="4. Analytical Templates\ATemplate_FinplateConnection.cs" />
+    <Compile Include="4. Analytical Templates\ATemplate_MomentResistingConnection.cs" />
+    <Compile Include="4. Analytical Templates\ATemplate_WeldAllMembers.cs" />
+    <Compile Include="5. IDEA Templates\TemplateByFilePath.cs" />
+    <Compile Include="6. IDEA utilities\CalculateIDEAFile.cs" />
+    <Compile Include="6. IDEA utilities\CreateAndCalculateIDEAfile.cs" />
+    <Compile Include="6. IDEA utilities\CreateIDEAfile.cs" />
+    <Compile Include="6. IDEA utilities\OptimizePlates.cs" />
+    <Compile Include="7. Cost calculation\CostCalculator.cs" />
+    <Compile Include="7. Cost calculation\TotalWeight.cs" />
+    <Compile Include="ImportGrasshopperUtils.cs" />
+    <Compile Include="0. Utilities\LinesSCIA.cs" />
+    <Compile Include="3. Project utilities\JointEquilibrium.cs" />
+    <Compile Include="2. CreateProject\CreateProject.cs" />
+    <Compile Include="0. Utilities\JointVector.cs" />
+    <Compile Include="0. Utilities\JointViewer.cs" />
+    <Compile Include="1. Load-conversions\LoadConversionGSA.cs" />
+    <Compile Include="1. Load-conversions\LoadConversionSCIA.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Resources.resx</DependentUpon>
     </Compile>
-    <Page Include="MainWindow.xaml">
-      <Generator>MSBuild:Compile</Generator>
-      <SubType>Designer</SubType>
-    </Page>
-    <Compile Include="App.xaml.cs">
-      <DependentUpon>App.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
-    <Compile Include="MainWindow.xaml.cs">
-      <DependentUpon>MainWindow.xaml</DependentUpon>
-      <SubType>Code</SubType>
-    </Compile>
+    <Compile Include="7. Cost calculation\TransportElements.cs" />
+    <Compile Include="3. Project utilities\VisualizeJoints.cs" />
+    <Compile Include="7. Cost calculation\WeldVolumeGenerator.cs" />
+    <Compile Include="5. IDEA Templates\Template_BoltedEndPlateConnection.cs" />
+    <Compile Include="5. IDEA Templates\Template_WeldAllMembers.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
       <SubType>Code</SubType>
     </Compile>
-    <Compile Include="Properties\Settings.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DependentUpon>Settings.settings</DependentUpon>
-      <DesignTimeSharedInput>True</DesignTimeSharedInput>
-    </Compile>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
-    <None Include="app.config" />
     <None Include="KarambaIDEA.licenseheader" />
-    <None Include="Properties\Settings.settings">
-      <Generator>PublicSettingsSingleFileGenerator</Generator>
-      <LastGenOutput>Settings.Designer.cs</LastGenOutput>
-    </None>
+    <None Include="packages.config" />
     <AppDesigner Include="Properties\" />
   </ItemGroup>
   <ItemGroup>
@@ -185,9 +159,23 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\TemplateFromFilePath.png" />
+    <None Include="Resources\StiffnessDiagram2.png" />
+    <None Include="Resources\StiffnessDiagram.png" />
+    <None Include="Resources\IDEAlogo_safe.png" />
+    <None Include="Resources\Costs.png" />
+    <None Include="Resources\IDEAlogo.png" />
+    <None Include="Resources\TransportElements.png" />
+    <None Include="Resources\WeldingVolume.png" />
+    <None Include="Resources\Weight.png" />
+    <None Include="Resources\ATempMomentResistingConnection.png" />
+    <None Include="Resources\ATempMomentResistingConnection2.png" />
+    <None Include="Resources\ATempFinPlate.png" />
     <Content Include="Resources\continues2members.contemp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
+    <None Include="Resources\TempWeldAllMembers.png" />
+    <None Include="Resources\TempBoltedEndplateConnection.png" />
     <None Include="Resources\KarambaIDEA_logo_JointVector.png" />
     <None Include="Resources\KarambaIDEA_logo.png" />
     <None Include="Resources\KarambaIDEA_logo_viewer.png" />
@@ -197,10 +185,31 @@
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </EmbeddedResource>
   </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\Core\Core.csproj">
+      <Project>{76c4e11c-35ec-4e0d-87fe-149c3b15c0e0}</Project>
+      <Name>Core</Name>
+      <EmbedInteropTypes>False</EmbedInteropTypes>
+    </ProjectReference>
+    <ProjectReference Include="..\IDEA\IDEA.csproj">
+      <Project>{48a8e110-8e17-4d3b-981a-adf7be95c461}</Project>
+      <Name>IDEA</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
     <PostBuildEvent>Copy "$(TargetPath)" "$(TargetDir)$(ProjectName).gha"</PostBuildEvent>
   </PropertyGroup>
+  <Import Project="..\packages\RhinoCommon.6.18.19266.14201\build\net45\RhinoCommon.targets" Condition="Exists('..\packages\RhinoCommon.6.18.19266.14201\build\net45\RhinoCommon.targets')" />
+  <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">
+    <PropertyGroup>
+      <ErrorText>This project references NuGet package(s) that are missing on this computer. Use NuGet Package Restore to download them.  For more information, see http://go.microsoft.com/fwlink/?LinkID=322105. The missing file is {0}.</ErrorText>
+    </PropertyGroup>
+    <Error Condition="!Exists('..\packages\RhinoCommon.6.18.19266.14201\build\net45\RhinoCommon.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\RhinoCommon.6.18.19266.14201\build\net45\RhinoCommon.targets'))" />
+    <Error Condition="!Exists('..\packages\Grasshopper.6.18.19266.14201\build\net45\Grasshopper.targets')" Text="$([System.String]::Format('$(ErrorText)', '..\packages\Grasshopper.6.18.19266.14201\build\net45\Grasshopper.targets'))" />
+  </Target>
+  <Import Project="..\packages\Grasshopper.6.18.19266.14201\build\net45\Grasshopper.targets" Condition="Exists('..\packages\Grasshopper.6.18.19266.14201\build\net45\Grasshopper.targets')" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
   <Target Name="BeforeBuild">

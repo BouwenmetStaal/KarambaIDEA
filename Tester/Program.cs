@@ -9,7 +9,9 @@ using System.Diagnostics;
 using System.Reflection;
 using System.Windows.Forms;
 using KarambaIDEA;
-
+using System.IO;
+using Newtonsoft.Json;
+using System.Collections.Generic;
 
 namespace Tester
 {
@@ -21,43 +23,120 @@ namespace Tester
         [STAThread]
         static void Main()
         {
-            VectorRAZ a = new VectorRAZ(1, 2, 3);
-            VectorRAZ b = new VectorRAZ(0, 0, 1);
+            //TESTCalculate();
+            //TESTCreateAndCalculate();
+            TestClass par = new TestClass();
+            TestClass self = new TestClass() { parent=par, mypro="sdsd" };
 
-            double angle = 90.0;
+            par.children.Add(self);
 
-            double scalar = VectorRAZ.DotProduct(a, b);
-            VectorRAZ vector = VectorRAZ.CrossProduct(a, b);
-            VectorRAZ xx = VectorRAZ.RotateVector(b, angle, a);
 
-            System.Windows.Media.Media3D.Vector3D va = new System.Windows.Media.Media3D.Vector3D(a.X, a.Y, a.Z);
-            System.Windows.Media.Media3D.Vector3D vb = new System.Windows.Media.Media3D.Vector3D(b.X, b.Y, b.Z);
-
-            double dot = System.Windows.Media.Media3D.Vector3D.DotProduct(va, vb);
-            System.Windows.Media.Media3D.Vector3D cross = System.Windows.Media.Media3D.Vector3D.CrossProduct(va, vb);
-
-            System.Windows.Media.Media3D.AxisAngleRotation3D vec = new System.Windows.Media.Media3D.AxisAngleRotation3D();
-            
+            Project project = null;
 
             
 
-            //System.Windows.Media.Media3D.Rotation3D rot = new System.Windows.Media.Media3D.Rotation3D();
+            Project clone = project.CloneJson();
+            //
+            foreach (CrossSection c in clone.crossSections)
+            {
+                c.project = clone;
+            }
 
-
-            KarambaIDEA.MainWindow mainWindow = new MainWindow();
-            Tester.GenerateTestJoint fj = new GenerateTestJoint();
-            //KarambaIDEA.TestFrameworkJoint fj = new TestFrameworkJoint();
-
-            //hieronder testjoint definieren
-            Joint joint = fj.Testjoint();
-            //Joint joint = fj.Testjoint5();
-            joint.project.CreateFolder(@"C:\Data\");
-            joint.project.templatePath = @"C:\Data\template.contemp";
-            //min lasafmeting uitzetten bij Grasshopper
-            joint.project.minthroat = 1.0;
-
-            mainWindow.Test(joint);
         }
+
+        static void TESTCalculate()
+        {
+            // Initialize idea references, before calling code.
+            AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
+            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
+
+
+            Joint joint = new Joint();
+            joint.JointFilePath = "C:\\Data\\20191115214919\\C12-brandname\\APIproduced File - NotCorrect.ideaCon";
+            HiddenCalculationV20.Calculate(joint);
+            //Results
+            string results = joint.ResultsSummary.summary;
+        }
+        static void TESTCreateAndCalculate()
+        {
+            Tester.GenerateTestJoint testrun = new GenerateTestJoint();
+
+            //Define testjoint
+            Joint joint = testrun.Testjoint2();
+
+
+            //Define workshop operations
+            joint.template = new Template();
+            joint.template.workshopOperations = Template.WorkshopOperations.WeldAllMembers;
+
+            //Set Project folder path
+            string folderpath = @"C:\Data\";
+            joint.project.CreateFolder(folderpath);
+
+            //Set Joint folder path
+            //string filepath = joint.project.projectFolderPath + ".ideaCon";
+            //string fileName = joint.Name + ".ideaCon";
+            //string jointFilePath = Path.Combine(joint.project.projectFolderPath, joint.Name, fileName);
+            //joint.JointFilePath = jointFilePath;
+            joint.JointFilePath = "xx";
+
+            // Initialize idea references, before calling code.
+            AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
+            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
+
+            //Create IDEA file
+            IdeaConnection ideaConnection = new IdeaConnection(joint);
+
+            //Calculate
+            HiddenCalculationV20.Calculate(joint);
+            //KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(joint);
+
+            //Results
+            string results = joint.ResultsSummary.summary;
+        }
+
+
+
+        public static void SetParent<T>(this T source, string propertyname, dynamic parent) where T : class
+        {
+            PropertyInfo pinfo = source.GetType().GetProperty(propertyname);
+            if (pinfo != null)
+            {
+                pinfo.SetValue(source, parent);
+            }
+        }
+
+        /// <summary>
+        /// Perform a deep Copy of the object, using Json as a serialisation method. NOTE: Private members are not cloned using this method.
+        /// </summary>
+        /// <typeparam name="T">The type of object being copied.</typeparam>
+        /// <param name="source">The object instance to copy.</param>
+        /// <returns>The copied object.</returns>
+        public static T CloneJson<T>(this T source)
+        {
+            // Don't serialize a null object, simply return the default for that object
+            if (Object.ReferenceEquals(source, null))
+            {
+                return default(T);
+            }
+
+            // initialize inner objects individually
+            // for example in default constructor some list property initialized with some values,
+            // but in 'source' these items are cleaned -
+            // without ObjectCreationHandling.Replace default constructor values will be added to result
+            var deserializeSettings = new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace };
+
+            return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(source), deserializeSettings);
+        }
+
+
+    }
+    public class TestClass
+    {
         
+        [NonSerialized]//toepassen project field
+        public TestClass parent;
+        public string mypro { get; set; }
+        public List<TestClass> children { get; set; } = new List<TestClass>();
     }
 }
