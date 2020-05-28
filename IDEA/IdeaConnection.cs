@@ -37,8 +37,8 @@ namespace KarambaIDEA.IDEA
                 Directory.CreateDirectory(this.filePath);
             }
 
-            //IdeaInstallDir = IDEA.Properties.Settings.Default.IdeaInstallDir;
-            IdeaInstallDir = @"C:\Release_20_UT_x64_2020-04-20_23-28_20.0.139";
+            IdeaInstallDir = IDEA.Properties.Settings.Default.IdeaInstallDir;
+            //IdeaInstallDir = @"C:\Release_20_UT_x64_2020-04-20_23-28_20.0.139";
             if (!Directory.Exists(IdeaInstallDir))
             {
                 Console.WriteLine("IDEA StatiCa installation was not found in '{0}'", IdeaInstallDir);

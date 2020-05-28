@@ -25,7 +25,7 @@ namespace KarambaIDEA.IDEA.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Program Files\\IDEA StatiCa\\StatiCa 10.1")]
+        [global::System.Configuration.DefaultSettingValueAttribute("C:\\Program Files\\IDEA StatiCa\\StatiCa 20.0")]
         public string IdeaInstallDir {
             get {
                 return ((string)(this["IdeaInstallDir"]));
