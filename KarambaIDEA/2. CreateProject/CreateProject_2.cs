@@ -1,4 +1,5 @@
-﻿// Copyright (c) 2019 Rayaan Ajouz, Bouwen met Staal. Please see the LICENSE file	
+﻿/*
+// Copyright (c) 2019 Rayaan Ajouz, Bouwen met Staal. Please see the LICENSE file	
 // for details. All rights reserved. Use of this source code is governed by a	
 // Apache-2.0 license that can be found in the LICENSE file.	
 using System;
@@ -24,16 +25,13 @@ namespace KarambaIDEA.Grasshopper
 
 
 
-    public class CreateProject : GH_Component
+    public class CreateProject2 : GH_Component
     {
-        public CreateProject() : base("Create Project", "CP", "Exporting selected joint to IDEA Statica Connection", "KarambaIDEA", "2. CreateProject")
+        public CreateProject2() : base("Create Project2", "CP", "Exporting selected joint to IDEA Statica Connection", "KarambaIDEA", "TESTCreateProject")
         {
-            //TODO: below code will trow error if idea dlls are not found.
-            /*
             //ensure loading of IDEA dllss
-            AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(Utils.IdeaResolveEventHandler);
-            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(Utils.IdeaResolveEventHandler);
-            */
+            //AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(Utils.IdeaResolveEventHandler);
+            //AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(Utils.IdeaResolveEventHandler);
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
@@ -43,7 +41,7 @@ namespace KarambaIDEA.Grasshopper
             pManager.AddTextParameter("Hierarchy", "Hierarchy", "List of hierarchy on with joints are made", GH_ParamAccess.list);
             pManager[0].Optional = true;
             pManager.AddPointParameter("Points", "Points", "Points of connections", GH_ParamAccess.list);
-            
+
             //Input elements
             pManager.AddLineParameter("Lines", "Lines", "Lines of geometry", GH_ParamAccess.list);
             pManager.AddNumberParameter("LCS rotations [Deg]", "LCS rotations", "Local Coordinate System rotation of element in Degrees. Rotation runs from local y to local z-axis", GH_ParamAccess.list);
@@ -167,7 +165,7 @@ namespace KarambaIDEA.Grasshopper
 
             //CREATE PROJECT
             Project project = new Project(projectnameFromGH);
-           
+
             //CREATE HIERARCHY
             for (int i = 0; i < hierarchy.Count; i++)
             {
@@ -187,7 +185,7 @@ namespace KarambaIDEA.Grasshopper
                 //CROSS SECTIONS
                 CrossSection crosssection = project.crossSections.FirstOrDefault(a => a.name == crossectionsName[i] && a.material == material);
                 CrossSection.Shape shape = new CrossSection.Shape();
-                
+
                 if (shapes[i].StartsWith("I"))
                 {
                     shape = CrossSection.Shape.ISection;
@@ -196,7 +194,7 @@ namespace KarambaIDEA.Grasshopper
                 {
                     shape = CrossSection.Shape.SHSSection;
                 }
-                else if (shapes[i].StartsWith("()")|| shapes[i].StartsWith("O"))
+                else if (shapes[i].StartsWith("()") || shapes[i].StartsWith("O"))
                 {
                     shape = CrossSection.Shape.CHSsection;
                 }
@@ -210,7 +208,7 @@ namespace KarambaIDEA.Grasshopper
                 }
                 else
                 {
-                    throw new ArgumentNullException(shapes[i]+" Cross-section not implemented");
+                    throw new ArgumentNullException(shapes[i] + " Cross-section not implemented");
                 }
                 if (crosssection == null)
                 {
@@ -234,7 +232,7 @@ namespace KarambaIDEA.Grasshopper
                 Element element = new Element(project, i, line, crosssection, groupnames[i], hierarchyId, rotationLCS[i]);
             }
 
-            
+
 
             //CREATE LIST OF LOADS
             //Here N,V,M are defined for the startpoint and endpoint of every line in the project.
@@ -242,8 +240,8 @@ namespace KarambaIDEA.Grasshopper
 
             for (int i = 0; i < N.PathCount; i++)
             {
-                Load start =    new Load(N[i][0].Value, Vz[i][0].Value, Vy[i][0].Value, Mt[i][0].Value, My[i][0].Value, Mz[i][0].Value);
-                Load end =      new Load(N[i][1].Value, Vz[i][1].Value, Vy[i][1].Value, Mt[i][1].Value, My[i][1].Value, Mz[i][1].Value);
+                Load start = new Load(N[i][0].Value, Vz[i][0].Value, Vy[i][0].Value, Mt[i][0].Value, My[i][0].Value, Mz[i][0].Value);
+                Load end = new Load(N[i][1].Value, Vz[i][1].Value, Vy[i][1].Value, Mt[i][1].Value, My[i][1].Value, Mz[i][1].Value);
                 LoadsPerLine w = new LoadsPerLine(start, end);
                 loadsPerLines.Add(w);
             }
@@ -296,16 +294,17 @@ namespace KarambaIDEA.Grasshopper
         {
             get
             {
-                
+
                 return Properties.Resources.KarambaIDEA_logo;
-                
+
             }
         }
 
         public override Guid ComponentGuid
         {
-            get { return new Guid("b882356e-b75d-4d33-a92d-f02687ef6219"); }
+            get { return new Guid("f7df861e-41c0-45f3-be7d-ad22cd38f1d3"); }
         }
-        
+
     }
 }
+*/

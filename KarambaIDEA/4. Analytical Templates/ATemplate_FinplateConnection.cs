@@ -241,9 +241,11 @@ namespace KarambaIDEA
                 }
                 messages.Add("No solution found", path);
                 goto nosolution;
+                /*
                 joint.template.plates.Clear();
                 joint.template.welds.Clear();
                 joint.template.boltGrids.Clear();
+                */
 
             finish:;
                 //Step V - Define data for cost analyses

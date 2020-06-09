@@ -57,7 +57,5 @@ namespace KarambaIDEA.Core
             rhiVec.Z = vector.Z;
             return rhiVec;
         }
-
-        
     }
 }

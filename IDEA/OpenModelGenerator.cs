@@ -46,6 +46,7 @@ namespace KarambaIDEA.IDEA
             {
                 this.AddMaterialSteelToOpenModel(m as MaterialSteel);
             }
+            this.AddMaterialBoltGrade();
 
             //3.add all reelvant cross sections:
             List<KarambaIDEA.Core.CrossSection> crossSections = joint.attachedMembers.Select(a => a.element.crossSection).Distinct().ToList();
@@ -104,6 +105,7 @@ namespace KarambaIDEA.IDEA
             return strFil;
         }
 
+        
         private void AddMaterialSteelToOpenModel(MaterialSteel material)
         {
 
@@ -123,6 +125,25 @@ namespace KarambaIDEA.IDEA
             matOM.G = matOM.E / (2 * (1 + matOM.Poisson));
 
             openModel.AddObject(matOM);
+        }
+        private void AddMaterialBoltGrade()
+        {
+            MaterialBoltGrade matBolt = new MaterialBoltGrade();
+            matBolt.Id = 10;
+            matBolt.Name = "8.8";
+            matBolt.UnitMass = 7850;
+            matBolt.E = 210000000000.00003;// 210000000;
+            matBolt.Poisson = 0.3;
+            matBolt.G = matBolt.E / (2 * (1 + matBolt.Poisson));
+
+            matBolt.ThermalExpansion = 0.000012;
+            matBolt.ThermalConductivity = 50.2;
+            matBolt.SpecificHeat = 0.49;
+
+            matBolt.fyb = 640 * Math.Pow(10, 6);// 275000000;
+            matBolt.fub = 800 * Math.Pow(10, 6);// 430000000;
+            matBolt.Elongation = 0.12;
+            openModel.AddObject(matBolt);
         }
         private void AddCrossSectionToOpenModel(KarambaIDEA.Core.CrossSection crossSection)
         {

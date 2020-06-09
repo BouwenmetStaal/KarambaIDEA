@@ -24,7 +24,8 @@ namespace Tester
         static void Main()
         {
             //TESTCalculate();
-            //TESTCreateAndCalculate();
+            TESTCreateAndCalculateTemplate();
+            /*
             TestClass par = new TestClass();
             TestClass self = new TestClass() { parent=par, mypro="sdsd" };
 
@@ -41,6 +42,7 @@ namespace Tester
             {
                 c.project = clone;
             }
+            */
 
         }
 
@@ -95,7 +97,42 @@ namespace Tester
             string results = joint.ResultsSummary.summary;
         }
 
+        static void TESTCreateAndCalculateTemplate()
+        {
+            Tester.GenerateTestJoint testrun = new GenerateTestJoint();
 
+            //Define testjoint
+            Joint joint = testrun.Testjoint2();
+
+
+            //Define Template location
+            joint.ideaTemplateLocation = @"C:\SMARTconnection\BouwenmetStaal\KarambaIDEA\0_IDEA_Templates\TESTjointTester.contemp";
+
+            //Set Project folder path
+            string folderpath = @"C:\Data\";
+            joint.project.CreateFolder(folderpath);
+
+            //Set Joint folder path
+            //string filepath = joint.project.projectFolderPath + ".ideaCon";
+            //string fileName = joint.Name + ".ideaCon";
+            //string jointFilePath = Path.Combine(joint.project.projectFolderPath, joint.Name, fileName);
+            //joint.JointFilePath = jointFilePath;
+            joint.JointFilePath = "xx";
+
+            // Initialize idea references, before calling code.
+            AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
+            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
+
+            //Create IDEA file
+            IdeaConnection ideaConnection = new IdeaConnection(joint);
+
+            //Calculate
+            //HiddenCalculationV20.Calculate(joint);
+            //KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(joint);
+
+            //Results
+            //string results = joint.ResultsSummary.summary;
+        }
 
         public static void SetParent<T>(this T source, string propertyname, dynamic parent) where T : class
         {

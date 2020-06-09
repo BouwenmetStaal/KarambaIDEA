@@ -48,44 +48,25 @@ namespace KarambaIDEA.IDEA
         }
 
         #region: combined commands
-        static public OpenModel CutBeamByBeam(OpenModel openModel, int cuttingobject, int modifiedObject)
+        static public OpenModel BoltedEndplateConnection(OpenModel openModel, Joint joint, double tplate)
         {
+            double w0 = joint.attachedMembers[0].element.crossSection.width / 1000;
+            double h0 = joint.attachedMembers[0].element.crossSection.height / 1000;
+            double w1 = joint.attachedMembers[1].element.crossSection.width / 1000;
+            double h1 = joint.attachedMembers[1].element.crossSection.height / 1000;
 
-            // add cut
-            if (openModel.Connections[0].CutBeamByBeams==null)
-            {
-                openModel.Connections[0].CutBeamByBeams = new List<IdeaRS.OpenModel.Connection.CutBeamByBeamData>();
+            CreatePlateForBeam(openModel, joint, 0, w0, h0, tplate);
+            CreatePlateForBeam(openModel, joint, 1, w1, h1, tplate);
 
-            }
-            openModel.Connections[0].CutBeamByBeams.Add(new IdeaRS.OpenModel.Connection.CutBeamByBeamData
-            {
 
-                CuttingObject = new ReferenceElement(openModel.Connections[0].Beams[cuttingobject]),
-                ModifiedObject = new ReferenceElement(openModel.Connections[0].Beams[modifiedObject]),
-                IsWeld = true,
-            });
+
+            CutBeamByPlate(openModel, joint, 0, 0);
+            CutBeamByPlate(openModel, joint, 1, 1);
+            CreateBoltgrid(openModel, 0, 1, w0 - 0.1, h0 - 0.1);
+
             return openModel;
         }
-        static public OpenModel CutBeamByPlate(OpenModel openModel, Joint joint, int cuttingobject, int modifiedObject)
-        {
-            
-            
-            // add cut
-            if (openModel.Connections[0].CutBeamByBeams == null)
-            {
-                openModel.Connections[0].CutBeamByBeams = new List<IdeaRS.OpenModel.Connection.CutBeamByBeamData>();
 
-            }
-            openModel.Connections[0].CutBeamByBeams.Add(new IdeaRS.OpenModel.Connection.CutBeamByBeamData
-            {
-
-                CuttingObject = new ReferenceElement(openModel.Connections[0].Plates[cuttingobject]),
-                ModifiedObject = new ReferenceElement(openModel.Connections[0].Beams[modifiedObject]),
-                IsWeld = true,
-            });
-            
-            return openModel;
-        }
         static public OpenModel WeldAllMembers(OpenModel openModel)
         {
             
@@ -100,26 +81,47 @@ namespace KarambaIDEA.IDEA
             return openModel;
         }
         #endregion
+
         
         #region: primitive commands
-        static public OpenModel BoltedEndplateConnection(OpenModel openModel, Joint joint, double tplate)
+        static public OpenModel CutBeamByBeam(OpenModel openModel, int cuttingobject, int modifiedObject)
         {
-            double w0 = joint.attachedMembers[0].element.crossSection.width/1000;
-            double h0 = joint.attachedMembers[0].element.crossSection.height / 1000;
-            double w1 = joint.attachedMembers[1].element.crossSection.width / 1000;
-            double h1 = joint.attachedMembers[1].element.crossSection.height / 1000;
 
-            CreatePlateForBeam(openModel, joint, 0, w0, h0, tplate);
-            CreatePlateForBeam(openModel, joint, 1, w1, h1, tplate);
+            // add cut
+            if (openModel.Connections[0].CutBeamByBeams == null)
+            {
+                openModel.Connections[0].CutBeamByBeams = new List<IdeaRS.OpenModel.Connection.CutBeamByBeamData>();
+            }
+            openModel.Connections[0].CutBeamByBeams.Add(new IdeaRS.OpenModel.Connection.CutBeamByBeamData
+            {
 
-            
-
-            CutBeamByPlate(openModel,joint, 0, 0);
-            CutBeamByPlate(openModel,joint, 1, 1);
-            CreateBoltgrid(openModel, 0, 1, w0-0.1,h0-0.1);
-       
+                CuttingObject = new ReferenceElement(openModel.Connections[0].Beams[cuttingobject]),
+                ModifiedObject = new ReferenceElement(openModel.Connections[0].Beams[modifiedObject]),
+                IsWeld = true,
+            });
             return openModel;
         }
+        static public OpenModel CutBeamByPlate(OpenModel openModel, Joint joint, int cuttingobject, int modifiedObject)
+        {
+
+
+            // add cut
+            if (openModel.Connections[0].CutBeamByBeams == null)
+            {
+                openModel.Connections[0].CutBeamByBeams = new List<IdeaRS.OpenModel.Connection.CutBeamByBeamData>();
+
+            }
+            openModel.Connections[0].CutBeamByBeams.Add(new IdeaRS.OpenModel.Connection.CutBeamByBeamData
+            {
+
+                CuttingObject = new ReferenceElement(openModel.Connections[0].Plates[cuttingobject]),
+                ModifiedObject = new ReferenceElement(openModel.Connections[0].Beams[modifiedObject]),
+                IsWeld = true,
+            });
+
+            return openModel;
+        }
+        
         static public OpenModel CreatePlateForBeam(OpenModel openModel, Joint joint, int refBeam, double width, double height, double tplate)
         {
             joint.template.plates.Add(new Plate("Kopplaat", width, height, tplate));
