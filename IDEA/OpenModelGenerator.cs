@@ -128,8 +128,9 @@ namespace KarambaIDEA.IDEA
         }
         private void AddMaterialBoltGrade()
         {
+            //TODO: assign default BoltGrade to make template workflow work
             MaterialBoltGrade matBolt = new MaterialBoltGrade();
-            matBolt.Id = 10;
+            matBolt.Id = 1;
             matBolt.Name = "8.8";
             matBolt.UnitMass = 7850;
             matBolt.E = 210000000000.00003;// 210000000;

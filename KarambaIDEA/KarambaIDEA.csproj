@@ -102,7 +102,6 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="2. CreateProject\CreateProject_2.cs" />
     <Compile Include="3. Project utilities\CheckLocalCoordinateSystem.cs" />
     <Compile Include="3. Project utilities\RetrieveLinesPoints.cs" />
     <Compile Include="3. Project utilities\RetrieveConnectionProperties.cs" />

@@ -304,7 +304,7 @@ namespace KarambaIDEA.Grasshopper
 
         public override Guid ComponentGuid
         {
-            get { return new Guid("b882356e-b75d-4d33-a92d-f02687ef6219"); }
+            get { return new Guid("ca79dc4b-64f2-4627-93b4-066ad7649621"); }
         }
         
     }

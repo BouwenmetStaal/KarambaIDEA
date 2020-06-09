@@ -127,11 +127,11 @@ namespace Tester
             IdeaConnection ideaConnection = new IdeaConnection(joint);
 
             //Calculate
-            //HiddenCalculationV20.Calculate(joint);
-            //KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(joint);
+            HiddenCalculationV20.Calculate(joint);
+            
 
             //Results
-            //string results = joint.ResultsSummary.summary;
+            string results = joint.ResultsSummary.summary;
         }
 
         public static void SetParent<T>(this T source, string propertyname, dynamic parent) where T : class
