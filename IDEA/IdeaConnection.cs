@@ -54,11 +54,11 @@ namespace KarambaIDEA.IDEA
             openModelGenerator = new OpenModelGenerator();
             openModelGenerator.CreateOpenModel(joint, filePath);
 
-            // create IOM and results
+            //3. create IOM and results
             OpenModel example = openModelGenerator.openModel;
             OpenModelResult result = openModelGenerator.openModelResult;
 
-            //add (programmed) template to openmodel
+            //4. add (programmed) template to openmodel if available
             if(joint.template!= null)
             {
                 Templates.ApplyProgrammedIDEAtemplate(example , joint);
@@ -81,6 +81,9 @@ namespace KarambaIDEA.IDEA
             var client = calcFactory.Create();
             try
             {
+                
+                
+                
                 // it creates connection project from IOM 
                 Console.WriteLine("Creating Idea connection project ");
                 client.CreateConProjFromIOM(iomFileName, iomResFileName, fileConnFileNameFromLocal);

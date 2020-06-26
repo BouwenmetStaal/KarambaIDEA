@@ -374,9 +374,12 @@ namespace KarambaIDEA.Core
 
         public Project Clone()
         {
-            Project clone = this.Clone();
+
+            //Project clone = this.Clone();
             //Project clone = this.Clone() as Project;
-            //clone.CopyPropertiesFromSource(this);
+
+            Project clone = new Project();
+            clone.CopyPropertiesFromSource(this);
             return clone;
         }
     }

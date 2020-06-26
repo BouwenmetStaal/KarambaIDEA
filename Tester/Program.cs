@@ -24,25 +24,8 @@ namespace Tester
         static void Main()
         {
             //TESTCalculate();
-            TESTCreateAndCalculateTemplate();
-            /*
-            TestClass par = new TestClass();
-            TestClass self = new TestClass() { parent=par, mypro="sdsd" };
-
-            par.children.Add(self);
-
-
-            Project project = null;
-
-            
-
-            Project clone = project.CloneJson();
-            //
-            foreach (CrossSection c in clone.crossSections)
-            {
-                c.project = clone;
-            }
-            */
+            //TESTCreateAndCalculateTemplate();
+            TESTCopyProject();
 
         }
 
@@ -132,6 +115,27 @@ namespace Tester
 
             //Results
             string results = joint.ResultsSummary.summary;
+        }
+
+        static void TESTCopyProject()
+        {
+            TestClass par = new TestClass();
+            TestClass self = new TestClass() { parent = par, mypro = "sdsd" };
+
+            par.children.Add(self);
+
+
+            Project project = null;
+
+
+
+            Project clone = project.CloneJson();
+            //
+            foreach (CrossSection c in clone.crossSections)
+            {
+                c.project = clone; //project copieren naar in elke child
+                //kijken naar mogelijkheden om parent verwijzing te verwijderen
+            }
         }
 
         public static void SetParent<T>(this T source, string propertyname, dynamic parent) where T : class

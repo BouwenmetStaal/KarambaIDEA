@@ -18,21 +18,27 @@ namespace KarambaIDEA.IDEA
         {
             string path = IdeaConnection.IdeaInstallDir;//path to idea
             string pathToFile = joint.JointFilePath;//ideafile path
+            string newBoltAssemblyName = "M16 8.8";
             var calcFactory = new ConnHiddenClientFactory(path);
             ConnectionResultsData conRes=null;
             var client = calcFactory.Create();
             try
             {
                 client.OpenProject(pathToFile);
+                
 
                 try
                 {
                     
                     // get detail about idea connection project
                     var projInfo = client.GetProjectInfo();
-                    var connection = projInfo.Connections.FirstOrDefault();
+                    
+                    var connection = projInfo.Connections.FirstOrDefault();//Select first connection
                     if (joint.ideaTemplateLocation != null)
                     {
+                        //int newBoltAssemblyId = Service.AddBoltAssembly(newBoltAssemblyName);//??Here Martin
+                        //int newBoltAssemblyId = client.AddBoltAssembly(newBoltAssemblyName);//??Here Martin
+
                         client.ApplyTemplate(connection.Identifier, joint.ideaTemplateLocation, null);
                         client.SaveAsProject(pathToFile);
                     }
