@@ -71,11 +71,11 @@ namespace KarambaIDEA
             List<Rhino.Geometry.Line> lines = new List<Rhino.Geometry.Line>();
             List<Rhino.Geometry.Line> jointlines = new List<Rhino.Geometry.Line>();
             //output variables
-            double analysis = new double();
-            double plates = new double();
-            double bolts = new double();
-            double welds = new double();
-            double buckling = new double();
+            double? analysis = new double();
+            double? plates = new double();
+            double? bolts = new double();
+            double? welds = new double();
+            double? buckling = new double();
             string summary = string.Empty;
 
             //Adjust out of bounds index calculateThisJoint

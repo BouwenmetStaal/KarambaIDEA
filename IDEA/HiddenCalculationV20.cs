@@ -5,6 +5,7 @@ using System.Collections.Generic;
 
 using KarambaIDEA.Core;
 using System.Linq;
+using System.Windows.Forms;
 
 namespace KarambaIDEA.IDEA
 {
@@ -16,28 +17,27 @@ namespace KarambaIDEA.IDEA
     {
         public static void Calculate(Joint joint)
         {
-            string path = IdeaConnection.IdeaInstallDir;//path to idea
+            string path = IdeaConnection.ideaStatiCaDir;//path to idea
             string pathToFile = joint.JointFilePath;//ideafile path
             string newBoltAssemblyName = "M16 8.8";
             var calcFactory = new ConnHiddenClientFactory(path);
-            ConnectionResultsData conRes=null;
+            ConnectionResultsData conRes = null;
             var client = calcFactory.Create();
             try
             {
                 client.OpenProject(pathToFile);
-                
+
 
                 try
                 {
-                    
+
                     // get detail about idea connection project
                     var projInfo = client.GetProjectInfo();
-                    
+
                     var connection = projInfo.Connections.FirstOrDefault();//Select first connection
                     if (joint.ideaTemplateLocation != null)
                     {
-                        //int newBoltAssemblyId = Service.AddBoltAssembly(newBoltAssemblyName);//??Here Martin
-                        //int newBoltAssemblyId = client.AddBoltAssembly(newBoltAssemblyName);//??Here Martin
+                        client.AddBoltAssembly(newBoltAssemblyName);//??Here Martin
 
                         client.ApplyTemplate(connection.Identifier, joint.ideaTemplateLocation, null);
                         client.SaveAsProject(pathToFile);
@@ -49,7 +49,7 @@ namespace KarambaIDEA.IDEA
                     //projInfo.Connections.Count()
                     if (projInfo != null && projInfo.Connections != null)
                     {
-                        
+
                         /*
                         // iterate all connections in the project
                         foreach (var con in projInfo.Connections)
@@ -83,7 +83,7 @@ namespace KarambaIDEA.IDEA
             {
                 SaveResultsSummary(joint, conRes);
             }
-            
+
 
         }
 
@@ -92,7 +92,7 @@ namespace KarambaIDEA.IDEA
         /// </summary>
         /// <param name="joint">joint instance</param>
         /// <param name="cbfemResults">summary results retrieved from IDEA StatiCa</param>
-        public static void SaveResultsSummary(Joint joint, ConnectionResultsData cbfemResults)
+        private static void SaveResultsSummary(Joint joint, ConnectionResultsData cbfemResults)
         {
             List<CheckResSummary> results = cbfemResults.ConnectionCheckRes[0].CheckResSummary;
             joint.ResultsSummary = new ResultsSummary();
@@ -100,21 +100,11 @@ namespace KarambaIDEA.IDEA
             //TODO:include message when singilarity occurs
             //TODO:include message when bolts and welds are conflicting
 
-            if (results.Count == 4)//No bolts in connections. Hence, no results for bolts.
-            {
-                joint.ResultsSummary.analysis = results[0].CheckValue;
-                joint.ResultsSummary.plates = results[1].CheckValue;
-                joint.ResultsSummary.welds = results[2].CheckValue;
-                joint.ResultsSummary.buckling = results[3].CheckValue;
-            }
-            else//Bolts in connection.
-            {
-                joint.ResultsSummary.analysis = results[0].CheckValue;
-                joint.ResultsSummary.plates = results[1].CheckValue;
-                joint.ResultsSummary.bolts = results[2].CheckValue;
-                joint.ResultsSummary.welds = results[3].CheckValue;
-                joint.ResultsSummary.buckling = results[4].CheckValue;
-            }
+            joint.ResultsSummary.analysis = results.GetResult("Analysis");
+            joint.ResultsSummary.plates = results.GetResult("Plates");
+            joint.ResultsSummary.bolts = results.GetResult("Bolts");
+            joint.ResultsSummary.welds = results.GetResult("Welds");
+            joint.ResultsSummary.buckling = results.GetResult("Buckling");
 
             string message = string.Empty;
             foreach (var result in results)
@@ -123,13 +113,21 @@ namespace KarambaIDEA.IDEA
             }
             joint.ResultsSummary.summary = message;
 
+   
         }
-
-
-
-
     }
-
+    public static class CalculationExtentions
+    {
+        public static double? GetResult(this List<CheckResSummary> source, string key  )
+        {
+            var boltResult = source.FirstOrDefault(x => x.Name == key);
+            if (boltResult != null)
+            { 
+                return boltResult.CheckValue; 
+            }
+            return null;
+        }
+    }
 
     
 }

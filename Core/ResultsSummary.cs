@@ -7,11 +7,11 @@ namespace KarambaIDEA.Core
 {
     public class ResultsSummary
     {
-        public double analysis;
-        public double plates;
-        public double bolts;
-        public double welds;
-        public double buckling;
+        public double? analysis;
+        public double? plates;
+        public double? bolts;
+        public double? welds;
+        public double? buckling;
         public string summary;
 
         public ResultsSummary()

@@ -52,11 +52,11 @@ namespace KarambaIDEA
             DA.GetData(1, ref startIDEA);
 
             //output variables
-            double analysis = new double();
-            double plates = new double();
-            double bolts = new double();
-            double welds = new double();
-            double buckling = new double();
+            double? analysis = new double();
+            double? plates = new double();
+            double? bolts = new double();
+            double? welds = new double();
+            double? buckling = new double();
             string summary = string.Empty;
                                   
             if (startIDEA == true)

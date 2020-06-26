@@ -18,7 +18,7 @@ namespace KarambaIDEA.IDEA
         public OpenModelGenerator openModelGenerator;
         public Joint joint;
         public string filePath = "";
-        public static string IdeaInstallDir;
+        public static string ideaStatiCaDir;
 
         /// <summary>
         /// Constructor for an IdeaConnection based on a joint
@@ -37,14 +37,16 @@ namespace KarambaIDEA.IDEA
                 Directory.CreateDirectory(this.filePath);
             }
 
-            IdeaInstallDir = IDEA.Properties.Settings.Default.IdeaInstallDir;
+            //ideaStatiCaDir = IDEA.Properties.Settings.Default.IdeaInstallDir;
+
+            ideaStatiCaDir = @"C:\Release_20_UT_x64_2020-06-24_15-30_20.0.250";
             //IdeaInstallDir = @"C:\Release_20_UT_x64_2020-04-20_23-28_20.0.139";
-            if (!Directory.Exists(IdeaInstallDir))
+            if (!Directory.Exists(ideaStatiCaDir))
             {
-                Console.WriteLine("IDEA StatiCa installation was not found in '{0}'", IdeaInstallDir);
+                Console.WriteLine("IDEA StatiCa installation was not found in '{0}'", ideaStatiCaDir);
                 return;
             }
-            Console.WriteLine("IDEA StatiCa installation directory is '{0}'", IdeaInstallDir);
+            Console.WriteLine("IDEA StatiCa installation directory is '{0}'", ideaStatiCaDir);
             Console.WriteLine("Start generate example of IOM...");
 
 
@@ -76,8 +78,8 @@ namespace KarambaIDEA.IDEA
             //var desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
             var fileConnFileNameFromLocal = Path.Combine(folder,joint.Name, filename);
 
-            var calcFactory = new ConnHiddenClientFactory(IdeaInstallDir);//V20
-
+            var calcFactory = new ConnHiddenClientFactory(ideaStatiCaDir);//V20
+            //string newBoltAssemblyName = "M16 8.8";
             var client = calcFactory.Create();
             try
             {
@@ -88,7 +90,7 @@ namespace KarambaIDEA.IDEA
                 Console.WriteLine("Creating Idea connection project ");
                 client.CreateConProjFromIOM(iomFileName, iomResFileName, fileConnFileNameFromLocal);
                 Console.WriteLine("Generated project was saved to the file '{0}'", fileConnFileNameFromLocal);
-
+                //client.AddBoltAssembly(newBoltAssemblyName);//??Here Martin
 
             }
             catch (Exception e)
@@ -109,7 +111,7 @@ namespace KarambaIDEA.IDEA
         private static Assembly IdeaResolveEventHandler(object sender, ResolveEventArgs args)
         {
             AssemblyName asmName = new AssemblyName(args.Name);
-            string assemblyFileName = System.IO.Path.Combine(IdeaInstallDir, asmName.Name + ".dll");
+            string assemblyFileName = System.IO.Path.Combine(ideaStatiCaDir, asmName.Name + ".dll");
             if (System.IO.File.Exists(assemblyFileName))
             {
                 return Assembly.LoadFile(assemblyFileName);
