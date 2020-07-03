@@ -37,9 +37,9 @@ namespace KarambaIDEA.IDEA
                 Directory.CreateDirectory(this.filePath);
             }
 
-            //ideaStatiCaDir = IDEA.Properties.Settings.Default.IdeaInstallDir;
+            ideaStatiCaDir = IDEA.Properties.Settings.Default.IdeaInstallDir;
 
-            ideaStatiCaDir = @"C:\Release_20_UT_x64_2020-06-24_15-30_20.0.250";
+            //ideaStatiCaDir = @"C:\Release_20_UT_x64_2020-06-24_15-30_20.0.250";
             //IdeaInstallDir = @"C:\Release_20_UT_x64_2020-04-20_23-28_20.0.139";
             if (!Directory.Exists(ideaStatiCaDir))
             {

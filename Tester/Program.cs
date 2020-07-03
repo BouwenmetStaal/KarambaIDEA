@@ -27,6 +27,9 @@ namespace Tester
             //TESTCreateAndCalculateTemplate();
             TESTCopyProject();
 
+
+
+
         }
 
         static void TESTCalculate()

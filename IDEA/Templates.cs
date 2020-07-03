@@ -47,7 +47,7 @@ namespace KarambaIDEA.IDEA
             }
         }
 
-        #region: combined commands
+        #region: combined workshop operations
         static public OpenModel BoltedEndplateConnection(OpenModel openModel, Joint joint, double tplate)
         {
             double w0 = joint.attachedMembers[0].element.crossSection.width / 1000;
@@ -83,7 +83,7 @@ namespace KarambaIDEA.IDEA
         #endregion
 
         
-        #region: primitive commands
+        #region: Workshop operation commands
         static public OpenModel CutBeamByBeam(OpenModel openModel, int cuttingobject, int modifiedObject)
         {
 
