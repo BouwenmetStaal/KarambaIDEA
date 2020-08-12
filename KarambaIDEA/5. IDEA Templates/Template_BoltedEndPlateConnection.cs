@@ -143,6 +143,7 @@ namespace KarambaIDEA
                 //BREP add plate
                 if (tplate != 0.0)
                 {
+                    //Create plate
                     CrossSection c = at.element.crossSection;
 
                     Vector3d vecZ = ImportGrasshopperUtils.CastVectorToRhino(at.element.localCoordinateSystem.Z);
@@ -162,7 +163,33 @@ namespace KarambaIDEA
                     Transform transform = Transform.PlaneToPlane(Plane.WorldXY, plane);
                     nurbsCurve.Transform(transform);
                     Surface sur = Surface.CreateExtrusion(nurbsCurve, vecX);
-                    breps.Add(sur.ToBrep().CapPlanarHoles(Project.tolerance));
+                    Brep plate = sur.ToBrep().CapPlanarHoles(Project.tolerance);
+
+                    //Create Holes
+                    Brep tubes = new Brep();
+
+                    double d0 = 24;
+                    double topmm = 80;
+
+                    double tol = 0.001;
+                    Vector3d locX = plane.XAxis;
+                    locX.Unitize();
+                    Transform transform2 = Transform.Translation(Vector3d.Multiply(topmm/1000, locX));
+                    Plane plane2 = plane;
+                    plane2.Transform(transform2);
+
+
+
+
+                    Circle circle = new Circle(plane2, d0 / 2000);//Radius 
+                    Surface sur2 = Surface.CreateExtrusion(circle.ToNurbsCurve(), vecX);
+                    Brep tube = sur2.ToBrep().CapPlanarHoles(tol);
+
+                    //List<Brep> breps8 = Brep.CreateBooleanDifference(plate, tube, tol).ToList();
+                    //plate = breps8.FirstOrDefault();
+
+                    breps.Add(tube);
+                    breps.Add(plate);
                 }
             }
         }

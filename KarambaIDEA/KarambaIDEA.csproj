@@ -109,6 +109,7 @@
     <Compile Include="4. Analytical Templates\ATemplate_MomentResistingConnection.cs" />
     <Compile Include="4. Analytical Templates\ATemplate_WeldAllMembers.cs" />
     <Compile Include="5. IDEA Templates\TemplateByFilePath.cs" />
+    <Compile Include="5. IDEA Templates\Template_BoltedEndplate_Optimized.cs" />
     <Compile Include="6. IDEA utilities\CalculateIDEAFile.cs" />
     <Compile Include="6. IDEA utilities\CreateAndCalculateIDEAfile.cs" />
     <Compile Include="6. IDEA utilities\CreateIDEAfile.cs" />
