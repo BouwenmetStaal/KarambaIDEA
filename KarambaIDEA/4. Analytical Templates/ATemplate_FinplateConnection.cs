@@ -331,12 +331,11 @@ namespace KarambaIDEA
                 //Step VIII - modify beam brepline
                 KarambaIDEA.Core.Line.ModifyBeamBrepLine(column, con, gap);
                 maxBeamHeight = Math.Max(maxBeamHeight, beam.height);
-            }
 
+                nosolution:;
+            }
             //Step IIX - modify column brepline
             KarambaIDEA.Core.Line.ModifyColumnBrepLine(bearlist, maxBeamHeight);
-
-            nosolution:;
         }
 
       

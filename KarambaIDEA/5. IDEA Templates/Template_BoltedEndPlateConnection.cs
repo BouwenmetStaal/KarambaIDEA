@@ -150,7 +150,7 @@ namespace KarambaIDEA
                     Vector3d vecY = ImportGrasshopperUtils.CastVectorToRhino(at.element.localCoordinateSystem.Y);
                     Vector3d vecX = ImportGrasshopperUtils.CastVectorToRhino(Vector.VecScalMultiply(vX.Unitize(), (tplate / 1000)));
 
-                    Plane plane = new Plane(point, vecZ, vecY);
+                    Plane plane = new Plane(point, vecY, vecZ);
 
                     Point3d P1 = new Point3d(-c.width / 2000, c.height / 2000, 0);
                     Point3d P6 = new Point3d(-c.width / 2000, -c.height / 2000, 0);
@@ -182,13 +182,12 @@ namespace KarambaIDEA
 
 
                     Circle circle = new Circle(plane2, d0 / 2000);//Radius 
-                    Surface sur2 = Surface.CreateExtrusion(circle.ToNurbsCurve(), vecX);
+                    Surface sur2 = Surface.CreateExtrusion(circle.ToNurbsCurve(), 2*vecX);
                     Brep tube = sur2.ToBrep().CapPlanarHoles(tol);
 
-                    //List<Brep> breps8 = Brep.CreateBooleanDifference(plate, tube, tol).ToList();
-                    //plate = breps8.FirstOrDefault();
+                    plate = Brep.CreateBooleanDifference(plate, tube, tol).ToList().FirstOrDefault();
 
-                    breps.Add(tube);
+                    //breps.Add(tube);
                     breps.Add(plate);
                 }
             }

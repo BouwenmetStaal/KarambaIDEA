@@ -14,12 +14,13 @@ using KarambaIDEA.Core;
 using KarambaIDEA.IDEA;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+using KarambaIDEA.Core.JointTemplate;
 
 namespace KarambaIDEA._5._IDEA_Templates
 {
     public class Template_BoltedEndplate_Optimized : GH_Component
     {
-        public Template_BoltedEndplate_Optimized() : base("Template: Bolted endplate connection", "Template: Bolted endplate connection", "Template: Bolted endplate connection", "KarambaIDEA", "5. IDEA Templates")
+        public Template_BoltedEndplate_Optimized() : base("Template: Bolted endplate optimizer", "Template: Bolted endplate optimizer", "Template: Bolted endplate optimizer", "KarambaIDEA", "5. IDEA Templates")
         {
 
         }
@@ -36,7 +37,7 @@ namespace KarambaIDEA._5._IDEA_Templates
         {
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
             pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.tree);
-            pManager.AddBrepParameter("Brep", "Brep", "", GH_ParamAccess.list);
+            pManager.AddBrepParameter("Brep", "Brep", "", GH_ParamAccess.tree);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -50,7 +51,7 @@ namespace KarambaIDEA._5._IDEA_Templates
 
             //Output variables
             DataTree<string> messages = new DataTree<string>();
-            List<Brep> breps = new List<Brep>();
+            DataTree<Brep> breps = new DataTree<Brep>();
 
             //Link input
             DA.GetData(0, ref sourceProject);
@@ -83,44 +84,29 @@ namespace KarambaIDEA._5._IDEA_Templates
                     }
                 }
             }
-            /*
-            else
-            {
-                foreach (Joint joint in project.joints)
-                {
-                    SetTemplate(tplate, joint, breps);
-                }
-            }
-            */
-
-            //messages = project.MakeTemplateJointMessage();
-
             //link output
             DA.SetData(0, project);
             DA.SetDataTree(1, messages);
-            DA.SetDataList(2, breps);
+            DA.SetDataTree(2, breps);
         }
 
-        private static void SetTemplate(double tplate, Joint joint, List<Brep> breps, DataTree<string> messages)
+        private static void SetTemplate(double tplate, Joint joint, DataTree<Brep> breps, DataTree<string> messages)
         {
             joint.template = new Template();
             int a = joint.id;
             int b = 0;
-
+            joint.template.boltGrids.Clear();
             Core.CrossSection beam = joint.attachedMembers.First().element.crossSection;
-            Plate plateA = new Plate("endplateA", beam.height, beam.width, tplate);
-            Plate plateB = new Plate("endplateB", beam.height, beam.width, tplate);
-
-            joint.template.plates.Add(plateA);
-            joint.template.plates.Add(plateB);
 
             joint.template.workshopOperations = Template.WorkshopOperations.BoltedEndPlateConnection;
             foreach (AttachedMember at in joint.attachedMembers)
             {
                 GH_Path path = new GH_Path(a, b);
+                GH_Path pathPlates = new GH_Path(a, b,0);
+                GH_Path pathBolts = new GH_Path(a, b,1);
                 b++;
                 //Step I - retrieve loads
-                List<double> vloads = new List<double>();
+                List<double> nloads = new List<double>();
                 foreach (LoadCase lc in joint.project.loadcases)
                 {
                     foreach (LoadsPerLine loadsPerLine in lc.loadsPerLines)
@@ -129,123 +115,100 @@ namespace KarambaIDEA._5._IDEA_Templates
                         {
                             if (at.isStartPoint == true)
                             {
-                                vloads.Add(Math.Abs(loadsPerLine.startLoad.N));
+                                nloads.Add(Math.Abs(loadsPerLine.startLoad.N));
                             }
                             else
                             {
-                                vloads.Add(Math.Abs(loadsPerLine.endLoad.N));
+                                nloads.Add(Math.Abs(loadsPerLine.endLoad.N));
                             }
                         }
                     }
                 }
-                double vload = vloads.Max() * 1000;
+                double nload = nloads.Max() * 1000;
                 //Step II - Create bolts list
                 List<Bolt> bolts = Bolt.CreateBoltsList(BoltSteelGrade.Steelgrade.b8_8);
-                //Step III - determine maximum finplate height
-                double hmax = beam.height - 2 * (beam.thicknessFlange + beam.radius);//Straight portion of the web
-                double gap = 20;//TODO: update
-                //double tplate = Math.Ceiling(beam.thicknessWeb / 5) * 5;
-                double wplate = new double();
-                double hplate = new double();
-
-
+                
                 //Step IV - evaluation of different bolt configurations
                 int it = 0;
                 foreach (Bolt bolt in bolts)
                 {
+                    //Step III - determine maximum inner height and inner width of I section
+                    double hymax = beam.height - 2 * (beam.thicknessFlange);
+                    double hxmax = (beam.width - beam.thicknessWeb) / 2;
+
+
                     double d0 = bolt.HoleDiameter;
 
-                    double e1 = 1.2 * d0;//Edge distance longitudinal direction
+                    double e1 = 1.2 * d0;//Edge distance longitudinal direction (local Y)
                     double p1 = 2.2 * d0;//Inner distance longitudinal direction
-                    double e2 = 1.2 * d0;//Edge distance transversal direction
+                    double e2 = 1.2 * d0;//Edge distance transversal direction (local X)
                     double p2 = 2.2 * d0;//single row, so actually not needed
 
-                    wplate = d0 + 2 * e2;
+                    hymax -= (2 * e1);
+                    hxmax -= (2 * e2);
 
-                    for (int n = 2; n < 5; n++)
+                    if (bolt.Name == "M16")
                     {
-                    retry:;
-                        double hmin = e1 * 2 + d0 * n + p1 * (n - 1);
+                        int adfadfa = 0;
+                    }
 
-                        if (hmax > hmin)//if configuration fits within the beam
+                    for (int nx = 1; nx < 3; nx++)
+                    {
+                        double hXspaceleft = hxmax - (d0 * nx) - (p2 * (nx - 1));
+                        if (hXspaceleft >= 0)
                         {
-                            hplate = hmin;
-                            it = it + 1;
-                            string info = n + "x " + bolt.Name + " H=" + hplate + " mm";
-
-                            //Check Bolts in shear
-                            double vRdShearBolts = n * bolt.ShearResistance();
-                            if (vload > vRdShearBolts)//If Ved>Vrd
+                            for (int ny = 2; ny < 4; ny++)
                             {
-                                messages.Add(info + ": Bolts fail in shear", path);
-                                goto increaseN;
-                            }
-                            //Check Plate in bearing
-                            double tweb = beam.thicknessWeb;
-                            MaterialSteel mat = beam.material;
-
-                            double Nrd1 = bolt.TensionResistance();
-                            
-
-
-                            double Vrd1 = bolt.BearingRestance(true, true, bolt, tweb, mat, e1, p1, e2, p2);//edge bolt
-                            if (vload > Vrd1)
-                            {
-                                messages.Add(info + ": Beamweb fails in bearing (edge bolt)", path);
-                                e1 = e1 * 1.5;//
-                                //goto retry;
-                                goto increaseN;
-                            }
-                            double Vrd2 = bolt.BearingRestance(false, true, bolt, tweb, mat, e1, p1, e2, p2);//inner bolt
-                            if (vload > Vrd2)
-                            {
-                                messages.Add(info + ": Beamweb fails in bearing (inner bolt)", path);
-                                p1 = p1 * 1.5;
-                                goto increaseN;
-                            }
-                            //Check beamWeb in shear
-                            double vRdShearWeb = (tweb * (hmin - n * d0) * (beam.material.Fy / Math.Sqrt(3))) / 1.0;
-                            if (vload > vRdShearWeb)
-                            {
-                                messages.Add(info + ": Beamweb fails in shear", path);
-                                goto increaseN;
-                            }
-                            //Check Plate in bending         
-                            double leverarm = gap + e2 + 0.5 * d0;
-                            double Med = leverarm * vload;
-                            double MRd = (tplate * Math.Pow(hmin, 2) * mat.Fy) / 6;
-                            if (Med > MRd)
-                            {
-                                messages.Add(info + ": Finplate fails in bending", path);
-                                //if this check fails it will be a dead end
-                                //TODO: redesign height plate
-                                //double hbending = Math.Sqrt(Med / ((1 / 6) * b * mat.Fy));
-
-                                if (hplate + 100 < hmax)
+                                string info = bolt.Name + " " + nx + "x" + ny + "";
+                                double hYspaceleft = hymax - (d0 * ny) - (p1 * (ny - 1));
+                                if (hYspaceleft >= 0)//if configuration fits within the beam
                                 {
-                                    e1 = e1 + 50;
-                                    goto retry;
+                                    it++;
+
+                                    //Check Bolts in tension
+                                    double pryingForcesFactor = 1;
+                                    double nRdTensionBolts = ny*nx *2* bolt.TensionResistance() * pryingForcesFactor;
+                                    if (nload > nRdTensionBolts)//If Ved>Vrd
+                                    {
+                                        double uc = Math.Round(nload / nRdTensionBolts,2);
+                                        messages.Add(info + ": Bolts fail in tension [uc="+uc+"]", path);
+                                        goto increaseN;
+                                    }
+                                    messages.Add(info + " is chosen after " + it + " iterations.", path);
+                                    //Assemble bolt grid
+                                    List<Coordinate2D> coors = new List<Coordinate2D>();
+                                    double locX = (beam.width/2)-(0.5*d0+e2);
+                                    for(int col = 0; col < nx;col++)
+                                    {
+                                        double locY = (hymax-d0)/2;
+                                        for (int row = 0; row < ny; row++)
+                                        {
+                                            coors.Add(new Coordinate2D(locX, locY));///or
+                                            coors.Add(new Coordinate2D(-locX, locY));//mirrored bolt
+                                            locY = locY - ((hymax - d0) / (ny - 1));
+                                        }
+                                        locX = locX - (d0 + e2);
+                                    }
+                                    BoltGrid boltGrid = new BoltGrid(bolt, coors);
+                                    joint.template.boltGrids.Add(boltGrid);
+                                    goto finish;
                                 }
                                 else
                                 {
-                                    //messages.Add(info + ": Finplate fails in bending", path);
+                                    messages.Add(info + ": too little space in Y ["+hYspaceleft+" mm]", path);
+
+                                    //extend plate
+                                    double hExtraPlate =2*(d0 + 2 * e1);
+
                                 }
-
-
+                            increaseN:;
                             }
-
-                            BoltGrid boltGrid = new BoltGrid(bolt, n, 1, e1, e2, p1, p2);
-                            joint.template.boltGrids.Add(boltGrid);
-                            //TODO:include message
-                            //3x M20 is chosen after x iterions
-                            messages.Add(info + " is chosen after " + it + " iterations.", path);
-                            goto finish;
                         }
                         else
                         {
-                            //no else commands
+                            messages.Add(bolt.Name + " " + nx + "x?: too little space in X [" + hXspaceleft + " mm]", path);
                         }
-                    increaseN:;
+                        
                     }
                 }
                 messages.Add("No solution found", path);
@@ -258,16 +221,13 @@ namespace KarambaIDEA._5._IDEA_Templates
 
             finish:;
                 //Step V - Define data for cost analyses
+                Plate plateA = new Plate("endplateA", beam.height, beam.width, tplate);
+                Plate plateB = new Plate("endplateB", beam.height, beam.width, tplate);
 
-                
-                BearingMember bear = joint.attachedMembers.OfType<BearingMember>().ToList().First();
-                double weldsize = Weld.CalWeldSizeFullStrenth90deg(bear.element.crossSection.thicknessFlange, tplate, beam.material, Weld.WeldType.DoubleFillet);
-                Weld weld = new Weld("Finplateweld", Weld.WeldType.DoubleFillet, weldsize, hplate);
-                joint.template.welds.Add(weld);
-                Plate finplate = new Plate("Finplate", hplate, wplate + gap, tplate);
-                joint.template.plates.Add(finplate);
+                joint.template.plates.Add(plateA);
+                joint.template.plates.Add(plateB);
 
-                weldsize = Weld.CalWeldSizeFullStrenth90deg(tplate, beam.thicknessFlange, beam.material, Weld.WeldType.DoubleFillet);
+                double weldsize = Weld.CalWeldSizeFullStrenth90deg(tplate, beam.thicknessFlange, beam.material, Weld.WeldType.DoubleFillet);
                 joint.template.welds.Add(new Weld("FlangeweldTop", Weld.WeldType.DoubleFillet, weldsize, beam.width));
                 joint.template.welds.Add(new Weld("FlangeweldBot", Weld.WeldType.DoubleFillet, weldsize, beam.width));
                 double weldsizeWeb = Weld.CalWeldSizeFullStrenth90deg(tplate, beam.thicknessWeb, beam.material, Weld.WeldType.DoubleFillet);
@@ -301,7 +261,7 @@ namespace KarambaIDEA._5._IDEA_Templates
                     Vector3d vecY = ImportGrasshopperUtils.CastVectorToRhino(at.element.localCoordinateSystem.Y);
                     Vector3d vecX = ImportGrasshopperUtils.CastVectorToRhino(Vector.VecScalMultiply(vX.Unitize(), (tplate / 1000)));
 
-                    Plane plane = new Plane(point, vecZ, vecY);
+                    Plane plane = new Plane(point, vecY, vecZ);
 
                     Point3d P1 = new Point3d(-c.width / 2000, c.height / 2000, 0);
                     Point3d P6 = new Point3d(-c.width / 2000, -c.height / 2000, 0);
@@ -317,34 +277,41 @@ namespace KarambaIDEA._5._IDEA_Templates
                     Brep plate = sur.ToBrep().CapPlanarHoles(Project.tolerance);
 
                     //Create Holes
-                    Brep tubes = new Brep();
+                    BoltGrid bg = joint.template.boltGrids.FirstOrDefault();
+                    foreach(Coordinate2D coor in bg.Coordinates2D)
+                    {
+                        Brep tubes = new Brep();
 
-                    double d0 = 24;
-                    double topmm = 80;
+                        double d0 = bg.bolttype.HoleDiameter;
+                        double corX = coor.locX / 1000;
+                        double corY = coor.locY / 1000;
+                        double tol = 0.001;
 
-                    double tol = 0.001;
-                    Vector3d locX = plane.XAxis;
-                    locX.Unitize();
-                    Transform transform2 = Transform.Translation(Vector3d.Multiply(topmm / 1000, locX));
-                    Plane plane2 = plane;
-                    plane2.Transform(transform2);
+                        Vector3d planeVecX = plane.XAxis;
+                        planeVecX.Unitize();
+                        Transform transform2 = Transform.Translation(Vector3d.Multiply(corX, planeVecX));
+                        Plane plane2 = plane;
+                        plane2.Transform(transform2);
 
+                        Vector3d planeVecY = plane.YAxis;
+                        planeVecY.Unitize();
+                        Transform transform3 = Transform.Translation(Vector3d.Multiply(corY, planeVecY));
+                        Plane plane3 = plane2;
+                        plane3.Transform(transform3);
 
+                        Circle circle = new Circle(plane3, d0/2000);//Radius 
 
-
-                    Circle circle = new Circle(plane2, d0 / 2000);//Radius 
-                    Surface sur2 = Surface.CreateExtrusion(circle.ToNurbsCurve(), vecX);
-                    Brep tube = sur2.ToBrep().CapPlanarHoles(tol);
-
-                    //List<Brep> breps8 = Brep.CreateBooleanDifference(plate, tube, tol).ToList();
-                    //plate = breps8.FirstOrDefault();
-
-                    breps.Add(tube);
-                    breps.Add(plate);
+                        Polyline hexagon = Polyline.CreateCircumscribedPolygon(circle, 6);
+                        Surface sur2 = Surface.CreateExtrusion(hexagon.ToNurbsCurve(), 2 * vecX);
+                        
+                        Brep tube = sur2.ToBrep().CapPlanarHoles(tol);
+                        breps.Add(tube, pathBolts);
+                        //plate = Brep.CreateBooleanDifference(plate, tube, tol).ToList().FirstOrDefault();
+                    }
+                    breps.Add(plate, pathPlates);
                 }
+                nosolution:;
             }
-            nosolution:;
-
         }
 
         /// <summary>
