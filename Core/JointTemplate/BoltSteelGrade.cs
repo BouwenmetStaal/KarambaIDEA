@@ -84,6 +84,43 @@ namespace KarambaIDEA.Core
             }
         }
 
+        public string name
+        {
+            get
+            {
+                switch (this.steelgrade)
+                {
+                    case Steelgrade.b4_6:
+                        {
+                            return "4.6";
+                        }
+                    case Steelgrade.b4_8:
+                        {
+                            return "4.8";
+                        }
+                    case Steelgrade.b5_6:
+                        {
+                            return "5.6";
+                        }
+                    case Steelgrade.b6_8:
+                        {
+                            return "6.8";
+                        }
+                    case Steelgrade.b8_8:
+                        {
+                            return "8.8";
+                        }
+                    case Steelgrade.b10_9:
+                        {
+                            return "10.9";
+                        }
+                    default:
+                        {
+                            return "8.8";
+                        }
+                }
+            }
+        }
         public BoltSteelGrade()
         {
 

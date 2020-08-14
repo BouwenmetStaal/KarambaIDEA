@@ -15,6 +15,7 @@ using KarambaIDEA.IDEA;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using KarambaIDEA.Core.JointTemplate;
+using System.Runtime.InteropServices;
 
 namespace KarambaIDEA._5._IDEA_Templates
 {
@@ -30,6 +31,7 @@ namespace KarambaIDEA._5._IDEA_Templates
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
             pManager.AddTextParameter("BrandNames", "BrandNames", "BrandNames to apply template to", GH_ParamAccess.list, "");
             pManager.AddNumberParameter("Thickness endplate [mm]", "Thickness endplate [mm]", "", GH_ParamAccess.item, 10.0);
+            pManager.AddNumberParameter("factor Prying forces", "factor Prying forces", "", GH_ParamAccess.item, 0.5);
             pManager[1].Optional = true;
         }
 
@@ -48,6 +50,7 @@ namespace KarambaIDEA._5._IDEA_Templates
             double tplate = new double();
             List<GH_String> brandNamesDirty = new List<GH_String>();
             List<string> brandNames = new List<string>();
+            double pryingForcesFactor = new double();
 
             //Output variables
             DataTree<string> messages = new DataTree<string>();
@@ -57,6 +60,7 @@ namespace KarambaIDEA._5._IDEA_Templates
             DA.GetData(0, ref sourceProject);
             DA.GetDataList(1, brandNamesDirty);
             DA.GetData(2, ref tplate);
+            DA.GetData(3, ref pryingForcesFactor);
 
             //Clone project
             Project project = null;
@@ -79,7 +83,7 @@ namespace KarambaIDEA._5._IDEA_Templates
                     {
                         if (brandName == joint.brandName)
                         {
-                            SetTemplate(tplate, joint, breps, messages);
+                            SetTemplate(tplate, pryingForcesFactor, joint, breps, messages);
                         }
                     }
                 }
@@ -90,15 +94,14 @@ namespace KarambaIDEA._5._IDEA_Templates
             DA.SetDataTree(2, breps);
         }
 
-        private static void SetTemplate(double tplate, Joint joint, DataTree<Brep> breps, DataTree<string> messages)
+        private static void SetTemplate(double tplate, double pryingForcesFactor, Joint joint, DataTree<Brep> breps, DataTree<string> messages)
         {
             joint.template = new Template();
             int a = joint.id;
             int b = 0;
             joint.template.boltGrids.Clear();
             Core.CrossSection beam = joint.attachedMembers.First().element.crossSection;
-
-            joint.template.workshopOperations = Template.WorkshopOperations.BoltedEndPlateConnection;
+            
             foreach (AttachedMember at in joint.attachedMembers)
             {
                 GH_Path path = new GH_Path(a, b);
@@ -127,7 +130,7 @@ namespace KarambaIDEA._5._IDEA_Templates
                 double nload = nloads.Max() * 1000;
                 //Step II - Create bolts list
                 List<Bolt> bolts = Bolt.CreateBoltsList(BoltSteelGrade.Steelgrade.b8_8);
-                
+                double hEndplate = beam.height;
                 //Step IV - evaluation of different bolt configurations
                 int it = 0;
                 foreach (Bolt bolt in bolts)
@@ -135,6 +138,7 @@ namespace KarambaIDEA._5._IDEA_Templates
                     //Step III - determine maximum inner height and inner width of I section
                     double hymax = beam.height - 2 * (beam.thicknessFlange);
                     double hxmax = (beam.width - beam.thicknessWeb) / 2;
+                    
 
 
                     double d0 = bolt.HoleDiameter;
@@ -147,26 +151,22 @@ namespace KarambaIDEA._5._IDEA_Templates
                     hymax -= (2 * e1);
                     hxmax -= (2 * e2);
 
-                    if (bolt.Name == "M16")
-                    {
-                        int adfadfa = 0;
-                    }
-
                     for (int nx = 1; nx < 3; nx++)
                     {
                         double hXspaceleft = hxmax - (d0 * nx) - (p2 * (nx - 1));
                         if (hXspaceleft >= 0)
                         {
+                            int ny_inner = 1;
                             for (int ny = 2; ny < 4; ny++)
                             {
                                 string info = bolt.Name + " " + nx + "x" + ny + "";
                                 double hYspaceleft = hymax - (d0 * ny) - (p1 * (ny - 1));
                                 if (hYspaceleft >= 0)//if configuration fits within the beam
                                 {
+                                    hEndplate = beam.height;
+                                    ny_inner++;
                                     it++;
-
                                     //Check Bolts in tension
-                                    double pryingForcesFactor = 1;
                                     double nRdTensionBolts = ny*nx *2* bolt.TensionResistance() * pryingForcesFactor;
                                     if (nload > nRdTensionBolts)//If Ved>Vrd
                                     {
@@ -183,7 +183,7 @@ namespace KarambaIDEA._5._IDEA_Templates
                                         double locY = (hymax-d0)/2;
                                         for (int row = 0; row < ny; row++)
                                         {
-                                            coors.Add(new Coordinate2D(locX, locY));///or
+                                            coors.Add(new Coordinate2D(locX, locY));//original
                                             coors.Add(new Coordinate2D(-locX, locY));//mirrored bolt
                                             locY = locY - ((hymax - d0) / (ny - 1));
                                         }
@@ -195,10 +195,52 @@ namespace KarambaIDEA._5._IDEA_Templates
                                 }
                                 else
                                 {
-                                    messages.Add(info + ": too little space in Y ["+hYspaceleft+" mm]", path);
-
+                                    //messages.Add(info + ": too little space in Y ["+hYspaceleft+" mm]", path);
+                                    int ny_outer = ny - ny_inner;
                                     //extend plate
                                     double hExtraPlate =2*(d0 + 2 * e1);
+                                    hEndplate = hEndplate + hExtraPlate;
+
+                                    //Check Bolts in tension
+                                    double nRdTensionBolts = (ny_inner + ny_outer*2) * nx * 2 * bolt.TensionResistance() * pryingForcesFactor;
+                                    if (nload > nRdTensionBolts)//If Ved>Vrd
+                                    {
+                                        double uc = Math.Round(nload / nRdTensionBolts, 2);
+                                        messages.Add(info + ": Bolts fail in tension [uc=" + uc + "]", path);
+                                        goto increaseN;
+                                    }
+                                    messages.Add(info + " is chosen after " + it + " iterations.", path);
+                                    //Assemble bolt grid
+                                    List<Coordinate2D> coors = new List<Coordinate2D>();
+                                    double locX = (beam.width / 2) - (0.5 * d0 + e2);
+                                    for (int col = 0; col < nx; col++)
+                                    {
+                                        double locY_inn = (hymax - d0) / 2;
+                                        for (int row = 0; row < ny_inner; row++)
+                                        {
+                                            if(ny_inner == 1)
+                                            {
+                                                locY_inn = 0;
+                                            }
+                                            
+                                            coors.Add(new Coordinate2D(locX, locY_inn));//original
+                                            coors.Add(new Coordinate2D(-locX, locY_inn));//mirrored bolt
+                                            locY_inn = locY_inn - ((hymax - d0) / (ny_inner - 1));
+                                        }
+                                        double locY_out = ((hEndplate) / 2)-(0.5 * d0 + e2);
+                                        for (int row = 0; row < ny_outer; row++)
+                                        {
+                                            coors.Add(new Coordinate2D(locX, locY_out));//original
+                                            coors.Add(new Coordinate2D(-locX, locY_out));//mirrored bolt
+                                            coors.Add(new Coordinate2D(locX, -locY_out));//original
+                                            coors.Add(new Coordinate2D(-locX, -locY_out));//mirrored bolt
+                                            locY_out = locY_out - (d0+e2);
+                                        }
+                                        locX = locX - (d0 + e2);
+                                    }
+                                    BoltGrid boltGrid = new BoltGrid(bolt, coors);
+                                    joint.template.boltGrids.Add(boltGrid);
+                                    goto finish;
 
                                 }
                             increaseN:;
@@ -221,8 +263,8 @@ namespace KarambaIDEA._5._IDEA_Templates
 
             finish:;
                 //Step V - Define data for cost analyses
-                Plate plateA = new Plate("endplateA", beam.height, beam.width, tplate);
-                Plate plateB = new Plate("endplateB", beam.height, beam.width, tplate);
+                Plate plateA = new Plate("endplateA", hEndplate, beam.width, tplate);
+                Plate plateB = new Plate("endplateB", hEndplate, beam.width, tplate);
 
                 joint.template.plates.Add(plateA);
                 joint.template.plates.Add(plateB);
@@ -263,10 +305,10 @@ namespace KarambaIDEA._5._IDEA_Templates
 
                     Plane plane = new Plane(point, vecY, vecZ);
 
-                    Point3d P1 = new Point3d(-c.width / 2000, c.height / 2000, 0);
-                    Point3d P6 = new Point3d(-c.width / 2000, -c.height / 2000, 0);
-                    Point3d P7 = new Point3d(c.width / 2000, -c.height / 2000, 0);
-                    Point3d P12 = new Point3d(c.width / 2000, c.height / 2000, 0);
+                    Point3d P1 = new Point3d(-c.width / 2000, hEndplate / 2000, 0);
+                    Point3d P6 = new Point3d(-c.width / 2000, -hEndplate / 2000, 0);
+                    Point3d P7 = new Point3d(c.width / 2000, -hEndplate / 2000, 0);
+                    Point3d P12 = new Point3d(c.width / 2000, hEndplate / 2000, 0);
                     IEnumerable<Point3d> points = new Point3d[] { P1, P6, P7, P12, P1 };
                     Polyline poly = new Polyline(points);
                     NurbsCurve nurbsCurve = poly.ToNurbsCurve();
@@ -282,7 +324,7 @@ namespace KarambaIDEA._5._IDEA_Templates
                     {
                         Brep tubes = new Brep();
 
-                        double d0 = bg.bolttype.HoleDiameter;
+                        double d0 = bg.bolttype.HeadDiagonalDiameter;
                         double corX = coor.locX / 1000;
                         double corY = coor.locY / 1000;
                         double tol = 0.001;
@@ -312,6 +354,7 @@ namespace KarambaIDEA._5._IDEA_Templates
                 }
                 nosolution:;
             }
+            joint.template.workshopOperations = Template.WorkshopOperations.BoltedEndplateOptimizer;
         }
 
         /// <summary>

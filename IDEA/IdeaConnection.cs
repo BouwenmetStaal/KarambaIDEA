@@ -57,21 +57,21 @@ namespace KarambaIDEA.IDEA
             openModelGenerator.CreateOpenModel(joint, filePath);
 
             //3. create IOM and results
-            OpenModel example = openModelGenerator.openModel;
-            OpenModelResult result = openModelGenerator.openModelResult;
+            OpenModel openModel = openModelGenerator.openModel;
+            OpenModelResult openModelResult = openModelGenerator.openModelResult;
 
             //4. add (programmed) template to openmodel if available
             if(joint.template!= null)
             {
-                Templates.ApplyProgrammedIDEAtemplate(example , joint);
+                Templates.ApplyProgrammedIDEAtemplate(openModel , joint);
             }
 
             string iomFileName = Path.Combine(folder, joint.Name, "IOM.xml");
             string iomResFileName = Path.Combine(folder, joint.Name, "IOMresults.xml");
 
             // save to the files
-            example.SaveToXmlFile(iomFileName);
-            result.SaveToXmlFile(iomResFileName);
+            openModel.SaveToXmlFile(iomFileName);
+            openModelResult.SaveToXmlFile(iomResFileName);
 
             string filename = joint.Name + ".ideaCon";
 

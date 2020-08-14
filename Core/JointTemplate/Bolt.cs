@@ -14,6 +14,12 @@ namespace KarambaIDEA.Core
         public double HoleDiameter;
         public double ShankArea;
         public double CoreArea;
+
+        public double HeadDiameter;
+        public double HeadDiagonalDiameter;
+        public double HeadHeight;
+        public double NutThickness;
+        public double WasherThickness;
         public BoltSteelGrade BoltSteelGrade = new BoltSteelGrade();
 
         
@@ -28,20 +34,36 @@ namespace KarambaIDEA.Core
             this.CoreArea = _coreArea;
 
         }
+        public Bolt(BoltSteelGrade.Steelgrade bsg, double _diameter, double _holediameter, double _coreArea, double _headDiameter, double _headDiagonalDiameter, double _headHeight, double _nutThickness, double _washerThickness)
+        {
+            this.BoltSteelGrade.steelgrade = bsg;
+            this.Name = "M" + _diameter.ToString();
+            this.Diameter = _diameter;
+            this.HoleDiameter = _holediameter;
+            this.ShankArea = (Math.PI * Math.Pow(_diameter, 2)) / 4;
+            this.CoreArea = _coreArea;
+
+            this.HeadDiameter = _headDiameter;
+            this.HeadDiagonalDiameter = _headDiagonalDiameter;
+            this.HeadHeight = _headHeight;
+            this.NutThickness = _nutThickness;
+            this.WasherThickness = _washerThickness;
+
+        }
 
         static public List<Bolt> CreateBoltsList(BoltSteelGrade.Steelgrade bsg)
         {
             List<Bolt> bolts = new List<Bolt>();
-            bolts.Add(new Bolt(bsg, 12, 13, 84.3));
-            bolts.Add(new Bolt(bsg, 16, 18, 157));
-            bolts.Add(new Bolt(bsg, 20, 22, 245));
-            bolts.Add(new Bolt(bsg, 24, 26, 353));
-            bolts.Add(new Bolt(bsg, 27, 30, 459));
-            bolts.Add(new Bolt(bsg, 30, 33, 561));
-            bolts.Add(new Bolt(bsg, 36, 39, 817));
-            bolts.Add(new Bolt(bsg, 42, 45, 1121));
-            bolts.Add(new Bolt(bsg, 48, 51, 1473));
-            bolts.Add(new Bolt(bsg, 52, 55, 1758));
+            bolts.Add(new Bolt(bsg, 12, 13, 84.3,   19, 21, 8,  10, 3));
+            bolts.Add(new Bolt(bsg, 16, 18, 157,    24, 26, 10, 13, 3));
+            bolts.Add(new Bolt(bsg, 20, 22, 245,    30, 33, 13, 16, 4));
+            bolts.Add(new Bolt(bsg, 24, 26, 353,    36, 40, 15, 22, 4));
+            bolts.Add(new Bolt(bsg, 27, 30, 459,    41, 45, 17, 22, 5));
+            bolts.Add(new Bolt(bsg, 30, 33, 561,    46, 51, 19, 26, 5));
+            bolts.Add(new Bolt(bsg, 36, 39, 817,    55, 61, 23, 29, 5));
+            bolts.Add(new Bolt(bsg, 42, 45, 1121,   65, 73, 26, 34, 7));
+            bolts.Add(new Bolt(bsg, 48, 51, 1473,   75, 84, 30, 38, 8));
+            bolts.Add(new Bolt(bsg, 52, 55, 1758,   80, 90, 33, 42, 9));
             return bolts;
         }
 

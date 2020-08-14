@@ -14,6 +14,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using KarambaIDEA.Core;
+using KarambaIDEA.Core.JointTemplate;
 
 namespace KarambaIDEA.IDEA
 {
@@ -41,6 +42,14 @@ namespace KarambaIDEA.IDEA
                 }
 
             }
+            if (joint.template.workshopOperations == Template.WorkshopOperations.BoltedEndplateOptimizer)
+            {
+                if (joint.template.plates.First() != null)
+                {
+                    Templates.BoltedEndplateOptimizer(openModel, joint);
+                }
+
+            }
             if (joint.template.workshopOperations == Template.WorkshopOperations.WeldAllMembers)
             {
                 Templates.WeldAllMembers(openModel);
@@ -58,11 +67,28 @@ namespace KarambaIDEA.IDEA
             CreatePlateForBeam(openModel, joint, 0, w0, h0, tplate);
             CreatePlateForBeam(openModel, joint, 1, w1, h1, tplate);
 
-
-
             CutBeamByPlate(openModel, joint, 0, 0);
             CutBeamByPlate(openModel, joint, 1, 1);
             CreateBoltgrid(openModel, 0, 1, w0 - 0.1, h0 - 0.1);
+
+            return openModel;
+        }
+
+        static public OpenModel BoltedEndplateOptimizer(OpenModel openModel, Joint joint)
+        {
+            Plate plate = joint.template.plates.First();
+            Core.BoltGrid boltGrid = joint.template.boltGrids.First();
+            
+            double w = plate.width / 1000;
+            double h = plate.length / 1000;
+            double t = plate.thickness / 1000;
+
+            CreatePlateForBeam(openModel, joint, 0, w, h, t);
+            CreatePlateForBeam(openModel, joint, 1, w, h, t);
+
+            CutBeamByPlate(openModel, joint, 0, 0);
+            CutBeamByPlate(openModel, joint, 1, 1);
+            CreateBoltgrid_coor(openModel, boltGrid, 0, 1, w - 0.1, h - 0.1);
 
             return openModel;
         }
@@ -339,6 +365,71 @@ namespace KarambaIDEA.IDEA
                     Z = point.Z+h
                 }
             };
+
+            boltGrid.ConnectedPartIds = new List<string>() { plateTwo.OriginalModelId, plateData.OriginalModelId };
+
+            openModel.Connections[0].BoltGrids.Add(boltGrid);
+
+            //(openModel.Connections[0].BoltGrids ?? (openModel.Connections[0].BoltGrids = new List<IdeaRS.OpenModel.Connection.BoltGrid>())).Add(boltGrid);
+            return openModel;
+        }
+
+        static public OpenModel CreateBoltgrid_coor(OpenModel openModel, Core.BoltGrid boltGridCore, int firstPlate, int secondPlate, double width, double height)
+        {
+            PlateData plateData = openModel.Connections[0].Plates[firstPlate];
+            PlateData plateTwo = openModel.Connections[0].Plates[secondPlate];
+
+            double w = 0.5 * width;
+            double h = 0.5 * height;
+
+            int pointId = openModel.ConnectionPoint[0].Id;
+            Point3D point = openModel.Point3D.First(a => a.Id == pointId);
+
+
+            if (openModel.Connections[0].BoltGrids == null)
+            {
+                openModel.Connections[0].BoltGrids = new List<IdeaRS.OpenModel.Connection.BoltGrid>();
+
+            }
+            int number = openModel.Connections[0].BoltGrids.Count;
+
+            Bolt bolt = boltGridCore.bolttype;
+
+            //openModel.Connections[0].Plates.Add(new IdeaRS.OpenModel.Connection.PlateData
+            IdeaRS.OpenModel.Connection.BoltGrid boltGrid = new IdeaRS.OpenModel.Connection.BoltGrid()
+            {
+                Id = number + 1,
+                ConnectedPartIds = new List<string>(),
+                Diameter = bolt.Diameter/1000,
+                HeadDiameter = bolt.HeadDiameter/1000,
+                DiagonalHeadDiameter = bolt.HeadDiagonalDiameter/1000,
+                HeadHeight = bolt.HeadHeight/1000,
+                BoreHole = bolt.HoleDiameter/1000,
+                TensileStressArea = bolt.CoreArea,
+                NutThickness = bolt.NutThickness/1000,
+                AnchorLen = 0.05,
+                Material = bolt.BoltSteelGrade.name,
+                Standard = bolt.Name,
+            };
+
+            boltGrid.Origin = new IdeaRS.OpenModel.Geometry3D.Point3D() { X = plateData.Origin.X, Y = plateData.Origin.Y, Z = plateData.Origin.Z };
+            boltGrid.AxisX = new IdeaRS.OpenModel.Geometry3D.Vector3D() { X = plateData.AxisX.X, Y = plateData.AxisX.Y, Z = plateData.AxisX.Z };
+            boltGrid.AxisY = new IdeaRS.OpenModel.Geometry3D.Vector3D() { X = plateData.AxisY.X, Y = plateData.AxisY.Y, Z = plateData.AxisY.Z };
+            boltGrid.AxisZ = new IdeaRS.OpenModel.Geometry3D.Vector3D() { X = plateData.AxisZ.X, Y = plateData.AxisZ.Y, Z = plateData.AxisZ.Z };
+            boltGrid.Positions = new List<IdeaRS.OpenModel.Geometry3D.Point3D>();
+            foreach (Coordinate2D coor in boltGridCore.Coordinates2D)
+            {
+                Point3D p = new Point3D();
+                //TODO: define position bolts based on local coordinate system plate
+                //p.X = boltGrid.Origin.X;
+                //p.Y = boltGrid.Origin.Y;
+
+
+                p.X = point.X;
+                p.Y = point.Y + (coor.locX / 1000);
+                p.Z = point.Z + (coor.locY / 1000);
+                boltGrid.Positions.Add(p);
+            }
 
             boltGrid.ConnectedPartIds = new List<string>() { plateTwo.OriginalModelId, plateData.OriginalModelId };
 
