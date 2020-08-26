@@ -94,7 +94,7 @@ namespace KarambaIDEA
             get
             {
 
-                return Properties.Resources.KarambaIDEA_logo;
+                return Properties.Resources.KarambaIDEA_logo_viewer;
 
             }
         }

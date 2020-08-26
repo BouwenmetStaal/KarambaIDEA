@@ -160,6 +160,14 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\Weight_trans-01.png" />
+    <None Include="Resources\TransportElements_trans-01.png" />
+    <None Include="Resources\WeldingVolume_trans-01.png" />
+    <None Include="Resources\JointLoadEquilibrium.png" />
+    <None Include="Resources\LocalCoordianateSystem2.png" />
+    <None Include="Resources\RetrieveLinesAndPoints.png" />
+    <None Include="Resources\JointLoadEquilibrium2.png" />
+    <None Include="Resources\TempBoltedEndplateOptimizer.png" />
     <None Include="Resources\TemplateFromFilePath.png" />
     <None Include="Resources\StiffnessDiagram2.png" />
     <None Include="Resources\StiffnessDiagram.png" />

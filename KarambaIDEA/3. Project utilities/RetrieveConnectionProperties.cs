@@ -19,25 +19,25 @@ namespace KarambaIDEA
 {
     public class RetrieveConnectionProperties : GH_Component
     {
-        public RetrieveConnectionProperties() : base("RetrieveConnectionProperties", "RetrieveConnectionProperties", "RetrieveConnectionProperties", "KarambaIDEA", "3. Project utilities")
+        public RetrieveConnectionProperties() : base("Retrieve Connection Properties", "RetConProp", "Retrieve Connection Properties", "KarambaIDEA", "3. Project utilities")
         {
 
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Project", "P", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.list);
+            pManager.AddTextParameter("Message", "M", "", GH_ParamAccess.list);
 
-            pManager.AddNumberParameter("start Sj", "start Sj", "", GH_ParamAccess.list);
-            pManager.AddNumberParameter("end Sj", "end Sj", "", GH_ParamAccess.list);
+            pManager.AddNumberParameter("start Sj", "S Sj", "Sj at start of element", GH_ParamAccess.list);
+            pManager.AddNumberParameter("end Sj", "E Sj", "Sj at end of element", GH_ParamAccess.list);
 
-            pManager.AddNumberParameter("start Mj,Rd", "start Mj,Rd", "", GH_ParamAccess.list);
-            pManager.AddNumberParameter("end Mj,Rd", "end Mj,Rd", "", GH_ParamAccess.list);
+            pManager.AddNumberParameter("start Mj,Rd", "S Mj,Rd", "Mj,Rd at start of element", GH_ParamAccess.list);
+            pManager.AddNumberParameter("end Mj,Rd", "E Mj,Rd", "Mj,Rd at end of element", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)

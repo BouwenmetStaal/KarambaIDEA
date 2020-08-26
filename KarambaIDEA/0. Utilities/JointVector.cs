@@ -17,7 +17,7 @@ namespace KarambaIDEA.Grasshopper
 {
     public class JointVector : GH_Component
     {
-        public JointVector() : base("JointVector", "JVector", "Define normal vector of the joint", "KarambaIDEA", "0. Utilities")
+        public JointVector() : base("JointVector", "JV", "Define normal vector of the joint", "KarambaIDEA", "0. Utilities")
         {
 
         }
@@ -30,7 +30,7 @@ namespace KarambaIDEA.Grasshopper
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddVectorParameter("Vec", "Vec", "JointVector per joint", GH_ParamAccess.list);
+            pManager.AddVectorParameter("Vector", "V", "Vector perpendicular to joint", GH_ParamAccess.list);
         }
         
         protected override void SolveInstance(IGH_DataAccess DA)

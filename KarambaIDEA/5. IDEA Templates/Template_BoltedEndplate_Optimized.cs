@@ -366,7 +366,7 @@ namespace KarambaIDEA._5._IDEA_Templates
             get
             {
 
-                return Properties.Resources.TempBoltedEndplateConnection;
+                return Properties.Resources.TempBoltedEndplateOptimizer;
             }
         }
         public override Guid ComponentGuid

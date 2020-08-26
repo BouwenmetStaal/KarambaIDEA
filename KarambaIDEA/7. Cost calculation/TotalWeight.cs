@@ -209,7 +209,7 @@ namespace KarambaIDEA
             get
             {
 
-                return Properties.Resources.Weight;
+                return Properties.Resources.Weight_trans_01;
 
             }
         }

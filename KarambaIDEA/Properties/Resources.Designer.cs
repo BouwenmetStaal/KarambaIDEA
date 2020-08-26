@@ -19,7 +19,7 @@ namespace KarambaIDEA.Properties {
     // class via a tool like ResGen or Visual Studio.
     // To add or remove a member, edit your .ResX file then rerun ResGen
     // with the /str option, or rebuild your VS project.
-    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "15.0.0.0")]
+    [global::System.CodeDom.Compiler.GeneratedCodeAttribute("System.Resources.Tools.StronglyTypedResourceBuilder", "16.0.0.0")]
     [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
     [global::System.Runtime.CompilerServices.CompilerGeneratedAttribute()]
     internal class Resources {
@@ -143,6 +143,16 @@ namespace KarambaIDEA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap JointLoadEquilibrium {
+            get {
+                object obj = ResourceManager.GetObject("JointLoadEquilibrium", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap KarambaIDEA_logo {
             get {
                 object obj = ResourceManager.GetObject("KarambaIDEA_logo", resourceCulture);
@@ -193,6 +203,26 @@ namespace KarambaIDEA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap LocalCoordianateSystem2 {
+            get {
+                object obj = ResourceManager.GetObject("LocalCoordianateSystem2", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap RetrieveLinesAndPoints {
+            get {
+                object obj = ResourceManager.GetObject("RetrieveLinesAndPoints", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap StiffnessDiagram {
             get {
                 object obj = ResourceManager.GetObject("StiffnessDiagram", resourceCulture);
@@ -216,6 +246,16 @@ namespace KarambaIDEA.Properties {
         internal static System.Drawing.Bitmap TempBoltedEndplateConnection {
             get {
                 object obj = ResourceManager.GetObject("TempBoltedEndplateConnection", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap TempBoltedEndplateOptimizer {
+            get {
+                object obj = ResourceManager.GetObject("TempBoltedEndplateOptimizer", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }
@@ -253,6 +293,16 @@ namespace KarambaIDEA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap TransportElements_trans_01 {
+            get {
+                object obj = ResourceManager.GetObject("TransportElements_trans_01", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap Weight {
             get {
                 object obj = ResourceManager.GetObject("Weight", resourceCulture);
@@ -263,9 +313,29 @@ namespace KarambaIDEA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap Weight_trans_01 {
+            get {
+                object obj = ResourceManager.GetObject("Weight_trans_01", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap WeldingVolume {
             get {
                 object obj = ResourceManager.GetObject("WeldingVolume", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap WeldingVolume_trans_01 {
+            get {
+                object obj = ResourceManager.GetObject("WeldingVolume_trans_01", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

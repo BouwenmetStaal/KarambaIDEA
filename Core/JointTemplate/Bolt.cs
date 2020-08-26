@@ -9,17 +9,17 @@ namespace KarambaIDEA.Core
     public class Bolt
     {
         public Project project;
-        public string Name;
-        public double Diameter;
-        public double HoleDiameter;
-        public double ShankArea;
-        public double CoreArea;
+        public string Name { get; private set; }
+        public double Diameter { get; private set; }
+        public double HoleDiameter { get; private set; }
+        public double ShankArea { get; private set; }
+        public double CoreArea { get; private set; }
 
-        public double HeadDiameter;
-        public double HeadDiagonalDiameter;
-        public double HeadHeight;
-        public double NutThickness;
-        public double WasherThickness;
+        public double HeadDiameter{ get; private set; }
+        public double HeadDiagonalDiameter { get; private set; }
+        public double HeadHeight { get; private set; }
+        public double NutThickness { get; private set; }
+        public double WasherThickness { get; private set; }
         public BoltSteelGrade BoltSteelGrade = new BoltSteelGrade();
 
         
