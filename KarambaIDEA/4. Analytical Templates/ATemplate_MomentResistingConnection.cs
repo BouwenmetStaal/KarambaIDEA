@@ -20,26 +20,26 @@ namespace KarambaIDEA
 {
     public class ATemplate_MomentResistingConnection : GH_Component
     {
-        public ATemplate_MomentResistingConnection() : base("Analytical Template: Moment resisting connection", "Analytical Template: Moment resisting connection", "Analytical Template: Moment resisting connection", "KarambaIDEA", "4. Analytical Templates")
+        public ATemplate_MomentResistingConnection() : base("Analytical Template: Moment resisting connection", "AT: MRC", "Analytical Template: Moment resisting connection", "KarambaIDEA", "4. Analytical Templates")
         {
 
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
-            pManager.AddTextParameter("BrandNames", "BrandNames", "BrandNames to apply template to", GH_ParamAccess.list, "");
-            pManager.AddNumberParameter("Height haunch [mm]", "Height haunch [mm]", "", GH_ParamAccess.item, 0.0);
-            pManager.AddBooleanParameter("Stiffeners?", "Stiffeners?", "", GH_ParamAccess.item, false);
-            pManager.AddBooleanParameter("Unbraced structure?", "Unbraced structure?", "If true joint classification will be assesed accoring to unbraced structures specifications, if false for braced structures.", GH_ParamAccess.item, false);
+            pManager.AddGenericParameter("Project", "P", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddTextParameter("BrandNames", "BN", "BrandNames to apply template to", GH_ParamAccess.list, "");
+            pManager.AddNumberParameter("Height haunch [mm]", "H [mm]", "Heigt of haunch in mm, length of haunch is defined bij a ratio of 1:2", GH_ParamAccess.item, 0.0);
+            pManager.AddBooleanParameter("Stiffeners?", "S?", "Does the connection include stiffeners?", GH_ParamAccess.item, false);
+            pManager.AddBooleanParameter("Unbraced structure?", "UB?", "If true joint classification will be assesed accoring to unbraced structures specifications, if false for braced structures.", GH_ParamAccess.item, false);
             pManager[1].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
-            pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.list);
-            pManager.AddBrepParameter("Brep", "Brep","", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Project", "P", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddTextParameter("Message", "N", "", GH_ParamAccess.list);
+            pManager.AddBrepParameter("Brep", "B","", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)

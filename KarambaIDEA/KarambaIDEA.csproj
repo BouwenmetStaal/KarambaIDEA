@@ -160,6 +160,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\TempBoltedEndplateOptimizer2-01.png" />
     <None Include="Resources\Weight_trans-01.png" />
     <None Include="Resources\TransportElements_trans-01.png" />
     <None Include="Resources\WeldingVolume_trans-01.png" />

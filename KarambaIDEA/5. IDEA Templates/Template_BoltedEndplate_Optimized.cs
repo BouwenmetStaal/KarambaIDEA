@@ -21,25 +21,26 @@ namespace KarambaIDEA._5._IDEA_Templates
 {
     public class Template_BoltedEndplate_Optimized : GH_Component
     {
-        public Template_BoltedEndplate_Optimized() : base("Template: Bolted endplate optimizer", "Template: Bolted endplate optimizer", "Template: Bolted endplate optimizer", "KarambaIDEA", "5. IDEA Templates")
+        public Template_BoltedEndplate_Optimized() : base("Template: Bolted endplate optimizer", "T: BEO", "Template: Bolted endplate optimizer", "KarambaIDEA", "5. IDEA Templates")
         {
 
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
-            pManager.AddTextParameter("BrandNames", "BrandNames", "BrandNames to apply template to", GH_ParamAccess.list, "");
-            pManager.AddNumberParameter("Thickness endplate [mm]", "Thickness endplate [mm]", "", GH_ParamAccess.item, 10.0);
-            pManager.AddNumberParameter("factor Prying forces", "factor Prying forces", "", GH_ParamAccess.item, 0.5);
+            pManager.AddGenericParameter("Project", "P", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddTextParameter("BrandNames", "BN", "BrandNames to apply template to", GH_ParamAccess.list, "");
+            pManager.AddNumberParameter("Thickness endplate [mm]", "T [mm]", "", GH_ParamAccess.item, 10.0);
+            pManager.AddNumberParameter("factor Prying forces", "PF", "", GH_ParamAccess.item, 0.5);
+            pManager.AddBooleanParameter("Stiffeners?", "S?", "Does the connection include stiffeners?", GH_ParamAccess.item, false);
             pManager[1].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
-            pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.tree);
-            pManager.AddBrepParameter("Brep", "Brep", "", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Project", "P", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddTextParameter("Message", "M", "", GH_ParamAccess.tree);
+            pManager.AddBrepParameter("Brep", "B", "", GH_ParamAccess.tree);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -51,6 +52,7 @@ namespace KarambaIDEA._5._IDEA_Templates
             List<GH_String> brandNamesDirty = new List<GH_String>();
             List<string> brandNames = new List<string>();
             double pryingForcesFactor = new double();
+            bool stiffener = new bool();
 
             //Output variables
             DataTree<string> messages = new DataTree<string>();
@@ -61,6 +63,7 @@ namespace KarambaIDEA._5._IDEA_Templates
             DA.GetDataList(1, brandNamesDirty);
             DA.GetData(2, ref tplate);
             DA.GetData(3, ref pryingForcesFactor);
+            DA.GetData(4, ref stiffener);
 
             //Clone project
             Project project = null;
@@ -83,7 +86,7 @@ namespace KarambaIDEA._5._IDEA_Templates
                     {
                         if (brandName == joint.brandName)
                         {
-                            SetTemplate(tplate, pryingForcesFactor, joint, breps, messages);
+                            SetTemplate(tplate, pryingForcesFactor, stiffener, joint, breps, messages);
                         }
                     }
                 }
@@ -94,7 +97,7 @@ namespace KarambaIDEA._5._IDEA_Templates
             DA.SetDataTree(2, breps);
         }
 
-        private static void SetTemplate(double tplate, double pryingForcesFactor, Joint joint, DataTree<Brep> breps, DataTree<string> messages)
+        private static void SetTemplate(double tplate, double pryingForcesFactor, bool stiffener, Joint joint, DataTree<Brep> breps, DataTree<string> messages)
         {
             joint.template = new Template();
             int a = joint.id;
@@ -157,13 +160,14 @@ namespace KarambaIDEA._5._IDEA_Templates
                         if (hXspaceleft >= 0)
                         {
                             int ny_inner = 1;
+                            hEndplate = beam.height;
                             for (int ny = 2; ny < 4; ny++)
                             {
                                 string info = bolt.Name + " " + nx + "x" + ny + "";
                                 double hYspaceleft = hymax - (d0 * ny) - (p1 * (ny - 1));
                                 if (hYspaceleft >= 0)//if configuration fits within the beam
                                 {
-                                    hEndplate = beam.height;
+                                    //hEndplate = beam.height;
                                     ny_inner++;
                                     it++;
                                     //Check Bolts in tension
@@ -325,6 +329,7 @@ namespace KarambaIDEA._5._IDEA_Templates
                         Brep tubes = new Brep();
 
                         double d0 = bg.bolttype.HeadDiagonalDiameter;
+                        double h0 = tplate+bg.bolttype.HeadHeight;
                         double corX = coor.locX / 1000;
                         double corY = coor.locY / 1000;
                         double tol = 0.001;
@@ -344,13 +349,55 @@ namespace KarambaIDEA._5._IDEA_Templates
                         Circle circle = new Circle(plane3, d0/2000);//Radius 
 
                         Polyline hexagon = Polyline.CreateCircumscribedPolygon(circle, 6);
-                        Surface sur2 = Surface.CreateExtrusion(hexagon.ToNurbsCurve(), 2 * vecX);
+                        vecX.Unitize();
+                        Surface sur2 = Surface.CreateExtrusion(hexagon.ToNurbsCurve(), Vector3d.Multiply(h0/1000, vecX));
                         
                         Brep tube = sur2.ToBrep().CapPlanarHoles(tol);
                         breps.Add(tube, pathBolts);
                         //plate = Brep.CreateBooleanDifference(plate, tube, tol).ToList().FirstOrDefault();
                     }
                     breps.Add(plate, pathPlates);
+                }
+                //BREP add stiffeners
+                if (stiffener == true && hEndplate > beam.height)
+                {
+                    double hstif = (hEndplate - beam.height)/ 2;
+                    double lstif = hstif * 2;
+                    CrossSection c = at.element.crossSection;
+                    double tstiff = c.thicknessWeb/1000;
+
+                    Vector3d vecZ = ImportGrasshopperUtils.CastVectorToRhino(Vector.VecScalMultiply(at.element.localCoordinateSystem.Z.Unitize(), (beam.height/2000)));
+                    Vector3d vecY = ImportGrasshopperUtils.CastVectorToRhino(at.element.localCoordinateSystem.Y.Unitize());
+                    Vector3d vecX = ImportGrasshopperUtils.CastVectorToRhino(vX.Unitize());
+
+                    Plane planeHor = new Plane(point, vecX, vecY);
+                    point.Transform(Transform.Translation(vecZ));
+
+                    Plane plane = new Plane(point, vecX, vecZ);
+                    
+
+                    Point3d P1 = new Point3d(0, 0, 0);
+                    Point3d P2 = new Point3d(0, hstif / 1000, 0);
+                    Point3d P3 = new Point3d(lstif/1000,0, 0);
+                    IEnumerable<Point3d> points = new Point3d[] { P1, P2,P3, P1 };
+                    Polyline poly = new Polyline(points);
+                    NurbsCurve nurbsCurve = poly.ToNurbsCurve();
+
+                    Transform transform = Transform.PlaneToPlane(Plane.WorldXY, plane);
+                    nurbsCurve.Transform(transform);
+                    nurbsCurve.Transform(Transform.Translation(Vector3d.Multiply(-tstiff / 2, vecY)));
+                    nurbsCurve.Transform(Transform.Translation(Vector3d.Multiply(tplate/1000, vecX)));
+                    Surface sur = Surface.CreateExtrusion(nurbsCurve, Vector3d.Multiply(tstiff, vecY));
+                    Brep plate = sur.ToBrep().CapPlanarHoles(Project.tolerance);
+                    breps.Add(plate, pathPlates);
+
+                    Brep plate2 = new Brep();
+                    plate2.CopyPropertiesFromSource<Brep>(plate);//Todo does not work                       
+                    plate2.Transform(Transform.Mirror(planeHor));
+                    breps.Add(plate2, pathPlates);
+                    
+                    //Todo: add costdata
+                    //Todo: include idea part for stiffeners
                 }
                 nosolution:;
             }
@@ -366,7 +413,7 @@ namespace KarambaIDEA._5._IDEA_Templates
             get
             {
 
-                return Properties.Resources.TempBoltedEndplateOptimizer;
+                return Properties.Resources.TempBoltedEndplateOptimizer2_01;
             }
         }
         public override Guid ComponentGuid

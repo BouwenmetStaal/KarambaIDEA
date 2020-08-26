@@ -19,23 +19,23 @@ namespace KarambaIDEA
 {
     public class ATemplate_FinplateConnection : GH_Component
     {
-        public ATemplate_FinplateConnection() : base("ATemplate_FinplateConnection", "ATemplate_FinplateConnection", "ATemplate_FinplateConnection", "KarambaIDEA", "4. Analytical Templates")
+        public ATemplate_FinplateConnection() : base("ATemplate_FinplateConnection", "AT_FPC", "ATemplate_FinplateConnection", "KarambaIDEA", "4. Analytical Templates")
         {
 
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
-            pManager.AddTextParameter("BrandNames", "BrandNames", "BrandNames to apply template to", GH_ParamAccess.list, "");
+            pManager.AddGenericParameter("Project", "P", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddTextParameter("BrandNames", "BN", "BrandNames to apply template to", GH_ParamAccess.list, "");
             pManager[1].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
-            pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.tree);
-            pManager.AddBrepParameter("Brep", "Brep", "", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Project", "P", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddTextParameter("Message", "M", "", GH_ParamAccess.tree);
+            pManager.AddBrepParameter("Brep", "B", "", GH_ParamAccess.list);
 
         }
 

@@ -17,21 +17,21 @@ namespace KarambaIDEA
 {
     public class VisualizeJoints: GH_Component
     {
-        public VisualizeJoints() : base("Visualize Joints", "Visualize Joints", "Visualize all joints in project", "KarambaIDEA", "3. Project utilities")
+        public VisualizeJoints() : base("Visualize Joints", "VJ", "Visualize all joints in project", "KarambaIDEA", "3. Project utilities")
         {
 
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Project", "P", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddLineParameter("Joint types", "Joint types", "Types of joint in project", GH_ParamAccess.tree);
-            pManager.AddTextParameter("Brandnames", "Brandnames", "Defined brandname per joint", GH_ParamAccess.tree);
-            pManager.AddPointParameter("Centerpoints", "Centerpoints", "Centerpoint per joint", GH_ParamAccess.tree);
+            pManager.AddLineParameter("Joint types", "JT", "Types of joint in project", GH_ParamAccess.tree);
+            pManager.AddTextParameter("Brandnames", "BN", "Defined brandname per joint", GH_ParamAccess.tree);
+            pManager.AddPointParameter("Centerpoints", "DP", "Centerpoint per joint", GH_ParamAccess.tree);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
