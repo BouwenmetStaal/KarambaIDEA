@@ -90,6 +90,17 @@ namespace KarambaIDEA.IDEA
             CutBeamByPlate(openModel, joint, 1, 1);
             CreateBoltgrid_coor(openModel, boltGrid, 0, 1, w - 0.1, h - 0.1);
 
+            Core.CrossSection c = joint.attachedMembers.FirstOrDefault().element.crossSection;
+
+            double elh = c.height/1000;
+            double wt = c.thicknessWeb / 1000;
+            double wh = ((plate.length-c.height)/2)/ 1000;
+            double ww = 2 * wh;
+
+            CreateWebWidener(openModel, joint, 0, ww, wh, wt, elh/2);
+            CutPlateByPlate(openModel, joint, 0, 2);
+            CreateWebWidener(openModel, joint, 1, -ww, -wh, wt, -elh / 2);
+            CutPlateByPlate(openModel, joint, 1, 3);
             return openModel;
         }
 
@@ -147,11 +158,29 @@ namespace KarambaIDEA.IDEA
 
             return openModel;
         }
-        
+        static public OpenModel CutPlateByPlate(OpenModel openModel, Joint joint, int cuttingobject, int modifiedObject)
+        {
+
+
+            // add cut
+            if (openModel.Connections[0].CutBeamByBeams == null)
+            {
+                openModel.Connections[0].CutBeamByBeams = new List<IdeaRS.OpenModel.Connection.CutBeamByBeamData>();
+
+            }
+            openModel.Connections[0].CutBeamByBeams.Add(new IdeaRS.OpenModel.Connection.CutBeamByBeamData
+            {
+
+                CuttingObject = new ReferenceElement(openModel.Connections[0].Plates[cuttingobject]),
+                ModifiedObject = new ReferenceElement(openModel.Connections[0].Plates[modifiedObject]),
+                IsWeld = true,
+            });
+
+            return openModel;
+        }
+
         static public OpenModel CreatePlateForBeam(OpenModel openModel, Joint joint, int refBeam, double width, double height, double tplate)
         {
-            joint.template.plates.Add(new Plate("Kopplaat", width, height, tplate));
-
             double w = 0.5 * width;
             double h = 0.5 * height;
             List<string> stringlist = new List<string>();
@@ -239,6 +268,96 @@ namespace KarambaIDEA.IDEA
                     Z = ele.localCoordinateSystem.X.Z
                 },
                 Region = region ,
+            });
+
+            //(openModel.Connections[0].Plates ?? (openModel.Connections[0].Plates = new List<IdeaRS.OpenModel.Connection.PlateData>())).Add(plateData);
+
+
+            return openModel;
+        }
+
+        static public OpenModel CreateWebWidener(OpenModel openModel, Joint joint, int refBeam, double width, double height, double tplate, double distanceZloc)
+        {
+            double w = width;
+            double h = height;
+            List<string> stringlist = new List<string>();
+            stringlist.Add(Moveto(0, 0));
+            stringlist.Add(Lineto(h, 0));
+            stringlist.Add(Lineto(0, w));
+            stringlist.Add(Lineto(0, 0));
+
+            string region = Combine(stringlist);
+            //thickness
+
+
+            //string region = "M "+-w+" 0 L " + width + " 0 L " + width + " " + height + " L 0 " + height + " L 0 0";
+            //geometry of plate descript by SVG path https://www.w3.org/TR/SVG/paths.html
+            //helpfull online SVG generator https://mavo.io/demos/svgpath/
+            region = region.Replace(",", ".");
+            int pointId = openModel.ConnectionPoint[0].Id;
+            Point3D point = openModel.Point3D.First(a => a.Id == pointId);
+
+            if (openModel.Connections[0].Plates == null)
+            {
+                openModel.Connections[0].Plates = new List<IdeaRS.OpenModel.Connection.PlateData>();
+
+            }
+            int number = 1 + openModel.Connections[0].Plates.Count;
+            BeamData beam = openModel.Connections[0].Beams[refBeam];
+            Element ele = joint.project.elements.First(a => a.id == (beam.Id - 1));
+            AttachedMember at = joint.attachedMembers.First(a => a.element.id == (beam.Id - 1));
+
+
+            CoordSystem coor = openModel.LineSegment3D[refBeam].LocalCoordinateSystem;//based on integer of linesegments not of plates
+            var LocalCoordinateSystem = new CoordSystemByVector();
+
+            //TODO: make definition that creates plate based on the LCS of the reference beam
+            Point movedPoint = Point.MovePointByVectorandLength(joint.centralNodeOfJoint, ele.localCoordinateSystem.Z.Unitize(), distanceZloc);
+
+            openModel.Connections[0].Plates.Add(new IdeaRS.OpenModel.Connection.PlateData
+            {
+                Name = "P" + number,
+                Thickness = tplate,
+
+
+                Id = number,
+                //openModel.GetMaxId(openModel.GetMaxId(PlateData ) +1), //unique identificator
+                //openModel.GetMaxId(lineSegment2) + 1
+                Material = openModel.MatSteel.First().Name,
+                OriginalModelId = number.ToString(),//inique identificator from original model [string]
+                Origin = new IdeaRS.OpenModel.Geometry3D.Point3D
+                {
+                    //TODO: include movement based on local x-axis. However, not yet available in current API
+                    X = movedPoint.X,
+                    Y = movedPoint.Y,
+                    Z = movedPoint.Z
+                },
+                //Y-axis is normal to plane of plate. 
+                //Therefore, 
+                //axixX = localY
+                //axixY = localZ
+                //axixZ = localX
+                AxisX = new IdeaRS.OpenModel.Geometry3D.Vector3D
+                {
+                    X = ele.localCoordinateSystem.Z.X,
+                    Y = ele.localCoordinateSystem.Z.Y,
+                    Z = ele.localCoordinateSystem.Z.Z
+
+                },
+                AxisY = new IdeaRS.OpenModel.Geometry3D.Vector3D
+                {
+                    X = ele.localCoordinateSystem.X.X,
+                    Y = ele.localCoordinateSystem.X.Y,
+                    Z = ele.localCoordinateSystem.X.Z
+
+                },
+                AxisZ = new IdeaRS.OpenModel.Geometry3D.Vector3D
+                {
+                    X = ele.localCoordinateSystem.Y.X,
+                    Y = ele.localCoordinateSystem.Y.Y,
+                    Z = ele.localCoordinateSystem.Y.Z
+                },
+                Region = region,
             });
 
             //(openModel.Connections[0].Plates ?? (openModel.Connections[0].Plates = new List<IdeaRS.OpenModel.Connection.PlateData>())).Add(plateData);

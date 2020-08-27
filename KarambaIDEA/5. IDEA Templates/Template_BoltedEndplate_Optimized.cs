@@ -267,11 +267,9 @@ namespace KarambaIDEA._5._IDEA_Templates
 
             finish:;
                 //Step V - Define data for cost analyses
-                Plate plateA = new Plate("endplateA", hEndplate, beam.width, tplate);
-                Plate plateB = new Plate("endplateB", hEndplate, beam.width, tplate);
+                Plate plateA = new Plate("endplate", hEndplate, beam.width, tplate);
 
                 joint.template.plates.Add(plateA);
-                joint.template.plates.Add(plateB);
 
                 double weldsize = Weld.CalWeldSizeFullStrenth90deg(tplate, beam.thicknessFlange, beam.material, Weld.WeldType.DoubleFillet);
                 joint.template.welds.Add(new Weld("FlangeweldTop", Weld.WeldType.DoubleFillet, weldsize, beam.width));
@@ -366,15 +364,25 @@ namespace KarambaIDEA._5._IDEA_Templates
                     CrossSection c = at.element.crossSection;
                     double tstiff = c.thicknessWeb/1000;
 
+
                     Vector3d vecZ = ImportGrasshopperUtils.CastVectorToRhino(Vector.VecScalMultiply(at.element.localCoordinateSystem.Z.Unitize(), (beam.height/2000)));
                     Vector3d vecY = ImportGrasshopperUtils.CastVectorToRhino(at.element.localCoordinateSystem.Y.Unitize());
                     Vector3d vecX = ImportGrasshopperUtils.CastVectorToRhino(vX.Unitize());
 
-                    Plane planeHor = new Plane(point, vecX, vecY);
-                    point.Transform(Transform.Translation(vecZ));
 
+                    //Add cost data
+                    Plate plateStiffner = new Plate("widenerUp", hEndplate, beam.width, tplate);
+
+                    joint.template.plates.Add(plateA);
+
+                    double weldsize2 = Weld.CalWeldSizeFullStrenth90deg(tplate, beam.thicknessFlange, beam.material, Weld.WeldType.DoubleFillet);
+                    joint.template.welds.Add(new Weld("FlangeweldTop", Weld.WeldType.DoubleFillet, weldsize, beam.width));
+                    joint.template.welds.Add(new Weld("FlangeweldBot", Weld.WeldType.DoubleFillet, weldsize, beam.width));
+                    double weldsizeWeb2 = Weld.CalWeldSizeFullStrenth90deg(tplate, beam.thicknessWeb, beam.material, Weld.WeldType.DoubleFillet);
+                    joint.template.welds.Add(new Weld("Webweld", Weld.WeldType.DoubleFillet, weldsizeWeb, beam.height));
+
+                    point.Transform(Transform.Translation(vecZ));
                     Plane plane = new Plane(point, vecX, vecZ);
-                    
 
                     Point3d P1 = new Point3d(0, 0, 0);
                     Point3d P2 = new Point3d(0, hstif / 1000, 0);
@@ -391,11 +399,31 @@ namespace KarambaIDEA._5._IDEA_Templates
                     Brep plate = sur.ToBrep().CapPlanarHoles(Project.tolerance);
                     breps.Add(plate, pathPlates);
 
+                    point.Transform(Transform.Translation(-2 * vecZ));//anders (-2*vecZ)
+                    Plane plane2 = new Plane(point, vecX, -vecZ);
+
+                    Point3d P12 = new Point3d(0, 0, 0);
+                    Point3d P22 = new Point3d(0, hstif / 1000, 0);
+                    Point3d P32 = new Point3d(lstif / 1000, 0, 0);
+                    IEnumerable<Point3d> points2 = new Point3d[] { P12, P22, P32, P12 };
+                    Polyline poly2 = new Polyline(points2);
+                    NurbsCurve nurbsCurve2 = poly2.ToNurbsCurve();
+
+                    Transform transform2 = Transform.PlaneToPlane(Plane.WorldXY, plane2);
+                    nurbsCurve2.Transform(transform2);
+                    nurbsCurve2.Transform(Transform.Translation(Vector3d.Multiply(-tstiff / 2, vecY)));
+                    nurbsCurve2.Transform(Transform.Translation(Vector3d.Multiply(tplate / 1000, vecX)));
+                    Surface sur2 = Surface.CreateExtrusion(nurbsCurve2, Vector3d.Multiply(tstiff, vecY));
+                    Brep plate2 = sur2.ToBrep().CapPlanarHoles(Project.tolerance);
+                    breps.Add(plate2, pathPlates);
+
+                    /*
                     Brep plate2 = new Brep();
                     plate2.CopyPropertiesFromSource<Brep>(plate);//Todo does not work                       
                     plate2.Transform(Transform.Mirror(planeHor));
+                    Rhino.MirrorObject
                     breps.Add(plate2, pathPlates);
-                    
+                    */
                     //Todo: add costdata
                     //Todo: include idea part for stiffeners
                 }
