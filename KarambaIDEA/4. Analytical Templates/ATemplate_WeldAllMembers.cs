@@ -165,7 +165,7 @@ namespace KarambaIDEA
             get
             {
 
-                return Properties.Resources.KarambaIDEA_logo;
+                return Properties.Resources.ATempWeldAll_01_01;
             }
         }
         public override Guid ComponentGuid

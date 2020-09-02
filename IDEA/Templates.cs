@@ -97,10 +97,19 @@ namespace KarambaIDEA.IDEA
             double wh = ((plate.length-c.height)/2)/ 1000;
             double ww = 2 * wh;
 
-            CreateWebWidener(openModel, joint, 0, ww, wh, wt, elh/2);
-            CutPlateByPlate(openModel, joint, 0, 2);
-            CreateWebWidener(openModel, joint, 1, -ww, -wh, wt, -elh / 2);
-            CutPlateByPlate(openModel, joint, 1, 3);
+            CreateWebWidener(openModel, joint, 0, ww, wh, wt,t, elh/2);
+            //CutPlateByPlate(openModel, joint, 0, 2);werkt niet
+            //CutPlateByBeam(openModel, joint, 0, 2);werkt niet
+
+            CreateWebWidener(openModel, joint, 1, -ww, -wh, wt,t, -elh / 2);
+            //CutPlateByPlate(openModel, joint, 1, 3);werkt niet
+            //CutPlateByBeam(openModel, joint, 1, 3);werkt niet
+
+            WeldBetweenPlates(openModel, 0, 3);
+            WeldBetweenPlates(openModel, 1, 2);
+            WeldBetweenPlates(openModel, 1, 3);
+            WeldBetweenPlates(openModel, 0, 2);
+
             return openModel;
         }
 
@@ -158,10 +167,30 @@ namespace KarambaIDEA.IDEA
 
             return openModel;
         }
-        static public OpenModel CutPlateByPlate(OpenModel openModel, Joint joint, int cuttingobject, int modifiedObject)
+        static public OpenModel CutPlateByBeam(OpenModel openModel, Joint joint, int cuttingobject, int modifiedObject)
         {
 
 
+            // add cut
+            if (openModel.Connections[0].CutBeamByBeams == null)
+            {
+                openModel.Connections[0].CutBeamByBeams = new List<IdeaRS.OpenModel.Connection.CutBeamByBeamData>();
+
+            }
+            openModel.Connections[0].CutBeamByBeams.Add(new IdeaRS.OpenModel.Connection.CutBeamByBeamData
+            {
+
+                CuttingObject = new ReferenceElement(openModel.Connections[0].Beams[cuttingobject]),
+                ModifiedObject = new ReferenceElement(openModel.Connections[0].Plates[modifiedObject]),
+                IsWeld = true,
+            });
+
+            return openModel;
+        }
+        static public OpenModel CutPlateByPlate(OpenModel openModel, Joint joint, int cuttingobject, int modifiedObject)
+        {
+
+            
             // add cut
             if (openModel.Connections[0].CutBeamByBeams == null)
             {
@@ -276,7 +305,7 @@ namespace KarambaIDEA.IDEA
             return openModel;
         }
 
-        static public OpenModel CreateWebWidener(OpenModel openModel, Joint joint, int refBeam, double width, double height, double tplate, double distanceZloc)
+        static public OpenModel CreateWebWidener(OpenModel openModel, Joint joint, int refBeam, double width, double height, double tplate, double tEndplate, double distanceZloc)
         {
             double w = width;
             double h = height;
@@ -307,12 +336,20 @@ namespace KarambaIDEA.IDEA
             Element ele = joint.project.elements.First(a => a.id == (beam.Id - 1));
             AttachedMember at = joint.attachedMembers.First(a => a.element.id == (beam.Id - 1));
 
-
+            
+            double sign = 1;
+            if (at.isStartPoint == false)
+            {
+                sign = -1;
+            }
             CoordSystem coor = openModel.LineSegment3D[refBeam].LocalCoordinateSystem;//based on integer of linesegments not of plates
             var LocalCoordinateSystem = new CoordSystemByVector();
 
             //TODO: make definition that creates plate based on the LCS of the reference beam
-            Point movedPoint = Point.MovePointByVectorandLength(joint.centralNodeOfJoint, ele.localCoordinateSystem.Z.Unitize(), distanceZloc);
+            Point moved2Point = Point.MovePointByVectorandLength(joint.centralNodeOfJoint, ele.localCoordinateSystem.Z.Unitize(), distanceZloc);
+            Point movedPoint = Point.MovePointByVectorandLength(moved2Point, ele.localCoordinateSystem.X.Unitize(), -sign*tEndplate);
+            //Point outerPoint = Point.MovePointByVectorandLength(movedPoint, ele.localCoordinateSystem.X.Unitize(), -sign*width);
+            Point outerPoint = Point.MovePointByVectorandLength(movedPoint, ele.localCoordinateSystem.Z.Unitize(), height);
 
             openModel.Connections[0].Plates.Add(new IdeaRS.OpenModel.Connection.PlateData
             {
@@ -359,10 +396,69 @@ namespace KarambaIDEA.IDEA
                 },
                 Region = region,
             });
+            if (openModel.Connections[0].Welds == null)
+            {
+                openModel.Connections[0].Welds = new List<IdeaRS.OpenModel.Connection.WeldData>();
+            }
+            int beamId = refBeam + 1;
+            BeamData beamData = openModel.Connections[0].Beams[refBeam];
+            PlateData plateData = openModel.Connections[0].Plates[number-1];
 
+            openModel.Connections[0].Welds.Add(new IdeaRS.OpenModel.Connection.WeldData
+            {
+                Id = openModel.Connections[0].Welds.Count+1,
+                ConnectedPartIds = new List<string>() { beamData.OriginalModelId, plateData.OriginalModelId },
+                Start = new IdeaRS.OpenModel.Geometry3D.Point3D()
+                {
+                    X = movedPoint.X,
+                    Y = movedPoint.Y,
+                    Z = movedPoint.Z
+                },
+                End = new IdeaRS.OpenModel.Geometry3D.Point3D()
+                {
+                    X = outerPoint.X,
+                    Y = outerPoint.Y,
+                    Z = outerPoint.Z
+                },
+                Thickness = 0.004,
+                WeldType = IdeaRS.OpenModel.Connection.WeldType.DoubleFillet,
+            });
             //(openModel.Connections[0].Plates ?? (openModel.Connections[0].Plates = new List<IdeaRS.OpenModel.Connection.PlateData>())).Add(plateData);
 
 
+            return openModel;
+        }
+        static public OpenModel WeldBetweenPlates(OpenModel openModel, int beamIndex, int plateIndex)
+        {
+            if (openModel.Connections[0].Welds == null)
+            {
+                openModel.Connections[0].Welds = new List<IdeaRS.OpenModel.Connection.WeldData>();
+            }
+            int plate1ID = beamIndex + 1;
+            int plate2ID = plateIndex + 1;
+            //BeamData beamData = openModel.Connections[0].Beams[beamIndex];
+            PlateData beamData = openModel.Connections[0].Plates[beamIndex];
+            PlateData plateData = openModel.Connections[0].Plates[plateIndex];
+
+            openModel.Connections[0].Welds.Add(new IdeaRS.OpenModel.Connection.WeldData
+            {
+                Id = openModel.Connections[0].Welds.Count + 1,
+                ConnectedPartIds = new List<string>() { beamData.OriginalModelId, plateData.OriginalModelId},
+                Start = new IdeaRS.OpenModel.Geometry3D.Point3D()
+                {
+                    X = -2,
+                    Y = 2.995,
+                    Z = 2.76
+                },
+                End = new IdeaRS.OpenModel.Geometry3D.Point3D()
+                {
+                    X = -2,
+                    Y = 2.995,
+                    Z = 2.76
+                },
+                Thickness = 0.004,
+                WeldType = IdeaRS.OpenModel.Connection.WeldType.DoubleFillet,
+            });
             return openModel;
         }
         static public OpenModel CreatePlate(OpenModel openModel, double height, double width, double moveX)

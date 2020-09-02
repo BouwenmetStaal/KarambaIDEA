@@ -21,6 +21,7 @@ namespace KarambaIDEA.Core
         public double NutThickness { get; private set; }
         public double WasherThickness { get; private set; }
         public BoltSteelGrade BoltSteelGrade = new BoltSteelGrade();
+        public double price;
 
         
 

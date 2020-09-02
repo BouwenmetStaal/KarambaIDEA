@@ -114,6 +114,7 @@
     <Compile Include="6. IDEA utilities\CreateAndCalculateIDEAfile.cs" />
     <Compile Include="6. IDEA utilities\CreateIDEAfile.cs" />
     <Compile Include="6. IDEA utilities\OptimizePlates.cs" />
+    <Compile Include="7. Cost calculation\BoltsCosts.cs" />
     <Compile Include="7. Cost calculation\CostCalculator.cs" />
     <Compile Include="7. Cost calculation\TotalWeight.cs" />
     <Compile Include="ImportGrasshopperUtils.cs" />
@@ -181,6 +182,9 @@
     <None Include="Resources\ATempMomentResistingConnection.png" />
     <None Include="Resources\ATempMomentResistingConnection2.png" />
     <None Include="Resources\ATempFinPlate.png" />
+    <None Include="Resources\bolts-01-01.png" />
+    <None Include="Resources\ATempWeldAll-01.png" />
+    <None Include="Resources\ATempWeldAll-01-01.png" />
     <Content Include="Resources\continues2members.contemp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
