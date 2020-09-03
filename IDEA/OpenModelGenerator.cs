@@ -429,7 +429,7 @@ namespace KarambaIDEA.IDEA
 
             //create member
             Member1D member1D = new Member1D();
-            member1D.Id = openModel.GetMaxId(member1D) + 1;
+            member1D.Id = bearingMembers[0].element.id + 1;
             member1D.Name = "Member" + member1D.Id.ToString();
             member1D.Elements1D.Add(new ReferenceElement(el1));
             member1D.Elements1D.Add(new ReferenceElement(el2));
@@ -512,7 +512,8 @@ namespace KarambaIDEA.IDEA
 
             //create member
             Member1D member1D = new Member1D();
-            member1D.Id = openModel.GetMaxId(member1D) + 1;
+            member1D.Id = attachedMember.element.id + 1;
+            //member1D.Id = openModel.GetMaxId(member1D) + 1;
             member1D.Name = "Member " + member1D.Id.ToString();
             member1D.Elements1D.Add(new ReferenceElement(element1D));
             openModel.Member1D.Add(member1D);
