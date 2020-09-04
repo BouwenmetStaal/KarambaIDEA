@@ -97,20 +97,25 @@ namespace KarambaIDEA.IDEA
             double wh = ((plate.length-c.height)/2)/ 1000;
             double ww = 2 * wh;
 
-            CreateWebWidener(openModel, joint, 0, ww, wh, wt,t, elh/2);
-            CreateWebWidener(openModel, joint, 0, ww, -wh, wt, t, -elh / 2);
-            //CutPlateByPlate(openModel, joint, 0, 2);werkt niet
-            //CutPlateByBeam(openModel, joint, 0, 2);werkt niet
+            if(joint.template.plates.Count>2 && h > elh)
+            {
+                CreateWebWidener(openModel, joint, 0, ww, wh, wt, t, elh / 2);
+                CreateWebWidener(openModel, joint, 0, ww, -wh, wt, t, -elh / 2);
+                //CutPlateByPlate(openModel, joint, 0, 2);werkt niet
+                //CutPlateByBeam(openModel, joint, 0, 2);werkt niet
 
-            CreateWebWidener(openModel, joint, 1, ww, wh, wt,t, elh / 2);
-            CreateWebWidener(openModel, joint, 1, ww, -wh, wt, t, -elh / 2);
-            //CutPlateByPlate(openModel, joint, 1, 3);werkt niet
-            //CutPlateByBeam(openModel, joint, 1, 3);werkt niet
+                CreateWebWidener(openModel, joint, 1, ww, wh, wt, t, elh / 2);
+                CreateWebWidener(openModel, joint, 1, ww, -wh, wt, t, -elh / 2);
+                //CutPlateByPlate(openModel, joint, 1, 3);werkt niet
+                //CutPlateByBeam(openModel, joint, 1, 3);werkt niet
 
-            //WeldBetweenPlates(openModel, 0, 3);
-            //WeldBetweenPlates(openModel, 1, 2);
-            //WeldBetweenPlates(openModel, 1, 3);
-            //WeldBetweenPlates(openModel, 0, 2);
+                //WeldBetweenPlates(openModel, 0, 3);
+                //WeldBetweenPlates(openModel, 1, 2);
+                //WeldBetweenPlates(openModel, 1, 3);
+                //WeldBetweenPlates(openModel, 0, 2);
+            }
+
+
 
             return openModel;
         }
@@ -408,8 +413,8 @@ namespace KarambaIDEA.IDEA
             int beamId = refBeam + 1;
             BeamData beamData = openModel.Connections[0].Beams[refBeam];
             PlateData plateData = openModel.Connections[0].Plates[number - 1 - 100];
-            CreateWeld(openModel, movedPoint, outerPoint, beamData.OriginalModelId, plateData.OriginalModelId);
-            CreateWeld(openModel,  upperPoint, movedPoint, beamData.OriginalModelId, plateData.OriginalModelId);
+            CreateWeld(openModel,  outerPoint, movedPoint, beamData.OriginalModelId, plateData.OriginalModelId);
+            CreateWeld(openModel, movedPoint, upperPoint, beamData.OriginalModelId, plateData.OriginalModelId);
             //(openModel.Connections[0].Plates ?? (openModel.Connections[0].Plates = new List<IdeaRS.OpenModel.Connection.PlateData>())).Add(plateData);
 
 
@@ -495,9 +500,8 @@ namespace KarambaIDEA.IDEA
                 Id = number,
                 Material = openModel.MatSteel.First().Name,
                 OriginalModelId = number.ToString(),//inique identificator from original model [string]
-                Origin = new IdeaRS.OpenModel.Geometry3D.Point3D
+                Origin = new IdeaRS.OpenModel.Geometry3D.Point3D             
                 {
-
                     X = point.X + moveX,
                     Y = point.Y - 0.5 * width,
                     Z = point.Z - 0.5 * height
@@ -643,18 +647,14 @@ namespace KarambaIDEA.IDEA
             boltGrid.AxisY = new IdeaRS.OpenModel.Geometry3D.Vector3D() { X = plateData.AxisY.X, Y = plateData.AxisY.Y, Z = plateData.AxisY.Z };
             boltGrid.AxisZ = new IdeaRS.OpenModel.Geometry3D.Vector3D() { X = plateData.AxisZ.X, Y = plateData.AxisZ.Y, Z = plateData.AxisZ.Z };
             boltGrid.Positions = new List<IdeaRS.OpenModel.Geometry3D.Point3D>();
+
+            Vector3D vx = boltGrid.AxisX.Unitize();
+
             foreach (Coordinate2D coor in boltGridCore.Coordinates2D)
             {
-                Point3D p = new Point3D();
-                //TODO: define position bolts based on local coordinate system plate
-                //p.X = boltGrid.Origin.X;
-                //p.Y = boltGrid.Origin.Y;
-
-
-                p.X = point.X;
-                p.Y = point.Y + (coor.locX / 1000);
-                p.Z = point.Z + (coor.locY / 1000);
-                boltGrid.Positions.Add(p);
+                Point3D p2 = point.MovePointVecAndLength(boltGrid.AxisX, coor.locX / 1000);
+                Point3D p3 = p2.MovePointVecAndLength(boltGrid.AxisY, coor.locY / 1000);
+                boltGrid.Positions.Add(p3);
             }
 
             boltGrid.ConnectedPartIds = new List<string>() { plateTwo.OriginalModelId, plateData.OriginalModelId };

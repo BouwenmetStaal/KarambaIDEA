@@ -121,16 +121,32 @@ namespace KarambaIDEA._5._IDEA_Templates
                         {
                             if (at.isStartPoint == true)
                             {
-                                nloads.Add(Math.Abs(loadsPerLine.startLoad.N));
+                                if (loadsPerLine.startLoad.N > 0)
+                                {
+                                    nloads.Add(Math.Abs(loadsPerLine.startLoad.N));
+                                }
+                                
                             }
                             else
                             {
-                                nloads.Add(Math.Abs(loadsPerLine.endLoad.N));
+                                if (loadsPerLine.startLoad.N > 0)
+                                {
+                                    nloads.Add(Math.Abs(loadsPerLine.endLoad.N));
+                                }
                             }
                         }
                     }
                 }
-                double nload = nloads.Max() * 1000;
+                double nload = new double();
+                if (nloads.Count != 0)
+                {
+                    nload = nloads.Max() * 1000; //maximum tensile load in N
+                }
+                else
+                {
+                    nload = 1000; //if there is no tensile load, this defauld load of 1 kN is used
+                }
+                
                 //Step II - Create bolts list
                 List<Bolt> bolts = Bolt.CreateBoltsList(BoltSteelGrade.Steelgrade.b8_8);
                 double hEndplate = beam.height;
