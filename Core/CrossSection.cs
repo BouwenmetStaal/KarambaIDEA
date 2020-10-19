@@ -137,6 +137,117 @@ namespace KarambaIDEA.Core
         {
             return (1 / 12) * b * Math.Pow(h, 2);
         }
-        
+
+        /// <summary>
+        /// NEN-EN 1993-1-1 Table 5.2 and 5.3 
+        /// All sections are assumed to be fully loaded in compression (conservative)
+        /// </summary>
+        /// <returns></returns>
+        public int SectionClass()
+        {
+            double epsilon = Math.Sqrt(235 / this.material.Fy);
+            
+            if (this.shape.Equals(Shape.ISection))
+            {
+                int resInt = 4;
+                int resExt = 4;
+                
+                //Internal
+                double ci = height - 2 * (thicknessFlange + radius);
+                double ti = thicknessWeb;
+                if (ci / ti <= 33 * epsilon)
+                {
+                    resInt = 1;
+                }
+                if (ci / ti <= 38 * epsilon)
+                {
+                    resInt = 2;
+                }
+                if (ci / ti <= 42 * epsilon)
+                {
+                    resInt = 3;
+                }
+                else
+                {
+                    resInt = 4;
+                }
+                //External
+                double ce = (width - thicknessWeb)/2;
+                double te = thicknessFlange;
+                if (ce / te <= 9 * epsilon)
+                {
+                    resExt = 1;
+                }
+                if (ce / te <= 10 * epsilon)
+                {
+                    resExt = 2;
+                }
+                if (ce / te <= 14 * epsilon)
+                {
+                    resExt = 3;
+                }
+                else
+                {
+                    resExt = 4;
+                }
+
+
+                return Math.Max(resInt,resExt);
+            }
+            if (this.shape.Equals(Shape.SHSSection))
+            {
+                int resInt = 4;
+
+                //Internal
+                double ci = height - 2 * (thicknessFlange + radius);
+                double ti = thicknessWeb;
+                if (ci / ti <= 33 * epsilon)
+                {
+                    resInt = 1;
+                }
+                if (ci / ti <= 38 * epsilon)
+                {
+                    resInt = 2;
+                }
+                if (ci / ti <= 42 * epsilon)
+                {
+                    resInt = 3;
+                }
+                else
+                {
+                    resInt = 4;
+                }
+                return (resInt);
+            }
+            if (this.shape.Equals(Shape.CHSsection))
+            {
+                int resInt = 4;
+
+                //Internal
+                double ci = width ;
+                double ti = thicknessWeb;
+                if (ci / ti <= 33 * Math.Pow(epsilon, 2))
+                {
+                    resInt = 1;
+                }
+                if (ci / ti <= 38 * Math.Pow(epsilon,2))
+                {
+                    resInt = 2;
+                }
+                if (ci / ti <= 42 * Math.Pow(epsilon, 2))
+                {
+                    resInt = 3;
+                }
+                else
+                {
+                    resInt = 4;
+                }
+                return (resInt);
+            }
+            else
+            {
+                throw new ArgumentNullException("Section Class for this Cross-section not implemented");
+            }
+        }
     }
 }

@@ -129,7 +129,7 @@ namespace KarambaIDEA._5._IDEA_Templates
                             }
                             else
                             {
-                                if (loadsPerLine.startLoad.N > 0)
+                                if (loadsPerLine.endLoad.N > 0)
                                 {
                                     nloads.Add(Math.Abs(loadsPerLine.endLoad.N));
                                 }

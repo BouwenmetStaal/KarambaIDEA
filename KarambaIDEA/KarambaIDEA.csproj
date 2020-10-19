@@ -107,6 +107,7 @@
     <Compile Include="3. Project utilities\RetrieveConnectionProperties.cs" />
     <Compile Include="4. Analytical Templates\ATemplate_FinplateConnection.cs" />
     <Compile Include="4. Analytical Templates\ATemplate_MomentResistingConnection.cs" />
+    <Compile Include="4. Analytical Templates\ATemplate_PlanarTrussJoint.cs" />
     <Compile Include="4. Analytical Templates\ATemplate_WeldAllMembers.cs" />
     <Compile Include="5. IDEA Templates\TemplateByFilePath.cs" />
     <Compile Include="5. IDEA Templates\Template_BoltedEndplate_Optimized.cs" />
