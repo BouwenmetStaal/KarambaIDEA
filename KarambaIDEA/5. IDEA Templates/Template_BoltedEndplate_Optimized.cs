@@ -157,8 +157,6 @@ namespace KarambaIDEA._5._IDEA_Templates
                     //Step III - determine maximum inner height and inner width of I section
                     double hymax = beam.height - 2 * (beam.thicknessFlange);
                     double hxmax = (beam.width - beam.thicknessWeb) / 2;
-                    
-
 
                     double d0 = bolt.HoleDiameter;
 

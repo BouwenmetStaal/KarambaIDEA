@@ -322,6 +322,8 @@ namespace KarambaIDEA
                         Brep tube = sur.ToBrep().CapPlanarHoles(tol);
                         plate = Brep.CreateBooleanDifference(plate, tube, tol).ToList().First();
 
+
+
                     }
                     //Add plate with holes
                     breps.Add(plate);
