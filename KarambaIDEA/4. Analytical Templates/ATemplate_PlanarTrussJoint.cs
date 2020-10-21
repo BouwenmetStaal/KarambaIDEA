@@ -101,7 +101,7 @@ namespace KarambaIDEA._4._Analytical_Templates
 
         private static void SetAnaTemplate(Joint joint, DataTree<string> messages)
         {
-            GH_Path path = new GH_Path(joint.id);
+            GH_Path path = new GH_Path(joint.id-1);
             joint.template = new Template();
 
             BearingMember bear = joint.attachedMembers.OfType<BearingMember>().ToList().First();
@@ -139,7 +139,8 @@ namespace KarambaIDEA._4._Analytical_Templates
                     double hi = cb.height;
                     double ti = cb.thicknessWeb;
                     //Check angle
-                    double angleDeg = Vector.AngleBetweenVectors(bear.element.Line.Vector, con.element.Line.Vector)*(180/Math.PI);
+                    double angle = Vector.AngleBetweenVectors(bear.element.Line.Vector, con.element.Line.Vector);
+                    double angleDeg = angle * (180 / Math.PI);
                     if (angleDeg < 30)
                     {
                         messages.Add("WARNING angle between chord and brace too small: " + angleDeg +" °", path);
@@ -182,13 +183,39 @@ namespace KarambaIDEA._4._Analytical_Templates
                         //CHS braces
                         throw new ArgumentNullException("Cross-section not implemented");
                     }
+                    
+                    //General check variables
+                    double beta = bi / b0;
+                    double C1 = 06-0.5*beta;
+
+                    double N_0_Ed = 0;
+                    double Npl_0_Rd = 0;
+                    double M_0_Ed = 0;
+                    double Mpl_0_Rd = 0;
+                    double n = N_0_Ed / Npl_0_Rd + M_0_Ed / Mpl_0_Rd;
+
+                    double Qf = Math.Pow(1 - Math.Abs(n), C1); 
+                    double eta = hi/b0;//waar kan ik deze vinden?
+                    double fy0 = cc.material.Fy;
+                    double fyi = cc.material.Fy;
+                    double be = (10 / (b0 / t0)) * (fy0 * t0 / fyi * ti) * bi;//chord compression stress (n<0)
+                    if (be > bi)
+                    {
+                        be = bi;
+                    }
+
                     //Chord face plastification (T, Y and X joints)
+                    double Nrd_1 = fy0 * Math.Pow(t0, 2) / Math.Sin(angleDeg)*(2*eta/(1-beta)*Math.Sin(angle)+4/Math.Sqrt(1-beta))*Qf;
                     //Local Brace failure (T, Y and X joints)
                     //Chord Punching shear (T, Y and X joints)
                     //Chord side wall failure (T, Y and X joints)
 
                     CostDefinition(joint, con);
                 }
+            }
+            else if(bear.element.crossSection.shape == CrossSection.Shape.ISection)
+            {
+
             }
             else
             {
@@ -266,6 +293,8 @@ namespace KarambaIDEA._4._Analytical_Templates
             {
                 //TODO: include warning, cross-sections not recognized
             }
+
+
         }
 
         /// <summary>
@@ -277,7 +306,7 @@ namespace KarambaIDEA._4._Analytical_Templates
             get
             {
 
-                return Properties.Resources.ATempWeldAll_01_01;
+                return Properties.Resources.TrussJoint_01;
             }
         }
         public override Guid ComponentGuid

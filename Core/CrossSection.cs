@@ -159,11 +159,11 @@ namespace KarambaIDEA.Core
                 {
                     resInt = 1;
                 }
-                if (ci / ti <= 38 * epsilon)
+                else if (ci / ti <= 38 * epsilon)
                 {
                     resInt = 2;
                 }
-                if (ci / ti <= 42 * epsilon)
+                else if (ci / ti <= 42 * epsilon)
                 {
                     resInt = 3;
                 }
@@ -178,11 +178,11 @@ namespace KarambaIDEA.Core
                 {
                     resExt = 1;
                 }
-                if (ce / te <= 10 * epsilon)
+                else if (ce / te <= 10 * epsilon)
                 {
                     resExt = 2;
                 }
-                if (ce / te <= 14 * epsilon)
+                else if (ce / te <= 14 * epsilon)
                 {
                     resExt = 3;
                 }
@@ -205,11 +205,11 @@ namespace KarambaIDEA.Core
                 {
                     resInt = 1;
                 }
-                if (ci / ti <= 38 * epsilon)
+                else if (ci / ti <= 38 * epsilon)
                 {
                     resInt = 2;
                 }
-                if (ci / ti <= 42 * epsilon)
+                else if (ci / ti <= 42 * epsilon)
                 {
                     resInt = 3;
                 }
@@ -230,11 +230,11 @@ namespace KarambaIDEA.Core
                 {
                     resInt = 1;
                 }
-                if (ci / ti <= 38 * Math.Pow(epsilon,2))
+                else if (ci / ti <= 38 * Math.Pow(epsilon,2))
                 {
                     resInt = 2;
                 }
-                if (ci / ti <= 42 * Math.Pow(epsilon, 2))
+                else if (ci / ti <= 42 * Math.Pow(epsilon, 2))
                 {
                     resInt = 3;
                 }
