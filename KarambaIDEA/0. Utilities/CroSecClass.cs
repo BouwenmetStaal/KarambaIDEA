@@ -127,7 +127,7 @@ namespace KarambaIDEA._0._Utilities
                 }
                 else if (shapes[i].StartsWith("[]"))
                 {
-                    shape = CrossSection.Shape.SHSSection;
+                    shape = CrossSection.Shape.RHSsection;
                 }
                 else if (shapes[i].StartsWith("()") || shapes[i].StartsWith("O"))
                 {

@@ -28,19 +28,19 @@ namespace KarambaIDEA._5._IDEA_Templates
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Project", "P", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
-            pManager.AddTextParameter("BrandNames", "BN", "BrandNames to apply template to", GH_ParamAccess.list, "");
-            pManager.AddNumberParameter("Thickness endplate [mm]", "T [mm]", "", GH_ParamAccess.item, 10.0);
-            pManager.AddNumberParameter("factor Prying forces", "PF", "", GH_ParamAccess.item, 0.5);
-            pManager.AddBooleanParameter("Stiffeners?", "S?", "Does the connection include stiffeners?", GH_ParamAccess.item, false);
+            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddTextParameter("BrandNames", "BrandNames", "BrandNames to apply template to", GH_ParamAccess.list, "");
+            pManager.AddNumberParameter("Thickness endplate [mm]", "Thickness endplate [mm]", "", GH_ParamAccess.item, 10.0);
+            pManager.AddNumberParameter("factor Prying forces", "factor Prying forces", "", GH_ParamAccess.item, 0.5);
+            pManager.AddBooleanParameter("Stiffeners?", "Stiffeners?", "Does the connection include stiffeners?", GH_ParamAccess.item, false);
             pManager[1].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Project", "P", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
-            pManager.AddTextParameter("Message", "M", "", GH_ParamAccess.tree);
-            pManager.AddBrepParameter("Brep", "B", "", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.tree);
+            pManager.AddBrepParameter("Brep", "Brep", "", GH_ParamAccess.tree);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)

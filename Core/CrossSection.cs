@@ -30,7 +30,7 @@ namespace KarambaIDEA.Core
         public enum Shape
         {
             ISection,
-            SHSSection,
+            RHSsection,
             CHSsection,
             Tsection,
             Strip
@@ -82,7 +82,7 @@ namespace KarambaIDEA.Core
         
         public double Iyy()
         {
-            if (this.shape.Equals(Shape.ISection) | this.shape.Equals(Shape.SHSSection))
+            if (this.shape.Equals(Shape.ISection) | this.shape.Equals(Shape.RHSsection))
             {
                 double a = Inertia(this.width, this.height);
                 double b = Inertia(this.width - this.thicknessWeb, this.height-2*this.thicknessFlange);
@@ -105,7 +105,7 @@ namespace KarambaIDEA.Core
                 double b = (this.width - 2 * this.thicknessWeb) * (this.height -this.thicknessFlange);
                 return a - b;
             }
-            if (this.shape.Equals(Shape.SHSSection))
+            if (this.shape.Equals(Shape.RHSsection))
             {
                 double a = this.width*this.height;
                 double b = (this.width-2*this.thicknessWeb) * (this.height-2*this.thicknessFlange);
@@ -131,6 +131,82 @@ namespace KarambaIDEA.Core
             else
             {
                 throw new ArgumentNullException("Area for this Cross-section not implemented");
+            }
+        }
+        public double MomentOfResistance()
+        {
+            if(this.SectionClass()==1|| this.SectionClass() == 2)
+            {
+                return MomentOfResistanceEL();
+            }
+            else
+            {
+                return MomentOfResistancePL();
+            }
+                
+        }
+        public double MomentOfResistanceEL()
+        {
+            if (this.shape.Equals(Shape.ISection))
+            {
+                double b = this.width;
+                double h = this.height;
+                double l = this.thicknessWeb;
+                double f = this.thicknessFlange;
+                double Wel = (b * Math.Pow(h, 3) - (b - l) * Math.Pow(h - 2 * f, 3)) / 6 * h;//https://www.mile17.nl/ivorm.php
+                return Wel;
+            }
+            if (this.shape.Equals(Shape.RHSsection))
+            {
+                double b = this.width;
+                double h = this.height;
+                double w = this.thicknessWeb;
+                double Wel = (b * Math.Pow(h, 3) - (b - 2*w) * Math.Pow(h - 2*w, 3)) / 6 * h;//https://www.mile17.nl/koker.php
+                return Wel;
+            }
+            if (this.shape.Equals(Shape.CHSsection))
+            {
+                double d = this.width;
+                double di = this.thicknessWeb;
+                double Wel = (Math.PI*(Math.Pow(d,4)-Math.Pow(di,4)))/32*d;//https://www.mile17.nl/buis.php
+                return Wel;
+            }
+            else
+            {
+                throw new ArgumentNullException("Section Class for this Cross-section not implemented");
+            }
+        }
+        public double MomentOfResistancePL()
+        {
+            if (this.shape.Equals(Shape.ISection))
+            {
+                double b = this.width;
+                double h = this.height;
+                double l = this.thicknessWeb;
+                double f = this.thicknessFlange;
+                double Wel = (b * Math.Pow(h, 3) - (b - l) * Math.Pow(h - 2 * f, 3)) / 6 * h;//https://www.dartmouth.edu/~cushman/courses/engs171/UsefulSolutionsForStandardProblems.pdf
+                return Wel;
+            }
+            if (this.shape.Equals(Shape.RHSsection))
+            {
+                double b = this.width;
+                double h = this.height;
+                double w = this.thicknessWeb;
+                double Wel = b*h*w*(1+h/2*b);
+                //https://www.dartmouth.edu/~cushman/courses/engs171/UsefulSolutionsForStandardProblems.pdf
+                return Wel;
+            }
+            if (this.shape.Equals(Shape.CHSsection))
+            {
+                double d = this.width;
+                double di = this.thicknessWeb;
+                double Wel = (Math.PI * (Math.Pow(d, 4) - Math.Pow(di, 4))) / 32 * d;
+                //https://www.dartmouth.edu/~cushman/courses/engs171/UsefulSolutionsForStandardProblems.pdf
+                return Wel;
+            }
+            else
+            {
+                throw new ArgumentNullException("Section Class for this Cross-section not implemented");
             }
         }
         public double Inertia(double b, double h)
@@ -194,7 +270,7 @@ namespace KarambaIDEA.Core
 
                 return Math.Max(resInt,resExt);
             }
-            if (this.shape.Equals(Shape.SHSSection))
+            if (this.shape.Equals(Shape.RHSsection))
             {
                 int resInt = 4;
 

@@ -2,7 +2,8 @@
 // for details. All rights reserved. Use of this source code is governed by a	
 // Apache-2.0 license that can be found in the LICENSE file.	
 using System;
-
+using System.Collections.Generic;
+using System.Linq;
 
 namespace KarambaIDEA.Core
 {
@@ -15,6 +16,71 @@ namespace KarambaIDEA.Core
         public int ideaOperationID;
         public Vector distanceVector;
         public bool platefailure = true;
+
+        
+
+        public double MaxAxialLoad()
+        {
+            List<double> Nloads = new List<double>();
+            foreach (LoadCase lc in this.element.project.loadcases)
+            {
+                foreach (LoadsPerLine loadsPerLine in lc.loadsPerLines)
+                {
+                    if (loadsPerLine.element == this.element)
+                    {
+                        if (this.isStartPoint == true)
+                        {
+                            double N = loadsPerLine.startLoad.N;
+                            N = Math.Abs(N);
+                            Nloads.Add(N);
+                        }
+                        else
+                        {
+                            double N = loadsPerLine.endLoad.N;
+                            N = Math.Abs(N);
+                            Nloads.Add(N);
+                        }
+                    }
+                }
+            }
+            return Nloads.Max();
+        }
+        /// <summary>
+        /// Max stress in local z direction
+        /// TODO extend to bidirectional stress determination
+        /// </summary>
+        /// <returns>maxiumum stress in N/mm2</returns>
+        public double Maxstress()
+        {
+            List<double> stresses = new List<double>();
+            foreach (LoadCase lc in this.element.project.loadcases)
+            {
+                foreach (LoadsPerLine loadsPerLine in lc.loadsPerLines)
+                {
+                    if (loadsPerLine.element == this.element)
+                    {
+                        double N;
+                        double My;
+                        if (this.isStartPoint == true)
+                        {
+                            N = loadsPerLine.startLoad.N*1000;//kN to N
+                            My = loadsPerLine.startLoad.My*1000000;//kNm to Nmm
+                        }
+                        else
+                        {
+                            N = loadsPerLine.endLoad.N*1000;//kN to N
+                            My = loadsPerLine.endLoad.My*1000000;//kNm to Nmm
+                        }
+                        CrossSection c = this.element.crossSection;
+                        double sigma1 = N / c.Area() + My / c.MomentOfResistance();
+                        double sigma2 = N / c.Area() - My / c.MomentOfResistance();
+                        double sigma = Math.Max(Math.Abs(sigma1), Math.Abs(sigma2));
+                        stresses.Add(sigma);
+                    }
+                }
+            }
+            return stresses.Max();
+        }
     }
 
     public class BearingMember : AttachedMember
@@ -85,7 +151,7 @@ namespace KarambaIDEA.Core
                 weldVolume = perimeter * Math.Pow(con.webWeld.Size, 2);
             }
 
-            if (cross.shape == CrossSection.Shape.SHSSection)
+            if (cross.shape == CrossSection.Shape.RHSsection)
             {
                 double perimeter = 2 * cross.width + 2 * cross.height;
                 weldVolume = perimeter * Math.Pow(con.webWeld.Size, 2);
@@ -121,5 +187,7 @@ namespace KarambaIDEA.Core
             return numerator / denumerator;
         }
     }
+
+
 }
 

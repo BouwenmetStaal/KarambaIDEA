@@ -11,7 +11,7 @@ namespace KarambaIDEA.Core
     [Serializable]
     public class Element
     {
-        internal Project project;
+        public Project project;
         public int id;
         public int numberInHierarchy;
         private readonly Line line;

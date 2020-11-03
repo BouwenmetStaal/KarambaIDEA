@@ -155,7 +155,7 @@ namespace KarambaIDEA.IDEA
                         AddRolledcrossSection(crossSection);
                         return;
                     }
-                case KarambaIDEA.Core.CrossSection.Shape.SHSSection:
+                case KarambaIDEA.Core.CrossSection.Shape.RHSsection:
                     {
                         AddSHScrossSection(crossSection);
                         return;

@@ -26,15 +26,15 @@ namespace KarambaIDEA._4._Analytical_Templates
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Project", "P", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
-            pManager.AddTextParameter("BrandNames", "BN", "BrandNames to apply template to", GH_ParamAccess.list, "");
+            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddTextParameter("BrandNames", "BrandNames", "BrandNames to apply template to", GH_ParamAccess.list, "");
             pManager[1].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Project", "P", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
-            pManager.AddTextParameter("Message", "M", "", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.tree);
 
             pManager.AddTextParameter("Throats Begin of Element", "TB", "ThroatFlange and ThroatWeb at Start of Element", GH_ParamAccess.list);
             pManager.AddTextParameter("Throats End of Element", "TE", "ThroatFlange and ThroatWeb at End of Element", GH_ParamAccess.list);
@@ -104,78 +104,85 @@ namespace KarambaIDEA._4._Analytical_Templates
             GH_Path path = new GH_Path(joint.id-1);
             joint.template = new Template();
 
-            BearingMember bear = joint.attachedMembers.OfType<BearingMember>().ToList().First();
-            if(bear.element.crossSection.shape == CrossSection.Shape.SHSSection)
+            BearingMember chord = joint.attachedMembers.OfType<BearingMember>().ToList().First();
+            if(chord.element.crossSection.shape == CrossSection.Shape.RHSsection)
             {
-                //Range of Validity for Chord
-                CrossSection cc = bear.element.crossSection;
+                //Range of Validity for RHS Chord NEN-EN 1993-1-8 table 7.8
+                CrossSection cc = chord.element.crossSection;
                 double b0 = cc.width;
                 double h0 = cc.height;
                 double t0 = cc.thicknessWeb;
-                //Check if CHORD is in tension or compression
-                if (b0/t0<=40 && h0 / t0 <= 40)
+                //Check if CHORD is in tension or compression NEN-EN 1993-1-8 table 7.8
+                if (b0/t0<=35 && h0 / t0 <= 35)
                 {
-                    if (IsLoadedInCompression(bear, joint))
+                    //Chord should always be at class 1 or 2 NEN-EN 1993-1-8 table 7.8
+                    int sectionClass = chord.element.crossSection.SectionClass();
+                    if (sectionClass > 2)
                     {
-                        int sectionClass = bear.element.crossSection.SectionClass();
-                        if (sectionClass > 2)
-                        {
-                            messages.Add("WARNING Section class of chord insufficient: section class " + sectionClass, path);
-                        }
+                        messages.Add("WARNING Section class of CHORD insufficient NEN-EN 1993-1-8 art 7.1.2 (2): section class " + sectionClass, path);
                     }
                 }
                 else
                 {
-                    messages.Add("WARNING b0/t0 ratio chord too small ", path);
+                    messages.Add("WARNING b0/t0 ratio chord too small NEN-EN 1993-1-8 table 7.8", path);
                 }
+                double gamma = b0 / 2 * t0;//NEN-EN 1993-1-8 art 1.5 (6)
+                //Max stress (in the connected face), now max stress is retrieved
+                double n = (chord.Maxstress() / chord.element.crossSection.material.Fy) / Project.gammaM5;//NEN-EN 1993-1-8 art 1.5 (5)
+                string mes = string.Format("n = {0:0.00} \u03B3 = {1:0.0} b0/t0 = {2:0.0}", n, gamma,b0/t0);
+                messages.Add(mes, path);
 
-
-
-                foreach (ConnectingMember con in joint.attachedMembers.OfType<ConnectingMember>())
+                foreach (ConnectingMember brace in joint.attachedMembers.OfType<ConnectingMember>())
                 {
-                    //Range of Validity for Brace
-                    CrossSection cb = con.element.crossSection;
+                    //Range of Validity for CHS or RHS Braces NEN-EN 1993-1-8 table 7.8
+                    CrossSection cb = brace.element.crossSection;
                     double bi = cb.width;
                     double hi = cb.height;
                     double ti = cb.thicknessWeb;
-                    //Check angle
-                    double angle = Vector.AngleBetweenVectors(bear.element.Line.Vector, con.element.Line.Vector);
+                    //Check angle NEN-EN 1993-1-8 art 7.1.2 (3)
+                    double angle = Vector.AngleBetweenVectors(chord.element.Line.Vector, brace.element.Line.Vector);
                     double angleDeg = angle * (180 / Math.PI);
                     if (angleDeg < 30)
                     {
-                        messages.Add("WARNING angle between chord and brace too small: " + angleDeg +" °", path);
+                        messages.Add("WARNING angle between CHORD and BRACE too small NEN-EN 1993-1-8 art 7.1.2 (3): " + angleDeg +" °", path);
                     }
-                    //Aspect ratio
-                    if(hi/bi<0.5 || 2.0 < hi / bi)
+                    //Aspect ratio NEN-EN 1993-1-8 table 7.8
+                    if (hi/bi<0.5 || 2.0 < hi / bi)
                     {
-                        messages.Add("WARNING aspect ratio hi/bi insufficent", path);
+                        messages.Add("WARNING aspect ratio hi/bi insufficent NEN-EN 1993-1-8 table 7.8", path);
                     }
                     
                     
-                    if (bear.element.crossSection.shape == CrossSection.Shape.SHSSection)
+                    if (brace.element.crossSection.shape == CrossSection.Shape.RHSsection)
                     {
-                        //Brace-to-chord ratio RHS Braces
-                        if(bi/b0<0.25 && bi / b0 < 0.1 + 0.01 * (b0 / t0))
+                        //Brace-to-chord ratio RHS Braces NEN-EN 1993-1-8 Table 7.8
+                        if (bi/b0<0.25)
                         {
-                            messages.Add("WARNING brace to chord ratio insufficient", path);
+                            messages.Add("WARNING BRACE to CHORD ratio insufficient, NEN-EN 1993-1-8 table 7.8", path);
                         }
-                        //RHS braces
-                        if (bi / ti <= 40 && hi / ti <= 40)
+                        //RHS braces NEN-EN 1993-1-8 Table 7.8
+                        if (bi / ti <= 35 && hi / ti <= 35)//
                         {
                             //Check if BRACE is in tension or compression
-                            if (IsLoadedInCompression(con, joint))
+                            if (IsLoadedInCompression(brace))
                             {
-                                int sectionClass = con.element.crossSection.SectionClass();
+                                int sectionClass = brace.element.crossSection.SectionClass();
+                                //Check if BRACE cross section class is 1 or 2, NEN-EN 1993-1-8 art 7.1.2 (2)
                                 if (sectionClass > 2)
                                 {
-                                    messages.Add("WARNING Section class of brace insufficient: section class " + sectionClass, path);
+                                    messages.Add("WARNING Section class of BRACE insufficient NEN-EN 1993-1-8 art 7.1.2 (2): section class " + sectionClass, path); //NEN-EN 1993-1-8 art 7.1.2 (2)
                                 }
                             }
                         }
+                        //CHS NEN-EN 1993-1-8 Table 7.8
                         else
                         {
-                            messages.Add("WARNING bi/ti ratio brace too small ", path);
+                            messages.Add("WARNING bi/ti ratio BRACE too small, NEN-EN 1993-1-8 table 7.8 ", path);
                         }
+                    }
+                    else if (brace.element.crossSection.shape == CrossSection.Shape.CHSsection)
+                    {
+
                     }
                     else
                     {
@@ -186,16 +193,6 @@ namespace KarambaIDEA._4._Analytical_Templates
                     
                     //General check variables
                     double beta = bi / b0;
-                    double C1 = 06-0.5*beta;
-
-                    double N_0_Ed = 0;
-                    double Npl_0_Rd = 0;
-                    double M_0_Ed = 0;
-                    double Mpl_0_Rd = 0;
-                    double n = N_0_Ed / Npl_0_Rd + M_0_Ed / Mpl_0_Rd;
-
-                    double Qf = Math.Pow(1 - Math.Abs(n), C1); 
-                    double eta = hi/b0;//waar kan ik deze vinden?
                     double fy0 = cc.material.Fy;
                     double fyi = cc.material.Fy;
                     double be = (10 / (b0 / t0)) * (fy0 * t0 / fyi * ti) * bi;//chord compression stress (n<0)
@@ -203,19 +200,46 @@ namespace KarambaIDEA._4._Analytical_Templates
                     {
                         be = bi;
                     }
+                    double gammaM5 = 1.0;
+                    double k_n = 1.3 - 0.4 * n / beta;
+                    if (k_n>1.0)
+                    {
+                        k_n = 1.0;
+                    }
+                    //T,Y and X joints NEN-EN 1993-1-8 Table 7.11
+                    if (beta <= 0.85)
+                    {
 
-                    //Chord face plastification (T, Y and X joints)
-                    double Nrd_1 = fy0 * Math.Pow(t0, 2) / Math.Sin(angleDeg)*(2*eta/(1-beta)*Math.Sin(angle)+4/Math.Sqrt(1-beta))*Qf;
-                    //Local Brace failure (T, Y and X joints)
-                    //Chord Punching shear (T, Y and X joints)
-                    //Chord side wall failure (T, Y and X joints)
+                    }
+                    double Nird = ((k_n * fy0 * Math.Pow(t0, 2)) / ((1 - beta) * Math.Sin(angle)) * (2 * beta / Math.Sin(angle) + 4 * Math.Sqrt(1 - beta))) / gammaM5;
+                    Nird = Nird / 1000;
+                    
+                    //K and N joints with gap NEN-EN 1993-1-8 Table 7.11
+                    if (beta <= 1.0)
+                    {
 
-                    CostDefinition(joint, con);
+                    }
+                    double b1 = bi;//TODO
+                    double b2 = bi;//TODO
+                    
+                    double Nird2 = (((8.9 * Math.Pow(gamma, 0.5) * k_n * fy0 * Math.Pow(t0, 2)) / Math.Sin(angle))*((b1+b2)/2*b0))/gammaM5;
+                    Nird2 = Nird2 / 1000;
+
+                    double Nmax = brace.MaxAxialLoad();
+                    double UC = Nmax / Math.Min(Nird, Nird2);
+                    string message = string.Format("Nmax = {0:0.0} kN Nird = {1:0.0} kN Nird = {2:0.0} kN UC = {3:0.00} \u03B2 = {4:0.00}",  Nmax, Nird, Nird2, UC, beta);
+                    messages.Add(message, path);
+                    //K and N joints with overlap NEN-EN 1993-1-8 Table 7.11
+
+
+
+
+                    CostDefinition(joint, brace);
                 }
             }
-            else if(bear.element.crossSection.shape == CrossSection.Shape.ISection)
+            else if(chord.element.crossSection.shape == CrossSection.Shape.ISection)
             {
-
+                //Range of Validity for CHS Chord NEN-EN 1993-1-8 table 7.1
             }
             else
             {
@@ -224,9 +248,9 @@ namespace KarambaIDEA._4._Analytical_Templates
 
         }
 
-        private static bool IsLoadedInCompression(AttachedMember at, Joint joint)
+        private static bool IsLoadedInCompression(AttachedMember at)
         {
-            foreach (LoadCase lc in joint.project.loadcases)
+            foreach (LoadCase lc in at.element.project.loadcases)
             {
                 foreach (LoadsPerLine loadsPerLine in lc.loadsPerLines)
                 {
@@ -252,6 +276,10 @@ namespace KarambaIDEA._4._Analytical_Templates
             return false;
         }
 
+        
+
+
+
         private static void CostDefinition(Joint joint, ConnectingMember con)
         {
             CrossSection cross = con.element.crossSection;
@@ -268,7 +296,7 @@ namespace KarambaIDEA._4._Analytical_Templates
                 con.webWeld.Size = weldSizeW;
             }
 
-            if (cross.shape == CrossSection.Shape.SHSSection)
+            if (cross.shape == CrossSection.Shape.RHSsection)
             {
                 double perimeter = 2 * cross.width + 2 * cross.height;
 

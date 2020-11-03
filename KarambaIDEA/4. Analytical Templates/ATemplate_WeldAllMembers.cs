@@ -26,15 +26,15 @@ namespace KarambaIDEA
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Project", "P", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
-            pManager.AddTextParameter("BrandNames", "BN", "BrandNames to apply template to", GH_ParamAccess.list, "");
+            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddTextParameter("BrandNames", "BrandNames", "BrandNames to apply template to", GH_ParamAccess.list, "");
             pManager[1].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Project", "P", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
-            pManager.AddTextParameter("Message", "M", "", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.list);
 
             pManager.AddTextParameter("Throats Begin of Element", "TB", "ThroatFlange and ThroatWeb at Start of Element", GH_ParamAccess.list);
             pManager.AddTextParameter("Throats End of Element", "TE", "ThroatFlange and ThroatWeb at End of Element", GH_ParamAccess.list);
@@ -128,7 +128,7 @@ namespace KarambaIDEA
                     con.webWeld.Size = weldSizeW;
                 }
 
-                if (cross.shape == CrossSection.Shape.SHSSection)
+                if (cross.shape == CrossSection.Shape.RHSsection)
                 {
                     double perimeter = 2 * cross.width + 2 * cross.height;
 
