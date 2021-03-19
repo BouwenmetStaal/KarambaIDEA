@@ -126,7 +126,7 @@ namespace KarambaIDEA._4._Analytical_Templates
                 {
                     messages.Add("WARNING b0/t0 ratio chord too small NEN-EN 1993-1-8 table 7.8", path);
                 }
-                double gamma = b0 / 2 * t0;//NEN-EN 1993-1-8 art 1.5 (6)
+                double gamma = b0 / (2 * t0);//NEN-EN 1993-1-8 art 1.5 (6)
                 //Max stress (in the connected face), now max stress is retrieved
                 double n = (chord.Maxstress() / chord.element.crossSection.material.Fy) / Project.gammaM5;//NEN-EN 1993-1-8 art 1.5 (5)
                 string mes = string.Format("n = {0:0.00} \u03B3 = {1:0.0} b0/t0 = {2:0.0}", n, gamma,b0/t0);
@@ -221,13 +221,21 @@ namespace KarambaIDEA._4._Analytical_Templates
                     }
                     double b1 = bi;//TODO
                     double b2 = bi;//TODO
-                    
-                    double Nird2 = (((8.9 * Math.Pow(gamma, 0.5) * k_n * fy0 * Math.Pow(t0, 2)) / Math.Sin(angle))*((b1+b2)/2*b0))/gammaM5;
+
+                    double a = (8.9 * Math.Pow(gamma, 0.5) * k_n * fy0 * Math.Pow(t0, 2)) / Math.Sin(angle);
+                    double b = ((b1 + b2) / (2 * b0));
+                    double Nird2 =  (a*b)/gammaM5;
                     Nird2 = Nird2 / 1000;
+
+                    double q = 0;//NEN-EN 1993-1-8 Figure 1.3
+                    double p = 0;//NEN-EN 1993-1-8 Figure 1.3
+
+                    double lambda_ov = (q/p)*100; //NEN-EN 1993-1-8 art 1.5 (6)
+                    double lambda_ovLim = 0; //NEN-EN 1993-1-8 art 1.5 (6)
 
                     double Nmax = brace.MaxAxialLoad();
                     double UC = Nmax / Math.Min(Nird, Nird2);
-                    string message = string.Format("Nmax = {0:0.0} kN Nird = {1:0.0} kN Nird = {2:0.0} kN UC = {3:0.00} \u03B2 = {4:0.00}",  Nmax, Nird, Nird2, UC, beta);
+                    string message = string.Format("Nmax = {0:0.0} kN Nird = {1:0.0} kN Nird = {2:0.0} kN UC = {3:0.00} [\u03B2 = {4:0.00}, \u03B1 = {5:0.0} \u00B0, k_n = {6:0.0}]",  Nmax, Nird, Nird2, UC, beta, angleDeg, k_n);
                     messages.Add(message, path);
                     //K and N joints with overlap NEN-EN 1993-1-8 Table 7.11
 

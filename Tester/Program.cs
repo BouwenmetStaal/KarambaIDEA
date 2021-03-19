@@ -12,6 +12,10 @@ using KarambaIDEA;
 using System.IO;
 using Newtonsoft.Json;
 using System.Collections.Generic;
+using Microsoft.Win32;
+using System.Linq;
+using System.Globalization;
+using System.Windows.Threading;
 
 namespace Tester
 {
@@ -23,11 +27,32 @@ namespace Tester
         [STAThread]
         static void Main()
         {
+            
+
+
+
+
             //TESTCalculate();
             //TESTCreateAndCalculateTemplate();
-            TESTCopyProject();
+            //TESTCopyProject();
+            try
+            {
+                RegistryKey staticaRoot = Registry.LocalMachine.OpenSubKey("SOFTWARE\\IDEAStatiCa");
+                double[] staticaVersions = staticaRoot.GetSubKeyNames().Select(x => double.Parse(x, CultureInfo.InvariantCulture.NumberFormat)).OrderByDescending(x => x).ToArray();
+                double? lastverion = staticaVersions.FirstOrDefault();
+                if (lastverion == null) { throw new ArgumentNullException("IDEA StatiCa installation cannot be found"); }
+                string path = $@"{lastverion.ToString().Replace(",", ".")}\IDEAStatiCa\Designer";
+                string staticaFolderPath = staticaRoot.OpenSubKey(path).GetValue("InstallDir64").ToString();
+            }
+            catch
+            {
+                throw new ArgumentNullException("IDEA StatiCa installation cannot be found");
+            }
+            
 
 
+
+            TESTCreateAndCalculate();
 
 
         }
@@ -76,11 +101,11 @@ namespace Tester
             IdeaConnection ideaConnection = new IdeaConnection(joint);
 
             //Calculate
-            HiddenCalculationV20.Calculate(joint);
+            //HiddenCalculationV20.Calculate(joint);
             //KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(joint);
 
             //Results
-            string results = joint.ResultsSummary.summary;
+            //string results = joint.ResultsSummary.summary;
         }
 
         static void TESTCreateAndCalculateTemplate()
