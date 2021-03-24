@@ -23,6 +23,7 @@ namespace KarambaIDEA.IDEA
         public Joint joint;
         public string filePath = "";
         public static string ideaStatiCaDir;
+        bool windowWPF = true;
 
         /// <summary>
         /// Constructor for an IdeaConnection based on a joint
@@ -46,10 +47,15 @@ namespace KarambaIDEA.IDEA
             {
                 throw new ArgumentNullException("IDEA StatiCa installation cannot be found");
             }
+            ProgressWindow pop = new ProgressWindow();
+            if (windowWPF)
+            {                
+                pop.Show();
+                pop.AddMessage(string.Format("IDEA StatiCa installation was found in '{0}'", ideaStatiCaDir));
+            }
 
-            //ProgressWindow pop = new ProgressWindow();
-            //pop.Show();
-            //pop.AddMessage(string.Format("IDEA StatiCa installation was found in '{0}'", ideaStatiCaDir));
+
+
 
             //1.set joint
             joint = _joint;
@@ -74,7 +80,11 @@ namespace KarambaIDEA.IDEA
             //3. create IOM and results
             OpenModel openModel = openModelGenerator.openModel;
             OpenModelResult openModelResult = openModelGenerator.openModelResult;
-            //pop.AddMessage(string.Format("Creating Openmodel and OpenmodelResult for '{0}'", joint.Name));
+            if (windowWPF)
+            {
+                pop.AddMessage(string.Format("Creating Openmodel and OpenmodelResult for '{0}'", joint.Name));
+            }
+            
             
             if (joint.template!= null)
             {
@@ -83,14 +93,20 @@ namespace KarambaIDEA.IDEA
 
             string iomFileName = Path.Combine(folder, joint.Name, "IOM.xml");
             string iomResFileName = Path.Combine(folder, joint.Name, "IOMresults.xml");
-            //pop.AddMessage(string.Format("Saving Openmodel and OpenmodelResult to XML for '{0}'", joint.Name));
+            if (windowWPF)
+            {
+                pop.AddMessage(string.Format("Saving Openmodel and OpenmodelResult to XML for '{0}'", joint.Name));
+            }
+            
 
             // save to the files
             openModel.SaveToXmlFile(iomFileName);
             openModelResult.SaveToXmlFile(iomResFileName);
 
-            //pop.AddMessage(string.Format("Creating IDEA StatiCa File '{0}'", joint.Name));
-            
+            if (windowWPF)
+            {
+                pop.AddMessage(string.Format("Creating IDEA StatiCa File '{0}'", joint.Name));
+            }
 
             string filename = joint.Name + ".ideaCon";            
             //var desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
@@ -104,7 +120,11 @@ namespace KarambaIDEA.IDEA
             {
                 // it creates connection project from IOM 
                 client.CreateConProjFromIOM(iomFileName, iomResFileName, fileConnFileNameFromLocal);
-                //pop.AddMessage(string.Format("Joint '{0}' was saved to:\n {1}", joint.Name, fileConnFileNameFromLocal));
+                if (windowWPF)
+                {
+                    pop.AddMessage(string.Format("Joint '{0}' was saved to:\n {1}", joint.Name, fileConnFileNameFromLocal));
+                }
+                
 
             }
             catch (Exception e)
@@ -119,7 +139,11 @@ namespace KarambaIDEA.IDEA
                     client.Close();
                 }
             }
-            //pop.Close();
+            if (windowWPF)
+            {
+                pop.Close();
+            }
+            
         }
 
         
