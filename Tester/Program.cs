@@ -10,7 +10,7 @@ using System.Reflection;
 using System.Windows.Forms;
 using KarambaIDEA;
 using System.IO;
-using Newtonsoft.Json;
+//using Newtonsoft.Json;
 using System.Collections.Generic;
 using Microsoft.Win32;
 using System.Linq;
@@ -38,10 +38,17 @@ namespace Tester
             try
             {
                 RegistryKey staticaRoot = Registry.LocalMachine.OpenSubKey("SOFTWARE\\IDEAStatiCa");
+                string[] SubKeyNames = staticaRoot.GetSubKeyNames();
+                Dictionary<double?, string> versions = new Dictionary<double?, string>();
+                foreach (string SubKeyName in SubKeyNames)
+                {
+                    versions.Add(double.Parse(SubKeyName, CultureInfo.InvariantCulture.NumberFormat), SubKeyName);
+                }
                 double[] staticaVersions = staticaRoot.GetSubKeyNames().Select(x => double.Parse(x, CultureInfo.InvariantCulture.NumberFormat)).OrderByDescending(x => x).ToArray();
                 double? lastverion = staticaVersions.FirstOrDefault();
+                string versionString = versions[lastverion];
                 if (lastverion == null) { throw new ArgumentNullException("IDEA StatiCa installation cannot be found"); }
-                string path = $@"{lastverion.ToString().Replace(",", ".")}\IDEAStatiCa\Designer";
+                string path = $@"{versionString.Replace(",", ".")}\IDEAStatiCa\Designer";
                 string staticaFolderPath = staticaRoot.OpenSubKey(path).GetValue("InstallDir64").ToString();
             }
             catch
@@ -153,17 +160,8 @@ namespace Tester
             par.children.Add(self);
 
 
-            Project project = null;
 
 
-
-            Project clone = project.CloneJson();
-            //
-            foreach (CrossSection c in clone.crossSections)
-            {
-                c.project = clone; //project copieren naar in elke child
-                //kijken naar mogelijkheden om parent verwijzing te verwijderen
-            }
         }
 
         public static void SetParent<T>(this T source, string propertyname, dynamic parent) where T : class
@@ -175,28 +173,7 @@ namespace Tester
             }
         }
 
-        /// <summary>
-        /// Perform a deep Copy of the object, using Json as a serialisation method. NOTE: Private members are not cloned using this method.
-        /// </summary>
-        /// <typeparam name="T">The type of object being copied.</typeparam>
-        /// <param name="source">The object instance to copy.</param>
-        /// <returns>The copied object.</returns>
-        public static T CloneJson<T>(this T source)
-        {
-            // Don't serialize a null object, simply return the default for that object
-            if (Object.ReferenceEquals(source, null))
-            {
-                return default(T);
-            }
-
-            // initialize inner objects individually
-            // for example in default constructor some list property initialized with some values,
-            // but in 'source' these items are cleaned -
-            // without ObjectCreationHandling.Replace default constructor values will be added to result
-            var deserializeSettings = new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace };
-
-            return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(source), deserializeSettings);
-        }
+       
 
 
     }

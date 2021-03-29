@@ -14,6 +14,7 @@ using Microsoft.Win32;
 using System.Linq;
 using System.Globalization;
 using System.Windows.Threading;
+using System.Collections.Generic;
 
 namespace KarambaIDEA.IDEA
 {
@@ -31,22 +32,28 @@ namespace KarambaIDEA.IDEA
         /// <param name="_joint">Joint object</param>
         public IdeaConnection(Joint _joint)
         {
-
-
-
             try
             {
+                //Find most recent version of IDEA StatiCa in registry
                 RegistryKey staticaRoot = Registry.LocalMachine.OpenSubKey("SOFTWARE\\IDEAStatiCa");
+                string[] SubKeyNames = staticaRoot.GetSubKeyNames();
+                Dictionary<double?, string> versions = new Dictionary<double?, string>();
+                foreach (string SubKeyName in SubKeyNames)
+                {
+                    versions.Add(double.Parse(SubKeyName, CultureInfo.InvariantCulture.NumberFormat), SubKeyName);
+                }
                 double[] staticaVersions = staticaRoot.GetSubKeyNames().Select(x => double.Parse(x, CultureInfo.InvariantCulture.NumberFormat)).OrderByDescending(x => x).ToArray();
                 double? lastverion = staticaVersions.FirstOrDefault();
+                string versionString = versions[lastverion];
                 if (lastverion == null) { throw new ArgumentNullException("IDEA StatiCa installation cannot be found"); }
-                string path = $@"{lastverion.ToString().Replace(",", ".")}\IDEAStatiCa\Designer";
+                string path = $@"{versionString.Replace(",", ".")}\IDEAStatiCa\Designer";
                 ideaStatiCaDir = staticaRoot.OpenSubKey(path).GetValue("InstallDir64").ToString();
             }
             catch
             {
                 throw new ArgumentNullException("IDEA StatiCa installation cannot be found");
             }
+
             ProgressWindow pop = new ProgressWindow();
             if (windowWPF)
             {                
