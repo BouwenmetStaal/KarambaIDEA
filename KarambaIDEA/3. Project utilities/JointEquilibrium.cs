@@ -17,27 +17,27 @@ namespace KarambaIDEA
 {
     public class JointEquilibrium : GH_Component
     {
-        public JointEquilibrium() : base("Joint Equilibrium", "Joint Equilibrium", "Joint Equilibrium per Loadcase", "KarambaIDEA", "3. Project utilities")
+        public JointEquilibrium() : base("Joint Load Equilibrium", "JLE", "Joint Load Equilibrium per Loadcase", "KarambaIDEA", "3. Project utilities")
         {
 
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Project", "P", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddNumberParameter("X kN", "X kN", "X kN", GH_ParamAccess.tree);
-            pManager.AddNumberParameter("Y kN", "Y kN", "Y kN", GH_ParamAccess.tree);
-            pManager.AddNumberParameter("Z kN", "Z kN", "Z kN", GH_ParamAccess.tree);
+            pManager.AddNumberParameter("X kN", "X kN", "result of equilibrium analysis in X direction [kN]", GH_ParamAccess.tree);
+            pManager.AddNumberParameter("Y kN", "Y kN", "result of equilibrium analysis in Y direction [kN]", GH_ParamAccess.tree);
+            pManager.AddNumberParameter("Z kN", "Z kN", "result of equilibrium analysis in Z direction [kN]", GH_ParamAccess.tree);
 
-            pManager.AddNumberParameter("Mt kN", "Mt kN", "Mt kN", GH_ParamAccess.tree);
-            pManager.AddNumberParameter("My kN", "My kN", "My kN", GH_ParamAccess.tree);
-            pManager.AddNumberParameter("Mz kN", "Mz kN", "Mz kN", GH_ParamAccess.tree);
+            pManager.AddNumberParameter("Mt kNm", "Mt kNm", "result of equilibrium analysis in Mt direction [kNm]", GH_ParamAccess.tree);
+            pManager.AddNumberParameter("My kNm", "My kNm", "result of equilibrium analysis in My direction [kNm]", GH_ParamAccess.tree);
+            pManager.AddNumberParameter("Mz kNm", "Mz kNm", "result of equilibrium analysis in Mz direction [kNm]", GH_ParamAccess.tree);
 
-            pManager.AddBooleanParameter("Equilibrium?", "Equilibrium?", "True if there is equilibrium", GH_ParamAccess.tree);
+            pManager.AddBooleanParameter("Equilibrium?", "E?", "True if there is equilibrium", GH_ParamAccess.tree);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -211,7 +211,7 @@ namespace KarambaIDEA
             get
             {
 
-                return Properties.Resources.KarambaIDEA_logo;
+                return Properties.Resources.JointLoadEquilibrium;
 
             }
         }

@@ -1,4 +1,5 @@
-﻿using System;
+﻿using KarambaIDEA.Core.JointTemplate;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -17,6 +18,8 @@ namespace KarambaIDEA.Core
         public double p1;
         public double p2;
 
+        public List<Coordinate2D> Coordinates2D;
+
         public BoltGrid(Bolt _bolttype, double _rows, double _columns, double _e1, double _e2, double _p1, double _p2)
         {
             this.bolttype = _bolttype;
@@ -27,6 +30,12 @@ namespace KarambaIDEA.Core
             this.p1 = _p1;
             this.p2 = _p2;
         }
+
+
+        public BoltGrid(Bolt _bolttype, List<Coordinate2D> _coordinate2Ds)
+        {
+            this.bolttype = _bolttype;
+            this.Coordinates2D = _coordinate2Ds;
+        }
     }
-    
 }

@@ -143,13 +143,14 @@ namespace KarambaIDEA
                 //BREP add plate
                 if (tplate != 0.0)
                 {
+                    //Create plate
                     CrossSection c = at.element.crossSection;
 
                     Vector3d vecZ = ImportGrasshopperUtils.CastVectorToRhino(at.element.localCoordinateSystem.Z);
                     Vector3d vecY = ImportGrasshopperUtils.CastVectorToRhino(at.element.localCoordinateSystem.Y);
                     Vector3d vecX = ImportGrasshopperUtils.CastVectorToRhino(Vector.VecScalMultiply(vX.Unitize(), (tplate / 1000)));
 
-                    Plane plane = new Plane(point, vecZ, vecY);
+                    Plane plane = new Plane(point, vecY, vecZ);
 
                     Point3d P1 = new Point3d(-c.width / 2000, c.height / 2000, 0);
                     Point3d P6 = new Point3d(-c.width / 2000, -c.height / 2000, 0);
@@ -162,7 +163,32 @@ namespace KarambaIDEA
                     Transform transform = Transform.PlaneToPlane(Plane.WorldXY, plane);
                     nurbsCurve.Transform(transform);
                     Surface sur = Surface.CreateExtrusion(nurbsCurve, vecX);
-                    breps.Add(sur.ToBrep().CapPlanarHoles(Project.tolerance));
+                    Brep plate = sur.ToBrep().CapPlanarHoles(Project.tolerance);
+
+                    //Create Holes
+                    Brep tubes = new Brep();
+
+                    double d0 = 24;
+                    double topmm = 80;
+
+                    double tol = 0.001;
+                    Vector3d locX = plane.XAxis;
+                    locX.Unitize();
+                    Transform transform2 = Transform.Translation(Vector3d.Multiply(topmm/1000, locX));
+                    Plane plane2 = plane;
+                    plane2.Transform(transform2);
+
+
+
+
+                    Circle circle = new Circle(plane2, d0 / 2000);//Radius 
+                    Surface sur2 = Surface.CreateExtrusion(circle.ToNurbsCurve(), 2*vecX);
+                    Brep tube = sur2.ToBrep().CapPlanarHoles(tol);
+
+                    plate = Brep.CreateBooleanDifference(plate, tube, tol).ToList().FirstOrDefault();
+
+                    //breps.Add(tube);
+                    breps.Add(plate);
                 }
             }
         }

@@ -17,20 +17,20 @@ namespace KarambaIDEA
 {
     public class RetrieveLinesPoints : GH_Component
     {
-        public RetrieveLinesPoints() : base("RetrieveLinesPoints", "RetrieveLinesPoints", "Retrieve lines and points of project", "KarambaIDEA", "3. Project utilities")
+        public RetrieveLinesPoints() : base("Retrieve Lines and Points", "RetLinPo", "Retrieve lines and points of project", "KarambaIDEA", "3. Project utilities")
         {
 
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Project", "P", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddLineParameter("Lines", "Lines", "Lines of project", GH_ParamAccess.list);
-            pManager.AddPointParameter("Points", "Points", "Points of project", GH_ParamAccess.list);
+            pManager.AddLineParameter("Lines", "L", "Lines of project", GH_ParamAccess.list);
+            pManager.AddPointParameter("Points", "P", "Points of project", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -68,7 +68,7 @@ namespace KarambaIDEA
             get
             {
 
-                return Properties.Resources.KarambaIDEA_logo;
+                return Properties.Resources.RetrieveLinesAndPoints;
 
             }
         }

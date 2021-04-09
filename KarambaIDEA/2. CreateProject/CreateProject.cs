@@ -194,7 +194,7 @@ namespace KarambaIDEA.Grasshopper
                 }
                 else if (shapes[i].StartsWith("[]"))
                 {
-                    shape = CrossSection.Shape.SHSSection;
+                    shape = CrossSection.Shape.RHSsection;
                 }
                 else if (shapes[i].StartsWith("()")|| shapes[i].StartsWith("O"))
                 {

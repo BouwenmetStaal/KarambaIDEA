@@ -87,7 +87,7 @@ namespace KarambaIDEA.Core
         {
             foreach (ConnectingMember CM in this.attachedMembers.OfType<ConnectingMember>())
             {
-                if (CM.element.crossSection.shape == CrossSection.Shape.SHSSection)
+                if (CM.element.crossSection.shape == CrossSection.Shape.RHSsection)
                 {
                     CM.flangeWeld.weldType = Weld.WeldType.Fillet;
                     CM.webWeld.weldType = Weld.WeldType.Fillet;

@@ -17,23 +17,23 @@ namespace KarambaIDEA.Grasshopper
 {
     public class LinesSCIA : GH_Component
     {
-        public LinesSCIA() : base("SCIA Lines", "SCIA Lines", "Create lines from SCIA PointNames", "KarambaIDEA", "0. Utilities")
+        public LinesSCIA() : base("SCIA Lines", "SL", "Create lines from SCIA PointNames", "KarambaIDEA", "0. Utilities")
         {
 
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Point names", "Point names", "Names of point", GH_ParamAccess.list);
-            pManager.AddPointParameter("Points", "Points", "Points", GH_ParamAccess.list);
+            pManager.AddTextParameter("Point names", "PN", "Names of point", GH_ParamAccess.list);
+            pManager.AddPointParameter("Points", "P", "Points", GH_ParamAccess.list);
 
-            pManager.AddTextParameter("Name StartPoint", "Name StartPoint", "Name of startpoint", GH_ParamAccess.list);
-            pManager.AddTextParameter("Name EndPoint", "Name EndPoint", "Name of startpoint", GH_ParamAccess.list);
+            pManager.AddTextParameter("Name StartPoint", "N SP", "Name of startpoint", GH_ParamAccess.list);
+            pManager.AddTextParameter("Name EndPoint", "N EP", "Name of startpoint", GH_ParamAccess.list);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddLineParameter("Lines", "Lines", "Created Lines", GH_ParamAccess.list);
+            pManager.AddLineParameter("Lines", "L", "Created Lines", GH_ParamAccess.list);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)

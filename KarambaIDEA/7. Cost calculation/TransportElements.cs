@@ -177,7 +177,7 @@ namespace KarambaIDEA
             get
             {
 
-                return Properties.Resources.TransportElements;
+                return Properties.Resources.TransportElements_trans_01;
 
             }
         }

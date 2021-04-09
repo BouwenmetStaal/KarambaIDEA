@@ -61,6 +61,9 @@ namespace KarambaIDEA
             //Adjust out of bounds index calculateThisJoint
             createThisJoint = createThisJoint % project.joints.Count;
 
+            //this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Warning Message");
+            //this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error Message");
+
             if (startIDEA == true)
             {
                 project.CreateFolder(outputfolderpath);
@@ -98,7 +101,7 @@ namespace KarambaIDEA
             get
             {
 
-                return Properties.Resources.IDEAlogo_safe;
+                return Properties.Resources.IDEAlogo;
 
             }
         }

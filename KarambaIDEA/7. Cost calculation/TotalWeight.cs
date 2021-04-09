@@ -96,7 +96,7 @@ namespace KarambaIDEA
                     nurbsCurve = poly.ToNurbsCurve();
                 }
 
-                if (c.shape == CrossSection.Shape.SHSSection)
+                if (c.shape == CrossSection.Shape.RHSsection)
                 {
                     Point3d P1 = new Point3d(-c.width / 2000, c.height / 2000,0);
                     Point3d P6 = new Point3d(-c.width / 2000, -c.height / 2000,0);
@@ -209,7 +209,7 @@ namespace KarambaIDEA
             get
             {
 
-                return Properties.Resources.Weight;
+                return Properties.Resources.Weight_trans_01;
 
             }
         }

@@ -19,7 +19,7 @@ namespace KarambaIDEA
 {
     public class ATemplate_WeldAllMembers : GH_Component
     {
-        public ATemplate_WeldAllMembers() : base("Analytical Template: Welds all members", "Analytical Template: Weld all members", "Analytical Template: weld all members", "KarambaIDEA", "4. Analytical Templates")
+        public ATemplate_WeldAllMembers() : base("Analytical Template: Welds all members", "AT: WAM", "Analytical Template: weld all members", "KarambaIDEA", "4. Analytical Templates")
         {
 
         }
@@ -36,8 +36,8 @@ namespace KarambaIDEA
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
             pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.list);
 
-            pManager.AddTextParameter("Throats Begin of Element", "ThroatsBegin", "ThroatFlange and ThroatWeb at Start of Element", GH_ParamAccess.list);
-            pManager.AddTextParameter("Throats End of Element", "ThroatsEnd", "ThroatFlange and ThroatWeb at End of Element", GH_ParamAccess.list);
+            pManager.AddTextParameter("Throats Begin of Element", "TB", "ThroatFlange and ThroatWeb at Start of Element", GH_ParamAccess.list);
+            pManager.AddTextParameter("Throats End of Element", "TE", "ThroatFlange and ThroatWeb at End of Element", GH_ParamAccess.list);
 
         }
 
@@ -128,7 +128,7 @@ namespace KarambaIDEA
                     con.webWeld.Size = weldSizeW;
                 }
 
-                if (cross.shape == CrossSection.Shape.SHSSection)
+                if (cross.shape == CrossSection.Shape.RHSsection)
                 {
                     double perimeter = 2 * cross.width + 2 * cross.height;
 
@@ -165,7 +165,7 @@ namespace KarambaIDEA
             get
             {
 
-                return Properties.Resources.KarambaIDEA_logo;
+                return Properties.Resources.ATempWeldAll_01_01;
             }
         }
         public override Guid ComponentGuid

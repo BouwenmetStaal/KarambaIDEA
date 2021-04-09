@@ -1,14 +1,16 @@
 ﻿using IdeaRS.OpenModel.Connection;
 using IdeaStatiCa.Plugin;
 using System.Collections.Generic;
-
+using IdeaRS.OpenModel.Geometry3D;
 
 using KarambaIDEA.Core;
 using System.Linq;
 using System.Windows.Forms;
+using System;
 
 namespace KarambaIDEA.IDEA
 {
+    
     /// <summary>
     /// Main view model of the example
     /// </summary>
@@ -45,7 +47,7 @@ namespace KarambaIDEA.IDEA
 
 
                     conRes = client.Calculate(connection.Identifier);
-
+                    client.SaveAsProject(pathToFile);
                     //projInfo.Connections.Count()
                     if (projInfo != null && projInfo.Connections != null)
                     {
@@ -81,40 +83,11 @@ namespace KarambaIDEA.IDEA
             }
             if (conRes != null)
             {
-                SaveResultsSummary(joint, conRes);
+                IdeaConnection.SaveResultsSummary(joint, conRes);
             }
-
-
         }
 
-        /// <summary>
-        /// Save ResultSummary from IDEA StatiCa back into Core 
-        /// </summary>
-        /// <param name="joint">joint instance</param>
-        /// <param name="cbfemResults">summary results retrieved from IDEA StatiCa</param>
-        private static void SaveResultsSummary(Joint joint, ConnectionResultsData cbfemResults)
-        {
-            List<CheckResSummary> results = cbfemResults.ConnectionCheckRes[0].CheckResSummary;
-            joint.ResultsSummary = new ResultsSummary();
-
-            //TODO:include message when singilarity occurs
-            //TODO:include message when bolts and welds are conflicting
-
-            joint.ResultsSummary.analysis = results.GetResult("Analysis");
-            joint.ResultsSummary.plates = results.GetResult("Plates");
-            joint.ResultsSummary.bolts = results.GetResult("Bolts");
-            joint.ResultsSummary.welds = results.GetResult("Welds");
-            joint.ResultsSummary.buckling = results.GetResult("Buckling");
-
-            string message = string.Empty;
-            foreach (var result in results)
-            {
-                message += result.Name + ": " + result.UnityCheckMessage + " ";
-            }
-            joint.ResultsSummary.summary = message;
-
-   
-        }
+  
     }
     public static class CalculationExtentions
     {
@@ -126,6 +99,41 @@ namespace KarambaIDEA.IDEA
                 return boltResult.CheckValue; 
             }
             return null;
+        }
+
+        public static Vector3D Unitize(this Vector3D vec)
+        {
+            vec.X = vec.X / vec.Length();
+            vec.Y = vec.Y / vec.Length();
+            vec.Z = vec.Z / vec.Length();
+            return vec;
+        }
+
+        public static double Length(this Vector3D vec)
+        {
+
+            return Math.Sqrt(Math.Pow(vec.X, 2) + Math.Pow(vec.Y, 2) + Math.Pow(vec.Z, 2));
+        }
+
+        static public Vector3D VecScalMultiply(this Vector3D vec, double scalar)
+        {
+            Vector3D vector = new Vector3D();
+            vector.X = vec.X * scalar;
+            vector.Y = vec.Y * scalar;
+            vector.Z = vec.Z * scalar;
+            return vector;
+        }
+
+        public static Point3D MovePointVecAndLength(this Point3D point, Vector3D vec, double length)
+        {
+            vec.Unitize();
+            Vector3D move = vec.VecScalMultiply(length);
+            Point3D newpoint = new Point3D();
+            newpoint.X = point.X + move.X;
+            newpoint.Y = point.Y + move.Y;
+            newpoint.Z = point.Z + move.Z;
+
+            return newpoint;
         }
     }
 

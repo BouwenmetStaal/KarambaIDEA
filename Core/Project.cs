@@ -42,6 +42,7 @@ namespace KarambaIDEA.Core
 
         public static readonly double tolerance = 1e-6;
         public static readonly double gammaM2 = 1.25;
+        public static readonly double gammaM5 = 1.0;
         public static readonly double EmodulusSteel = 210000;//N/mm2
         public static readonly double massSteel = 7850;//kg/m3
 

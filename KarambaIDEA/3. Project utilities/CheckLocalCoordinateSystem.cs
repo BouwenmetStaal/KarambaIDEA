@@ -26,7 +26,7 @@ namespace KarambaIDEA
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Project", "P", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -80,7 +80,7 @@ namespace KarambaIDEA
             get
             {
 
-                return Properties.Resources.KarambaIDEA_logo;
+                return Properties.Resources.LocalCoordianateSystem2;
 
             }
         }
