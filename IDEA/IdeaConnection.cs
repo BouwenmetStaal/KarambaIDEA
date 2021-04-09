@@ -15,6 +15,7 @@ using System.Linq;
 using System.Globalization;
 using System.Windows.Threading;
 using System.Collections.Generic;
+using IdeaRS.OpenModel.Connection;
 
 namespace KarambaIDEA.IDEA
 {
@@ -24,13 +25,14 @@ namespace KarambaIDEA.IDEA
         public Joint joint;
         public string filePath = "";
         public static string ideaStatiCaDir;
-        bool windowWPF = true;
+        bool windowWPF = true;//Mouse controls may freeze when true https://discourse.mcneel.com/t/mouse-click-not-working/73010/17
+        //https://www.grasshopper3d.com/forum/topics/bug-grasshopper-partly-freezes-after-any-export-operation
 
         /// <summary>
         /// Constructor for an IdeaConnection based on a joint
         /// </summary>
         /// <param name="_joint">Joint object</param>
-        public IdeaConnection(Joint _joint)
+        public IdeaConnection(Joint _joint, bool Calculate = false)
         {
             try
             {
@@ -61,13 +63,8 @@ namespace KarambaIDEA.IDEA
                 pop.AddMessage(string.Format("IDEA StatiCa installation was found in '{0}'", ideaStatiCaDir));
             }
 
-
-
-
             //1.set joint
             joint = _joint;
-
-            //throw new ArgumentException("dddddd");
 
             //2.create folder for joint
             string folder = this.joint.project.projectFolderPath;
@@ -115,8 +112,7 @@ namespace KarambaIDEA.IDEA
                 pop.AddMessage(string.Format("Creating IDEA StatiCa File '{0}'", joint.Name));
             }
 
-            string filename = joint.Name + ".ideaCon";            
-            //var desktopDir = Environment.GetFolderPath(Environment.SpecialFolder.DesktopDirectory);
+            string filename = joint.Name + ".ideaCon";       
             var fileConnFileNameFromLocal = Path.Combine(folder,joint.Name, filename);
             
             var calcFactory = new ConnHiddenClientFactory(ideaStatiCaDir);//V20
@@ -126,19 +122,16 @@ namespace KarambaIDEA.IDEA
             try
             {
                 // it creates connection project from IOM 
+                if (windowWPF){pop.AddMessage(string.Format("Joint '{0}' was saved to:\n {1}", joint.Name, fileConnFileNameFromLocal));}
                 client.CreateConProjFromIOM(iomFileName, iomResFileName, fileConnFileNameFromLocal);
-                if (windowWPF)
-                {
-                    pop.AddMessage(string.Format("Joint '{0}' was saved to:\n {1}", joint.Name, fileConnFileNameFromLocal));
-                }
-                
 
             }
             catch (Exception e)
             {
-                
+                if (windowWPF) { pop.AddMessage(string.Format("Creating of IDEA file Joint '{0}' failed", joint.Name)); }
                 throw new Exception(string.Format("Error '{0}'", e.Message));
             }
+
             finally
             {
                 if (client != null)
@@ -146,6 +139,80 @@ namespace KarambaIDEA.IDEA
                     client.Close();
                 }
             }
+
+            if (Calculate)//Currently not working
+            {
+                if (windowWPF) { pop.AddMessage(string.Format("Calculation Joint {0} start up", joint.Name)); }
+                string path = IdeaConnection.ideaStatiCaDir;//path to idea
+                string pathToFile = joint.JointFilePath;//ideafile path
+                string newBoltAssemblyName = "M16 8.8";
+                var calcFactory2 = new ConnHiddenClientFactory(path);
+                ConnectionResultsData conRes = null;
+                var client2 = calcFactory2.Create();
+                try
+                {
+                    client2.OpenProject(pathToFile);
+
+
+                    try
+                    {
+
+                        // get detail about idea connection project
+                        var projInfo = client2.GetProjectInfo();
+
+                        var connection = projInfo.Connections.FirstOrDefault();//Select first connection
+                        if (joint.ideaTemplateLocation != null)
+                        {
+                            if (windowWPF) { pop.AddMessage(string.Format("Template found at:'{0}' ", joint.ideaTemplateLocation)); }
+                            client2.AddBoltAssembly(newBoltAssemblyName);//??Here Martin
+                            client2.ApplyTemplate(connection.Identifier, joint.ideaTemplateLocation, null);
+                            client2.SaveAsProject(pathToFile);
+                            if (windowWPF) { pop.AddMessage(string.Format("Template applied to Joint {0}", joint.Name)); }
+                        }
+
+                        if (windowWPF) { pop.AddMessage(string.Format("Calculating Joint {0}", joint.Name)); }
+                        conRes = client2.Calculate(connection.Identifier);
+                        client2.SaveAsProject(pathToFile);
+                        //projInfo.Connections.Count()
+                        if (projInfo != null && projInfo.Connections != null)
+                        {
+
+                            /*
+                            // iterate all connections in the project
+                            foreach (var con in projInfo.Connections)
+                            {
+                                //Console.WriteLine(string.Format("Starting calculation of connection {0}", con.Identifier));
+
+                                // calculate a get results for each connection in the project
+                                var conRes = client.Calculate(con.Identifier);
+                                //Console.WriteLine("Calculation is done");
+
+                                // get the geometry of the connection
+                                var connectionModel = client.GetConnectionModel(con.Identifier);
+                            }
+                            */
+                        }
+                    }
+                    finally
+                    {
+                        // Delete temps in case of a crash
+                        client2.CloseProject();
+                    }
+                }
+                finally
+                {
+                    if (client2 != null)
+                    {
+                        client2.Close();
+                    }
+                }
+                if (conRes != null)
+                {
+                    SaveResultsSummary(joint, conRes);
+                }
+            }
+
+
             if (windowWPF)
             {
                 pop.Close();
@@ -164,6 +231,33 @@ namespace KarambaIDEA.IDEA
                 return Assembly.LoadFile(assemblyFileName);
             }
             return args.RequestingAssembly;
+        }
+
+        /// <summary>
+        /// Save ResultSummary from IDEA StatiCa back into Core 
+        /// </summary>
+        /// <param name="joint">joint instance</param>
+        /// <param name="cbfemResults">summary results retrieved from IDEA StatiCa</param>
+        public static void SaveResultsSummary(Joint joint, ConnectionResultsData cbfemResults)
+        {
+            List<CheckResSummary> results = cbfemResults.ConnectionCheckRes[0].CheckResSummary;
+            joint.ResultsSummary = new ResultsSummary();
+
+            //TODO:include message when singilarity occurs
+            //TODO:include message when bolts and welds are conflicting
+
+            joint.ResultsSummary.analysis = results.GetResult("Analysis");
+            joint.ResultsSummary.plates = results.GetResult("Plates");
+            joint.ResultsSummary.bolts = results.GetResult("Bolts");
+            joint.ResultsSummary.welds = results.GetResult("Welds");
+            joint.ResultsSummary.buckling = results.GetResult("Buckling");
+
+            string message = string.Empty;
+            foreach (var result in results)
+            {
+                message += result.Name + ": " + result.UnityCheckMessage + " ";
+            }
+            joint.ResultsSummary.summary = message;
         }
     }
 }

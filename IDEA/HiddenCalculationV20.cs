@@ -10,6 +10,7 @@ using System;
 
 namespace KarambaIDEA.IDEA
 {
+    
     /// <summary>
     /// Main view model of the example
     /// </summary>
@@ -82,40 +83,11 @@ namespace KarambaIDEA.IDEA
             }
             if (conRes != null)
             {
-                SaveResultsSummary(joint, conRes);
+                IdeaConnection.SaveResultsSummary(joint, conRes);
             }
-
-
         }
 
-        /// <summary>
-        /// Save ResultSummary from IDEA StatiCa back into Core 
-        /// </summary>
-        /// <param name="joint">joint instance</param>
-        /// <param name="cbfemResults">summary results retrieved from IDEA StatiCa</param>
-        private static void SaveResultsSummary(Joint joint, ConnectionResultsData cbfemResults)
-        {
-            List<CheckResSummary> results = cbfemResults.ConnectionCheckRes[0].CheckResSummary;
-            joint.ResultsSummary = new ResultsSummary();
-
-            //TODO:include message when singilarity occurs
-            //TODO:include message when bolts and welds are conflicting
-
-            joint.ResultsSummary.analysis = results.GetResult("Analysis");
-            joint.ResultsSummary.plates = results.GetResult("Plates");
-            joint.ResultsSummary.bolts = results.GetResult("Bolts");
-            joint.ResultsSummary.welds = results.GetResult("Welds");
-            joint.ResultsSummary.buckling = results.GetResult("Buckling");
-
-            string message = string.Empty;
-            foreach (var result in results)
-            {
-                message += result.Name + ": " + result.UnityCheckMessage + " ";
-            }
-            joint.ResultsSummary.summary = message;
-
-   
-        }
+  
     }
     public static class CalculationExtentions
     {

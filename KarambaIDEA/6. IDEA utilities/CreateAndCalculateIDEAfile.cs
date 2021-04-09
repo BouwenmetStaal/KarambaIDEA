@@ -86,7 +86,7 @@ namespace KarambaIDEA
                 project.CreateFolder(outputfolderpath);
                 Joint joint = project.joints[createAndCalculateThisJoint];
                 //joint.template.workshopOperations = workshopOperations;
-                IdeaConnection ideaConnection = new IdeaConnection(joint);
+                IdeaConnection ideaConnection = new IdeaConnection(joint,false);
 
                 //Run HiddenCalculation
                 joint.JointFilePath = "xx";
