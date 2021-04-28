@@ -73,7 +73,7 @@ namespace Tester
 
             Joint joint = new Joint();
             joint.JointFilePath = "C:\\Data\\20191115214919\\C12-brandname\\APIproduced File - NotCorrect.ideaCon";
-            HiddenCalculationV20.Calculate(joint);
+            HiddenCalculationV20.Calculate(joint, true);
             //Results
             string results = joint.ResultsSummary.summary;
         }
@@ -105,7 +105,7 @@ namespace Tester
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
 
             //Create IDEA file
-            IdeaConnection ideaConnection = new IdeaConnection(joint);
+            IdeaConnection ideaConnection = new IdeaConnection(joint, true);
 
             //Calculate
             //HiddenCalculationV20.Calculate(joint);
@@ -142,10 +142,10 @@ namespace Tester
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
 
             //Create IDEA file
-            IdeaConnection ideaConnection = new IdeaConnection(joint);
+            IdeaConnection ideaConnection = new IdeaConnection(joint, true);
 
             //Calculate
-            HiddenCalculationV20.Calculate(joint);
+            HiddenCalculationV20.Calculate(joint, true);
             
 
             //Results

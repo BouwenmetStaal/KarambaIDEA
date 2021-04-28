@@ -25,14 +25,14 @@ namespace KarambaIDEA.IDEA
         public Joint joint;
         public string filePath = "";
         public static string ideaStatiCaDir;
-        bool windowWPF = true;//Mouse controls may freeze when true https://discourse.mcneel.com/t/mouse-click-not-working/73010/17
+        //bool windowWPF = true;//Mouse controls may freeze when true https://discourse.mcneel.com/t/mouse-click-not-working/73010/17
         //https://www.grasshopper3d.com/forum/topics/bug-grasshopper-partly-freezes-after-any-export-operation
 
         /// <summary>
         /// Constructor for an IdeaConnection based on a joint
         /// </summary>
         /// <param name="_joint">Joint object</param>
-        public IdeaConnection(Joint _joint, bool Calculate = false)
+        public IdeaConnection(Joint _joint, bool userFeedback, bool Calculate = false)
         {
             try
             {
@@ -57,7 +57,7 @@ namespace KarambaIDEA.IDEA
             }
 
             ProgressWindow pop = new ProgressWindow();
-            if (windowWPF)
+            if (userFeedback)
             {                
                 pop.Show();
                 pop.AddMessage(string.Format("IDEA StatiCa installation was found in '{0}'", ideaStatiCaDir));
@@ -84,7 +84,7 @@ namespace KarambaIDEA.IDEA
             //3. create IOM and results
             OpenModel openModel = openModelGenerator.openModel;
             OpenModelResult openModelResult = openModelGenerator.openModelResult;
-            if (windowWPF)
+            if (userFeedback)
             {
                 pop.AddMessage(string.Format("Creating Openmodel and OpenmodelResult for '{0}'", joint.Name));
             }
@@ -97,7 +97,7 @@ namespace KarambaIDEA.IDEA
 
             string iomFileName = Path.Combine(folder, joint.Name, "IOM.xml");
             string iomResFileName = Path.Combine(folder, joint.Name, "IOMresults.xml");
-            if (windowWPF)
+            if (userFeedback)
             {
                 pop.AddMessage(string.Format("Saving Openmodel and OpenmodelResult to XML for '{0}'", joint.Name));
             }
@@ -107,7 +107,7 @@ namespace KarambaIDEA.IDEA
             openModel.SaveToXmlFile(iomFileName);
             openModelResult.SaveToXmlFile(iomResFileName);
 
-            if (windowWPF)
+            if (userFeedback)
             {
                 pop.AddMessage(string.Format("Creating IDEA StatiCa File '{0}'", joint.Name));
             }
@@ -122,13 +122,13 @@ namespace KarambaIDEA.IDEA
             try
             {
                 // it creates connection project from IOM 
-                if (windowWPF){pop.AddMessage(string.Format("Joint '{0}' was saved to:\n {1}", joint.Name, fileConnFileNameFromLocal));}
+                if (userFeedback){pop.AddMessage(string.Format("Joint '{0}' was saved to:\n {1}", joint.Name, fileConnFileNameFromLocal));}
                 client.CreateConProjFromIOM(iomFileName, iomResFileName, fileConnFileNameFromLocal);
 
             }
             catch (Exception e)
             {
-                if (windowWPF) { pop.AddMessage(string.Format("Creating of IDEA file Joint '{0}' failed", joint.Name)); }
+                if (userFeedback) { pop.AddMessage(string.Format("Creating of IDEA file Joint '{0}' failed", joint.Name)); }
                 throw new Exception(string.Format("Error '{0}'", e.Message));
             }
 
@@ -142,7 +142,7 @@ namespace KarambaIDEA.IDEA
 
             if (Calculate)//Currently not working
             {
-                if (windowWPF) { pop.AddMessage(string.Format("Calculation Joint {0} start up", joint.Name)); }
+                if (userFeedback) { pop.AddMessage(string.Format("Calculation Joint {0} start up", joint.Name)); }
                 string path = IdeaConnection.ideaStatiCaDir;//path to idea
                 string pathToFile = joint.JointFilePath;//ideafile path
                 string newBoltAssemblyName = "M16 8.8";
@@ -163,14 +163,14 @@ namespace KarambaIDEA.IDEA
                         var connection = projInfo.Connections.FirstOrDefault();//Select first connection
                         if (joint.ideaTemplateLocation != null)
                         {
-                            if (windowWPF) { pop.AddMessage(string.Format("Template found at:'{0}' ", joint.ideaTemplateLocation)); }
+                            if (userFeedback) { pop.AddMessage(string.Format("Template found at:'{0}' ", joint.ideaTemplateLocation)); }
                             client2.AddBoltAssembly(newBoltAssemblyName);//??Here Martin
                             client2.ApplyTemplate(connection.Identifier, joint.ideaTemplateLocation, null);
                             client2.SaveAsProject(pathToFile);
-                            if (windowWPF) { pop.AddMessage(string.Format("Template applied to Joint {0}", joint.Name)); }
+                            if (userFeedback) { pop.AddMessage(string.Format("Template applied to Joint {0}", joint.Name)); }
                         }
 
-                        if (windowWPF) { pop.AddMessage(string.Format("Calculating Joint {0}", joint.Name)); }
+                        if (userFeedback) { pop.AddMessage(string.Format("Calculating Joint {0}", joint.Name)); }
                         conRes = client2.Calculate(connection.Identifier);
                         client2.SaveAsProject(pathToFile);
                         //projInfo.Connections.Count()
@@ -213,7 +213,7 @@ namespace KarambaIDEA.IDEA
             }
 
 
-            if (windowWPF)
+            if (userFeedback)
             {
                 pop.Close();
             }

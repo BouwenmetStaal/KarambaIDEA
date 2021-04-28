@@ -17,8 +17,16 @@ namespace KarambaIDEA.IDEA
     /// //public class HiddenCalculation : INotifyPropertyChanged, IConHiddenCalcModel
     public class HiddenCalculationV20
     {
-        public static void Calculate(Joint joint)
+        public static void Calculate(Joint joint, bool userFeedback)
         {
+            ProgressWindow pop = new ProgressWindow();
+            if (userFeedback)
+            {
+                pop.Show();
+                pop.AddMessage(string.Format("Start calculation '{0}'", joint.Name));
+                pop.AddMessage(string.Format("IDEA StatiCa installation was found in '{0}'", IdeaConnection.ideaStatiCaDir));
+            }
+
             string path = IdeaConnection.ideaStatiCaDir;//path to idea
             string pathToFile = joint.JointFilePath;//ideafile path
             string newBoltAssemblyName = "M16 8.8";
@@ -39,13 +47,20 @@ namespace KarambaIDEA.IDEA
                     var connection = projInfo.Connections.FirstOrDefault();//Select first connection
                     if (joint.ideaTemplateLocation != null)
                     {
+                        if (userFeedback)
+                        {
+                            pop.AddMessage(string.Format("Template with path applied: '{0}'", joint.ideaTemplateLocation));
+                        }
                         client.AddBoltAssembly(newBoltAssemblyName);//??Here Martin
 
                         client.ApplyTemplate(connection.Identifier, joint.ideaTemplateLocation, null);
                         client.SaveAsProject(pathToFile);
                     }
 
-
+                    if (userFeedback)
+                    {
+                        pop.AddMessage(string.Format("Calculation started: '{0}'", joint.Name));
+                    }
                     conRes = client.Calculate(connection.Identifier);
                     client.SaveAsProject(pathToFile);
                     //projInfo.Connections.Count()
@@ -84,6 +99,10 @@ namespace KarambaIDEA.IDEA
             if (conRes != null)
             {
                 IdeaConnection.SaveResultsSummary(joint, conRes);
+            }
+            if (userFeedback)
+            {
+                pop.Close();
             }
         }
 

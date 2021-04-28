@@ -28,8 +28,8 @@ namespace KarambaIDEA
         {
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
             pManager.AddTextParameter("Output folder ", "Output folder", "Save location of IDEA Statica Connection output file. For example: 'C:\\Data'", GH_ParamAccess.item);
-            //pManager.AddGenericParameter("Template", "Template", "Template", GH_ParamAccess.item);
-            //pManager.AddBooleanParameter("RunAllJoints", "RunAllJoints", "If true run all joints, if false run ChooseJoint joint", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("UserFeedback", "User Feedback", "Feedback of calculation", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("RunAllJoints", "RunAllJoints", "If true run all joints, if false run ChooseJoint joint", GH_ParamAccess.item);
             pManager.AddIntegerParameter("ChooseJoint", "ChooseJoint", "Specify the joint that will be calculated in IDEA. Note: starts at zero.", GH_ParamAccess.item);
             pManager.AddBooleanParameter("RunIDEA", "RunIDEA", "Bool for running IDEA Statica Connection", GH_ParamAccess.item);
 
@@ -56,6 +56,8 @@ namespace KarambaIDEA
             //Input variables
             Project project = new Project();
             string outputfolderpath = null;
+            bool userFeedback = false;
+            bool createAllJoints = false;
             int createAndCalculateThisJoint = 0;
             bool startIDEA = false;
 
@@ -63,8 +65,10 @@ namespace KarambaIDEA
             //Link input
             DA.GetData(0, ref project);
             DA.GetData(1, ref outputfolderpath);
-            DA.GetData(2, ref createAndCalculateThisJoint);
-            DA.GetData(3, ref startIDEA);
+            DA.GetData(2, ref userFeedback);
+            DA.GetData(3, ref createAllJoints);
+            DA.GetData(4, ref createAndCalculateThisJoint);
+            DA.GetData(5, ref startIDEA);
 
 
             //output variables
@@ -84,22 +88,43 @@ namespace KarambaIDEA
             if (startIDEA == true)
             {
                 project.CreateFolder(outputfolderpath);
-                Joint joint = project.joints[createAndCalculateThisJoint];
-                //joint.template.workshopOperations = workshopOperations;
-                IdeaConnection ideaConnection = new IdeaConnection(joint,false);
+                if (createAllJoints == true)
+                {
+                    foreach (Joint joint in project.joints)
+                    {
+                        IdeaConnection ideaConnection = new IdeaConnection(joint, userFeedback);
 
-                //Run HiddenCalculation
-                joint.JointFilePath = "xx";
-                HiddenCalculationV20.Calculate(joint);
-                //KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(joint);
+                        //Run HiddenCalculation
+                        joint.JointFilePath = "xx";
+                        HiddenCalculationV20.Calculate(joint, userFeedback);
 
-                //Retrieve results
-                analysis = joint.ResultsSummary.analysis;
-                plates = joint.ResultsSummary.plates;
-                bolts = joint.ResultsSummary.bolts;
-                welds = joint.ResultsSummary.welds;
-                buckling = joint.ResultsSummary.buckling;
-                summary = joint.ResultsSummary.summary;
+                        //Retrieve results//TODO: add to list
+                        analysis = joint.ResultsSummary.analysis;
+                        plates = joint.ResultsSummary.plates;
+                        bolts = joint.ResultsSummary.bolts;
+                        welds = joint.ResultsSummary.welds;
+                        buckling = joint.ResultsSummary.buckling;
+                        summary = joint.ResultsSummary.summary;
+                    }
+                }
+                else
+                {
+                    Joint joint = project.joints[createAndCalculateThisJoint];
+                    IdeaConnection ideaConnection = new IdeaConnection(joint, userFeedback);
+
+                    //Run HiddenCalculation
+                    joint.JointFilePath = "xx";
+                    HiddenCalculationV20.Calculate(joint, userFeedback);
+
+                    //Retrieve results
+                    analysis = joint.ResultsSummary.analysis;
+                    plates = joint.ResultsSummary.plates;
+                    bolts = joint.ResultsSummary.bolts;
+                    welds = joint.ResultsSummary.welds;
+                    buckling = joint.ResultsSummary.buckling;
+                    summary = joint.ResultsSummary.summary;
+                }
+                
 
             }
 
