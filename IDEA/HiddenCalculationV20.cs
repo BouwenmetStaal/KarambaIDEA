@@ -7,6 +7,7 @@ using KarambaIDEA.Core;
 using System.Linq;
 using System.Windows.Forms;
 using System;
+using System.IO;
 
 namespace KarambaIDEA.IDEA
 {
@@ -49,7 +50,7 @@ namespace KarambaIDEA.IDEA
                     {
                         if (userFeedback)
                         {
-                            pop.AddMessage(string.Format("Template with path applied: '{0}'", joint.ideaTemplateLocation));
+                            pop.AddMessage(string.Format("Template with path applied:\r '{0}'", joint.ideaTemplateLocation));
                         }
                         client.AddBoltAssembly(newBoltAssemblyName);//??Here Martin
 
@@ -63,6 +64,19 @@ namespace KarambaIDEA.IDEA
                     }
                     conRes = client.Calculate(connection.Identifier);
                     client.SaveAsProject(pathToFile);
+                    string templatePath = Path.Combine(joint.project.projectFolderPath, joint.Name, "Template.xml");
+                    client.ExportToTemplate(connection.Identifier, templatePath);//store template to location
+                    
+                    //ConnectionTemplateGenerator connectionTemplateGenerator = new ConnectionTemplateGenerator(templatePath);
+                    
+                    /*
+                    ConnectionData cd = client.GetConnectionModel(connection.Identifier);//needed to map weld IDs
+                    foreach (WeldData w in cd.Welds)
+                    {
+                        w.Thickness = 0.020;
+                    }
+                    */
+                    
                     //projInfo.Connections.Count()
                     if (projInfo != null && projInfo.Connections != null)
                     {

@@ -12,6 +12,7 @@ namespace KarambaIDEA.Core
     public class Element
     {
         public Project project;
+        public string name;
         public int id;
         public int numberInHierarchy;
         private readonly Line line;
@@ -26,6 +27,7 @@ namespace KarambaIDEA.Core
         public CrossSection crossSection;
         public string groupname { get; set; }
         public double rotationLCS;
+        public Vector eccentrictyVector;
         public LocalCoordinateSystem localCoordinateSystem = new LocalCoordinateSystem();
         public SawingCuts.SawingCut startCut;
         public SawingCuts.SawingCut endCut;
@@ -42,12 +44,13 @@ namespace KarambaIDEA.Core
         /// <param name="_groupname"></param>
         /// <param name="_numberInHierarchy"></param>
         /// <param name="_rotationLCS"></param>
-        public Element(Project _project, int _id, Line _line, CrossSection _crossSection, string _groupname, int _numberInHierarchy, double _rotationLCS)
+        public Element(Project _project, string _name, int _id, Line _line, CrossSection _crossSection, string _groupname, int _numberInHierarchy, double _rotationLCS, Vector _eccentricityVector)
 
         {
 
             this.project = _project;
             _project.elements.Add(this);
+            this.name = _name;
             this.id = _id;
             this.line = _line?? throw new ArgumentNullException("The argument _line cannot be null");
             this.brepLine = new Line(_line.start,_line.end);
@@ -55,6 +58,7 @@ namespace KarambaIDEA.Core
             this.groupname = _groupname;
             this.numberInHierarchy = _numberInHierarchy;
             this.rotationLCS = _rotationLCS;
+            this.eccentrictyVector = _eccentricityVector;
             this.UpdateLocalCoordinateSystem();
 
         }

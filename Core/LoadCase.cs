@@ -15,9 +15,10 @@ namespace KarambaIDEA.Core
         public int id;
         public string name;
         public List<LoadsPerLine> loadsPerLines = new List<LoadsPerLine>();
-        public LoadCase(Project _project, int _id)
+        public LoadCase(Project _project, int _id, string _name)
         {
             this.project = _project;
+            this.name = _name;
             _project.loadcases.Add(this);           
             this.id = _id;
         }

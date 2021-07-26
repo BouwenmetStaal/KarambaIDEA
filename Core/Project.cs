@@ -70,7 +70,7 @@ namespace KarambaIDEA.Core
         /// <param name="points">points in project</param>
         /// <param name="elements">elements of project</param>
         /// <param name="hierarchy">hierarchy if specified</param>
-        public void CreateJoints(double tol, double eccentricity, List<Point> points, List<Element> elements, List<Hierarchy> hierarchy)
+        public void CreateJoints(double tol, double eccentricity, List<Point> points, List<string> jointnames, List<Element> elements, List<Hierarchy> hierarchy)
         {
             double tolbox = tol + eccentricity;
             List<Joint> joints = new List<Joint>();
@@ -78,10 +78,21 @@ namespace KarambaIDEA.Core
             //iterate over all the points that represent centerpoints of the joint
             for (int i = 0; i < points.Count; i++)
             {
+                string jointName = "C"+i;
+                if (jointnames.Count != 0)
+                {
+                    if (points.Count != jointnames.Count)
+                    {
+                        throw new ArgumentNullException("Jointnames not equal to the number of points");
+                    }
+                    jointName = jointnames[i];
+                }
+                
                 Point centerpoint = points[i];
-                List<Vector> eccentricityVectors = new List<Vector>();
+                
+                //List<Vector> eccentricityVectors = new List<Vector>();
                 List<int> elementIDs = new List<int>();
-                List<Line> linesatcenter = new List<Line>();
+                //List<Line> linesatcenter = new List<Line>();
 
                 List<AttachedMember> attachedMemTemp = new List<AttachedMember>();
                 List<AttachedMember> attachedMembers = new List<AttachedMember>();
@@ -220,7 +231,7 @@ namespace KarambaIDEA.Core
                 //Joint id starts from one, because IDEA counts from one
                 double maxGlobalEccentricity = 0.0;
                 Vector bearingMemberUnitVector = new Vector(1.0, 0.0, 0.0);
-                Joint joint = new Joint(this, i + 1, elementIDs, attachedMembers, centerpoint, maxGlobalEccentricity, bearingMemberUnitVector, IsContinues);
+                Joint joint = new Joint(this, i + 1, jointName, elementIDs, attachedMembers, centerpoint, maxGlobalEccentricity, bearingMemberUnitVector, IsContinues);
                 this.joints.Add(joint);
             }
 

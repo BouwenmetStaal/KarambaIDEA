@@ -14,6 +14,7 @@ namespace KarambaIDEA.Core
         public Project project;
         private string jointFilePath;
         public int id;
+        public string name; 
 
         public List<AttachedMember> attachedMembers;
         public List<int> beamIDs;
@@ -36,7 +37,8 @@ namespace KarambaIDEA.Core
         {
             get
             {
-                return "C" + this.id+"-brandname"+this.brandName;
+                //return "C" + this.id+"-brandname"+this.brandName;
+                return this.name;
             }
         }
 
@@ -69,10 +71,11 @@ namespace KarambaIDEA.Core
 
         }
 
-        public Joint(Project _project, int _id, List<int> _beamIDs, List<AttachedMember> _attachedMembers, Point _centralNodeOfJoint, double _globaleccenticitylength, Vector _bearingMemberUnitVector, bool _IsContinues)
+        public Joint(Project _project, int _id, string _name, List<int> _beamIDs, List<AttachedMember> _attachedMembers, Point _centralNodeOfJoint, double _globaleccenticitylength, Vector _bearingMemberUnitVector, bool _IsContinues)
         {
             this.project = _project;
             this.id = _id;
+            this.name = _name;
             this.attachedMembers = _attachedMembers;
             this.beamIDs = _beamIDs;
             this.centralNodeOfJoint = _centralNodeOfJoint;

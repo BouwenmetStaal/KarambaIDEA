@@ -57,5 +57,10 @@ namespace KarambaIDEA.Core
             rhiVec.Z = vector.Z;
             return rhiVec;
         }
+
+        static public Core.Vector CastVectorToCore(Rhino.Geometry.Vector3d vec)
+        {
+            return new Vector(vec.X, vec.Y, vec.Z);
+        }
     }
 }

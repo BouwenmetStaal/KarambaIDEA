@@ -264,6 +264,12 @@ namespace KarambaIDEA.IDEA
 
             openModel.AddObject(p);
         }
+        /// <summary>
+        /// Add continuous member to joint. A continuous member always consist out of two FEM members 
+        /// and is always bearing
+        /// </summary>
+        /// <param name="bearingMembers"></param>
+        /// <param name="connectionPoint"></param>
         private void AddConnectedMember(List<BearingMember> bearingMembers, ConnectionPoint connectionPoint)
         {
             PolyLine3D polyLine3D = new PolyLine3D();
@@ -430,7 +436,9 @@ namespace KarambaIDEA.IDEA
             //create member
             Member1D member1D = new Member1D();
             member1D.Id = bearingMembers[0].element.id + 1;
-            member1D.Name = "Member" + member1D.Id.ToString();
+            //member1D.Name = "Member" + member1D.Id.ToString();
+            String MemberName = bearingMembers[0].element.name + " and " + bearingMembers[1].element.name;
+            member1D.Name = MemberName;
             member1D.Elements1D.Add(new ReferenceElement(el1));
             member1D.Elements1D.Add(new ReferenceElement(el2));
             openModel.Member1D.Add(member1D);
@@ -443,6 +451,7 @@ namespace KarambaIDEA.IDEA
 				MirrorY = false,
 				RefLineInCenterOfGravity = false,
 			};
+            beamData.Name = MemberName;
 			openModel.Connections[0].Beams.Add(beamData);
 
 
@@ -452,6 +461,11 @@ namespace KarambaIDEA.IDEA
             connectedMember.MemberId = new ReferenceElement(member1D);
             connectionPoint.ConnectedMembers.Add(connectedMember);
         }
+        /// <summary>
+        /// Add ended member to idea connection
+        /// </summary>
+        /// <param name="attachedMember"></param>
+        /// <param name="connectionPoint"></param>
         private void AddConnectedMember(AttachedMember attachedMember, ConnectionPoint connectionPoint)
         {
             PolyLine3D polyLine3D = new PolyLine3D();
@@ -491,22 +505,13 @@ namespace KarambaIDEA.IDEA
             element1D.CrossSectionEnd = new ReferenceElement(crossSection);
             //element1D.RotationRx = attachedMember.ElementRAZ.rotationLCS;
 
-            if (attachedMember is ConnectingMember)
-            {
-                ConnectingMember connectingMember = attachedMember as ConnectingMember;
-                double eccentricty = new double();
-                if (connectingMember.localEccentricity == -0)
-                {
-                    eccentricty = 0;
-                }
-                else
-                {
-                    eccentricty = connectingMember.localEccentricity;
-                }
-                element1D.EccentricityBeginZ = eccentricty;
-                element1D.EccentricityEndZ = eccentricty;
-
-            }
+            element1D.EccentricityBeginX = attachedMember.element.eccentrictyVector.X / 1000; //mm to m
+            element1D.EccentricityEndX = attachedMember.element.eccentrictyVector.X / 1000; //mm to m
+            element1D.EccentricityBeginY = attachedMember.element.eccentrictyVector.Y / 1000; //mm to m
+            element1D.EccentricityEndY = attachedMember.element.eccentrictyVector.Y / 1000; //mm to m
+            element1D.EccentricityBeginZ = attachedMember.element.eccentrictyVector.Z / 1000; //mm to m
+            element1D.EccentricityEndZ = attachedMember.element.eccentrictyVector.Z / 1000; //mm to m
+            //TODO: add eccentricy logic data in m or in mm?
 
             openModel.AddObject(element1D);
 
@@ -514,7 +519,9 @@ namespace KarambaIDEA.IDEA
             Member1D member1D = new Member1D();
             member1D.Id = attachedMember.element.id + 1;
             //member1D.Id = openModel.GetMaxId(member1D) + 1;
-            member1D.Name = "Member " + member1D.Id.ToString();
+            //member1D.Name = "Member " + member1D.Id.ToString();
+            string MemberName = attachedMember.element.name;
+            member1D.Name = MemberName;
             member1D.Elements1D.Add(new ReferenceElement(element1D));
             openModel.Member1D.Add(member1D);
 
@@ -526,6 +533,7 @@ namespace KarambaIDEA.IDEA
 				MirrorY = false,
 				RefLineInCenterOfGravity = false,
 			};
+            beam1Data.Name = MemberName;
 			openModel.Connections[0].Beams.Add(beam1Data);
 
 
@@ -563,7 +571,7 @@ namespace KarambaIDEA.IDEA
             openModel.AddObject(loadCase);
 
             CombiInputEC combi = new CombiInputEC();
-            combi.Name = "Load Case " + _loadCaseRAZ.id;
+            combi.Name = _loadCaseRAZ.name;
             combi.TypeCombiEC = TypeOfCombiEC.ULS;
             combi.TypeCalculationCombi = TypeCalculationCombiEC.Linear;
             combi.Items = new List<CombiItem>();

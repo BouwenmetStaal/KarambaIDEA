@@ -58,7 +58,7 @@ namespace KarambaIDEA.IDEA
 
             ProgressWindow pop = new ProgressWindow();
             if (userFeedback)
-            {                
+            {    
                 pop.Show();
                 pop.AddMessage(string.Format("IDEA StatiCa installation was found in '{0}'", ideaStatiCaDir));
             }
@@ -124,6 +124,26 @@ namespace KarambaIDEA.IDEA
                 // it creates connection project from IOM 
                 if (userFeedback){pop.AddMessage(string.Format("Joint '{0}' was saved to:\n {1}", joint.Name, fileConnFileNameFromLocal));}
                 client.CreateConProjFromIOM(iomFileName, iomResFileName, fileConnFileNameFromLocal);
+
+                /*
+                //TEST 28-05-2021 Does not work "The server was unable to process the request"
+                //TEST 22-07-2021 Does not work "Communication is in Faulted state"
+                if (joint.ideaTemplateLocation != null)
+                {
+                    var projInfo = client.GetProjectInfo();
+                    string newBoltAssemblyName = "M16 8.8";
+                    var connection = projInfo.Connections.FirstOrDefault();//Select first connection
+                    if (userFeedback)
+                    {
+                        pop.AddMessage(string.Format("Template with path applied: '{0}'", joint.ideaTemplateLocation));
+                    }
+                    client.AddBoltAssembly(newBoltAssemblyName);//??Here Martin
+
+                    client.ApplyTemplate(connection.Identifier, joint.ideaTemplateLocation, null);
+                    client.SaveAsProject(fileConnFileNameFromLocal);
+                }
+                */
+                
 
             }
             catch (Exception e)

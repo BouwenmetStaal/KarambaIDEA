@@ -146,6 +146,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="KarambaIDEA.licenseheader" />
     <None Include="packages.config" />
     <AppDesigner Include="Properties\" />
