@@ -60,7 +60,7 @@ namespace Tester
             project2.hierarchylist.Add(new Hierarchy(3, "Post"));
             project2.hierarchylist.Add(new Hierarchy(4, "Diagonal"));
 
-            LoadCase lc1 = new LoadCase(project2, 1);
+            LoadCase lc1 = new LoadCase(project2, 1, "testLC");
             new LoadsPerLine(project2.elements[0], lc1, new Load(100, 0, 0, 0, 0, 0), new Load(100, 0, 0, 0, 0, 0));
             new LoadsPerLine(project2.elements[1], lc1, new Load(100, 0, 0, 0, 0, 0), new Load(100, 0, 0, 0, 0, 0));
 
@@ -112,7 +112,7 @@ namespace Tester
             project2.hierarchylist.Add(new Hierarchy(3, "Post"));
             project2.hierarchylist.Add(new Hierarchy(4, "Diagonal"));
 
-            LoadCase lc1 = new LoadCase(project2, 1);
+            LoadCase lc1 = new LoadCase(project2, 1, "TestLC");
             new LoadsPerLine(project2.elements[0], lc1, new Load(5, 5, 5, 5, 5, 5), new Load(10, 10, 10, 10, 10, 10));
             new LoadsPerLine(project2.elements[1], lc1, new Load(5, 5, 5, 5, 5, 5), new Load(10, 10, 10, 10, 10, 10));
             new LoadsPerLine(project2.elements[2], lc1, new Load(5, 5, 5, 5, 5, 5), new Load(10, 10, 10, 10, 10, 10));

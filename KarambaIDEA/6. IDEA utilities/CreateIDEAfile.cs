@@ -28,14 +28,15 @@ namespace KarambaIDEA
         {
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
             pManager.AddTextParameter("Output folder ", "Output folder", "Save location of IDEA Statica Connection output file. For example: 'C:\\Data'", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("UserFeedback", "User Feedback", "Feedback of calculation", GH_ParamAccess.item);
             pManager.AddBooleanParameter("CreateAllJoints", "CreateAllJoints", "If true create all joints, if false create only the selected joint", GH_ParamAccess.item);
-            pManager.AddIntegerParameter("ChooseJoint", "ChooseJoint", "Specify the joint that will be calculated in IDEA. Note: starts at zero.", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("ChooseJoint", "ChooseJoint", "Specify the joint that will be calculated in IDEA. Note: starts at zero.", GH_ParamAccess.list);
             pManager.AddBooleanParameter("RunIDEA", "RunIDEA", "Bool for running IDEA Statica Connection", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddLineParameter("Selected Joint", "Selected Joint", "Lines of selected Joint", GH_ParamAccess.list);
+            pManager.AddLineParameter("Selected Joint", "Selected Joint", "Lines of selected Joint", GH_ParamAccess.tree);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -43,23 +44,29 @@ namespace KarambaIDEA
             //Input variables
             Project project = new Project();
             string outputfolderpath = null;
+            bool userFeedback = false;
             bool createAllJoints = false;
-            int createThisJoint = 0;
+            List<int> createThisJoint = new List<int>();
             bool startIDEA = false;
 
             //Link input
             DA.GetData(0, ref project);
             DA.GetData(1, ref outputfolderpath);
-            DA.GetData(2, ref createAllJoints);
-            DA.GetData(3, ref createThisJoint);
-            DA.GetData(4, ref startIDEA);
+            DA.GetData(2, ref userFeedback);
+            DA.GetData(3, ref createAllJoints);
+            DA.GetDataList(4, createThisJoint);
+            DA.GetData(5, ref startIDEA);
 
             //output variables
-            List<Rhino.Geometry.Line> lines = new List<Rhino.Geometry.Line>();
-            List<Rhino.Geometry.Line> jointlines = new List<Rhino.Geometry.Line>();
+            DataTree<Rhino.Geometry.Line> jointlines = new DataTree<Rhino.Geometry.Line>();
 
             //Adjust out of bounds index calculateThisJoint
-            createThisJoint = createThisJoint % project.joints.Count;
+            List<int> jointIndexes = new List<int>();
+            foreach (int i in createThisJoint)
+            {
+                jointIndexes.Add(i % project.joints.Count);
+            }
+            jointIndexes = jointIndexes.Distinct().ToList();
 
             //this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Warning Message");
             //this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error Message");
@@ -71,26 +78,33 @@ namespace KarambaIDEA
                 {
                     foreach(Joint joint in project.joints)
                     {
-                        IdeaConnection ideaConnection = new IdeaConnection(joint);
+                        IdeaConnection ideaConnection = new IdeaConnection(joint, userFeedback);
                     }
                 }
                 else
                 {
-                    Joint joint = project.joints[createThisJoint];
-                    IdeaConnection ideaConnection = new IdeaConnection(joint);
+                    foreach (int i in jointIndexes)
+                    {
+                        Joint joint = project.joints[i];
+                        IdeaConnection ideaConnection = new IdeaConnection(joint, userFeedback);
+                    }
                 }              
             }
 
             //export lines of joint for visualisation purposes
-            foreach (int i in project.joints[createThisJoint].beamIDs)
+            foreach (int index in jointIndexes)
             {
-                Core.Line line = project.elements[i].Line;
-                Rhino.Geometry.Line rhiline = ImportGrasshopperUtils.CastLineToRhino(line);
-                jointlines.Add(rhiline);
+                GH_Path path = new GH_Path(index);
+                foreach (int i in project.joints[index].beamIDs)
+                {
+                    Core.Line line = project.elements[i].Line;
+                    Rhino.Geometry.Line rhiline = ImportGrasshopperUtils.CastLineToRhino(line);
+                    jointlines.Add(rhiline, path);
+                }
             }
 
             //link output
-            DA.SetDataList(0, jointlines);
+            DA.SetDataTree(0, jointlines);
         }
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.

@@ -43,15 +43,21 @@ namespace KarambaIDEA.Grasshopper
             pManager.AddTextParameter("Hierarchy", "Hierarchy", "List of hierarchy on with joints are made", GH_ParamAccess.list);
             pManager[0].Optional = true;
             pManager.AddPointParameter("Points", "Points", "Points of connections", GH_ParamAccess.list);
-            
+            pManager.AddTextParameter("Jointnames", "Jointnames", "Optional by the user-defined name for every joint. List must be equal to list of Points", GH_ParamAccess.list);
+            pManager[2].Optional = true;
+
             //Input elements
             pManager.AddLineParameter("Lines", "Lines", "Lines of geometry", GH_ParamAccess.list);
             pManager.AddNumberParameter("LCS rotations [Deg]", "LCS rotations", "Local Coordinate System rotation of element in Degrees. Rotation runs from local y to local z-axis", GH_ParamAccess.list);
+            pManager.AddVectorParameter("Eccentricity vector", "Eccentricity vector", "Eccentricities defined by local x, y and z coordinate", GH_ParamAccess.list);
+            pManager[5].Optional = true;
             pManager.AddTextParameter("Groupnames", "Groupnames", "Groupname of element", GH_ParamAccess.list);
-            pManager.AddTextParameter("Materials", "Materials", "Steel grade of every element", GH_ParamAccess.list);
+            pManager.AddTextParameter("Membernames", "Membernames", "Optional by the user defined names for every member. List must be equal to the number of members", GH_ParamAccess.list);
+            pManager[7].Optional = true;
 
             //Input for creating Cross-section Objects
-            pManager.AddTextParameter("Cross-section names", "CroSecNames", "Name of cross-sections", GH_ParamAccess.list);
+            pManager.AddTextParameter("Materials", "Materials", "Steel grade of every element", GH_ParamAccess.list);
+            pManager.AddTextParameter("Cross-section names", "CroSecNames", "Names of cross-sections", GH_ParamAccess.list);
             pManager.AddTextParameter("Shapes", "Shapes", "Shape of of cross-sections", GH_ParamAccess.list);
             pManager.AddNumberParameter("Height", "Heights", "Heigth of crosssections [mm]", GH_ParamAccess.list);
             pManager.AddNumberParameter("Width", "Widths", "Width of crosssections [mm]", GH_ParamAccess.list);
@@ -60,6 +66,8 @@ namespace KarambaIDEA.Grasshopper
             pManager.AddNumberParameter("Radius", "FRads", "Radius of crosssections [mm]", GH_ParamAccess.list);
 
             //Input Loadcases, convert these to trees, and remodel them to usable objects with loadcase number as index
+            pManager.AddTextParameter("Load-case names", "LoadCaseNames", "Names of load-cases. List must be equal to the number of loadcases present in the internal forces", GH_ParamAccess.list);
+            pManager[16].Optional = true;
             pManager.AddNumberParameter("N", "N", "Normal force [kN]", GH_ParamAccess.tree);
             pManager.AddNumberParameter("Vz", "Vz", "Shear force z-direction[kN]", GH_ParamAccess.tree);
             pManager.AddNumberParameter("Vy", "Vy", "Shear force y-direction[kN]", GH_ParamAccess.tree);
@@ -88,12 +96,13 @@ namespace KarambaIDEA.Grasshopper
             List<string> hierarchy = new List<string>();
 
             List<Point3d> centerpoints = new List<Point3d>();
+            List<string> jointnames = new List<string>();
             List<Rhino.Geometry.Line> lines = new List<Rhino.Geometry.Line>();
             List<double> rotationLCS = new List<double>();
-
+            List<Rhino.Geometry.Vector3d> eccentrictyVecs = new List<Vector3d>();
             List<string> crossectionsNameDirty = new List<string>();
             List<string> crossectionsName = new List<string>();
-
+            List<string> membernames = new List<string>();
             List<string> steelgrades = new List<string>();
 
             List<string> groupnamesDirty = new List<string>();
@@ -108,7 +117,7 @@ namespace KarambaIDEA.Grasshopper
             List<double> thicknessWeb = new List<double>();
             List<double> radius = new List<double>();
 
-
+            List<string> loadCaseNames = new List<string>();
             GH_Structure<GH_Number> N = new GH_Structure<GH_Number>();
             GH_Structure<GH_Number> My = new GH_Structure<GH_Number>();
             GH_Structure<GH_Number> Vz = new GH_Structure<GH_Number>();
@@ -125,25 +134,30 @@ namespace KarambaIDEA.Grasshopper
                 hierarchyDirty.Add(new GH_String("NoHierarchy"));
             }
             DA.GetDataList(1, centerpoints);
-            DA.GetDataList(2, lines);
-            DA.GetDataList(3, rotationLCS);
-            DA.GetDataList(4, groupnamesDirty);
-            DA.GetDataList(5, steelgrades);
+            DA.GetDataList(2, jointnames); //TODO: implement code
+            DA.GetDataList(3, lines);
+            DA.GetDataList(4, rotationLCS);
+            DA.GetDataList(5, eccentrictyVecs); //TODO: implement code
+            DA.GetDataList(6, groupnamesDirty);
+            DA.GetDataList(7, membernames); //TOD: implement code
 
-            DA.GetDataList(6, crossectionsNameDirty);
-            DA.GetDataList(7, shapesDirty);
-            DA.GetDataList(8, height);
-            DA.GetDataList(9, width);
-            DA.GetDataList(10, thicknessFlange);
-            DA.GetDataList(11, thicknessWeb);
-            DA.GetDataList(12, radius);
+            DA.GetDataList(8, steelgrades);
+            DA.GetDataList(9, crossectionsNameDirty);
+            DA.GetDataList(10, shapesDirty);
+            DA.GetDataList(11, height);
+            DA.GetDataList(12, width);
+            DA.GetDataList(13, thicknessFlange);
+            DA.GetDataList(14, thicknessWeb);
+            DA.GetDataList(15, radius);
 
-            DA.GetDataTree(13, out N);
-            DA.GetDataTree(14, out Vz);
-            DA.GetDataTree(15, out Vy);
-            DA.GetDataTree(16, out Mt);
-            DA.GetDataTree(17, out My);
-            DA.GetDataTree(18, out Mz);
+            DA.GetDataList(16, loadCaseNames);
+
+            DA.GetDataTree(17, out N);
+            DA.GetDataTree(18, out Vz);
+            DA.GetDataTree(19, out Vy);
+            DA.GetDataTree(20, out Mt);
+            DA.GetDataTree(21, out My);
+            DA.GetDataTree(22, out Mz);
 
 
             #endregion
@@ -216,22 +230,38 @@ namespace KarambaIDEA.Grasshopper
                 {
                     crosssection = new CrossSection(project, crossectionsName[i], shape, material, height[i], width[i], thicknessFlange[i], thicknessWeb[i], radius[i]);
                 }
-
                 //LINES
                 Core.Point start = Core.Point.CreateNewOrExisting(project, lines[i].FromX, lines[i].FromY, lines[i].FromZ);
                 Core.Point end = Core.Point.CreateNewOrExisting(project, lines[i].ToX, lines[i].ToY, lines[i].ToZ);
                 Core.Line line = new Core.Line(i, start, end);
-
-                //Z-VECTOR
-                //Vector zvector = new Vector(rotationLCS[i].X, rotationLCS[i].Y, rotationLCS[i].Z);
-
+                //HIERARCHY
                 int hierarchyId = -1;
                 Hierarchy h = project.hierarchylist.FirstOrDefault(a => groupnames[i].StartsWith(a.groupname));
                 if (h != null)
                 {
                     hierarchyId = h.numberInHierarchy;
                 }
-                Element element = new Element(project, i, line, crosssection, groupnames[i], hierarchyId, rotationLCS[i]);
+                //MEMBER-NAME
+                string membername = "Member " + i;
+                if (membernames.Count != 0)
+                {
+                    if(membernames.Count != lines.Count)
+                    {
+                        throw new ArgumentNullException("Membernames not equal to the number of members");
+                    }
+                    membername = membernames[i];
+                }
+                //Eccentricity vectors
+                Core.Vector eccVec = new Vector(0,0,0);
+                if (eccentrictyVecs.Count != 0)
+                {
+                    if (eccentrictyVecs.Count != lines.Count)
+                    {
+                        throw new ArgumentNullException("Vectors not equal to the number of members");
+                    }
+                    eccVec = ImportGrasshopperUtils.CastVectorToCore(eccentrictyVecs[i]);
+                }
+                Element element = new Element(project, membername, i, line, crosssection, groupnames[i], hierarchyId, rotationLCS[i], eccVec);
             }
 
             
@@ -252,12 +282,22 @@ namespace KarambaIDEA.Grasshopper
             //the project has x number of loadcases, here the list of loads created is rearranged to separate lists for every loadcase
             int loadcases = N.PathCount / lines.Count;
             int ib = 0;
+            if (loadCaseNames.Count != 0)
+            {
+                if (loadcases != loadCaseNames.Count)
+                {
+                    throw new ArgumentNullException("LoadCaseNames not equal to the number of loadcases");
+                }
+            }
+            
             for (int a = 0; a < loadcases; a++)
             {
-
-                //loadcase id start from 1 because of IDEA
-                int loadCaseNumber = a + 1;
-                LoadCase loadcase = new LoadCase(project, loadCaseNumber);
+                string loadCaseName = "LC index "+a;
+                if (loadCaseNames.Count != 0)
+                {
+                    loadCaseName = loadCaseNames[a];
+                }
+                LoadCase loadcase = new LoadCase(project, a, loadCaseName);
                 List<LoadsPerLine> loadsPerline2s = new List<LoadsPerLine>();
                 for (int b = 0; b < lines.Count; b++)
                 {
@@ -278,7 +318,7 @@ namespace KarambaIDEA.Grasshopper
 
             //CREATE LIST OF JOINTS
             double tol = 1e-6;
-            project.CreateJoints(tol, eccentricity, punten, project.elements, project.hierarchylist);
+            project.CreateJoints(tol, eccentricity, punten, jointnames, project.elements, project.hierarchylist);
 
             //DEFINE BRANDNAMES PER JOINT
             project.SetBrandNames(project);
@@ -306,6 +346,5 @@ namespace KarambaIDEA.Grasshopper
         {
             get { return new Guid("ca79dc4b-64f2-4627-93b4-066ad7649621"); }
         }
-        
     }
 }

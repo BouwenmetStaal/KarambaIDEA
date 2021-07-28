@@ -7,6 +7,7 @@ using KarambaIDEA.Core;
 using System.Linq;
 using System.Windows.Forms;
 using System;
+using System.IO;
 
 namespace KarambaIDEA.IDEA
 {
@@ -17,8 +18,16 @@ namespace KarambaIDEA.IDEA
     /// //public class HiddenCalculation : INotifyPropertyChanged, IConHiddenCalcModel
     public class HiddenCalculationV20
     {
-        public static void Calculate(Joint joint)
+        public static void Calculate(Joint joint, bool userFeedback)
         {
+            ProgressWindow pop = new ProgressWindow();
+            if (userFeedback)
+            {
+                pop.Show();
+                pop.AddMessage(string.Format("Start calculation '{0}'", joint.Name));
+                pop.AddMessage(string.Format("IDEA StatiCa installation was found in '{0}'", IdeaConnection.ideaStatiCaDir));
+            }
+
             string path = IdeaConnection.ideaStatiCaDir;//path to idea
             string pathToFile = joint.JointFilePath;//ideafile path
             string newBoltAssemblyName = "M16 8.8";
@@ -39,15 +48,35 @@ namespace KarambaIDEA.IDEA
                     var connection = projInfo.Connections.FirstOrDefault();//Select first connection
                     if (joint.ideaTemplateLocation != null)
                     {
+                        if (userFeedback)
+                        {
+                            pop.AddMessage(string.Format("Template with path applied:\r '{0}'", joint.ideaTemplateLocation));
+                        }
                         client.AddBoltAssembly(newBoltAssemblyName);//??Here Martin
 
                         client.ApplyTemplate(connection.Identifier, joint.ideaTemplateLocation, null);
                         client.SaveAsProject(pathToFile);
                     }
 
-
+                    if (userFeedback)
+                    {
+                        pop.AddMessage(string.Format("Calculation started: '{0}'", joint.Name));
+                    }
                     conRes = client.Calculate(connection.Identifier);
                     client.SaveAsProject(pathToFile);
+                    string templatePath = Path.Combine(joint.project.projectFolderPath, joint.Name, "Template.xml");
+                    client.ExportToTemplate(connection.Identifier, templatePath);//store template to location
+                    
+                    //ConnectionTemplateGenerator connectionTemplateGenerator = new ConnectionTemplateGenerator(templatePath);
+                    
+                    /*
+                    ConnectionData cd = client.GetConnectionModel(connection.Identifier);//needed to map weld IDs
+                    foreach (WeldData w in cd.Welds)
+                    {
+                        w.Thickness = 0.020;
+                    }
+                    */
+                    
                     //projInfo.Connections.Count()
                     if (projInfo != null && projInfo.Connections != null)
                     {
@@ -84,6 +113,10 @@ namespace KarambaIDEA.IDEA
             if (conRes != null)
             {
                 IdeaConnection.SaveResultsSummary(joint, conRes);
+            }
+            if (userFeedback)
+            {
+                pop.Close();
             }
         }
 

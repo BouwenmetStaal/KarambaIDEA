@@ -35,26 +35,6 @@ namespace Tester
             //TESTCalculate();
             //TESTCreateAndCalculateTemplate();
             //TESTCopyProject();
-            try
-            {
-                RegistryKey staticaRoot = Registry.LocalMachine.OpenSubKey("SOFTWARE\\IDEAStatiCa");
-                string[] SubKeyNames = staticaRoot.GetSubKeyNames();
-                Dictionary<double?, string> versions = new Dictionary<double?, string>();
-                foreach (string SubKeyName in SubKeyNames)
-                {
-                    versions.Add(double.Parse(SubKeyName, CultureInfo.InvariantCulture.NumberFormat), SubKeyName);
-                }
-                double[] staticaVersions = staticaRoot.GetSubKeyNames().Select(x => double.Parse(x, CultureInfo.InvariantCulture.NumberFormat)).OrderByDescending(x => x).ToArray();
-                double? lastverion = staticaVersions.FirstOrDefault();
-                string versionString = versions[lastverion];
-                if (lastverion == null) { throw new ArgumentNullException("IDEA StatiCa installation cannot be found"); }
-                string path = $@"{versionString.Replace(",", ".")}\IDEAStatiCa\Designer";
-                string staticaFolderPath = staticaRoot.OpenSubKey(path).GetValue("InstallDir64").ToString();
-            }
-            catch
-            {
-                throw new ArgumentNullException("IDEA StatiCa installation cannot be found");
-            }
             
 
 
@@ -73,7 +53,7 @@ namespace Tester
 
             Joint joint = new Joint();
             joint.JointFilePath = "C:\\Data\\20191115214919\\C12-brandname\\APIproduced File - NotCorrect.ideaCon";
-            HiddenCalculationV20.Calculate(joint);
+            HiddenCalculationV20.Calculate(joint, true);
             //Results
             string results = joint.ResultsSummary.summary;
         }
@@ -105,14 +85,14 @@ namespace Tester
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
 
             //Create IDEA file
-            IdeaConnection ideaConnection = new IdeaConnection(joint);
+            IdeaConnection ideaConnection = new IdeaConnection(joint, true);
 
             //Calculate
-            //HiddenCalculationV20.Calculate(joint);
+            HiddenCalculationV20.Calculate(joint, true);
             //KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(joint);
 
             //Results
-            //string results = joint.ResultsSummary.summary;
+            string results = joint.ResultsSummary.summary;
         }
 
         static void TESTCreateAndCalculateTemplate()
@@ -142,10 +122,10 @@ namespace Tester
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
 
             //Create IDEA file
-            IdeaConnection ideaConnection = new IdeaConnection(joint);
+            IdeaConnection ideaConnection = new IdeaConnection(joint, true);
 
             //Calculate
-            HiddenCalculationV20.Calculate(joint);
+            HiddenCalculationV20.Calculate(joint, true);
             
 
             //Results
