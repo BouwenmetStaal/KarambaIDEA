@@ -45,8 +45,8 @@ namespace Tester
             KarambaIDEA.Core.CrossSection.CreateNewOrExisting(project2, "HEA160", KarambaIDEA.Core.CrossSection.Shape.ISection, steel, 200, 200, 10,10,10);
             //CrossSection cross = new CrossSection(project2, "HEA100", "I", steel, 20, 20, 20, 20, 20);
 
-            new Element(project2, 0, new Line(0, puntA, puntB), project2.crossSections[1], "Column", 1,0.0);
-            new Element(project2, 1, new Line(1, puntB, puntC), project2.crossSections[1], "Diagonal", 2, 0.0);
+            new Element(project2, "name", 0, new Line(0, puntA, puntB), project2.crossSections[1], "Column", 1,0.0, new Vector(0, 0, 0));
+            new Element(project2, "name", 1, new Line(1, puntB, puntC), project2.crossSections[1], "Diagonal", 2, 0.0, new Vector(0, 0, 0));
             
 
 
@@ -67,7 +67,7 @@ namespace Tester
 
 
             double tol = 1e-6;
-            project2.CreateJoints(tol, 0, Points, project2.elements, project2.hierarchylist);
+            project2.CreateJoints(tol, 0, Points, new List<string> { "jointname" }, project2.elements, project2.hierarchylist);
 
 
             Joint joint = project2.joints[0];
@@ -95,11 +95,11 @@ namespace Tester
             KarambaIDEA.Core.CrossSection.CreateNewOrExisting(project2, "HEA160", KarambaIDEA.Core.CrossSection.Shape.ISection, steel, 20, 20, 20, 20, 20);
             //CrossSection cross = new CrossSection(project2, "HEA100", "I", steel, 20, 20, 20, 20, 20);
 
-            new Element(project2, 0, new Line(0, puntA, puntB), project2.crossSections[1], "Column", 1, 0.0);
-            new Element(project2, 1, new Line(1, puntB, puntC), project2.crossSections[1], "Column", 1, 0.0);
+            new Element(project2, "name",0, new Line(0, puntA, puntB), project2.crossSections[1], "Column", 1, 0.0, new Vector(0,0,0));
+            new Element(project2, "name", 1, new Line(1, puntB, puntC), project2.crossSections[1], "Column", 1, 0.0, new Vector(0, 0, 0));
 
-            new Element(project2, 2, new Line(2, puntB, puntE), project2.crossSections[0], "Diagonal", 3, 0.0);
-            new Element(project2, 3, new Line(3, puntB, puntD), project2.crossSections[0], "Diagonal", 3, 0.0);
+            new Element(project2, "name", 2, new Line(2, puntB, puntE), project2.crossSections[0], "Diagonal", 3, 0.0, new Vector(0, 0, 0));
+            new Element(project2, "name", 3, new Line(3, puntB, puntD), project2.crossSections[0], "Diagonal", 3, 0.0, new Vector(0, 0, 0));
 
 
 
@@ -121,7 +121,7 @@ namespace Tester
 
 
             double tol = 1e-6;
-            project2.CreateJoints(tol, 0, Points, project2.elements, project2.hierarchylist);
+            project2.CreateJoints(tol, 0, Points, new List<string> { "jointname" }, project2.elements, project2.hierarchylist);
 
 
             Joint joint = project2.joints[0];
