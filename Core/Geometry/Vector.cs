@@ -83,7 +83,12 @@ namespace KarambaIDEA.Core
 
 
         }
-
+        /// <summary>
+        /// Minimal angle in radians between two vectors
+        /// </summary>
+        /// <param name="first"></param>
+        /// <param name="second"></param>
+        /// <returns>angle in radians</returns>
         static public double AngleBetweenVectors(Vector first, Vector second)
         {
             double ans = ((first.X * second.X) + (first.Y * second.Y) + (first.Z * second.Z)) / (first.Length * second.Length);

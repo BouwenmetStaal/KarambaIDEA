@@ -17,7 +17,7 @@ namespace KarambaIDEA
 {
     public class WeldVolumeGenerator : GH_Component
     {
-        public WeldVolumeGenerator() : base("Weld volume generator", "Weld volume generator", "Generate weld volume per joint based on the perimeter of attached cross-sections with a throat thickness determined by the full-strength method", "KarambaIDEA", "7. Cost calculation")
+        public WeldVolumeGenerator() : base("Weld volume", "Weld volume", "Retrieve weld volume per joint for cost analysis", "KarambaIDEA", "7. Cost calculation")
         {
 
         }
@@ -83,7 +83,7 @@ namespace KarambaIDEA
             get
             {
 
-                return Properties.Resources.WeldingVolume;
+                return Properties.Resources.WeldingVolume_trans_01;
 
             }
         }

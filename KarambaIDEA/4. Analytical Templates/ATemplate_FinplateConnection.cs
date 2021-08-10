@@ -19,7 +19,7 @@ namespace KarambaIDEA
 {
     public class ATemplate_FinplateConnection : GH_Component
     {
-        public ATemplate_FinplateConnection() : base("ATemplate_FinplateConnection", "ATemplate_FinplateConnection", "ATemplate_FinplateConnection", "KarambaIDEA", "4. Analytical Templates")
+        public ATemplate_FinplateConnection() : base("ATemplate_FinplateConnection", "AT_FPC", "ATemplate_FinplateConnection", "KarambaIDEA", "4. Analytical Templates")
         {
 
         }
@@ -35,7 +35,7 @@ namespace KarambaIDEA
         {
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
             pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.tree);
-            pManager.AddBrepParameter("Brep", "Brep", "", GH_ParamAccess.list);
+            pManager.AddBrepParameter("Brep", "B", "", GH_ParamAccess.list);
 
         }
 
@@ -322,6 +322,8 @@ namespace KarambaIDEA
                         Brep tube = sur.ToBrep().CapPlanarHoles(tol);
                         plate = Brep.CreateBooleanDifference(plate, tube, tol).ToList().First();
 
+
+
                     }
                     //Add plate with holes
                     breps.Add(plate);
@@ -331,12 +333,11 @@ namespace KarambaIDEA
                 //Step VIII - modify beam brepline
                 KarambaIDEA.Core.Line.ModifyBeamBrepLine(column, con, gap);
                 maxBeamHeight = Math.Max(maxBeamHeight, beam.height);
-            }
 
+                nosolution:;
+            }
             //Step IIX - modify column brepline
             KarambaIDEA.Core.Line.ModifyColumnBrepLine(bearlist, maxBeamHeight);
-
-            nosolution:;
         }
 
       

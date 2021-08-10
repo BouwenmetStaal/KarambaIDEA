@@ -14,6 +14,7 @@ using KarambaIDEA.Core;
 using KarambaIDEA.IDEA;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+using System.IO;
 
 namespace KarambaIDEA
 {
@@ -55,6 +56,12 @@ namespace KarambaIDEA
             DA.GetData(0, ref sourceProject);
             DA.GetDataList(1, brandNamesDirty);
             DA.GetData(2, ref ideaTemplateLocation);
+
+            //Check if path exists
+            if (!(File.Exists(ideaTemplateLocation)))
+            {
+                throw new ArgumentNullException("Template filepath incorrect");
+            }
 
             //Clone project
             Project project = null;

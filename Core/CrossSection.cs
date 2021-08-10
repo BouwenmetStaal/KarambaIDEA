@@ -30,7 +30,7 @@ namespace KarambaIDEA.Core
         public enum Shape
         {
             ISection,
-            SHSSection,
+            RHSsection,
             CHSsection,
             Tsection,
             Strip
@@ -82,7 +82,7 @@ namespace KarambaIDEA.Core
         
         public double Iyy()
         {
-            if (this.shape.Equals(Shape.ISection) | this.shape.Equals(Shape.SHSSection))
+            if (this.shape.Equals(Shape.ISection) | this.shape.Equals(Shape.RHSsection))
             {
                 double a = Inertia(this.width, this.height);
                 double b = Inertia(this.width - this.thicknessWeb, this.height-2*this.thicknessFlange);
@@ -105,7 +105,7 @@ namespace KarambaIDEA.Core
                 double b = (this.width - 2 * this.thicknessWeb) * (this.height -this.thicknessFlange);
                 return a - b;
             }
-            if (this.shape.Equals(Shape.SHSSection))
+            if (this.shape.Equals(Shape.RHSsection))
             {
                 double a = this.width*this.height;
                 double b = (this.width-2*this.thicknessWeb) * (this.height-2*this.thicknessFlange);
@@ -133,10 +133,197 @@ namespace KarambaIDEA.Core
                 throw new ArgumentNullException("Area for this Cross-section not implemented");
             }
         }
+        public double MomentOfResistance()
+        {
+            if(this.SectionClass()==1|| this.SectionClass() == 2)
+            {
+                return MomentOfResistanceEL();
+            }
+            else
+            {
+                return MomentOfResistancePL();
+            }
+                
+        }
+        public double MomentOfResistanceEL()
+        {
+            if (this.shape.Equals(Shape.ISection))
+            {
+                double b = this.width;
+                double h = this.height;
+                double l = this.thicknessWeb;
+                double f = this.thicknessFlange;
+                double Wel = (b * Math.Pow(h, 3) - (b - l) * Math.Pow(h - 2 * f, 3)) / 6 * h;//https://www.mile17.nl/ivorm.php
+                return Wel;
+            }
+            if (this.shape.Equals(Shape.RHSsection))
+            {
+                double b = this.width;
+                double h = this.height;
+                double w = this.thicknessWeb;
+                double Wel = (b * Math.Pow(h, 3) - (b - 2*w) * Math.Pow(h - 2*w, 3)) / 6 * h;//https://www.mile17.nl/koker.php
+                return Wel;
+            }
+            if (this.shape.Equals(Shape.CHSsection))
+            {
+                double d = this.width;
+                double di = this.thicknessWeb;
+                double Wel = (Math.PI*(Math.Pow(d,4)-Math.Pow(di,4)))/32*d;//https://www.mile17.nl/buis.php
+                return Wel;
+            }
+            else
+            {
+                throw new ArgumentNullException("Section Class for this Cross-section not implemented");
+            }
+        }
+        public double MomentOfResistancePL()
+        {
+            if (this.shape.Equals(Shape.ISection))
+            {
+                double b = this.width;
+                double h = this.height;
+                double l = this.thicknessWeb;
+                double f = this.thicknessFlange;
+                double Wel = (b * Math.Pow(h, 3) - (b - l) * Math.Pow(h - 2 * f, 3)) / 6 * h;//https://www.dartmouth.edu/~cushman/courses/engs171/UsefulSolutionsForStandardProblems.pdf
+                return Wel;
+            }
+            if (this.shape.Equals(Shape.RHSsection))
+            {
+                double b = this.width;
+                double h = this.height;
+                double w = this.thicknessWeb;
+                double Wel = b*h*w*(1+h/2*b);
+                //https://www.dartmouth.edu/~cushman/courses/engs171/UsefulSolutionsForStandardProblems.pdf
+                return Wel;
+            }
+            if (this.shape.Equals(Shape.CHSsection))
+            {
+                double d = this.width;
+                double di = this.thicknessWeb;
+                double Wel = (Math.PI * (Math.Pow(d, 4) - Math.Pow(di, 4))) / 32 * d;
+                //https://www.dartmouth.edu/~cushman/courses/engs171/UsefulSolutionsForStandardProblems.pdf
+                return Wel;
+            }
+            else
+            {
+                throw new ArgumentNullException("Section Class for this Cross-section not implemented");
+            }
+        }
         public double Inertia(double b, double h)
         {
             return (1 / 12) * b * Math.Pow(h, 2);
         }
-        
+
+        /// <summary>
+        /// NEN-EN 1993-1-1 Table 5.2 and 5.3 
+        /// All sections are assumed to be fully loaded in compression (conservative)
+        /// </summary>
+        /// <returns></returns>
+        public int SectionClass()
+        {
+            double epsilon = Math.Sqrt(235 / this.material.Fy);
+            
+            if (this.shape.Equals(Shape.ISection))
+            {
+                int resInt = 4;
+                int resExt = 4;
+                
+                //Internal
+                double ci = height - 2 * (thicknessFlange + radius);
+                double ti = thicknessWeb;
+                if (ci / ti <= 33 * epsilon)
+                {
+                    resInt = 1;
+                }
+                else if (ci / ti <= 38 * epsilon)
+                {
+                    resInt = 2;
+                }
+                else if (ci / ti <= 42 * epsilon)
+                {
+                    resInt = 3;
+                }
+                else
+                {
+                    resInt = 4;
+                }
+                //External
+                double ce = (width - thicknessWeb)/2;
+                double te = thicknessFlange;
+                if (ce / te <= 9 * epsilon)
+                {
+                    resExt = 1;
+                }
+                else if (ce / te <= 10 * epsilon)
+                {
+                    resExt = 2;
+                }
+                else if (ce / te <= 14 * epsilon)
+                {
+                    resExt = 3;
+                }
+                else
+                {
+                    resExt = 4;
+                }
+
+
+                return Math.Max(resInt,resExt);
+            }
+            if (this.shape.Equals(Shape.RHSsection))
+            {
+                int resInt = 4;
+
+                //Internal
+                double ci = height - 2 * (thicknessFlange + radius);
+                double ti = thicknessWeb;
+                if (ci / ti <= 33 * epsilon)
+                {
+                    resInt = 1;
+                }
+                else if (ci / ti <= 38 * epsilon)
+                {
+                    resInt = 2;
+                }
+                else if (ci / ti <= 42 * epsilon)
+                {
+                    resInt = 3;
+                }
+                else
+                {
+                    resInt = 4;
+                }
+                return (resInt);
+            }
+            if (this.shape.Equals(Shape.CHSsection))
+            {
+                int resInt = 4;
+
+                //Internal
+                double ci = width ;
+                double ti = thicknessWeb;
+                if (ci / ti <= 33 * Math.Pow(epsilon, 2))
+                {
+                    resInt = 1;
+                }
+                else if (ci / ti <= 38 * Math.Pow(epsilon,2))
+                {
+                    resInt = 2;
+                }
+                else if (ci / ti <= 42 * Math.Pow(epsilon, 2))
+                {
+                    resInt = 3;
+                }
+                else
+                {
+                    resInt = 4;
+                }
+                return (resInt);
+            }
+            else
+            {
+                throw new ArgumentNullException("Section Class for this Cross-section not implemented");
+            }
+        }
     }
 }

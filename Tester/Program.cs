@@ -10,8 +10,12 @@ using System.Reflection;
 using System.Windows.Forms;
 using KarambaIDEA;
 using System.IO;
-using Newtonsoft.Json;
+//using Newtonsoft.Json;
 using System.Collections.Generic;
+using Microsoft.Win32;
+using System.Linq;
+using System.Globalization;
+using System.Windows.Threading;
 
 namespace Tester
 {
@@ -23,11 +27,19 @@ namespace Tester
         [STAThread]
         static void Main()
         {
+            
+
+
+
+
             //TESTCalculate();
             //TESTCreateAndCalculateTemplate();
-            TESTCopyProject();
+            //TESTCopyProject();
+            
 
 
+
+            TESTCreateAndCalculate();
 
 
         }
@@ -41,7 +53,7 @@ namespace Tester
 
             Joint joint = new Joint();
             joint.JointFilePath = "C:\\Data\\20191115214919\\C12-brandname\\APIproduced File - NotCorrect.ideaCon";
-            HiddenCalculationV20.Calculate(joint);
+            HiddenCalculationV20.Calculate(joint, true);
             //Results
             string results = joint.ResultsSummary.summary;
         }
@@ -73,10 +85,10 @@ namespace Tester
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
 
             //Create IDEA file
-            IdeaConnection ideaConnection = new IdeaConnection(joint);
+            IdeaConnection ideaConnection = new IdeaConnection(joint, true);
 
             //Calculate
-            HiddenCalculationV20.Calculate(joint);
+            HiddenCalculationV20.Calculate(joint, true);
             //KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(joint);
 
             //Results
@@ -110,10 +122,10 @@ namespace Tester
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
 
             //Create IDEA file
-            IdeaConnection ideaConnection = new IdeaConnection(joint);
+            IdeaConnection ideaConnection = new IdeaConnection(joint, true);
 
             //Calculate
-            HiddenCalculationV20.Calculate(joint);
+            HiddenCalculationV20.Calculate(joint, true);
             
 
             //Results
@@ -128,17 +140,8 @@ namespace Tester
             par.children.Add(self);
 
 
-            Project project = null;
 
 
-
-            Project clone = project.CloneJson();
-            //
-            foreach (CrossSection c in clone.crossSections)
-            {
-                c.project = clone; //project copieren naar in elke child
-                //kijken naar mogelijkheden om parent verwijzing te verwijderen
-            }
         }
 
         public static void SetParent<T>(this T source, string propertyname, dynamic parent) where T : class
@@ -150,28 +153,7 @@ namespace Tester
             }
         }
 
-        /// <summary>
-        /// Perform a deep Copy of the object, using Json as a serialisation method. NOTE: Private members are not cloned using this method.
-        /// </summary>
-        /// <typeparam name="T">The type of object being copied.</typeparam>
-        /// <param name="source">The object instance to copy.</param>
-        /// <returns>The copied object.</returns>
-        public static T CloneJson<T>(this T source)
-        {
-            // Don't serialize a null object, simply return the default for that object
-            if (Object.ReferenceEquals(source, null))
-            {
-                return default(T);
-            }
-
-            // initialize inner objects individually
-            // for example in default constructor some list property initialized with some values,
-            // but in 'source' these items are cleaned -
-            // without ObjectCreationHandling.Replace default constructor values will be added to result
-            var deserializeSettings = new JsonSerializerSettings { ObjectCreationHandling = ObjectCreationHandling.Replace };
-
-            return JsonConvert.DeserializeObject<T>(JsonConvert.SerializeObject(source), deserializeSettings);
-        }
+       
 
 
     }

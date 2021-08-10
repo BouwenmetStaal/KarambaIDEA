@@ -25,19 +25,19 @@ namespace KarambaIDEA.Grasshopper
             pManager.AddIntegerParameter("Entry Element ID", "Entry Element ID", "Entry Element ID", GH_ParamAccess.list);
             pManager.AddTextParameter("Entry Loadcase", "Entry Loadcase", "Loadcase", GH_ParamAccess.list);
             
-            pManager.AddNumberParameter("Start: N", "Start: N", "Normal force [kN]", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Start: Vz", "Start: Vz", "Shear force z-direction[kN]", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Start: Vy", "Start: Vy", "Shear force y-direction[kN]", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Start: Mt", "Start: Mt", "Torsional force[kNm]", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Start: My", "Start: My", "Moment force y-direction[kN]", GH_ParamAccess.list);
-            pManager.AddNumberParameter("Start: Mz", "Start: Mz", "Moment force z-direction[kN]", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Start: N", "S: N", "Normal force [kN]", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Start: Vz", "S: Vz", "Shear force z-direction[kN]", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Start: Vy", "S: Vy", "Shear force y-direction[kN]", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Start: Mt", "S: Mt", "Torsional force[kNm]", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Start: My", "S: My", "Moment force y-direction[kN]", GH_ParamAccess.list);
+            pManager.AddNumberParameter("Start: Mz", "S: Mz", "Moment force z-direction[kN]", GH_ParamAccess.list);
 
-            pManager.AddNumberParameter("End: N", "End: N", "Normal force [kN]", GH_ParamAccess.list);
-            pManager.AddNumberParameter("End: Vz", "End: Vz", "Shear force z-direction[kN]", GH_ParamAccess.list);
-            pManager.AddNumberParameter("End: Vy", "End: Vy", "Shear force y-direction[kN]", GH_ParamAccess.list);
-            pManager.AddNumberParameter("End: Mt", "End: Mt", "Torsional force[kNm]", GH_ParamAccess.list);
-            pManager.AddNumberParameter("End: My", "End: My", "Moment force y-direction[kN]", GH_ParamAccess.list);
-            pManager.AddNumberParameter("End: Mz", "End: Mz", "Moment force z-direction[kN]", GH_ParamAccess.list);
+            pManager.AddNumberParameter("End: N", "E: N", "Normal force [kN]", GH_ParamAccess.list);
+            pManager.AddNumberParameter("End: Vz", "E: Vz", "Shear force z-direction[kN]", GH_ParamAccess.list);
+            pManager.AddNumberParameter("End: Vy", "E: Vy", "Shear force y-direction[kN]", GH_ParamAccess.list);
+            pManager.AddNumberParameter("End: Mt", "E: Mt", "Torsional force[kNm]", GH_ParamAccess.list);
+            pManager.AddNumberParameter("End: My", "E: My", "Moment force y-direction[kN]", GH_ParamAccess.list);
+            pManager.AddNumberParameter("End: Mz", "E: Mz", "Moment force z-direction[kN]", GH_ParamAccess.list);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)

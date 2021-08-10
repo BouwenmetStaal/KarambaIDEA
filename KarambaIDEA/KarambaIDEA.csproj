@@ -102,17 +102,21 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="0. Utilities\CroSecClass.cs" />
     <Compile Include="3. Project utilities\CheckLocalCoordinateSystem.cs" />
     <Compile Include="3. Project utilities\RetrieveLinesPoints.cs" />
     <Compile Include="3. Project utilities\RetrieveConnectionProperties.cs" />
     <Compile Include="4. Analytical Templates\ATemplate_FinplateConnection.cs" />
     <Compile Include="4. Analytical Templates\ATemplate_MomentResistingConnection.cs" />
+    <Compile Include="4. Analytical Templates\ATemplate_PlanarTrussJoint.cs" />
     <Compile Include="4. Analytical Templates\ATemplate_WeldAllMembers.cs" />
     <Compile Include="5. IDEA Templates\TemplateByFilePath.cs" />
+    <Compile Include="5. IDEA Templates\Template_BoltedEndplate_Optimized.cs" />
     <Compile Include="6. IDEA utilities\CalculateIDEAFile.cs" />
     <Compile Include="6. IDEA utilities\CreateAndCalculateIDEAfile.cs" />
     <Compile Include="6. IDEA utilities\CreateIDEAfile.cs" />
     <Compile Include="6. IDEA utilities\OptimizePlates.cs" />
+    <Compile Include="7. Cost calculation\BoltsCosts.cs" />
     <Compile Include="7. Cost calculation\CostCalculator.cs" />
     <Compile Include="7. Cost calculation\TotalWeight.cs" />
     <Compile Include="ImportGrasshopperUtils.cs" />
@@ -142,6 +146,7 @@
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Resources.Designer.cs</LastGenOutput>
     </EmbeddedResource>
+    <None Include="app.config" />
     <None Include="KarambaIDEA.licenseheader" />
     <None Include="packages.config" />
     <AppDesigner Include="Properties\" />
@@ -159,6 +164,18 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\TrussJoint-01.png" />
+    <None Include="Resources\CroSecClass-01-01.png" />
+    <None Include="Resources\CroSecClass-01.png" />
+    <None Include="Resources\TempBoltedEndplateOptimizer2-01.png" />
+    <None Include="Resources\Weight_trans-01.png" />
+    <None Include="Resources\TransportElements_trans-01.png" />
+    <None Include="Resources\WeldingVolume_trans-01.png" />
+    <None Include="Resources\JointLoadEquilibrium.png" />
+    <None Include="Resources\LocalCoordianateSystem2.png" />
+    <None Include="Resources\RetrieveLinesAndPoints.png" />
+    <None Include="Resources\JointLoadEquilibrium2.png" />
+    <None Include="Resources\TempBoltedEndplateOptimizer.png" />
     <None Include="Resources\TemplateFromFilePath.png" />
     <None Include="Resources\StiffnessDiagram2.png" />
     <None Include="Resources\StiffnessDiagram.png" />
@@ -171,6 +188,9 @@
     <None Include="Resources\ATempMomentResistingConnection.png" />
     <None Include="Resources\ATempMomentResistingConnection2.png" />
     <None Include="Resources\ATempFinPlate.png" />
+    <None Include="Resources\bolts-01-01.png" />
+    <None Include="Resources\ATempWeldAll-01.png" />
+    <None Include="Resources\ATempWeldAll-01-01.png" />
     <Content Include="Resources\continues2members.contemp">
       <CopyToOutputDirectory>Always</CopyToOutputDirectory>
     </Content>
