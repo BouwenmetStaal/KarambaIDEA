@@ -52,11 +52,11 @@
     <Reference Include="IdeaRS.Connections">
       <HintPath>..\..\..\..\..\..\Program Files\IDEA StatiCa\StatiCa 20.1\IdeaRS.Connections.dll</HintPath>
     </Reference>
-    <Reference Include="IdeaRS.OpenModel">
-      <HintPath>..\..\..\..\..\..\Program Files\IDEA StatiCa\StatiCa 20.1\IdeaRS.OpenModel.dll</HintPath>
+    <Reference Include="IdeaRS.OpenModel, Version=21.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\IdeaStatiCa.OpenModel.21.0.2.289\lib\net48\IdeaRS.OpenModel.dll</HintPath>
     </Reference>
-    <Reference Include="IdeaStatiCa.Plugin">
-      <HintPath>..\..\..\..\..\..\Program Files\IDEA StatiCa\StatiCa 20.1\IdeaStatiCa.Plugin.dll</HintPath>
+    <Reference Include="IdeaStatiCa.Plugin, Version=21.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\IdeaStatiCa.Plugin.21.0.2.289\lib\net48\IdeaStatiCa.Plugin.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -133,6 +133,7 @@
   <ItemGroup>
     <None Include="app.config" />
     <None Include="libgrpc_csharp_ext.x64.dylib" />
+    <None Include="libgrpc_csharp_ext.x64.so" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

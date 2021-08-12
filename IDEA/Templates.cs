@@ -69,7 +69,10 @@ namespace KarambaIDEA.IDEA
 
             CutBeamByPlate(openModel, joint, 0, 0);
             CutBeamByPlate(openModel, joint, 1, 1);
-            CreateBoltgrid(openModel, 0, 1, w0 - 0.1, h0 - 0.1);
+            //CreateBoltgrid(openModel, 0, 1, w0 - 0.1, h0 - 0.1);
+
+            Core.BoltGrid boltGrid = joint.template.boltGrids.First();
+            CreateBoltgrid_coor(openModel, boltGrid, 0, 1);
 
             return openModel;
         }
@@ -88,7 +91,7 @@ namespace KarambaIDEA.IDEA
 
             CutBeamByPlate(openModel, joint, 0, 0);
             CutBeamByPlate(openModel, joint, 1, 1);
-            CreateBoltgrid_coor(openModel, boltGrid, 0, 1, w - 0.1, h - 0.1);
+            CreateBoltgrid_coor(openModel, boltGrid, 0, 1);
 
             Core.CrossSection c = joint.attachedMembers.FirstOrDefault().element.crossSection;
 
@@ -170,8 +173,12 @@ namespace KarambaIDEA.IDEA
                 CuttingObject = new ReferenceElement(openModel.Connections[0].Plates[cuttingobject]),
                 ModifiedObject = new ReferenceElement(openModel.Connections[0].Beams[modifiedObject]),
                 IsWeld = true,
+                WeldType = IdeaRS.OpenModel.Connection.WeldType.DoubleFillet,
             });
 
+            IdeaRS.OpenModel.Connection.CutBeamByBeamData dd = new IdeaRS.OpenModel.Connection.CutBeamByBeamData();
+            
+            
             return openModel;
         }
         static public OpenModel CutPlateByBeam(OpenModel openModel, Joint joint, int cuttingobject, int modifiedObject)
@@ -604,13 +611,12 @@ namespace KarambaIDEA.IDEA
             return openModel;
         }
 
-        static public OpenModel CreateBoltgrid_coor(OpenModel openModel, Core.BoltGrid boltGridCore, int firstPlate, int secondPlate, double width, double height)
+        static public OpenModel CreateBoltgrid_coor(OpenModel openModel, Core.BoltGrid boltGridCore, int firstPlate, int secondPlate)
         {
             PlateData plateData = openModel.Connections[0].Plates[firstPlate];
             PlateData plateTwo = openModel.Connections[0].Plates[secondPlate];
 
-            double w = 0.5 * width;
-            double h = 0.5 * height;
+           
 
             int pointId = openModel.ConnectionPoint[0].Id;
             Point3D point = openModel.Point3D.First(a => a.Id == pointId);

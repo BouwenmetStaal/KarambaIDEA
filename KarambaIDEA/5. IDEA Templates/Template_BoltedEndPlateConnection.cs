@@ -14,6 +14,7 @@ using KarambaIDEA.Core;
 using KarambaIDEA.IDEA;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+using KarambaIDEA.Core.JointTemplate;
 
 namespace KarambaIDEA
 {
@@ -30,6 +31,9 @@ namespace KarambaIDEA
             pManager.AddTextParameter("BrandNames", "BrandNames", "BrandNames to apply template to", GH_ParamAccess.list,"");
             pManager.AddNumberParameter("Thickness endplate [mm]", "Thickness endplate [mm]", "", GH_ParamAccess.item, 10.0);
             pManager[1].Optional = true;
+            pManager.AddNumberParameter("Edge distance [mm]", "Edge distance [mm]", "", GH_ParamAccess.item, 30);
+            pManager.AddTextParameter("Bolttype", "Bolttype", "", GH_ParamAccess.item, "M20");
+            pManager.AddTextParameter("Boltsteelgrade", "Boltsteelgrade", "", GH_ParamAccess.item, "8.8");
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -48,6 +52,10 @@ namespace KarambaIDEA
             List<GH_String> brandNamesDirty = new List<GH_String>();
             List<string> brandNames = new List<string>();
 
+            string boltsteelgrade = "10.9";
+            string bolttypename = "M30";
+            double edgedistance = 50;
+
             //Output variables
             List<string> messages = new List<string>();
             List<Brep> breps = new List<Brep>();
@@ -56,6 +64,9 @@ namespace KarambaIDEA
             DA.GetData(0, ref sourceProject);
             DA.GetDataList(1, brandNamesDirty);
             DA.GetData(2, ref tplate);
+            DA.GetData("Edge distance [mm]", ref edgedistance);
+            DA.GetData("Bolttype", ref bolttypename);
+            DA.GetData("Boltsteelgrade", ref boltsteelgrade);
 
             //Clone project
             Project project = null;
@@ -78,7 +89,7 @@ namespace KarambaIDEA
                     {
                         if (brandName == joint.brandName)
                         {
-                            SetTemplate(tplate, joint, breps);
+                            SetTemplate(tplate, joint, breps, edgedistance,bolttypename, boltsteelgrade);
                         }
                     }
                 }
@@ -101,7 +112,7 @@ namespace KarambaIDEA
             DA.SetDataList(2, breps);
         }
 
-        private static void SetTemplate(double tplate, Joint joint, List<Brep> breps)
+        private static void SetTemplate(double tplate, Joint joint, List<Brep> breps, double edgedistance, string bolttypename, string boltsteelgrade)
         {
             joint.template = new Template();
             
@@ -112,6 +123,25 @@ namespace KarambaIDEA
             
             joint.template.plates.Add(plateA);
             joint.template.plates.Add(plateB);
+
+            
+            //create boltgrid
+            //BoltSteelGrade bsg = new BoltSteelGrade.Steelgrade();
+
+            //BoltSteelGrade bsg = BoltSteelGrade.Steelgrade.b8_8;
+
+            List<Bolt> bolts = Bolt.CreateBoltsList(BoltSteelGrade.selectgrade(boltsteelgrade));
+            Bolt bolt = bolts.Single(a => bolttypename == a.Name);
+            double locXp =  0.5 * beam.width - edgedistance;
+            double locY = 0.5 * beam.height - edgedistance;
+
+            List<Coordinate2D> coors = new List<Coordinate2D>();
+            coors.Add(new Coordinate2D(locXp, locY));
+            coors.Add(new Coordinate2D(locXp, -locY));
+            coors.Add(new Coordinate2D(-locXp, locY));
+            coors.Add(new Coordinate2D(-locXp, -locY));
+            BoltGrid boltGrid = new BoltGrid(bolt, coors);
+            joint.template.boltGrids.Add(boltGrid);
 
             joint.template.workshopOperations = Template.WorkshopOperations.BoltedEndPlateConnection;
             foreach(AttachedMember at in joint.attachedMembers)
