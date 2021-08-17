@@ -72,10 +72,10 @@ namespace KarambaIDEA._7._Cost_calculation
             }
 
 
-            int a = 0;
+            int b = 0;
             foreach (Joint joint in project.joints)
             {
-                GH_Path path = new GH_Path(a);
+                GH_Path path = new GH_Path(b);
                 if (joint.template != null)
                 {
                     if (joint.template.boltGrids.Count != 0)
@@ -84,10 +84,13 @@ namespace KarambaIDEA._7._Cost_calculation
                         {
                             if(boltgrid.Coordinates2D != null)
                             {
-                                int xbolts = boltgrid.Coordinates2D.Count;
+                                foreach (Core.JointTemplate.Coordinate2D cor in boltgrid.Coordinates2D)
+                                {
+                                    double boltCost = bolts.Single(a => boltgrid.bolttype.Name == a.Name).price;
+                                    boltCosts.Add(boltCost, path);
+                                }
+                                
                             }
-                            double boltCost = boltgrid.columns*boltgrid.rows; //conversion from mm3 to cm3
-                            boltCosts.Add(boltCost, path);
                         }
                     }
                     else
@@ -99,7 +102,7 @@ namespace KarambaIDEA._7._Cost_calculation
                 {
                     boltCosts.Add(0.0, path);
                 }
-                a = a + 1;
+                b = b + 1;
             }
 
             //link output
