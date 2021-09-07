@@ -24,11 +24,11 @@ namespace KarambaIDEA
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddNumberParameter("Weight elements [kg]", "Weight elements [kg]", "Weight elements per beam elemeent", GH_ParamAccess.list, 0.0);
-            pManager.AddNumberParameter("Weight plates [kg]", "Weight plates [kg]", "Weight plates per plate per joint", GH_ParamAccess.tree, 0.0);
-            pManager.AddNumberParameter("Welding volume [cm3]", "Welding volume [cm3]", "Welding volume per weld per joint", GH_ParamAccess.tree, 0.0);
-            pManager.AddNumberParameter("Bolt costs", "Bolt costs", "Bolt costs per bolt per joint", GH_ParamAccess.tree, 0.0);
-            pManager.AddNumberParameter("Number of elements", "Number of elements", "Number of elements", GH_ParamAccess.list, 0.0);
+            pManager.AddNumberParameter("Weight elements [kg]", "Weight elements [kg]", "Weight elements per beam elemeent", GH_ParamAccess.list, -1);
+            pManager.AddNumberParameter("Weight plates [kg]", "Weight plates [kg]", "Weight plates per plate per joint", GH_ParamAccess.tree, -1);
+            pManager.AddNumberParameter("Welding volume [cm3]", "Welding volume [cm3]", "Welding volume per weld per joint", GH_ParamAccess.tree, -1);
+            pManager.AddNumberParameter("Bolt costs", "Bolt costs", "Bolt costs per bolt per joint", GH_ParamAccess.tree, -1);
+            pManager.AddNumberParameter("Number of elements", "Number of elements", "Number of elements", GH_ParamAccess.list, -1);
             pManager.AddNumberParameter("Steel: Price per kg", "Steel: Price per kg", "Price of steel per kg, default price is €1,- per kg", GH_ParamAccess.item, 1.0);
             pManager.AddNumberParameter("Welding: Price per cm3", "Welding: Price per cm3", "Price of welding per cm3, default price is €2.60 per cm3", GH_ParamAccess.item, 2.6);
             pManager.AddNumberParameter("Transport: Price per element", "Transport: Price per element", "Price of transport per element, default price is €20,-", GH_ParamAccess.item, 20);
@@ -74,33 +74,57 @@ namespace KarambaIDEA
             DataTree<double> jointCostsDouble = new DataTree<double>();
             double transportcosts = new double();
 
-            for (int a=0; a < totalWeldingVolumes.Branches.Count; a++)
+            for (int a = 0; a < totalWeldingVolumes.Branches.Count; a++)
             {
                 GH_Path path = new GH_Path(a);
                 double weldcosts = new double();
-                foreach (GH_Number number in totalWeldingVolumes[a])
+                if (totalWeldingVolumes[0].FirstOrDefault().Value == 0 && totalWeldingVolumes.Branches.Count == 1 && totalWeldingVolumes[0].Count == 1)
                 {
-                    double weldcost = number.Value * priceWelding;
-                    jointCostsDouble.Add(weldcost, path);
-                    weldcosts = weldcosts + weldcost;
+                    //no data specified
                 }
-                
+                else
+                {
+                    foreach (GH_Number number in totalWeldingVolumes[a])
+                    {
+                        double weldcost = number.Value * priceWelding;
+                        jointCostsDouble.Add(weldcost, path);
+                        weldcosts = weldcosts + weldcost;
+                    }
+                }
+
+
 
                 double platecosts = new double();
-                foreach (GH_Number number in totalPlateWeights[a])
+                if (totalPlateWeights[0].FirstOrDefault().Value == 0 && totalPlateWeights.Branches.Count == 1 && totalPlateWeights[0].Count == 1)
                 {
-                    double platecost = number.Value * priceSteel;
-                    jointCostsDouble.Add(number.Value, path);
-                    platecosts = platecosts + platecost;
+                    //no data specified
                 }
+                else
+                {
+                    foreach (GH_Number number in totalPlateWeights[a])
+                    {
+                        double platecost = number.Value * priceSteel;
+                        jointCostsDouble.Add(number.Value, path);
+                        platecosts = platecosts + platecost;
+                    }
+                }
+                
                 
 
                 double boltcosts = new double();
-                foreach (GH_Number number in boltscosts[a])
+                if (boltscosts[0].FirstOrDefault().Value == 0 && boltscosts.Branches.Count == 1 && boltscosts[0].Count == 1)
                 {
-                    boltcosts = boltcosts + number.Value;//number value is already a price
-                    jointCostsDouble.Add(number.Value, path);
+                    //no data specified
                 }
+                else
+                {
+                    foreach (GH_Number number in boltscosts[a])
+                    {
+                        boltcosts = boltcosts + number.Value;//number value is already a price
+                        jointCostsDouble.Add(number.Value, path);
+                    }
+                }
+                
                 //bolt = bolt * priceSteel;
 
                 double price = Math.Ceiling(weldcosts+platecosts+boltcosts);
