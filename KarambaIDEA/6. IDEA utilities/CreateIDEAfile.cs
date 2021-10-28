@@ -14,7 +14,7 @@ using KarambaIDEA.Core;
 using KarambaIDEA.IDEA;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
-
+using GH = Grasshopper;
 namespace KarambaIDEA
 {
     public class CreateIDEAfile : GH_Component
@@ -71,8 +71,12 @@ namespace KarambaIDEA
             //this.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Warning Message");
             //this.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Error Message");
 
+
             if (startIDEA == true)
             {
+                var form = new LoadingForm("Running IDEA StatiCa");
+                form.Show();
+
                 project.CreateFolder(outputfolderpath);
                 if (createAllJoints == true)
                 {
@@ -88,7 +92,8 @@ namespace KarambaIDEA
                         Joint joint = project.joints[i];
                         IdeaConnection ideaConnection = new IdeaConnection(joint, userFeedback);
                     }
-                }              
+                }
+                form.Close();
             }
 
             //export lines of joint for visualisation purposes

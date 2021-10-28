@@ -56,6 +56,10 @@ namespace KarambaIDEA.IDEA
                 throw new ArgumentNullException("IDEA StatiCa installation cannot be found");
             }
 
+            //LoadingForm form = new IDEA.LoadingForm("IDEA StatiCa started", p_canvas);
+            //form.Show();
+            //form.AddMessage(string.Format("IDEA StatiCa installation was found in '{0}'", ideaStatiCaDir));
+
             ProgressWindow pop = new ProgressWindow();
             if (userFeedback)
             {    
@@ -73,7 +77,7 @@ namespace KarambaIDEA.IDEA
             {
                 Directory.CreateDirectory(this.filePath);
             }
-
+            
 
             AppDomain currentDomain = AppDomain.CurrentDomain;
             currentDomain.AssemblyResolve += new ResolveEventHandler(IdeaResolveEventHandler);
@@ -88,8 +92,9 @@ namespace KarambaIDEA.IDEA
             {
                 pop.AddMessage(string.Format("Creating Openmodel and OpenmodelResult for '{0}'", joint.Name));
             }
-            
-            
+
+            //form.AddMessage(string.Format("Creating Openmodel and OpenmodelResult for '{0}'", joint.Name));
+
             if (joint.template!= null)
             {
                 Templates.ApplyProgrammedIDEAtemplate(openModel , joint);
@@ -101,7 +106,8 @@ namespace KarambaIDEA.IDEA
             {
                 pop.AddMessage(string.Format("Saving Openmodel and OpenmodelResult to XML for '{0}'", joint.Name));
             }
-            
+
+            //form.AddMessage(string.Format("Saving Openmodel and OpenmodelResult to XML for '{0}'", joint.Name));
 
             // save to the files
             openModel.SaveToXmlFile(iomFileName);
@@ -111,6 +117,8 @@ namespace KarambaIDEA.IDEA
             {
                 pop.AddMessage(string.Format("Creating IDEA StatiCa File '{0}'", joint.Name));
             }
+
+            //form.AddMessage(string.Format("Creating IDEA StatiCa File '{0}'", joint.Name));
 
             string filename = joint.Name + ".ideaCon";       
             var fileConnFileNameFromLocal = Path.Combine(folder,joint.Name, filename);
@@ -237,7 +245,8 @@ namespace KarambaIDEA.IDEA
             {
                 pop.Close();
             }
-            
+            //form.Close();
+
         }
 
         

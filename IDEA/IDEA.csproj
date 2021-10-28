@@ -40,8 +40,14 @@
     <Reference Include="Castle.Windsor, Version=5.0.0.0, Culture=neutral, PublicKeyToken=407dd0808d44fbdc, processorArchitecture=MSIL">
       <HintPath>..\packages\Castle.Windsor.5.1.1\lib\net45\Castle.Windsor.dll</HintPath>
     </Reference>
+    <Reference Include="Eto">
+      <HintPath>..\..\..\..\Google Drive\BmS_onderzoek\2_KarambaIDEA\ETO Files\Eto.dll</HintPath>
+    </Reference>
     <Reference Include="Google.Protobuf, Version=3.14.0.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
       <HintPath>..\packages\Google.Protobuf.3.14.0\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
+    <Reference Include="Grasshopper">
+      <HintPath>..\..\..\..\..\..\Program Files\Rhino 7\Plug-ins\Grasshopper\Grasshopper.dll</HintPath>
     </Reference>
     <Reference Include="Grpc.Core, Version=2.0.0.0, Culture=neutral, PublicKeyToken=d754f35622e28bad, processorArchitecture=MSIL">
       <HintPath>..\packages\Grpc.Core.2.35.0\lib\net45\Grpc.Core.dll</HintPath>
@@ -110,6 +116,7 @@
     <Compile Include="ConnectionTemplateGenerator.cs" />
     <Compile Include="HiddenCalculationV20.cs" />
     <Compile Include="IdeaConnection.cs" />
+    <Compile Include="LoadingForm.cs" />
     <Compile Include="OpenModelGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">

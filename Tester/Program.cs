@@ -29,7 +29,7 @@ namespace Tester
         {
             
 
-
+            
 
 
             //TESTCalculate();
@@ -85,6 +85,7 @@ namespace Tester
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
 
             //Create IDEA file
+            Point p_canvas = new Point(100, 100, 0);
             IdeaConnection ideaConnection = new IdeaConnection(joint, true);
 
             //Calculate
@@ -122,6 +123,7 @@ namespace Tester
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
 
             //Create IDEA file
+            Point p_canvas = new Point(100, 100, 0);
             IdeaConnection ideaConnection = new IdeaConnection(joint, true);
 
             //Calculate

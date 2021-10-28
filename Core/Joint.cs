@@ -22,14 +22,10 @@ namespace KarambaIDEA.Core
         public bool IsContinuous;
         public string brandName;
 
-        public Vector bearingMemberUnitVector;
-        public double maxGlobalEccentricity;
-        //public bool isWarrenEccentricJoint;
-        //public double weldVolume;
+        
         public Template template=null;
         public string ideaTemplateLocation=null;
 
-        //public EnumWorkshopOperations template;
         
         public ResultsSummary ResultsSummary;
 
@@ -71,7 +67,7 @@ namespace KarambaIDEA.Core
 
         }
 
-        public Joint(Project _project, int _id, string _name, List<int> _beamIDs, List<AttachedMember> _attachedMembers, Point _centralNodeOfJoint, double _globaleccenticitylength, Vector _bearingMemberUnitVector, bool _IsContinues)
+        public Joint(Project _project, int _id, string _name, List<int> _beamIDs, List<AttachedMember> _attachedMembers, Point _centralNodeOfJoint, bool _IsContinues)
         {
             this.project = _project;
             this.id = _id;
@@ -79,8 +75,6 @@ namespace KarambaIDEA.Core
             this.attachedMembers = _attachedMembers;
             this.beamIDs = _beamIDs;
             this.centralNodeOfJoint = _centralNodeOfJoint;
-            this.maxGlobalEccentricity = _globaleccenticitylength;
-            this.bearingMemberUnitVector = _bearingMemberUnitVector;
             this.IsContinuous = _IsContinues;
         }
         /// <summary>

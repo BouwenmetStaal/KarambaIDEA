@@ -127,6 +127,7 @@
     <Compile Include="0. Utilities\JointViewer.cs" />
     <Compile Include="1. Load-conversions\LoadConversionGSA.cs" />
     <Compile Include="1. Load-conversions\LoadConversionSCIA.cs" />
+    <Compile Include="LoadingForm.cs" />
     <Compile Include="Properties\Resources.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>

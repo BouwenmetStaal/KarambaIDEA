@@ -311,6 +311,7 @@ namespace KarambaIDEA
                     for (int ba = 0; ba < rows; ba++)
                     {
                         double d0 = joint.template.boltGrids.FirstOrDefault().bolttype.HoleDiameter;
+                        double h0 = joint.template.boltGrids.FirstOrDefault().bolttype.HeadHeight + tplate;
                         double topmm = (0.5 * (rows - 1) * (p1 + d0) / 1000) - (((p1 + d0) * ba) / 1000);
                         Vector3d locX = plane.XAxis;
                         locX.Unitize();
@@ -318,11 +319,13 @@ namespace KarambaIDEA
                         Plane plane2 = plane;
                         plane2.Transform(transform);
                         Circle circle = new Circle(plane2, d0 / 2000);//Radius 
-                        Surface sur = Surface.CreateExtrusion(circle.ToNurbsCurve(), vector);
-                        Brep tube = sur.ToBrep().CapPlanarHoles(tol);
-                        plate = Brep.CreateBooleanDifference(plate, tube, tol).ToList().First();
 
 
+                        Polyline hexagon = Polyline.CreateCircumscribedPolygon(circle, 6);
+                        vecX.Unitize();
+                        Surface sur2 = Surface.CreateExtrusion(hexagon.ToNurbsCurve(), Vector3d.Multiply(h0 / 1000, vector));
+                        Brep tube = sur2.ToBrep().CapPlanarHoles(tol);
+                        breps.Add(tube);
 
                     }
                     //Add plate with holes

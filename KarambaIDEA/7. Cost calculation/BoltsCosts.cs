@@ -91,7 +91,17 @@ namespace KarambaIDEA._7._Cost_calculation
                                 }
                                 
                             }
+                            if(boltgrid.rows != 0 && boltgrid.columns != 0)
+                            {
+                                double boltCost = boltgrid.rows * boltgrid.columns * bolts.Single(a => boltgrid.bolttype.Name == a.Name).price;
+                                boltCosts.Add(boltCost, path);
+                            }
+                            else
+                            {
+                                boltCosts.Add(0.0, path);
+                            }
                         }
+                        
                     }
                     else
                     {
