@@ -62,7 +62,7 @@ namespace KarambaIDEA.IDEA
 
             ProgressWindow pop = new ProgressWindow();
             if (userFeedback)
-            {    
+            {
                 pop.Show();
                 pop.AddMessage(string.Format("IDEA StatiCa installation was found in '{0}'", ideaStatiCaDir));
             }

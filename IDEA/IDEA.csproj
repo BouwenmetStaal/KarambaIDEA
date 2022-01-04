@@ -116,7 +116,6 @@
     <Compile Include="ConnectionTemplateGenerator.cs" />
     <Compile Include="HiddenCalculationV20.cs" />
     <Compile Include="IdeaConnection.cs" />
-    <Compile Include="LoadingForm.cs" />
     <Compile Include="OpenModelGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Properties\Settings.Designer.cs">

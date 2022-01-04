@@ -74,7 +74,8 @@ namespace KarambaIDEA
 
             if (startIDEA == true)
             {
-                var form = new LoadingForm("Running IDEA StatiCa");
+                LoadingForm form = new LoadingForm("Running IDEA StatiCa");
+                //form.Location = form.Parent.Location;
                 form.Show();
 
                 project.CreateFolder(outputfolderpath);

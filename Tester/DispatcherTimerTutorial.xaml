@@ -1,0 +1,10 @@
+﻿<Window x:Class="Tester.DispatcherTimerTutorial"
+        xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:local="clr-namespace:Tester"
+        mc:Ignorable="d"
+        Title="DispatcherTimerTutorial" Height="219.364" Width="266.474">
+    <Label Name="lblTime" FontSize="48" Content="Label" HorizontalAlignment="Center" VerticalAlignment="Center" RenderTransformOrigin="-0.93,-2.041" Margin="68,14,68,100"/>
+</Window>

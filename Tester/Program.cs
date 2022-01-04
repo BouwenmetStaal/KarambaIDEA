@@ -3,6 +3,7 @@
 // Apache-2.0 license that can be found in the LICENSE file.	 
 using KarambaIDEA.Core;
 using KarambaIDEA.IDEA;
+using KarambaIDEA.Grasshopper;
 
 using System;
 using System.Diagnostics;
@@ -16,6 +17,11 @@ using Microsoft.Win32;
 using System.Linq;
 using System.Globalization;
 using System.Windows.Threading;
+using System.Threading;
+using Eto.Forms;
+using Eto.Drawing;
+using Eto;
+using Application = Eto.Forms.Application;
 
 namespace Tester
 {
@@ -27,22 +33,35 @@ namespace Tester
         [STAThread]
         static void Main()
         {
-            
 
-            
+            ///MainWindow mainWindow = new MainWindow();
+            //mainWindow.ShowDialog();
+            //KarambaIDEA.LoadingForm form = new KarambaIDEA.LoadingForm("blabla");
+            //form.Show();
+            new Application(Eto.Platforms.Wpf).Run(new Test_Eto_forms());
+            //new Eto.Forms.Application();
 
+            Test_Eto_forms form = new Test_Eto_forms();
+            form.Show();
 
+            DispatcherTimerTutorial dispatcherTimerTutorial = new DispatcherTimerTutorial();
+            //Application.Run(new MainWindow());
+            dispatcherTimerTutorial.ShowDialog();
+            //dispatcherTimerTutorial.Dispatcher.BeginInvoke(new EventHandler())
+            //Application.Run(mainWindow);
             //TESTCalculate();
             //TESTCreateAndCalculateTemplate();
             //TESTCopyProject();
-            
 
 
 
-            TESTCreateAndCalculate();
+            //TESTCreateAndCalculate();
+            //mainWindow.Close();
 
 
         }
+       
+
 
         static void TESTCalculate()
         {
@@ -85,7 +104,7 @@ namespace Tester
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
 
             //Create IDEA file
-            Point p_canvas = new Point(100, 100, 0);
+            KarambaIDEA.Core.Point p_canvas = new KarambaIDEA.Core.Point(100, 100, 0);
             IdeaConnection ideaConnection = new IdeaConnection(joint, true);
 
             //Calculate
@@ -123,7 +142,7 @@ namespace Tester
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
 
             //Create IDEA file
-            Point p_canvas = new Point(100, 100, 0);
+            KarambaIDEA.Core.Point p_canvas = new KarambaIDEA.Core.Point(100, 100, 0);
             IdeaConnection ideaConnection = new IdeaConnection(joint, true);
 
             //Calculate
