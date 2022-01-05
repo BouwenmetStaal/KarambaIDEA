@@ -12,9 +12,6 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using KarambaIDEA.Core;
 using KarambaIDEA.IDEA;
-using Grasshopper.Kernel.Parameters;
-using Grasshopper.Kernel.Types;
-using GH = Grasshopper;
 namespace KarambaIDEA
 {
     public class CreateIDEAfile : GH_Component

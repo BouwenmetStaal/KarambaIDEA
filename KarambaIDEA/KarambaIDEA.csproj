@@ -65,6 +65,7 @@
   <ItemGroup>
     <Reference Include="Eto, Version=2.5.0.0, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
       <HintPath>..\packages\RhinoCommon.6.18.19266.14201\lib\net45\Eto.dll</HintPath>
+      <Private>True</Private>
     </Reference>
     <Reference Include="GH_IO, Version=6.18.19266.14200, Culture=neutral, PublicKeyToken=6a29997d2e6b4f97, processorArchitecture=MSIL">
       <HintPath>..\packages\Grasshopper.6.18.19266.14201\lib\net45\GH_IO.dll</HintPath>
@@ -79,6 +80,7 @@
     </Reference>
     <Reference Include="Rhino.UI, Version=6.18.19266.14200, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
       <HintPath>..\packages\RhinoCommon.6.18.19266.14201\lib\net45\Rhino.UI.dll</HintPath>
+      <Private>False</Private>
     </Reference>
     <Reference Include="RhinoCommon, Version=6.18.19266.14200, Culture=neutral, PublicKeyToken=552281e97c755530, processorArchitecture=MSIL">
       <HintPath>..\packages\RhinoCommon.6.18.19266.14201\lib\net45\RhinoCommon.dll</HintPath>
@@ -97,7 +99,6 @@
     <Reference Include="System.Xaml">
       <RequiredTargetFramework>4.0</RequiredTargetFramework>
     </Reference>
-    <Reference Include="WindowsBase" />
     <Reference Include="PresentationCore" />
     <Reference Include="PresentationFramework" />
   </ItemGroup>
@@ -149,6 +150,9 @@
     </EmbeddedResource>
     <None Include="app.config" />
     <None Include="KarambaIDEA.licenseheader" />
+    <None Include="manifest.yml">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </None>
     <None Include="packages.config" />
     <AppDesigner Include="Properties\" />
   </ItemGroup>
@@ -192,9 +196,7 @@
     <None Include="Resources\bolts-01-01.png" />
     <None Include="Resources\ATempWeldAll-01.png" />
     <None Include="Resources\ATempWeldAll-01-01.png" />
-    <Content Include="Resources\continues2members.contemp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </Content>
+    <Content Include="Resources\continues2members.contemp" />
     <None Include="Resources\TempWeldAllMembers.png" />
     <None Include="Resources\TempBoltedEndplateConnection.png" />
     <None Include="Resources\KarambaIDEA_logo_JointVector.png" />
@@ -202,9 +204,7 @@
     <None Include="Resources\KarambaIDEA_logo_viewer.png" />
     <None Include="Resources\KarambaIDEA_logo_LinesFromNodes.png" />
     <None Include="Resources\KarambaIDEA_logo_excel.png" />
-    <EmbeddedResource Include="Resources\ended2members.contemp">
-      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
-    </EmbeddedResource>
+    <EmbeddedResource Include="Resources\ended2members.contemp" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
@@ -220,7 +220,30 @@
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <PropertyGroup>
-    <PostBuildEvent>Copy "$(TargetPath)" "$(TargetDir)$(ProjectName).gha"</PostBuildEvent>
+    <PostBuildEvent>cd $(TargetDir)
+del System.Memory.dll
+del System.Buffers.dll
+del System.Numerics.Vectors.dll
+del grpc_csharp_ext.x64.dll
+del grpc_csharp_ext.x86.dll
+del libgrpc_csharp_ext.x64.dylib
+del libgrpc_csharp_ext.x64.so
+del *.config
+del *.pdb
+RD /S /Q "$(TargetDir)Resources"
+
+Copy "$(SolutionDir)LICENSE"
+Copy "$(SolutionDir)README.MD"
+
+mkdir "$(TargetDir)example_files" 
+Copy "$(SolutionDir)0_Grasshopper_Files" "$(TargetDir)example_files" 
+cd "$(TargetDir)example_files"
+del *.zip
+
+cd "$(TargetDir)"
+Copy "$(TargetPath)" "$(TargetDir)$(ProjectName).gha"
+
+</PostBuildEvent>
   </PropertyGroup>
   <Import Project="..\packages\RhinoCommon.6.18.19266.14201\build\net45\RhinoCommon.targets" Condition="Exists('..\packages\RhinoCommon.6.18.19266.14201\build\net45\RhinoCommon.targets')" />
   <Target Name="EnsureNuGetPackageBuildImports" BeforeTargets="PrepareForBuild">

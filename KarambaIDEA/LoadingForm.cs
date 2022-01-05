@@ -1,15 +1,6 @@
 ﻿using Eto.Drawing;
 using Eto.Forms;
-using System;
-using System.Collections.Generic;
-using System.IO;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using GH = Grasshopper;
-using Rhino.UI;
-using System.Windows.Threading;
-using System.Threading;
 
 namespace KarambaIDEA
 {
