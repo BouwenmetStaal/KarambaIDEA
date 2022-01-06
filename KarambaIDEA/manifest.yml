@@ -1,6 +1,5 @@
 ---
 name: KarambaIDEA
-version: 1.0.0.1
 authors:
 - Rayaan Ajouz
 description: KarambaIDEA is an open-source Grasshopper plug-in, which can link Karamba3D with IDEA StatiCa connection.
