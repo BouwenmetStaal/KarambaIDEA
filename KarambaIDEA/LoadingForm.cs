@@ -1,5 +1,6 @@
 ﻿using Eto.Drawing;
 using Eto.Forms;
+using System;
 using GH = Grasshopper;
 
 namespace KarambaIDEA
@@ -41,7 +42,19 @@ namespace KarambaIDEA
 			Label label = new Label();
 			label.Text = Message;
 			//label.Text = Message + (int)canvas_location.X +" " +(int)canvas_location.Y;
+			Label labertimer = new Label();
+
+
+			//Does not work yet
+			var start = DateTime.Now;
+			var timer = new UITimer { Interval = 1.0 };
+			timer.Elapsed += (sender, e) => {
+				TimeSpan elapsed = DateTime.Now - start;
+				label.Text = $"Elapsed: {elapsed.Hours}:{elapsed.Minutes:00}:{elapsed.Seconds:00}";
+			};
+			timer.Start();
 			
+
 
 			TableLayout tableLayout = new TableLayout();
 			tableLayout.Padding = new Padding(60, 60, 60, 60);// space around the table's sides
@@ -49,6 +62,7 @@ namespace KarambaIDEA
 			tableLayout.Spacing = new Size(5, 5);// space between each cell
 
 			tableLayout.Rows.Add(new TableRow(label, null));
+			tableLayout.Rows.Add(new TableRow(labertimer, null));
 			TableLayout control = tableLayout;
 			base.Content = new TableLayout
 			{

@@ -38,7 +38,7 @@ namespace Tester
             //mainWindow.ShowDialog();
             //KarambaIDEA.LoadingForm form = new KarambaIDEA.LoadingForm("blabla");
             //form.Show();
-            new Application(Eto.Platforms.Wpf).Run(new Test_Eto_forms());
+            //new Application(Eto.Platforms.Wpf).Run(new Test_Eto_forms());
             //new Eto.Forms.Application();
 
             Test_Eto_forms form = new Test_Eto_forms();
