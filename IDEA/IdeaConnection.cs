@@ -132,6 +132,7 @@ namespace KarambaIDEA.IDEA
                 // it creates connection project from IOM 
                 if (userFeedback){pop.AddMessage(string.Format("Joint '{0}' was saved to:\n {1}", joint.Name, fileConnFileNameFromLocal));}
                 client.CreateConProjFromIOM(iomFileName, iomResFileName, fileConnFileNameFromLocal);
+               
 
                 /*
                 //TEST 28-05-2021 Does not work "The server was unable to process the request"

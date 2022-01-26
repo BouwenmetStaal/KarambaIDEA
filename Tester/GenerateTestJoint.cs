@@ -74,7 +74,7 @@ namespace Tester
             return joint;
         }
 
-        // weld all members
+        // weld all members, joint in the form of a plus
         public Joint Testjoint2()
         {
             //info: Octopus-joint, all start points
@@ -95,11 +95,11 @@ namespace Tester
             KarambaIDEA.Core.CrossSection.CreateNewOrExisting(project2, "HEA160", KarambaIDEA.Core.CrossSection.Shape.ISection, steel, 20, 20, 20, 20, 20);
             //CrossSection cross = new CrossSection(project2, "HEA100", "I", steel, 20, 20, 20, 20, 20);
 
-            new Element(project2, "name",0, new Line(0, puntA, puntB), project2.crossSections[1], "Column", 1, 0.0, new Vector(0,0,0));
-            new Element(project2, "name", 1, new Line(1, puntB, puntC), project2.crossSections[1], "Column", 1, 0.0, new Vector(0, 0, 0));
+            new Element(project2, "member 0",0, new Line(0, puntA, puntB), project2.crossSections[1], "Column", 1, 0.0, new Vector(0,0,0));
+            new Element(project2, "member 1", 1, new Line(1, puntB, puntC), project2.crossSections[1], "Column", 1, 0.0, new Vector(0, 0, 0));
 
-            new Element(project2, "name", 2, new Line(2, puntB, puntE), project2.crossSections[0], "Diagonal", 3, 0.0, new Vector(0, 0, 0));
-            new Element(project2, "name", 3, new Line(3, puntB, puntD), project2.crossSections[0], "Diagonal", 3, 0.0, new Vector(0, 0, 0));
+            new Element(project2, "member 2", 2, new Line(2, puntB, puntE), project2.crossSections[0], "Diagonal", 3, 0.0, new Vector(0, 0, 0));
+            new Element(project2, "member 3", 3, new Line(3, puntB, puntD), project2.crossSections[0], "Diagonal", 3, 0.0, new Vector(0, 0, 0));
 
 
 

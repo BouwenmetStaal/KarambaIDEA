@@ -48,14 +48,23 @@ namespace KarambaIDEA.IDEA
                     var connection = projInfo.Connections.FirstOrDefault();//Select first connection
                     if (joint.ideaTemplateLocation != null)
                     {
-                        if (userFeedback)
+                        if (File.Exists(joint.ideaTemplateLocation))
                         {
-                            pop.AddMessage(string.Format("Template with path applied:\r '{0}'", joint.ideaTemplateLocation));
-                        }
-                        client.AddBoltAssembly(newBoltAssemblyName);//??Here Martin
+                            if (userFeedback)
+                            {
+                                pop.AddMessage(string.Format("Template with path applied:\r '{0}'", joint.ideaTemplateLocation));
+                            }
+                            client.AddBoltAssembly(newBoltAssemblyName);//??Here Martin
 
-                        client.ApplyTemplate(connection.Identifier, joint.ideaTemplateLocation, null);
-                        client.SaveAsProject(pathToFile);
+                            client.ApplyTemplate(connection.Identifier, joint.ideaTemplateLocation, null);
+                            client.SaveAsProject(pathToFile);
+                        }
+                        else
+                        {
+                            pop.AddMessage(string.Format("Template file does not exist:\r '{0}'", joint.ideaTemplateLocation));
+                        }
+                        
+                        
                     }
 
                     if (userFeedback)

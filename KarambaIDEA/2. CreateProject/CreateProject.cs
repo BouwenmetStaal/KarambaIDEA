@@ -49,6 +49,7 @@ namespace KarambaIDEA.Grasshopper
             //Input elements
             pManager.AddLineParameter("Lines", "Lines", "Lines of geometry", GH_ParamAccess.list);
             pManager.AddNumberParameter("LCS rotations [Deg]", "LCS rotations", "Local Coordinate System rotation of element in Degrees. Rotation runs from local y to local z-axis", GH_ParamAccess.list);
+            pManager[4].Optional = true;
             pManager.AddVectorParameter("Eccentricity vector", "Eccentricity vector", "Eccentricities defined by local x, y and z coordinate", GH_ParamAccess.list);
             pManager[5].Optional = true;
             pManager.AddTextParameter("Groupnames", "Groupnames", "Groupname of element", GH_ParamAccess.list);
@@ -261,7 +262,14 @@ namespace KarambaIDEA.Grasshopper
                     }
                     eccVec = ImportGrasshopperUtils.CastVectorToCore(eccentrictyVecs[i]);
                 }
-                Element element = new Element(project, membername, i, line, crosssection, groupnames[i], hierarchyId, rotationLCS[i], eccVec);
+
+                double rotation = 0.0;
+                if (rotationLCS.Count != 0)
+                {
+                    rotation = rotationLCS[i];  
+                }
+
+                Element element = new Element(project, membername, i, line, crosssection, groupnames[i], hierarchyId, rotation, eccVec);
             }
 
             

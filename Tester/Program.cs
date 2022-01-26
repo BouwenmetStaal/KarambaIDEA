@@ -22,6 +22,9 @@ using Eto.Forms;
 using Eto.Drawing;
 using Eto;
 using Application = Eto.Forms.Application;
+using System.Xml.Linq;
+using System.Xml.Serialization;
+using IdeaRS.OpenModel.Connection;
 
 namespace Tester
 {
@@ -33,35 +36,63 @@ namespace Tester
         [STAThread]
         static void Main()
         {
+            TESTCreateAndCalculateTemplate();
+            
+            
+            
+            string pathTemplate = "C:\\Users\\r.ajouz\\source\\repos\\KarambaIDEA\\0_IDEA_Templates\\ended2members.contemp";
+            ConnectionTemplateGenerator con = new ConnectionTemplateGenerator(pathTemplate);
+            con.UpdateTemplate();
 
-            ///MainWindow mainWindow = new MainWindow();
-            //mainWindow.ShowDialog();
-            //KarambaIDEA.LoadingForm form = new KarambaIDEA.LoadingForm("blabla");
-            //form.Show();
-            //new Application(Eto.Platforms.Wpf).Run(new Test_Eto_forms());
-            //new Eto.Forms.Application();
+          
+          
 
-            Test_Eto_forms form = new Test_Eto_forms();
-            form.Show();
-
-            DispatcherTimerTutorial dispatcherTimerTutorial = new DispatcherTimerTutorial();
-            //Application.Run(new MainWindow());
-            dispatcherTimerTutorial.ShowDialog();
-            //dispatcherTimerTutorial.Dispatcher.BeginInvoke(new EventHandler())
-            //Application.Run(mainWindow);
-            //TESTCalculate();
-            //TESTCreateAndCalculateTemplate();
-            //TESTCopyProject();
-
-
-
-            //TESTCreateAndCalculate();
-            //mainWindow.Close();
-
+            
 
         }
-       
 
+
+        static void TESTCreateAndCalculateTemplate()
+        {
+            Tester.GenerateTestJoint testrun = new GenerateTestJoint();
+
+            //Define testjoint
+            Joint joint = testrun.Testjoint2();
+
+
+            //Define Template location
+            joint.ideaTemplateLocation = @"C:\Users\r.ajouz\source\repos\KarambaIDEA\0_IDEA_Templates\template_plusjoint.contemp";
+            if(!File.Exists(joint.ideaTemplateLocation))
+            {
+                Console.WriteLine("dddd");
+            }
+
+            //Set Project folder path
+            string folderpath = @"C:\Data\";
+            joint.project.CreateFolder(folderpath);
+
+            //Set Joint folder path
+            //string filepath = joint.project.projectFolderPath + ".ideaCon";
+            //string fileName = joint.Name + ".ideaCon";
+            //string jointFilePath = Path.Combine(joint.project.projectFolderPath, joint.Name, fileName);
+            //joint.JointFilePath = jointFilePath;
+            joint.JointFilePath = "xx";
+
+            // Initialize idea references, before calling code.
+            AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
+            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
+
+            //Create IDEA file
+            KarambaIDEA.Core.Point p_canvas = new KarambaIDEA.Core.Point(100, 100, 0);
+            IdeaConnection ideaConnection = new IdeaConnection(joint, true);
+
+            //Calculate
+            HiddenCalculationV20.Calculate(joint, true);
+
+
+            //Results
+            string results = joint.ResultsSummary.summary;
+        }
 
         static void TESTCalculate()
         {
@@ -115,43 +146,6 @@ namespace Tester
             string results = joint.ResultsSummary.summary;
         }
 
-        static void TESTCreateAndCalculateTemplate()
-        {
-            Tester.GenerateTestJoint testrun = new GenerateTestJoint();
-
-            //Define testjoint
-            Joint joint = testrun.Testjoint2();
-
-
-            //Define Template location
-            joint.ideaTemplateLocation = @"C:\SMARTconnection\BouwenmetStaal\KarambaIDEA\0_IDEA_Templates\TESTjointTester.contemp";
-
-            //Set Project folder path
-            string folderpath = @"C:\Data\";
-            joint.project.CreateFolder(folderpath);
-
-            //Set Joint folder path
-            //string filepath = joint.project.projectFolderPath + ".ideaCon";
-            //string fileName = joint.Name + ".ideaCon";
-            //string jointFilePath = Path.Combine(joint.project.projectFolderPath, joint.Name, fileName);
-            //joint.JointFilePath = jointFilePath;
-            joint.JointFilePath = "xx";
-
-            // Initialize idea references, before calling code.
-            AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
-            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
-
-            //Create IDEA file
-            KarambaIDEA.Core.Point p_canvas = new KarambaIDEA.Core.Point(100, 100, 0);
-            IdeaConnection ideaConnection = new IdeaConnection(joint, true);
-
-            //Calculate
-            HiddenCalculationV20.Calculate(joint, true);
-            
-
-            //Results
-            string results = joint.ResultsSummary.summary;
-        }
 
         static void TESTCopyProject()
         {

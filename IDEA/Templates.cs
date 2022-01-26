@@ -155,6 +155,9 @@ namespace KarambaIDEA.IDEA
                 ModifiedObject = new ReferenceElement(openModel.Connections[0].Beams[modifiedObject]),
                 IsWeld = true,
                 WeldType = WeldType.Fillet,
+                 
+                
+                
             });
             return openModel;
         }
