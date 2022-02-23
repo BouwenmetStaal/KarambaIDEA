@@ -36,13 +36,12 @@ namespace Tester
         [STAThread]
         static void Main()
         {
+
+
+            
+
+
             TESTCreateAndCalculateTemplate();
-            
-            
-            
-            string pathTemplate = "C:\\Users\\r.ajouz\\source\\repos\\KarambaIDEA\\0_IDEA_Templates\\ended2members.contemp";
-            ConnectionTemplateGenerator con = new ConnectionTemplateGenerator(pathTemplate);
-            con.UpdateTemplate();
 
           
           
@@ -61,8 +60,22 @@ namespace Tester
 
 
             //Define Template location
-            joint.ideaTemplateLocation = @"C:\Users\r.ajouz\source\repos\KarambaIDEA\0_IDEA_Templates\template_plusjoint.contemp";
-            if(!File.Exists(joint.ideaTemplateLocation))
+            
+            string filename = "template_plusjoint_extended";
+            string pathfolder = "C:\\Users\\r.ajouz\\source\\repos\\KarambaIDEA\\0_IDEA_Templates\\";
+            string extension = ".contemp";
+            string path_1 = pathfolder + filename + extension;
+            string path_2 = pathfolder + filename + "2" + extension;
+            //string path = 
+            //string pathTemplate = "C:\\Users\\r.ajouz\\source\\repos\\KarambaIDEA\\0_IDEA_Templates\\IDEA_NL.contemp";//This template does not work, contains multiple classes, which are not being serialized
+            //string pathTemplate = "C:\\Users\\r.ajouz\\source\\repos\\KarambaIDEA\\0_IDEA_Templates\\template_plusjoint.contemp";//This template works, contains only CutBeamData
+            KarambaIDEA.IDEA.ConnectionTemplateGenerator con = new KarambaIDEA.IDEA.ConnectionTemplateGenerator(path_1);
+            con.UpdateTemplate();//check if 
+            con.SaveToXmlFile(path_2);
+
+            joint.ideaTemplateLocation = path_2;
+
+            if (!File.Exists(joint.ideaTemplateLocation))
             {
                 Console.WriteLine("dddd");
             }
@@ -83,7 +96,7 @@ namespace Tester
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
 
             //Create IDEA file
-            KarambaIDEA.Core.Point p_canvas = new KarambaIDEA.Core.Point(100, 100, 0);
+            
             IdeaConnection ideaConnection = new IdeaConnection(joint, true);
 
             //Calculate

@@ -36,7 +36,8 @@ namespace Tester
             // since xml contains dictionairies xmlSerializer doesn not work.
             // use DataContractSerializer instead.https://theburningmonk.com/2010/05/net-tips-xml-serialize-or-deserialize-dictionary-in-csharp/
             // all unique operations should be referenced in list: CutBeamByBeamData , add if error
-            DataContractSerializer serializer = new DataContractSerializer(typeof(ConnectionTemplate), new List<Type>() { typeof(IdeaRS.Connections.Data.CutBeamByBeamData) });
+            //IdeaRS.Connections.Data.StiffenerData
+            DataContractSerializer serializer = new DataContractSerializer(typeof(ConnectionTemplate), new List<Type>() { typeof(IdeaRS.Connections.Data.CutBeamData) });
             using (FileStream fileStream = new FileStream(xmlFileName, FileMode.Open))
             {
                 XmlDictionaryReader reader = XmlDictionaryReader.CreateTextReader(fileStream, new XmlDictionaryReaderQuotas());
@@ -86,16 +87,18 @@ namespace Tester
         {
             //1.Create list with only (WELD)workshop operations
             //List<CutBeamByBeamData> cut = new List<CutBeamByBeamData>();
+
             foreach (var c in connectionTemplate.Properties.Items)
             {
-                if (c.Value.GetType() == typeof(IdeaRS.Connections.Data.CutBeamByBeamData))
+                
+                if (c.Value.GetType() == typeof(IdeaRS.Connections.Data.CutBeamData))
                 {
                     //IdeaRS.Connections.Data.StiffenerData;
                     //IdeaRS.Connections.Data.EndPlateData;
                     //IdeaRS.Connections.Data.ColumnWidenerData;
 
                     
-                    CutBeamByBeamData cutBeamByBeamData = (c.Value as IdeaRS.Connections.Data.CutBeamByBeamData);
+                    CutBeamByBeamData cutBeamByBeamData = (c.Value as IdeaRS.Connections.Data.CutBeamData);
                     if (cutBeamByBeamData.FlangesWeld != null)
                     {
                         

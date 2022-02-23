@@ -18,6 +18,7 @@ namespace KarambaIDEA.IDEA
     /// //public class HiddenCalculation : INotifyPropertyChanged, IConHiddenCalcModel
     public class HiddenCalculationV20
     {
+        
         public static void Calculate(Joint joint, bool userFeedback)
         {
             ProgressWindow pop = new ProgressWindow();
@@ -67,6 +68,17 @@ namespace KarambaIDEA.IDEA
                         
                     }
 
+                    //ConnectionData cd = client.GetConnectionModel(connection.Identifier);
+                    /*
+                    ConnectionData cd = client.GetConnectionModel(connection.Identifier);//needed to map weld IDs
+                    foreach (WeldData w in cd.Welds)
+                    {
+                        double thicknessWeld = w.Thickness;//Link unique thickness with connectionTemplate
+                        int uniqueIDweld = w.Id;//Store Id to connectionTemplate, to find results
+                        
+                    }
+                    */
+
                     if (userFeedback)
                     {
                         pop.AddMessage(string.Format("Calculation started: '{0}'", joint.Name));
@@ -75,17 +87,15 @@ namespace KarambaIDEA.IDEA
                     client.SaveAsProject(pathToFile);
                     string templatePath = Path.Combine(joint.project.projectFolderPath, joint.Name, "Template.xml");
                     client.ExportToTemplate(connection.Identifier, templatePath);//store template to location
-                    
+
+                   
+
                     //ConnectionTemplateGenerator connectionTemplateGenerator = new ConnectionTemplateGenerator(templatePath);
+
                     
-                    /*
-                    ConnectionData cd = client.GetConnectionModel(connection.Identifier);//needed to map weld IDs
-                    foreach (WeldData w in cd.Welds)
-                    {
-                        w.Thickness = 0.020;
-                    }
-                    */
                     
+                    
+
                     //projInfo.Connections.Count()
                     if (projInfo != null && projInfo.Connections != null)
                     {
@@ -121,16 +131,59 @@ namespace KarambaIDEA.IDEA
             }
             if (conRes != null)
             {
-                IdeaConnection.SaveResultsSummary(joint, conRes);
+                SaveResultsSummary(joint, conRes);
+                SaveResults(joint, conRes);
             }
             if (userFeedback)
             {
                 pop.Close();
             }
         }
+        /// <summary>
+        /// Save ResultSummary from IDEA StatiCa back into Core 
+        /// </summary>
+        /// <param name="joint">joint instance</param>
+        /// <param name="cbfemResults">summary results retrieved from IDEA StatiCa</param>
+        public static void SaveResultsSummary(Joint joint, ConnectionResultsData cbfemResults)
+        {
+            List<CheckResSummary> results = cbfemResults.ConnectionCheckRes[0].CheckResSummary;
+            joint.ResultsSummary = new ResultsSummary();
 
-  
+            //TODO:include message when singilarity occurs
+            //TODO:include message when bolts and welds are conflicting
+
+            joint.ResultsSummary.analysis = results.GetResult("Analysis");
+            joint.ResultsSummary.plates = results.GetResult("Plates");
+            joint.ResultsSummary.bolts = results.GetResult("Bolts");
+            joint.ResultsSummary.welds = results.GetResult("Welds");
+            joint.ResultsSummary.buckling = results.GetResult("Buckling");
+
+            string message = string.Empty;
+            foreach (var result in results)
+            {
+                message += result.Name + ": " + result.UnityCheckMessage + " ";
+            }
+            joint.ResultsSummary.summary = message;
+        }
+        /// <summary>
+        /// Save ResultSummary from IDEA StatiCa back into Core 
+        /// </summary>
+        /// <param name="joint">joint instance</param>
+        /// <param name="cbfemResults">summary results retrieved from IDEA StatiCa</param>
+        public static void SaveResults(Joint joint, ConnectionResultsData cbfemResults)
+        {
+            List<CheckResWeld> results = cbfemResults.ConnectionCheckRes[0].CheckResWeld;
+            foreach (CheckResWeld w in results)
+            {
+                double idnumber = w.Id;
+                double idnumer2 = w.Items[0];
+            }
+            double o1 = 0;
+        }
+
+
     }
+    
     public static class CalculationExtentions
     {
         public static double? GetResult(this List<CheckResSummary> source, string key  )

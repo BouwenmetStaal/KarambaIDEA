@@ -14,6 +14,7 @@ namespace KarambaIDEA.IDEA
 
     public class ConnectionTemplateGenerator
     {
+        private List<Type> _types = new List<Type>() { typeof(CutBeamData), typeof(StiffenerData), typeof(EndPlateData), typeof(ColumnWidenerData), typeof(GeneralPlateData), typeof(CutPlateData)};
         public ConnectionTemplate connectionTemplate = new ConnectionTemplate();
 
         /// <summary>
@@ -36,7 +37,10 @@ namespace KarambaIDEA.IDEA
             // since xml contains dictionairies xmlSerializer doesn not work.
             // use DataContractSerializer instead.https://theburningmonk.com/2010/05/net-tips-xml-serialize-or-deserialize-dictionary-in-csharp/
             // all unique operations should be referenced in list: CutBeamByBeamData , add if error
-            DataContractSerializer serializer = new DataContractSerializer(typeof(ConnectionTemplate), new List<Type>() { typeof(CutBeamByBeamData) });
+            List<Type> types = new List<Type>() { typeof(CutBeamData), typeof(StiffenerData), typeof(EndPlateData), typeof(ColumnWidenerData) };
+            DataContractSerializer serializer = new DataContractSerializer(typeof(ConnectionTemplate),_types);
+
+
             using (FileStream fileStream = new FileStream(xmlFileName, FileMode.Open))
             {
                 XmlDictionaryReader reader = XmlDictionaryReader.CreateTextReader(fileStream, new XmlDictionaryReaderQuotas());
@@ -55,7 +59,7 @@ namespace KarambaIDEA.IDEA
         {
             using (FileStream fileStream = File.Open(xmlFileName, FileMode.Create))
             {
-                DataContractSerializer xmlSerializer = new DataContractSerializer(typeof(ConnectionTemplate), new List<Type>() { typeof(CutBeamByBeamData) });
+                DataContractSerializer xmlSerializer = new DataContractSerializer(typeof(ConnectionTemplate), _types);
                 XmlDictionaryWriter xmlWriter = XmlDictionaryWriter.CreateTextWriter(fileStream, Encoding.Unicode);
                 xmlSerializer.WriteObject(xmlWriter, this.connectionTemplate);
                 xmlWriter.Flush();
@@ -64,62 +68,74 @@ namespace KarambaIDEA.IDEA
             }
         }
 
-        /// <summary>
-        /// Serializes the connection template object and returns it as a memory stream
-        /// </summary>
-        /// <returns>memory stream containing the connetion template serialized in xml format</returns>
-        public MemoryStream SerializeToXMLMemoryStream()
-        {
-            MemoryStream xmlTemplateStream = new MemoryStream();
-            DataContractSerializer xmlSerializer = new DataContractSerializer(typeof(ConnectionTemplate), new List<Type>() { typeof(CutBeamByBeamData) });
-            xmlSerializer.WriteObject(xmlTemplateStream, this.connectionTemplate);
-            xmlTemplateStream.Flush();
-            return xmlTemplateStream;
-#warning To be tested
-        }
 
         /// <summary>
         /// Updates template based on properties in the joint
         /// </summary>
         /// <param name="joint"></param>
-        public void UpdateTemplate(Joint joint)
+        public void UpdateTemplate()
         {
             //IdeaRS.Connections.Data.StiffenerData;
             //IdeaRS.Connections.Data.EndPlateData;
-            //IdeaRS.Connections.Data.ColumnWidenerData;
+           
 
             //1.Create list with only (WELD)workshop operations
-            List<CutBeamByBeamData> cut = new List<CutBeamByBeamData>();
+            List<CutBeamData> cut = new List<CutBeamData>();
+            //List<Weld> cutBeamDatas = connectionTemplate.Properties.Items.OfType<CutBeamData>().ToList().Select(x => x.Weld);
+            List<CutBeamData> cutBeamDatas = connectionTemplate.Properties.Items.OfType<CutBeamData>().ToList();
+            double webweldSize = 0.001;
+            double flangeweldSize = 0.002;
             foreach (var c in connectionTemplate.Properties.Items)
             {
-                if (c.Value.GetType() == typeof(CutBeamByBeamData))
+                if (c.Value.GetType() == typeof(CutBeamData))
                 {
-                    CutBeamByBeamData cutBeamByBeamData = (c.Value as CutBeamByBeamData);
-                    if (cutBeamByBeamData.FlangesWeld != null)
-                    {
-                        cut.Add(cutBeamByBeamData);
-                    }
+                                      
+                    //Weld (IdeaRS.Connections.Data.WeldData){ Size [m], WeldType [DoubleFillet]}
+                    //Flangeweld (IdeaRS.Connections.Data.WeldData){ Size [m], WeldType [DoubleFillet]}
+                    WeldData webweld = ((CutBeamData)c.Value).Weld;
+                    WeldData flangeweld = ((CutBeamData)c.Value).FlangesWeld;
+                    webweld.Size = webweldSize;
+                    flangeweld.Size = flangeweldSize;
+                    webweldSize += 0.002;
+                    flangeweldSize += 0.002;
+
+                  
                 }
-            }
-
-            //make all updates relevant to the template here.
-            foreach (ConnectingMember con in joint.attachedMembers.OfType<ConnectingMember>())
-            {
-
-                foreach (CutBeamByBeamData c in cut)
+                if (c.Value.GetType() == typeof(StiffenerData))
                 {
-                    string modifiedObject = c.ModifiedObjectPath;
-                    string modifiedId = modifiedObject.Remove(0, 18).Remove(1, 1);
-                    int modId = Convert.ToInt32(modifiedId);
+                    //ShapeData (IdeaRS.Connections.Data.PlateEditorData){Thickness}
+                    //Weld (IdeaRS.Connections.Data.WeldData){ Size [m], WeldType [DoubleFillet]}
+                    WeldData weld = ((StiffenerData)c.Value).Weld;
+                    double platethickness = ((StiffenerData)c.Value).Thickness;
+                }
+                if (c.Value.GetType() == typeof(EndPlateData))
+                {
+                    WeldData plateweld = ((EndPlateData)c.Value).PlateWeld;
+                    WeldData memberweld = ((EndPlateData)c.Value).MemberWeld;
+                    WeldData flangeweld = ((EndPlateData)c.Value).MemberFlangesWeld;
+                    double thickness = ((EndPlateData)c.Value).Thickness;
+                    //Data about the bolts missing?
 
-                    if (con.ideaOperationID == modId)
-                    {
-
-                        //c.FlangesWeld.Size = (con.flangeWeld.size) / 1000;//mm to m
-                        //c.Weld.Size = (con.webWeld.size) / 1000;//mm to m
-                    }
+                }
+                if (c.Value.GetType() == typeof(ColumnWidenerData))
+                {
+                   //single weld
+                    WeldData weld = ((ColumnWidenerData)c.Value).Weld;
+                    double platethickness = ((ColumnWidenerData)c.Value).Thickness;
+                }
+                if (c.Value.GetType() == typeof(GeneralPlateData))
+                {
+                    double platethickness = ((GeneralPlateData)c.Value).Thickness;
+                }
+                if (c.Value.GetType() == typeof(CutPlateData))
+                {
+                    //single weld
+                    WeldData weld = ((CutPlateData)c.Value).Weld;
                 }
             }
         }
+
+        IdeaRS.OpenModel.Connection.ConnectionData ConnectionData;
+       
     }
 }

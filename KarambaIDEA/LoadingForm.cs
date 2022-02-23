@@ -45,6 +45,8 @@ namespace KarambaIDEA
 			Label labertimer = new Label();
 
 
+
+			/*
 			//Does not work yet
 			var start = DateTime.Now;
 			var timer = new UITimer { Interval = 1.0 };
@@ -53,6 +55,7 @@ namespace KarambaIDEA
 				label.Text = $"Elapsed: {elapsed.Hours}:{elapsed.Minutes:00}:{elapsed.Seconds:00}";
 			};
 			timer.Start();
+			*/
 			
 
 
