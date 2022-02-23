@@ -74,7 +74,7 @@ namespace KarambaIDEA
                     double MykNm = new double();
                     double MzkNm = new double();
 
-                    int lcId =lc.id-1;//Grasshopper loadcasses start at zero
+                    int lcId =lc.id;//Grasshopper loadcasses start at zero
                     foreach (AttachedMember member in joint.attachedMembers)
                     {
                         int id = member.element.id;
@@ -89,27 +89,27 @@ namespace KarambaIDEA
                         {
                             int sign = 1;
 
-                            double N = sign * project.loadcases[lcId].loadsPerLines[id].startLoad.N;
+                            double N = sign * lc.loadsPerLines[id].startLoad.N;
                             Vector localX = member.element.localCoordinateSystem.X;
                             vecN = Vector.VecScalMultiply(localX, N);
 
-                            double Vy = sign * project.loadcases[lcId].loadsPerLines[id].startLoad.Vy;
+                            double Vy = sign * lc.loadsPerLines[id].startLoad.Vy;
                             Vector localY = member.element.localCoordinateSystem.Y;
                             vecVy = Vector.VecScalMultiply(localY, Vy);
 
-                            double Vz = sign * project.loadcases[lcId].loadsPerLines[id].startLoad.Vz;
+                            double Vz = sign * lc.loadsPerLines[id].startLoad.Vz;
                             Vector localZ = member.element.localCoordinateSystem.Z;
                             vecVz = Vector.VecScalMultiply(localZ, Vz);
 
-                            double Mt = sign * project.loadcases[lcId].loadsPerLines[id].startLoad.Mt;
+                            double Mt = sign * lc.loadsPerLines[id].startLoad.Mt;
                             Vector localMt = member.element.localCoordinateSystem.X;
                             vecMt = Vector.VecScalMultiply(localMt, Mt);
 
-                            double My = sign * project.loadcases[lcId].loadsPerLines[id].startLoad.My;
+                            double My = sign * lc.loadsPerLines[id].startLoad.My;
                             Vector localMy = member.element.localCoordinateSystem.Z;
                             vecMy = Vector.VecScalMultiply(localMy, My);
 
-                            double Mz = sign * project.loadcases[lcId].loadsPerLines[id].startLoad.Mz;
+                            double Mz = sign * lc.loadsPerLines[id].startLoad.Mz;
                             Vector localMz = member.element.localCoordinateSystem.Y;
                             vecMz = Vector.VecScalMultiply(localMz, Mz);
 
@@ -119,27 +119,27 @@ namespace KarambaIDEA
                         {
                             int sign = -1;
 
-                            double N = sign * project.loadcases[lcId].loadsPerLines[id].endLoad.N;
+                            double N = sign * lc.loadsPerLines[id].startLoad.N;
                             Vector localX = member.element.localCoordinateSystem.X;
                             vecN = Vector.VecScalMultiply(localX, N);
 
-                            double Vy = sign * project.loadcases[lcId].loadsPerLines[id].endLoad.Vy;
+                            double Vy = sign * lc.loadsPerLines[id].startLoad.Vy;
                             Vector localY = member.element.localCoordinateSystem.Y;
                             vecVy = Vector.VecScalMultiply(localY, Vy);
 
-                            double Vz = sign * project.loadcases[lcId].loadsPerLines[id].endLoad.Vz;
+                            double Vz = sign * lc.loadsPerLines[id].startLoad.Vz;
                             Vector localZ = member.element.localCoordinateSystem.Z;
                             vecVz = Vector.VecScalMultiply(localZ, Vz);
 
-                            double Mt = sign * project.loadcases[lcId].loadsPerLines[id].endLoad.Mt;
+                            double Mt = sign * lc.loadsPerLines[id].startLoad.Mt;
                             Vector localMt = member.element.localCoordinateSystem.X;
                             vecMt = Vector.VecScalMultiply(localMt, Mt);
 
-                            double My = sign * project.loadcases[lcId].loadsPerLines[id].endLoad.My;
+                            double My = sign * lc.loadsPerLines[id].startLoad.My;
                             Vector localMy = member.element.localCoordinateSystem.Z;
                             vecMy = Vector.VecScalMultiply(localMy, My);
 
-                            double Mz = sign * project.loadcases[lcId].loadsPerLines[id].endLoad.Mz;
+                            double Mz = sign * lc.loadsPerLines[id].startLoad.Mz;
                             Vector localMz = member.element.localCoordinateSystem.Y;
                             vecMz = Vector.VecScalMultiply(localMz, Mz);
                         }
@@ -188,8 +188,9 @@ namespace KarambaIDEA
 
                     eqtree.Add(equilibrium, path);
 
-                    a = a + 1;
+                    
                 }
+                a = a + 1;
             }
             //link output
             DA.SetDataTree(0, xkNs);

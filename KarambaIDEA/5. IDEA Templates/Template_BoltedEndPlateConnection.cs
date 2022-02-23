@@ -14,6 +14,7 @@ using KarambaIDEA.Core;
 using KarambaIDEA.IDEA;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+using KarambaIDEA.Core.JointTemplate;
 
 namespace KarambaIDEA
 {
@@ -30,13 +31,16 @@ namespace KarambaIDEA
             pManager.AddTextParameter("BrandNames", "BrandNames", "BrandNames to apply template to", GH_ParamAccess.list,"");
             pManager.AddNumberParameter("Thickness endplate [mm]", "Thickness endplate [mm]", "", GH_ParamAccess.item, 10.0);
             pManager[1].Optional = true;
+            pManager.AddNumberParameter("Edge distance [mm]", "Edge distance [mm]", "", GH_ParamAccess.item, 30);
+            pManager.AddTextParameter("Bolttype", "Bolttype", "", GH_ParamAccess.item, "M20");
+            pManager.AddTextParameter("Boltsteelgrade", "Boltsteelgrade", "", GH_ParamAccess.item, "8.8");
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
             pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.list);
-            pManager.AddBrepParameter("Brep", "Brep", "", GH_ParamAccess.list);
+            pManager.AddBrepParameter("Brep", "Brep", "", GH_ParamAccess.tree);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -48,14 +52,21 @@ namespace KarambaIDEA
             List<GH_String> brandNamesDirty = new List<GH_String>();
             List<string> brandNames = new List<string>();
 
+            string boltsteelgrade = "10.9";
+            string bolttypename = "M30";
+            double edgedistance = 50;
+
             //Output variables
             List<string> messages = new List<string>();
-            List<Brep> breps = new List<Brep>();
+            DataTree<Brep> breps = new DataTree<Brep>();
 
             //Link input
             DA.GetData(0, ref sourceProject);
             DA.GetDataList(1, brandNamesDirty);
             DA.GetData(2, ref tplate);
+            DA.GetData("Edge distance [mm]", ref edgedistance);
+            DA.GetData("Bolttype", ref bolttypename);
+            DA.GetData("Boltsteelgrade", ref boltsteelgrade);
 
             //Clone project
             Project project = null;
@@ -78,7 +89,7 @@ namespace KarambaIDEA
                     {
                         if (brandName == joint.brandName)
                         {
-                            SetTemplate(tplate, joint, breps);
+                            SetTemplate(tplate, joint, breps, edgedistance,bolttypename, boltsteelgrade);
                         }
                     }
                 }
@@ -98,13 +109,14 @@ namespace KarambaIDEA
             //link output
             DA.SetData(0, project);
             DA.SetDataList(1, messages);
-            DA.SetDataList(2, breps);
+            DA.SetDataTree(2, breps);
         }
 
-        private static void SetTemplate(double tplate, Joint joint, List<Brep> breps)
+        private static void SetTemplate(double tplate, Joint joint, DataTree<Brep> breps, double edgedistance, string bolttypename, string boltsteelgrade)
         {
             joint.template = new Template();
-            
+            int jointid = joint.id;
+            int b = 0;
 
             Core.CrossSection beam = joint.attachedMembers.First().element.crossSection;
             Plate plateA = new Plate("endplateA", beam.height, beam.width, tplate);
@@ -113,9 +125,34 @@ namespace KarambaIDEA
             joint.template.plates.Add(plateA);
             joint.template.plates.Add(plateB);
 
+            //Step I - no loads retrieved
+            //Step II - create boltgrid
+            //BoltSteelGrade bsg = new BoltSteelGrade.Steelgrade();
+
+            //BoltSteelGrade bsg = BoltSteelGrade.Steelgrade.b8_8;
+
+            List<Bolt> bolts = Bolt.CreateBoltsList(BoltSteelGrade.selectgrade(boltsteelgrade));
+            Bolt bolt = bolts.Single(a => bolttypename == a.Name);
+            double locXp =  0.5 * beam.width - edgedistance;
+            double locY = 0.5 * beam.height - edgedistance;
+
+            List<Coordinate2D> coors = new List<Coordinate2D>();
+            coors.Add(new Coordinate2D(locXp, locY));
+            coors.Add(new Coordinate2D(locXp, -locY));
+            coors.Add(new Coordinate2D(-locXp, locY));
+            coors.Add(new Coordinate2D(-locXp, -locY));
+            BoltGrid boltGrid = new BoltGrid(bolt, coors);
+            joint.template.boltGrids.Add(boltGrid);
+
             joint.template.workshopOperations = Template.WorkshopOperations.BoltedEndPlateConnection;
             foreach(AttachedMember at in joint.attachedMembers)
             {
+                GH_Path path = new GH_Path(jointid, b);
+                GH_Path pathPlates = new GH_Path(jointid, b, 0);
+                GH_Path pathBolts = new GH_Path(jointid, b, 1);
+                b++;
+
+                //Step V - Define data for cost analyses
                 double weldsize = Weld.CalWeldSizeFullStrenth90deg(tplate, beam.thicknessFlange, beam.material, Weld.WeldType.DoubleFillet);
                 joint.template.welds.Add(new Weld("FlangeweldTop", Weld.WeldType.DoubleFillet, weldsize, beam.width));
                 joint.template.welds.Add(new Weld("FlangeweldBot", Weld.WeldType.DoubleFillet, weldsize, beam.width));
@@ -124,7 +161,7 @@ namespace KarambaIDEA
 
 
 
-                //BREP beam
+                //Step VI - BREP beam
                 Point3d point = new Point3d();
                 Vector vX = new Vector();
                 if (at.isStartPoint == true)
@@ -140,7 +177,7 @@ namespace KarambaIDEA
                     vX = (at.element.localCoordinateSystem.X.FlipVector());
                 }
 
-                //BREP add plate
+                //Step VII - BREP add plate with holes
                 if (tplate != 0.0)
                 {
                     //Create plate
@@ -166,6 +203,7 @@ namespace KarambaIDEA
                     Brep plate = sur.ToBrep().CapPlanarHoles(Project.tolerance);
 
                     //Create Holes
+                    /*
                     Brep tubes = new Brep();
 
                     double d0 = 24;
@@ -177,18 +215,51 @@ namespace KarambaIDEA
                     Transform transform2 = Transform.Translation(Vector3d.Multiply(topmm/1000, locX));
                     Plane plane2 = plane;
                     plane2.Transform(transform2);
-
-
-
-
                     Circle circle = new Circle(plane2, d0 / 2000);//Radius 
                     Surface sur2 = Surface.CreateExtrusion(circle.ToNurbsCurve(), 2*vecX);
                     Brep tube = sur2.ToBrep().CapPlanarHoles(tol);
 
                     plate = Brep.CreateBooleanDifference(plate, tube, tol).ToList().FirstOrDefault();
+                    */
+                    //Create Holes
+                    BoltGrid bg = joint.template.boltGrids.FirstOrDefault();
+                    foreach (Coordinate2D coor in bg.Coordinates2D)
+                    {
+                        Brep tubes = new Brep();
+
+                        double d0 = bg.bolttype.HeadDiagonalDiameter;
+                        double h0 = tplate + bg.bolttype.HeadHeight;
+                        double corX = coor.locX / 1000;
+                        double corY = coor.locY / 1000;
+                        double tol = 0.001;
+
+                        Vector3d planeVecX = plane.XAxis;
+                        planeVecX.Unitize();
+                        Transform transform2 = Transform.Translation(Vector3d.Multiply(corX, planeVecX));
+                        Plane plane2 = plane;
+                        plane2.Transform(transform2);
+
+                        Vector3d planeVecY = plane.YAxis;
+                        planeVecY.Unitize();
+                        Transform transform3 = Transform.Translation(Vector3d.Multiply(corY, planeVecY));
+                        Plane plane3 = plane2;
+                        plane3.Transform(transform3);
+
+                        Circle circle = new Circle(plane3, d0 / 2000);//Radius 
+
+                        Polyline hexagon = Polyline.CreateCircumscribedPolygon(circle, 6);
+                        vecX.Unitize();
+                        Surface sur2 = Surface.CreateExtrusion(hexagon.ToNurbsCurve(), Vector3d.Multiply(h0 / 1000, vecX));
+
+                        Brep tube = sur2.ToBrep().CapPlanarHoles(tol);
+                        breps.Add(tube, pathBolts);
+                        //plate = Brep.CreateBooleanDifference(plate, tube, tol).ToList().FirstOrDefault();
+                    }
+
+
 
                     //breps.Add(tube);
-                    breps.Add(plate);
+                    breps.Add(plate, pathPlates);
                 }
             }
         }

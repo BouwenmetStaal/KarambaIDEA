@@ -12,8 +12,6 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using KarambaIDEA.Core;
 using KarambaIDEA.IDEA;
-using Grasshopper.Kernel.Parameters;
-using Grasshopper.Kernel.Types;
 
 namespace KarambaIDEA
 {
@@ -90,9 +88,11 @@ namespace KarambaIDEA
             }
             jointIndexes = jointIndexes.Distinct().ToList();
 
-
+            
             if (startIDEA == true)
             {
+                var form = new LoadingForm("Running IDEA StatiCa");
+                form.Show();
                 project.CreateFolder(outputfolderpath);
                 if (createAllJoints == true)
                 {
@@ -135,6 +135,7 @@ namespace KarambaIDEA
                         summary.Add(joint.ResultsSummary.summary, path);
                     }
                 }
+                form.Close();
             }
 
             //export lines of joint for visualisation purposes

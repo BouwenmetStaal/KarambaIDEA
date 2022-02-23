@@ -8,7 +8,7 @@ using System.Windows;
 [assembly: AssemblyTitle("KarambaIDEA")]
 [assembly: AssemblyDescription("")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("ABT")]
+[assembly: AssemblyCompany("Rayaan Ajouz")]
 [assembly: AssemblyProduct("KarambaIDEA")]
 [assembly: AssemblyCopyright("Copyright ©  2018")]
 [assembly: AssemblyTrademark("")]
@@ -47,5 +47,5 @@ using System.Windows;
 // You can specify all the values or you can default the Build and Revision Numbers
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("1.0.0.0")]
-[assembly: AssemblyFileVersion("1.0.0.0")]
+[assembly: AssemblyVersion("2.6.0.2")]
+[assembly: AssemblyFileVersion("2.6.0.2")]

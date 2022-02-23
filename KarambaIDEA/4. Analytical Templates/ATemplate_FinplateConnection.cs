@@ -35,7 +35,7 @@ namespace KarambaIDEA
         {
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
             pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.tree);
-            pManager.AddBrepParameter("Brep", "B", "", GH_ParamAccess.list);
+            pManager.AddBrepParameter("Brep", "B", "", GH_ParamAccess.tree);
 
         }
 
@@ -48,7 +48,7 @@ namespace KarambaIDEA
 
             //Output variables
             DataTree<string> messages = new DataTree<string>();
-            List<Brep> breps = new List<Brep>();            
+            DataTree<Brep> breps = new DataTree<Brep>();            
 
             //Link input
             DA.GetData(0, ref sourceProject);
@@ -94,10 +94,10 @@ namespace KarambaIDEA
             //link output
             DA.SetData(0, project);
             DA.SetDataTree(1, messages);
-            DA.SetDataList(2, breps);
+            DA.SetDataTree(2, breps);
         }
 
-        private static void SetAnaTemplate(Joint joint, List<Brep> breps, DataTree<string> messages)
+        private static void SetAnaTemplate(Joint joint, DataTree<Brep> breps, DataTree<string> messages)
         {
             joint.template = new Template();
             int a = joint.id;
@@ -113,6 +113,8 @@ namespace KarambaIDEA
             foreach (ConnectingMember con in joint.attachedMembers.OfType<ConnectingMember>().ToList())
             {
                 GH_Path path = new GH_Path(a, b);
+                GH_Path pathPlates = new GH_Path(a, b, 0);
+                GH_Path pathBolts = new GH_Path(a, b, 1);
                 b++;
                 //Step I - retrieve loads
                 List<double> vloads = new List<double>();
@@ -304,13 +306,14 @@ namespace KarambaIDEA
                     Box box = new Box(plane, bbox);
                     Brep plate = box.ToBrep();
 
-                    //Create Holes
+                    //Create Bolts
                     Brep tubes = new Brep();
                     double rows = joint.template.boltGrids.FirstOrDefault().rows;
                     double p1 = joint.template.boltGrids.FirstOrDefault().p1;
                     for (int ba = 0; ba < rows; ba++)
                     {
                         double d0 = joint.template.boltGrids.FirstOrDefault().bolttype.HoleDiameter;
+                        double h0 = joint.template.boltGrids.FirstOrDefault().bolttype.HeadHeight + tplate;
                         double topmm = (0.5 * (rows - 1) * (p1 + d0) / 1000) - (((p1 + d0) * ba) / 1000);
                         Vector3d locX = plane.XAxis;
                         locX.Unitize();
@@ -318,15 +321,17 @@ namespace KarambaIDEA
                         Plane plane2 = plane;
                         plane2.Transform(transform);
                         Circle circle = new Circle(plane2, d0 / 2000);//Radius 
-                        Surface sur = Surface.CreateExtrusion(circle.ToNurbsCurve(), vector);
-                        Brep tube = sur.ToBrep().CapPlanarHoles(tol);
-                        plate = Brep.CreateBooleanDifference(plate, tube, tol).ToList().First();
 
 
+                        Polyline hexagon = Polyline.CreateCircumscribedPolygon(circle, 6);
+                        vecX.Unitize();
+                        Surface sur2 = Surface.CreateExtrusion(hexagon.ToNurbsCurve(), Vector3d.Multiply(h0 / 1000, vector));
+                        Brep tube = sur2.ToBrep().CapPlanarHoles(tol);
+                        breps.Add(tube, pathBolts);
 
                     }
                     //Add plate with holes
-                    breps.Add(plate);
+                    breps.Add(plate, pathPlates);
 
                 }
 
