@@ -1,0 +1,14 @@
+---
+name: KarambaIDEA
+authors:
+- Rayaan Ajouz
+description: KarambaIDEA is an open-source Grasshopper plug-in, which can link Karamba3D with IDEA StatiCa connection.
+url: https://github.com/BouwenmetStaal/KarambaIDEA
+icon_url: "https://static.food4rhino.com/s3fs-public/styles/thumbnail/public/users-files/bouwenmetstaal/app/thumb.jpg?itok=LaAC8FUn"
+keywords:
+- Karamba3D
+- IDEA
+- StatiCa
+- Steel
+- Connection
+- SMARTconnection

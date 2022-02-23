@@ -134,5 +134,18 @@ namespace KarambaIDEA.Core
             b8_8,
             b10_9
         }
+
+        public static BoltSteelGrade.Steelgrade selectgrade (string name)
+        {
+            if (name == "10.9")
+            {
+                return Steelgrade.b10_9;
+            }
+            else
+            {
+                return Steelgrade.b8_8;
+            }
+            
+        }
     }
 }

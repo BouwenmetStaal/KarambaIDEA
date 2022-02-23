@@ -56,9 +56,13 @@ namespace KarambaIDEA.IDEA
                 throw new ArgumentNullException("IDEA StatiCa installation cannot be found");
             }
 
+            //LoadingForm form = new IDEA.LoadingForm("IDEA StatiCa started", p_canvas);
+            //form.Show();
+            //form.AddMessage(string.Format("IDEA StatiCa installation was found in '{0}'", ideaStatiCaDir));
+
             ProgressWindow pop = new ProgressWindow();
             if (userFeedback)
-            {    
+            {
                 pop.Show();
                 pop.AddMessage(string.Format("IDEA StatiCa installation was found in '{0}'", ideaStatiCaDir));
             }
@@ -73,7 +77,7 @@ namespace KarambaIDEA.IDEA
             {
                 Directory.CreateDirectory(this.filePath);
             }
-
+            
 
             AppDomain currentDomain = AppDomain.CurrentDomain;
             currentDomain.AssemblyResolve += new ResolveEventHandler(IdeaResolveEventHandler);
@@ -88,8 +92,9 @@ namespace KarambaIDEA.IDEA
             {
                 pop.AddMessage(string.Format("Creating Openmodel and OpenmodelResult for '{0}'", joint.Name));
             }
-            
-            
+
+            //form.AddMessage(string.Format("Creating Openmodel and OpenmodelResult for '{0}'", joint.Name));
+
             if (joint.template!= null)
             {
                 Templates.ApplyProgrammedIDEAtemplate(openModel , joint);
@@ -101,7 +106,8 @@ namespace KarambaIDEA.IDEA
             {
                 pop.AddMessage(string.Format("Saving Openmodel and OpenmodelResult to XML for '{0}'", joint.Name));
             }
-            
+
+            //form.AddMessage(string.Format("Saving Openmodel and OpenmodelResult to XML for '{0}'", joint.Name));
 
             // save to the files
             openModel.SaveToXmlFile(iomFileName);
@@ -111,6 +117,8 @@ namespace KarambaIDEA.IDEA
             {
                 pop.AddMessage(string.Format("Creating IDEA StatiCa File '{0}'", joint.Name));
             }
+
+            //form.AddMessage(string.Format("Creating IDEA StatiCa File '{0}'", joint.Name));
 
             string filename = joint.Name + ".ideaCon";       
             var fileConnFileNameFromLocal = Path.Combine(folder,joint.Name, filename);
@@ -124,6 +132,7 @@ namespace KarambaIDEA.IDEA
                 // it creates connection project from IOM 
                 if (userFeedback){pop.AddMessage(string.Format("Joint '{0}' was saved to:\n {1}", joint.Name, fileConnFileNameFromLocal));}
                 client.CreateConProjFromIOM(iomFileName, iomResFileName, fileConnFileNameFromLocal);
+               
 
                 /*
                 //TEST 28-05-2021 Does not work "The server was unable to process the request"
@@ -160,84 +169,14 @@ namespace KarambaIDEA.IDEA
                 }
             }
 
-            if (Calculate)//Currently not working
-            {
-                if (userFeedback) { pop.AddMessage(string.Format("Calculation Joint {0} start up", joint.Name)); }
-                string path = IdeaConnection.ideaStatiCaDir;//path to idea
-                string pathToFile = joint.JointFilePath;//ideafile path
-                string newBoltAssemblyName = "M16 8.8";
-                var calcFactory2 = new ConnHiddenClientFactory(path);
-                ConnectionResultsData conRes = null;
-                var client2 = calcFactory2.Create();
-                try
-                {
-                    client2.OpenProject(pathToFile);
-
-
-                    try
-                    {
-
-                        // get detail about idea connection project
-                        var projInfo = client2.GetProjectInfo();
-
-                        var connection = projInfo.Connections.FirstOrDefault();//Select first connection
-                        if (joint.ideaTemplateLocation != null)
-                        {
-                            if (userFeedback) { pop.AddMessage(string.Format("Template found at:'{0}' ", joint.ideaTemplateLocation)); }
-                            client2.AddBoltAssembly(newBoltAssemblyName);//??Here Martin
-                            client2.ApplyTemplate(connection.Identifier, joint.ideaTemplateLocation, null);
-                            client2.SaveAsProject(pathToFile);
-                            if (userFeedback) { pop.AddMessage(string.Format("Template applied to Joint {0}", joint.Name)); }
-                        }
-
-                        if (userFeedback) { pop.AddMessage(string.Format("Calculating Joint {0}", joint.Name)); }
-                        conRes = client2.Calculate(connection.Identifier);
-                        client2.SaveAsProject(pathToFile);
-                        //projInfo.Connections.Count()
-                        if (projInfo != null && projInfo.Connections != null)
-                        {
-
-                            /*
-                            // iterate all connections in the project
-                            foreach (var con in projInfo.Connections)
-                            {
-                                //Console.WriteLine(string.Format("Starting calculation of connection {0}", con.Identifier));
-
-                                // calculate a get results for each connection in the project
-                                var conRes = client.Calculate(con.Identifier);
-                                //Console.WriteLine("Calculation is done");
-
-                                // get the geometry of the connection
-                                var connectionModel = client.GetConnectionModel(con.Identifier);
-                            }
-                            */
-                        }
-                    }
-                    finally
-                    {
-                        // Delete temps in case of a crash
-                        client2.CloseProject();
-                    }
-                }
-                finally
-                {
-                    if (client2 != null)
-                    {
-                        client2.Close();
-                    }
-                }
-                if (conRes != null)
-                {
-                    SaveResultsSummary(joint, conRes);
-                }
-            }
 
 
             if (userFeedback)
             {
                 pop.Close();
             }
-            
+            //form.Close();
+
         }
 
         
@@ -253,32 +192,7 @@ namespace KarambaIDEA.IDEA
             return args.RequestingAssembly;
         }
 
-        /// <summary>
-        /// Save ResultSummary from IDEA StatiCa back into Core 
-        /// </summary>
-        /// <param name="joint">joint instance</param>
-        /// <param name="cbfemResults">summary results retrieved from IDEA StatiCa</param>
-        public static void SaveResultsSummary(Joint joint, ConnectionResultsData cbfemResults)
-        {
-            List<CheckResSummary> results = cbfemResults.ConnectionCheckRes[0].CheckResSummary;
-            joint.ResultsSummary = new ResultsSummary();
-
-            //TODO:include message when singilarity occurs
-            //TODO:include message when bolts and welds are conflicting
-
-            joint.ResultsSummary.analysis = results.GetResult("Analysis");
-            joint.ResultsSummary.plates = results.GetResult("Plates");
-            joint.ResultsSummary.bolts = results.GetResult("Bolts");
-            joint.ResultsSummary.welds = results.GetResult("Welds");
-            joint.ResultsSummary.buckling = results.GetResult("Buckling");
-
-            string message = string.Empty;
-            foreach (var result in results)
-            {
-                message += result.Name + ": " + result.UnityCheckMessage + " ";
-            }
-            joint.ResultsSummary.summary = message;
-        }
+        
     }
 }
         

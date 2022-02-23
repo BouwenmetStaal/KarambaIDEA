@@ -334,7 +334,7 @@ namespace KarambaIDEA._5._IDEA_Templates
                     Surface sur = Surface.CreateExtrusion(nurbsCurve, vecX);
                     Brep plate = sur.ToBrep().CapPlanarHoles(Project.tolerance);
 
-                    //Create Holes
+                    //Create Bolts
                     BoltGrid bg = joint.template.boltGrids.FirstOrDefault();
                     foreach(Coordinate2D coor in bg.Coordinates2D)
                     {

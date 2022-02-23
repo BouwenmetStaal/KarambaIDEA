@@ -140,32 +140,17 @@ namespace KarambaIDEA.Core
 
                 bool IsContinues = true;
                 //Redistribute attachedMemTemp over BearingMember and ConnectingMember
-                //iterate over hierarchy rank to make sure list is created in a orded way
-                if (!hierarchy.Any())//if there is no hierarchy
+                //iterate over hierarchy rank to make sure list is created in a ordered way
+
+                if (!hierarchy.Any() || hierarchy.Count == 1)//if there is no hierarchy or hierarchy list is equal to one
                 {
-                    //no hierarchy, first member found is an ended bearing member
+                    //no hierarchy, first member found is an ended bearing member, rest is attatched
                     IsContinues = false;
-                    //First member is bearing
-                    AttachedMember w = attachedMemTemp.First();
-                    BearingMember bearing = new BearingMember(w.element, w.distanceVector, w.isStartPoint, w.ideaLine);
-                    attachedMembers.Add(bearing);
-                    //Rest of members are connecting members
-                    for (int b = 1; b < attachedMemTemp.Count; b++)
+                    if (attachedMemTemp.Count != 0)
                     {
-                        attachedMembers.Add(attachedMemTemp[b]);
-                    }
-                }
-                else//if there is a hierarchy
-                {
-                    //hierarchy determined, list will be build based on hierarchy
-                    //If only one hierarchy entry defined
-                    /*
-                    if (hierarchy.Count == 1)
-                    {
-                        IsContinues = false;
-                        //First member is bearing
-                        AttachedMember w = attachedMemTemp.First();
+                        AttachedMember w = attachedMemTemp.FirstOrDefault();
                         BearingMember bearing = new BearingMember(w.element, w.distanceVector, w.isStartPoint, w.ideaLine);
+                        //First member is bearing
                         attachedMembers.Add(bearing);
                         //Rest of members are connecting members
                         for (int b = 1; b < attachedMemTemp.Count; b++)
@@ -173,10 +158,18 @@ namespace KarambaIDEA.Core
                             attachedMembers.Add(attachedMemTemp[b]);
                         }
                     }
-                    */
+                    
+                }
+                else//if there is a hierarchy
+                {
+                    //hierarchy determined, list will be build based on hierarchy
+                    //If only one hierarchy entry defined
                     if (attachedMemTemp.Count == 2)//if joint has two attached members. First is bearing, Second is attached.
                     {
+                        //This is splice-joint cases, in such a case the members can be from the same hierarchy,
+                        //but need to be imported as two seperate members instead of one continuous
                         //TODO: christalyze method
+
                         IsContinues = false;
                         //First member is bearing
                         AttachedMember w = attachedMemTemp.FirstOrDefault();
@@ -193,8 +186,6 @@ namespace KarambaIDEA.Core
                         //TODO:include warning if not all available hierarchies are defined in hierarchylist
                         for (int rank = 0; rank < 1 + hierarchy.Max(a => a.numberInHierarchy); rank++)
                         {
-                            //iterate over attachedMembers of every joint
-                            //List<AttachedMember> templist = new List<AttachedMember>();
 
                             for (int ibb = 0; ibb < attachedMemTemp.Count; ibb++)
                             {
@@ -208,8 +199,6 @@ namespace KarambaIDEA.Core
                                 else if (w.element.numberInHierarchy == rank && rank != attachedMemTemp.Min(a => a.element.numberInHierarchy))
                                 {
                                     attachedMembers.Add(w);
-                                    //temp
-                                    //templist.Add(attachedMemTemp[ibb]);
                                 }
                             }
                         }
@@ -229,9 +218,7 @@ namespace KarambaIDEA.Core
                 //3. ADD JOINTS TO PROJECT
                 //CREATE JOINT ADD TO PROJECT
                 //Joint id starts from one, because IDEA counts from one
-                double maxGlobalEccentricity = 0.0;
-                Vector bearingMemberUnitVector = new Vector(1.0, 0.0, 0.0);
-                Joint joint = new Joint(this, i + 1, jointName, elementIDs, attachedMembers, centerpoint, maxGlobalEccentricity, bearingMemberUnitVector, IsContinues);
+                Joint joint = new Joint(this, i + 1, jointName, elementIDs, attachedMembers, centerpoint, IsContinues);
                 this.joints.Add(joint);
             }
 

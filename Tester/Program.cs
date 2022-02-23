@@ -3,6 +3,7 @@
 // Apache-2.0 license that can be found in the LICENSE file.	 
 using KarambaIDEA.Core;
 using KarambaIDEA.IDEA;
+using KarambaIDEA.Grasshopper;
 
 using System;
 using System.Diagnostics;
@@ -16,6 +17,14 @@ using Microsoft.Win32;
 using System.Linq;
 using System.Globalization;
 using System.Windows.Threading;
+using System.Threading;
+using Eto.Forms;
+using Eto.Drawing;
+using Eto;
+using Application = Eto.Forms.Application;
+using System.Xml.Linq;
+using System.Xml.Serialization;
+using IdeaRS.OpenModel.Connection;
 
 namespace Tester
 {
@@ -27,21 +36,75 @@ namespace Tester
         [STAThread]
         static void Main()
         {
+
+
             
 
 
+            TESTCreateAndCalculateTemplate();
 
+          
+          
 
-            //TESTCalculate();
-            //TESTCreateAndCalculateTemplate();
-            //TESTCopyProject();
             
 
+        }
 
 
-            TESTCreateAndCalculate();
+        static void TESTCreateAndCalculateTemplate()
+        {
+            Tester.GenerateTestJoint testrun = new GenerateTestJoint();
+
+            //Define testjoint
+            Joint joint = testrun.Testjoint2();
 
 
+            //Define Template location
+            
+            string filename = "template_plusjoint_extended";
+            string pathfolder = "C:\\Users\\r.ajouz\\source\\repos\\KarambaIDEA\\0_IDEA_Templates\\";
+            string extension = ".contemp";
+            string path_1 = pathfolder + filename + extension;
+            string path_2 = pathfolder + filename + "2" + extension;
+            //string path = 
+            //string pathTemplate = "C:\\Users\\r.ajouz\\source\\repos\\KarambaIDEA\\0_IDEA_Templates\\IDEA_NL.contemp";//This template does not work, contains multiple classes, which are not being serialized
+            //string pathTemplate = "C:\\Users\\r.ajouz\\source\\repos\\KarambaIDEA\\0_IDEA_Templates\\template_plusjoint.contemp";//This template works, contains only CutBeamData
+            KarambaIDEA.IDEA.ConnectionTemplateGenerator con = new KarambaIDEA.IDEA.ConnectionTemplateGenerator(path_1);
+            con.UpdateTemplate();//check if 
+            con.SaveToXmlFile(path_2);
+
+            joint.ideaTemplateLocation = path_2;
+
+            if (!File.Exists(joint.ideaTemplateLocation))
+            {
+                Console.WriteLine("dddd");
+            }
+
+            //Set Project folder path
+            string folderpath = @"C:\Data\";
+            joint.project.CreateFolder(folderpath);
+
+            //Set Joint folder path
+            //string filepath = joint.project.projectFolderPath + ".ideaCon";
+            //string fileName = joint.Name + ".ideaCon";
+            //string jointFilePath = Path.Combine(joint.project.projectFolderPath, joint.Name, fileName);
+            //joint.JointFilePath = jointFilePath;
+            joint.JointFilePath = "xx";
+
+            // Initialize idea references, before calling code.
+            AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
+            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
+
+            //Create IDEA file
+            
+            IdeaConnection ideaConnection = new IdeaConnection(joint, true);
+
+            //Calculate
+            HiddenCalculationV20.Calculate(joint, true);
+
+
+            //Results
+            string results = joint.ResultsSummary.summary;
         }
 
         static void TESTCalculate()
@@ -85,6 +148,7 @@ namespace Tester
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
 
             //Create IDEA file
+            KarambaIDEA.Core.Point p_canvas = new KarambaIDEA.Core.Point(100, 100, 0);
             IdeaConnection ideaConnection = new IdeaConnection(joint, true);
 
             //Calculate
@@ -95,42 +159,6 @@ namespace Tester
             string results = joint.ResultsSummary.summary;
         }
 
-        static void TESTCreateAndCalculateTemplate()
-        {
-            Tester.GenerateTestJoint testrun = new GenerateTestJoint();
-
-            //Define testjoint
-            Joint joint = testrun.Testjoint2();
-
-
-            //Define Template location
-            joint.ideaTemplateLocation = @"C:\SMARTconnection\BouwenmetStaal\KarambaIDEA\0_IDEA_Templates\TESTjointTester.contemp";
-
-            //Set Project folder path
-            string folderpath = @"C:\Data\";
-            joint.project.CreateFolder(folderpath);
-
-            //Set Joint folder path
-            //string filepath = joint.project.projectFolderPath + ".ideaCon";
-            //string fileName = joint.Name + ".ideaCon";
-            //string jointFilePath = Path.Combine(joint.project.projectFolderPath, joint.Name, fileName);
-            //joint.JointFilePath = jointFilePath;
-            joint.JointFilePath = "xx";
-
-            // Initialize idea references, before calling code.
-            AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
-            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
-
-            //Create IDEA file
-            IdeaConnection ideaConnection = new IdeaConnection(joint, true);
-
-            //Calculate
-            HiddenCalculationV20.Calculate(joint, true);
-            
-
-            //Results
-            string results = joint.ResultsSummary.summary;
-        }
 
         static void TESTCopyProject()
         {
