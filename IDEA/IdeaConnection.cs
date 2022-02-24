@@ -122,7 +122,9 @@ namespace KarambaIDEA.IDEA
 
             string filename = joint.Name + ".ideaCon";       
             var fileConnFileNameFromLocal = Path.Combine(folder,joint.Name, filename);
-            
+            string filename2 = joint.Name + "2.ideaCon";
+            var fileConnFileNameFromLocal2 = Path.Combine(folder, joint.Name, filename2);
+
             var calcFactory = new ConnHiddenClientFactory(ideaStatiCaDir);//V20
             //string newBoltAssemblyName = "M16 8.8";
             
@@ -149,9 +151,11 @@ namespace KarambaIDEA.IDEA
                     client.AddBoltAssembly(newBoltAssemblyName);//??Here Martin
 
                     client.ApplyTemplate(connection.Identifier, joint.ideaTemplateLocation, null);
-                    client.SaveAsProject(fileConnFileNameFromLocal);
+                    client.SaveAsProject(fileConnFileNameFromLocal2);
+                    
                 }
                 */
+                
                 
 
             }
