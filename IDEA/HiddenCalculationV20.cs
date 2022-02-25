@@ -47,37 +47,6 @@ namespace KarambaIDEA.IDEA
                     var projInfo = client.GetProjectInfo();
 
                     var connection = projInfo.Connections.FirstOrDefault();//Select first connection
-                    if (joint.ideaTemplateLocation != null)
-                    {
-                        if (File.Exists(joint.ideaTemplateLocation))
-                        {
-                            if (userFeedback)
-                            {
-                                pop.AddMessage(string.Format("Template with path applied:\r '{0}'", joint.ideaTemplateLocation));
-                            }
-                            client.AddBoltAssembly(newBoltAssemblyName);//??Here Martin
-
-                            client.ApplyTemplate(connection.Identifier, joint.ideaTemplateLocation, null);
-                            client.SaveAsProject(pathToFile);
-                        }
-                        else
-                        {
-                            pop.AddMessage(string.Format("Template file does not exist:\r '{0}'", joint.ideaTemplateLocation));
-                        }
-                        
-                        
-                    }
-
-                    //ConnectionData cd = client.GetConnectionModel(connection.Identifier);
-                    /*
-                    ConnectionData cd = client.GetConnectionModel(connection.Identifier);//needed to map weld IDs
-                    foreach (WeldData w in cd.Welds)
-                    {
-                        double thicknessWeld = w.Thickness;//Link unique thickness with connectionTemplate
-                        int uniqueIDweld = w.Id;//Store Id to connectionTemplate, to find results
-                        
-                    }
-                    */
 
                     if (userFeedback)
                     {
@@ -85,18 +54,16 @@ namespace KarambaIDEA.IDEA
                     }
                     conRes = client.Calculate(connection.Identifier);
                     client.SaveAsProject(pathToFile);
+
+                    //Export template file
                     string templatePath = Path.Combine(joint.project.projectFolderPath, joint.Name, "Template.xml");
                     client.ExportToTemplate(connection.Identifier, templatePath);//store template to location
 
-                   
-
                     //ConnectionTemplateGenerator connectionTemplateGenerator = new ConnectionTemplateGenerator(templatePath);
+                                      
+                                      
 
-                    
-                    
-                    
-
-                    //projInfo.Connections.Count()
+                    //example code for running multiple connectioin files
                     if (projInfo != null && projInfo.Connections != null)
                     {
 

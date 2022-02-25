@@ -135,12 +135,13 @@ namespace KarambaIDEA.IDEA
                 if (userFeedback){pop.AddMessage(string.Format("Joint '{0}' was saved to:\n {1}", joint.Name, fileConnFileNameFromLocal));}
                 client.CreateConProjFromIOM(iomFileName, iomResFileName, fileConnFileNameFromLocal);
                
-
-                /*
+                
+                ///*
                 //TEST 28-05-2021 Does not work "The server was unable to process the request"
                 //TEST 22-07-2021 Does not work "Communication is in Faulted state"
                 if (joint.ideaTemplateLocation != null)
                 {
+                    client.OpenProject(fileConnFileNameFromLocal);
                     var projInfo = client.GetProjectInfo();
                     string newBoltAssemblyName = "M16 8.8";
                     var connection = projInfo.Connections.FirstOrDefault();//Select first connection
@@ -151,10 +152,12 @@ namespace KarambaIDEA.IDEA
                     client.AddBoltAssembly(newBoltAssemblyName);//??Here Martin
 
                     client.ApplyTemplate(connection.Identifier, joint.ideaTemplateLocation, null);
-                    client.SaveAsProject(fileConnFileNameFromLocal2);
+                    client.SaveAsProject(fileConnFileNameFromLocal);
+
+
                     
                 }
-                */
+                //*/
                 
                 
 
