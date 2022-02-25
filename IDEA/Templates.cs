@@ -18,6 +18,17 @@ using KarambaIDEA.Core.JointTemplate;
 
 namespace KarambaIDEA.IDEA
 {
+
+    public class IDEATemplate : Template
+    {
+        //Class to manage IDEA Connection Templates
+
+
+
+
+    }
+
+
     public class Templates
     {
 
