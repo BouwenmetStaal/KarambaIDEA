@@ -120,6 +120,7 @@
     <Compile Include="7. Cost calculation\BoltsCosts.cs" />
     <Compile Include="7. Cost calculation\CostCalculator.cs" />
     <Compile Include="7. Cost calculation\TotalWeight.cs" />
+    <Compile Include="GH_IdeaGoo.cs" />
     <Compile Include="ImportGrasshopperUtils.cs" />
     <Compile Include="0. Utilities\LinesSCIA.cs" />
     <Compile Include="3. Project utilities\JointEquilibrium.cs" />
