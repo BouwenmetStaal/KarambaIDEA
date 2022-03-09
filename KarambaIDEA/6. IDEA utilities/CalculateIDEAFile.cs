@@ -1,4 +1,4 @@
-﻿/*
+﻿
 // Copyright (c) 2019 Rayaan Ajouz, Bouwen met Staal. Please see the LICENSE file	
 // for details. All rights reserved. Use of this source code is governed by a	
 // Apache-2.0 license that can be found in the LICENSE file.	
@@ -27,62 +27,72 @@ namespace KarambaIDEA
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("File path", "File path", "File path of .ideaCon file", GH_ParamAccess.item);
+            pManager.AddTextParameter("File paths", "File paths", "File paths of .ideaCon files", GH_ParamAccess.tree);
             pManager.AddBooleanParameter("RunIDEA", "RunIDEA", "Bool for running IDEA Statica Connection", GH_ParamAccess.item);
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddNumberParameter("Analysis", "Analysis", "", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Plates", "Plates", "", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Bolts", "Bolts", "", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Welds", "Welds", "", GH_ParamAccess.item);
-            pManager.AddNumberParameter("Buckling", "Buckling", "", GH_ParamAccess.item);
-            pManager.AddTextParameter("Summary", "Summary", "", GH_ParamAccess.item);
+            pManager.AddNumberParameter("Analysis", "Analysis", "", GH_ParamAccess.tree);
+            pManager.AddNumberParameter("Plates", "Plates", "", GH_ParamAccess.tree);
+            pManager.AddNumberParameter("Bolts", "Bolts", "", GH_ParamAccess.tree);
+            pManager.AddNumberParameter("Welds", "Welds", "", GH_ParamAccess.tree);
+            pManager.AddNumberParameter("Buckling", "Buckling", "", GH_ParamAccess.tree);
+            pManager.AddTextParameter("Summary", "Summary", "", GH_ParamAccess.tree);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
 
             //Input variables
-            string filepath = null;            
+            GH_Structure<GH_String> filepaths = new GH_Structure<GH_String>();
             bool startIDEA = false;
 
             //Link input
-            DA.GetData(0, ref filepath);
+            DA.GetDataTree(0, out filepaths);
             DA.GetData(1, ref startIDEA);
 
             //output variables
-            double? analysis = new double();
-            double? plates = new double();
-            double? bolts = new double();
-            double? welds = new double();
-            double? buckling = new double();
-            string summary = string.Empty;
-                                  
+            DataTree<double?> analysis = new DataTree<double?>();
+            DataTree<double?> plates = new DataTree<double?>();
+            DataTree<double?> bolts = new DataTree<double?>();
+            DataTree<double?> welds = new DataTree<double?>();
+            DataTree<double?> buckling = new DataTree<double?>();
+            DataTree<string> summary = new DataTree<string>();
+
+            int index = 0;//TODO assign index based on branch path of filepathstree
+
             if (startIDEA == true)
             {
-                //Run HiddenCalculation
-                Joint joint = new Joint();
-                joint.JointFilePath = filepath;
-                HiddenCalculationV20.Calculate(joint);
-                //KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(joint);
+                foreach (GH_String filepath in filepaths)
+                {
+                                       
+                    //Run HiddenCalculation
+                    Joint joint = new Joint();
+                    joint.JointFilePath = filepath.ToString();
+                    HiddenCalculationV20.Calculate(joint, false);
+                    //KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(joint);
 
-                //Retrieve results
-                analysis = joint.ResultsSummary.analysis;
-                plates = joint.ResultsSummary.plates;
-                bolts = joint.ResultsSummary.bolts;
-                welds = joint.ResultsSummary.welds;
-                buckling = joint.ResultsSummary.buckling;
-                summary = joint.ResultsSummary.summary;
+                    //Retrieve results
+                    GH_Path path = new GH_Path(index);
+                    analysis.Add(joint.ResultsSummary.analysis, path);
+                    plates.Add(joint.ResultsSummary.plates, path);
+                    bolts.Add(joint.ResultsSummary.bolts, path);
+                    welds.Add(joint.ResultsSummary.welds, path);
+                    buckling.Add(joint.ResultsSummary.buckling, path);
+                    summary.Add(joint.ResultsSummary.summary, path);
+
+                    index++;
+                }
+                
             }
             //link output
-            DA.SetData(0, analysis);
-            DA.SetData(1, plates);
-            DA.SetData(2, bolts);
-            DA.SetData(3, welds);
-            DA.SetData(4, buckling);
-            DA.SetData(5, summary);
+            DA.SetDataTree(0, analysis);
+            DA.SetDataTree(1, plates);
+            DA.SetDataTree(2, bolts);
+            DA.SetDataTree(3, welds);
+            DA.SetDataTree(4, buckling);
+            DA.SetDataTree(5, summary);
         }
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.
@@ -104,4 +114,3 @@ namespace KarambaIDEA
     }
 
 }
-*/

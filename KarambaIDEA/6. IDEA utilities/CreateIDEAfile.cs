@@ -12,6 +12,8 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using KarambaIDEA.Core;
 using KarambaIDEA.IDEA;
+using Grasshopper.Kernel.Types;
+
 namespace KarambaIDEA
 {
     public class CreateIDEAfile : GH_Component
@@ -34,6 +36,7 @@ namespace KarambaIDEA
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
             pManager.AddLineParameter("Selected Joint", "Selected Joint", "Lines of selected Joint", GH_ParamAccess.tree);
+            pManager.AddTextParameter("File paths", "File paths", "File paths of .ideaCon files", GH_ParamAccess.tree);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
@@ -56,6 +59,7 @@ namespace KarambaIDEA
 
             //output variables
             DataTree<Rhino.Geometry.Line> jointlines = new DataTree<Rhino.Geometry.Line>();
+            GH_Structure<GH_String> filepaths = new GH_Structure<GH_String>();
 
             //Adjust out of bounds index calculateThisJoint
             List<int> jointIndexes = new List<int>();
@@ -81,6 +85,10 @@ namespace KarambaIDEA
                     foreach(Joint joint in project.joints)
                     {
                         IdeaConnection ideaConnection = new IdeaConnection(joint, userFeedback);
+                        //TODO store filepath in tree format
+                        //TODO including check does file exist
+                        GH_String filepath = new GH_String(ideaConnection.filePath);
+                        filepaths.Append(filepath);
                     }
                 }
                 else
@@ -89,6 +97,10 @@ namespace KarambaIDEA
                     {
                         Joint joint = project.joints[i];
                         IdeaConnection ideaConnection = new IdeaConnection(joint, userFeedback);
+                        //TODO store filepath in tree format
+                        //TODO including check does file exist
+                        GH_String filepath = new GH_String(ideaConnection.filePath);
+                        filepaths.Append(filepath);
                     }
                 }
                 form.Close();
@@ -108,6 +120,7 @@ namespace KarambaIDEA
 
             //link output
             DA.SetDataTree(0, jointlines);
+            DA.SetDataTree(1, filepaths);
         }
         /// <summary>
         /// Provides an Icon for every component that will be visible in the User Interface.
