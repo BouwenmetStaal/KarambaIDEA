@@ -16,11 +16,52 @@ using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using System.IO;
 
-namespace KarambaIDEA
+namespace KarambaIDEA.Grasshopper
 {
     public class TemplateByFilePath : GH_Component
     {
-        public TemplateByFilePath() : base("Template by Filepath", "Template by Filepath", "Template by Filepath", "KarambaIDEA", "5. IDEA Templates")
+        public TemplateByFilePath() : base("Template by Filepath", "Template by Filepath", "Template by Filepath", "KarambaIDEA", "5. IDEA Templates") { }
+
+        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        {
+            pManager.AddTextParameter("Path", "P", "Filepath of ideaCon template file to import (.contemp)", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Template", "T", "Template which can be assigned to a joint.", GH_ParamAccess.item);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            string path = "";
+
+            DA.GetData<string>(0, ref path);
+
+            if (!path.EndsWith(".contemp"))
+            {
+                base.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Incorrect filepath extension.");
+                return;
+            }
+
+            IdeaTemplate template = new Template()
+
+            DA.
+
+
+        }
+
+        protected override System.Drawing.Bitmap Icon { get {  return Properties.Resources.TemplateFromFilePath; } }
+        public override Guid ComponentGuid { get { return new Guid("f48591d0-bdb2-45da-b347-2153af24f465"); } }
+
+    }
+
+
+
+
+    public class AssignTemplateByFilePathSS_OBSOLETE : GH_Component
+    {
+        public AssignTemplateByFilePathSS_OBSOLETE() : base("Assign Template by Filepath", "Assign a Template by Filepath", "Template by Filepath", "KarambaIDEA", "5. IDEA Templates")
         {
 
         }

@@ -11,23 +11,6 @@ using KarambaIDEA.IDEA;
 
 namespace KarambaIDEA.Grasshopper
 {
-
-	public class IdeaConnectionContainer
-	{
-		public int JointReference;
-		public string Filepath;
-
-		//Maybe later
-		//internal string xMLGeometry;
-		//internal string results;
-
-        public IdeaConnectionContainer(IdeaConnection connection)
-        {
-			JointReference = connection.joint.id;
-			Filepath = connection.filePath;
-        }
-	}
-
 	public class GH_IdeaConnection : GH_Goo<IdeaConnectionContainer>
 	{
 		public GH_IdeaConnection() : base() { }
