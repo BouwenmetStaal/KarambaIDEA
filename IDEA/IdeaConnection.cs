@@ -19,6 +19,21 @@ using IdeaRS.OpenModel.Connection;
 
 namespace KarambaIDEA.IDEA
 {
+
+    public class IdeaConnectionContainer
+    {
+        public int JointReference;
+        public string Filepath;
+
+		public IdeaConnectionResult Results = null;
+
+        public IdeaConnectionContainer(IdeaConnection connection)
+        {
+            JointReference = connection.joint.id;
+            Filepath = connection.filePath;
+        }
+    }
+
     public class IdeaConnection
     {
         public OpenModelGenerator openModelGenerator;

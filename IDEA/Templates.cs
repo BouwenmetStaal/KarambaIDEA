@@ -19,9 +19,23 @@ using KarambaIDEA.Core.JointTemplate;
 namespace KarambaIDEA.IDEA
 {
 
-    public class IDEATemplate : Template
+    public class IdeaTemplate : Template
     {
-        //Class to manage IDEA Connection Templates
+        private List<>
+
+
+        public string mFilepath = "";
+
+        public IdeaTemplate() { }
+        public IdeaTemplate(string filepath)
+        {
+            mFilepath = filepath;
+        }
+
+        public override string ToString()
+        {
+            return "Joint Template: " + mFilepath;
+        }
 
 
 
