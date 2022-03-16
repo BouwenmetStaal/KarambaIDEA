@@ -21,10 +21,10 @@ namespace KarambaIDEA.IDEA
 
     public class IdeaTemplate : Template
     {
-        private List<>
+        //private List<>;
 
 
-        public string mFilepath = "";
+        public string mFilepath = "bbb";
 
         public IdeaTemplate() { }
         public IdeaTemplate(string filepath)

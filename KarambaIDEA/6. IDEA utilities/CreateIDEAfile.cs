@@ -12,6 +12,8 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using KarambaIDEA.Core;
 using KarambaIDEA.IDEA;
+using Grasshopper.Kernel.Types;
+
 namespace KarambaIDEA
 {
 
@@ -111,7 +113,7 @@ namespace KarambaIDEA
                 }
             }
 
-            DA.SetDataList(0, connectionContainers.ConvertAll(x => new GH_IdeaConnection(x)));
+            DA.SetDataList(0, connectionContainers.ConvertAll(x => new KarambaIDEA.Grasshopper.GH_IdeaConnection(x)));
 
             //link output
             //DA.SetDataTree(0, jointlines);

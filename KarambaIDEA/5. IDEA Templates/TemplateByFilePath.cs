@@ -44,15 +44,15 @@ namespace KarambaIDEA.Grasshopper
                 return;
             }
 
-            IdeaTemplate template = new Template()
+            IdeaTemplate template = new IdeaTemplate();
 
-            DA.
+            //DA.
 
 
         }
 
         protected override System.Drawing.Bitmap Icon { get {  return Properties.Resources.TemplateFromFilePath; } }
-        public override Guid ComponentGuid { get { return new Guid("f48591d0-bdb2-45da-b347-2153af24f465"); } }
+        public override Guid ComponentGuid { get { return new Guid("1015698f-df9a-49c1-82da-187dcb672f18"); } }
 
     }
 
