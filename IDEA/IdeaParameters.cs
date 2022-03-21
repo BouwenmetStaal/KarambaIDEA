@@ -5,44 +5,154 @@ using System.Text;
 using System.Threading.Tasks;
 using IdeaRS.OpenModel;
 
-namespace KarambaIDEA
+using System.Xml.Linq;
+using System.Xml.Serialization;
+using Newtonsoft.Json;
+
+namespace KarambaIDEA.IDEA.Parameters
 {
-
-    public class IdeaParameter<T> where T : IdeaParameterValue
+    public class parameter : ICloneable
     {
+        //This class is for the serialisation to JSON. 
+        //Each Parameter Type holds this base parameter.  
 
-        //IdeaRS.OpenModel.Parameters.WeldParam
-
-
-
-    }
-
-    public class IdeaParameterValue
-    {
-        public IdeaParameterValue() { }
-    }
-
-
-
-
-
-    public class Parameters
-    {
-        public Parameter[] Property1 { get; set; }
-    }
-
-    public class Parameter
-    {
         public int id { get; set; }
         public string identifier { get; set; }
         public string description { get; set; }
         public string parameterType { get; set; }
-        public ParameterValue value { get; set; }
+        public object value { get; set; }
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this);
+        }
+
+        public object Clone()
+        {
+            return new parameter() { id = this.id, identifier = this.identifier, description = this.description, parameterType = this.parameterType, value = this.value };
+        }
     }
 
-    public class ParameterValue { }
+    public interface IIdeaParameter : ICloneable
+    {
+    }
 
-    public class AnchorValue : ParameterValue
+    public abstract class IdeaParameter<T> : IIdeaParameter
+    {
+        protected parameter _parameter;
+
+        public IdeaParameter(parameter parameter) 
+        {
+            _parameter = parameter;
+        }
+
+        public object Clone()
+        {
+            return ((ICloneable)_parameter).Clone();
+        }
+
+        public abstract T GetValue();
+
+        public void SetValue(T value)
+        {
+            _parameter.value = value.ToString();
+        }
+
+        public override string ToString()
+        {
+            return _parameter.ToString();
+        }
+    }
+
+    public class IdeaParameterInt : IdeaParameter<int>
+    {
+        public IdeaParameterInt(parameter parameter) : base (parameter) { }
+
+        public override int GetValue()
+        {
+            return int.Parse((string)_parameter.value);
+        }
+    }
+
+    public class IdeaParameterFloat : IdeaParameter<double> 
+    {
+        public IdeaParameterFloat(parameter parameter) : base(parameter) { }
+
+        public override double GetValue()
+        {
+            return double.Parse((string)_parameter.value);
+        }
+    }
+
+    public class IdeaParameterString : IdeaParameter<string> 
+    {
+        public IdeaParameterString(parameter parameter) : base(parameter) { }
+
+        public override string GetValue()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class IdeaParameterWeld : IdeaParameter<string>
+    {
+        public IdeaParameterWeld(parameter parameter) : base(parameter) { }
+
+        public override string GetValue()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class IdeaParameterEnum : IdeaParameter<int>
+    {
+        public IdeaParameterEnum(parameter parameter) : base(parameter) { }
+
+        public override int GetValue()
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public static class IdeaParameterFactory
+    {
+        public static IIdeaParameter Create(parameter parameter)
+        {
+            if (parameter.parameterType == "Enum")
+                return new IdeaParameterEnum(parameter);
+            else if (parameter.parameterType == "Float")
+                return new IdeaParameterFloat(parameter);
+            else if (parameter.parameterType == "Int")
+                return new IdeaParameterInt(parameter);
+            else
+                return new IdeaParameterString(parameter);
+        }
+    }
+
+    public static class ParameterSerialization
+    {
+        public static IIdeaParameter[] parametersFromTemplateXML(string templatePath)
+        {
+            //Read Template file.
+            XDocument xdoc = XDocument.Load(templatePath);
+
+            var parameters = xdoc.Descendants("Parameters");
+
+            return new IIdeaParameter[] { };
+        }
+
+        public static IIdeaParameter[] parametersFromJSON(string parametersJSON)
+        {
+            //To do
+
+            return new IIdeaParameter[] { };
+        }
+    }
+
+
+
+    //Anchor parameter - To Do
+    public class Anchor
     {
         public float length { get; set; }
         public int anchorTypeData { get; set; }
@@ -95,8 +205,8 @@ namespace KarambaIDEA
         public int count { get; set; }
     }
 
-
-    public class WeldValue : ParameterValue
+    //Weld parameter - To Do
+    public class Weld
     {
         public int weldType { get; set; }
         public string weldMaterialName { get; set; }
@@ -107,14 +217,4 @@ namespace KarambaIDEA
         public float intermittentGap { get; set; }
     }
 
-    public class StringValue : ParameterValue
-    {
-        public string weldType { get; set; }
-        public string weldMaterialName { get; set; }
-        public float size { get; set; }
-        public float beginOffset { get; set; }
-        public float endOffset { get; set; }
-        public float intermittentLength { get; set; }
-        public float intermittentGap { get; set; }
-    }
 }
