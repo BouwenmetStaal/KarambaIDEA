@@ -15,10 +15,25 @@ namespace KarambaIDEA.IDEA
     {
         public IdeaItemResultSet() { }
 
+        public List<T> GetResults(List<string> keys)
+        {
+            List<T> results = new List<T>();
+
+            if (keys == null || keys.Count == 0)
+                foreach (var result in this)
+                    results.Add(result.Value);
+            else
+                foreach (var key in keys)
+                    if (this.TryGetValue(key, out T result))
+                        results.Add(result);
+
+            return results;
+        }
     }
 
     public abstract class IdeaItemResult
     {
+        public string Name;
         public bool CheckStatus;
         public int LoadCaseId;
         public double UnityCheck;
@@ -27,15 +42,17 @@ namespace KarambaIDEA.IDEA
     }
 
 
-    public class IdeaResultSummary : IdeaItemResult
+    public class IdeaSummaryResult : IdeaItemResult
     {
         public double CheckValue;
         public string UnityCheckMsg;
 
-        public IdeaResultSummary() { }
-        internal IdeaResultSummary(CheckResSummary summaryResult)
+        public IdeaSummaryResult() { }
+        internal IdeaSummaryResult(CheckResSummary summaryResult)
         {
+            Name = summaryResult.Name;
             CheckValue = summaryResult.CheckValue;
+            UnityCheck = summaryResult.CheckValue; //to make it easyier for GH output.
             CheckStatus = summaryResult.CheckStatus;
             UnityCheckMsg = summaryResult.UnityCheckMessage;
             LoadCaseId = summaryResult.LoadCaseId;
@@ -46,9 +63,21 @@ namespace KarambaIDEA.IDEA
     {
         public IdeaBoltResult(CheckResBolt boltResult)
         {
+            Name = boltResult.Name;
             CheckStatus = boltResult.CheckStatus;
             LoadCaseId = boltResult.LoadCaseId;
             UnityCheck = boltResult.UnityCheck;
+        }
+    }
+
+    public class IdeaAnchorResult : IdeaItemResult
+    {
+        public IdeaAnchorResult(CheckResAnchor anchorResult)
+        {
+            Name = anchorResult.Name;
+            CheckStatus = anchorResult.CheckStatus;
+            LoadCaseId = anchorResult.LoadCaseId;
+            UnityCheck = anchorResult.UnityCheck;
         }
     }
 
@@ -60,6 +89,7 @@ namespace KarambaIDEA.IDEA
 
         public IdeaPlateResult(CheckResPlate plateResult)
         {
+            Name = plateResult.Name;
             CheckStatus = plateResult.CheckStatus;
             LoadCaseId = plateResult.LoadCaseId;
             MaxStrain = plateResult.MaxStrain;
@@ -75,6 +105,7 @@ namespace KarambaIDEA.IDEA
         
         public IdeaWeldResult(CheckResWeld weldResult)
         {
+            Name = weldResult.Name;
             CheckStatus = weldResult.CheckStatus;
             LoadCaseId = weldResult.LoadCaseId;
             Id = weldResult.Id;
@@ -82,29 +113,62 @@ namespace KarambaIDEA.IDEA
         }
     }
 
+    public class IdeaConcreteBlockResult : IdeaItemResult
+    {
+        public IdeaConcreteBlockResult(CheckResConcreteBlock concreteBlockResult)
+        {
+            Name = concreteBlockResult.Name;
+            CheckStatus = concreteBlockResult.CheckStatus;
+            LoadCaseId = concreteBlockResult.LoadCaseId;
+            UnityCheck = concreteBlockResult.UnityCheck;
+        }
+    }
+
 
     public class IdeaConnectionResult
     {
-        public IdeaItemResultSet<IdeaResultSummary> SummaryResults = new IdeaItemResultSet<IdeaResultSummary>();
-        public IdeaItemResultSet<IdeaPlateResult> PlateResults = new IdeaItemResultSet<IdeaPlateResult>();
-        public IdeaItemResultSet<IdeaBoltResult> BoltResults = new IdeaItemResultSet<IdeaBoltResult>();
-        public IdeaItemResultSet<IdeaWeldResult> WeldResults = new IdeaItemResultSet<IdeaWeldResult>();
-        //etc..
+        private readonly string _name;
+        private readonly IdeaItemResultSet<IdeaSummaryResult> _summaryResults = new IdeaItemResultSet<IdeaSummaryResult>();
+        private readonly IdeaItemResultSet<IdeaPlateResult> _plateResults = new IdeaItemResultSet<IdeaPlateResult>();
+        private readonly IdeaItemResultSet<IdeaBoltResult> _boltResults = new IdeaItemResultSet<IdeaBoltResult>();
+        private readonly IdeaItemResultSet<IdeaWeldResult> _weldResults = new IdeaItemResultSet<IdeaWeldResult>();
+        private readonly IdeaItemResultSet<IdeaAnchorResult> _anchorResults = new IdeaItemResultSet<IdeaAnchorResult>();
+        private readonly IdeaItemResultSet<IdeaConcreteBlockResult> _concreteBlockResults = new IdeaItemResultSet<IdeaConcreteBlockResult>();
 
         public IdeaConnectionResult(ConnectionResultsData connectionResult)
         {
             ConnectionCheckRes checkResult = connectionResult.ConnectionCheckRes[0];
 
-            foreach (CheckResSummary summaryResult in checkResult.CheckResSummary)
-                SummaryResults.Add(summaryResult.Name, new IdeaResultSummary(summaryResult));
-            foreach (CheckResPlate plateResult in checkResult.CheckResPlate)
-                PlateResults.Add(plateResult.Name, new IdeaPlateResult(plateResult));
-            foreach (CheckResBolt boltResult in checkResult.CheckResBolt)
-                BoltResults.Add(boltResult.Name, new IdeaBoltResult(boltResult));
-            foreach (CheckResWeld weldResult in checkResult.CheckResWeld)
-                WeldResults.Add(weldResult.Name, new IdeaWeldResult(weldResult));
+            _name = checkResult.Name;
             
-            //etc...
+            foreach (CheckResSummary summaryResult in checkResult.CheckResSummary)
+                _summaryResults.Add(summaryResult.Name, new IdeaSummaryResult(summaryResult));
+            foreach (CheckResPlate plateResult in checkResult.CheckResPlate)
+                _plateResults.Add(plateResult.Name, new IdeaPlateResult(plateResult));
+            foreach (CheckResBolt boltResult in checkResult.CheckResBolt)
+                _boltResults.Add(boltResult.Name, new IdeaBoltResult(boltResult));
+            foreach (CheckResWeld weldResult in checkResult.CheckResWeld)
+                _weldResults.Add(weldResult.Name, new IdeaWeldResult(weldResult));
+            foreach (CheckResAnchor anchorResult in checkResult.CheckResAnchor)
+                _anchorResults.Add(anchorResult.Name, new IdeaAnchorResult(anchorResult));
+            foreach (CheckResConcreteBlock concreteBlockResult in checkResult.CheckResConcreteBlock)
+                _concreteBlockResults.Add(concreteBlockResult.Name, new IdeaConcreteBlockResult(concreteBlockResult));
+
+            //To Do: Add Calculation Messages.
         }
+
+        public string Name { get { return _name; } }
+
+        public List<IdeaSummaryResult> GetSummaryResults(List<string> filterKeys) { return _summaryResults.GetResults(filterKeys); }
+        
+        public List<IdeaPlateResult> GetPlateResults(List<string> filterKeys) { return _plateResults.GetResults(filterKeys); }
+
+        public List<IdeaBoltResult> GetBoltResults(List<string> filterKeys) { return _boltResults.GetResults(filterKeys); }
+        
+        public List<IdeaWeldResult> GetWeldResults(List<string> filterKeys) { return _weldResults.GetResults(filterKeys); }
+
+        public List<IdeaAnchorResult> GetAnchorResults(List<string> filterKeys) { return _anchorResults.GetResults(filterKeys); }
+
+        public List<IdeaConcreteBlockResult> GetConcreteBlockResults(List<string> filterKeys) { return _concreteBlockResults.GetResults(filterKeys); }
     }
 }

@@ -116,6 +116,7 @@
     <Compile Include="6. IDEA utilities\CalculateIDEAFile.cs" />
     <Compile Include="6. IDEA utilities\CreateAndCalculateIDEAfile.cs" />
     <Compile Include="6. IDEA utilities\CreateIDEAfile.cs" />
+    <Compile Include="6. IDEA utilities\GetConnectionResults.cs" />
     <Compile Include="6. IDEA utilities\OptimizePlates.cs" />
     <Compile Include="7. Cost calculation\BoltsCosts.cs" />
     <Compile Include="7. Cost calculation\CostCalculator.cs" />
