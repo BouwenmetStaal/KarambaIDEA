@@ -33,9 +33,11 @@ namespace KarambaIDEA.IDEA
         private readonly string _filepath = "";
         private Dictionary<int, IIdeaParameter> _parameterCollection;
 
+
         //may want to desiaralise more info in the future.
 
         internal bool IsLoaded = false;
+
 
         public IdeaTemplate() { }
         public IdeaTemplate(string filepath)
