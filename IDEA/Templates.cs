@@ -108,7 +108,7 @@ namespace KarambaIDEA.IDEA
                     reader.Read();
 
                     //Break after all params are read.
-                    if (reader.Name == "Parameters")
+                    if ((reader.Name == "Parameters") || (reader.Name == "ParametersModelLinks") || reader.ReadState == ReadState.EndOfFile)
                         return;
                 }
 
