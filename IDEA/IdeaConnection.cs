@@ -151,9 +151,7 @@ namespace KarambaIDEA.IDEA
                 client.CreateConProjFromIOM(iomFileName, iomResFileName, fileConnFileNameFromLocal);
                
                 
-                ///*
-                //TEST 28-05-2021 Does not work "The server was unable to process the request"
-                //TEST 22-07-2021 Does not work "Communication is in Faulted state"
+                //Apply template if template location is defined
                 if (joint.ideaTemplateLocation != null)
                 {
                     client.OpenProject(fileConnFileNameFromLocal);
@@ -172,10 +170,6 @@ namespace KarambaIDEA.IDEA
 
                     
                 }
-                //*/
-                
-                
-
             }
             catch (Exception e)
             {
@@ -197,8 +191,7 @@ namespace KarambaIDEA.IDEA
             {
                 pop.Close();
             }
-            //form.Close();
-
+            return ;
         }
 
         

@@ -69,6 +69,7 @@ namespace KarambaIDEA.Grasshopper
             pManager.AddGenericParameter("Parameters", "P", "List of Parameters assigned in Template", GH_ParamAccess.list);
         }
 
+
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             GH_IdeaTemplate ghTemp = null;
