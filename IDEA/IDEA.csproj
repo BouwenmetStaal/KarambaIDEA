@@ -34,9 +34,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="IdeaRS.Connections">
-      <HintPath>..\..\..\..\..\..\Program Files\IDEA StatiCa\StatiCa 21.0\IdeaRS.Connections.dll</HintPath>
-    </Reference>
     <Reference Include="IdeaRS.OpenModel, Version=21.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\IdeaStatiCa.OpenModel.21.0.2.289\lib\net48\IdeaRS.OpenModel.dll</HintPath>
     </Reference>
