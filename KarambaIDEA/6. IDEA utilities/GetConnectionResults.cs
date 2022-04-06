@@ -87,7 +87,7 @@ namespace KarambaIDEA.Grasshopper
                 }
             }
             else
-                base.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Connection does not have any results avaliable. Calculate Connection using Calculate Component.");
+                base.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Connection does not have any results available. Calculate Connection using Calculate Component.");
         }
 
         protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.IDEAlogo; } }
@@ -122,7 +122,11 @@ namespace KarambaIDEA.Grasshopper
 
             DA.GetData<GH_IdeaItemResult>(0, ref itemResult);
 
-            if (itemResult.Value != null)
+            if (itemResult == null)
+            {
+                base.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Itemresults does not have any results available.");
+            }
+            else
             {
                 IdeaItemResult result = itemResult.Value;
 
