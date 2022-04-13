@@ -69,9 +69,9 @@ namespace Tester
             //string path = 
             //string pathTemplate = "C:\\Users\\r.ajouz\\source\\repos\\KarambaIDEA\\0_IDEA_Templates\\IDEA_NL.contemp";//This template does not work, contains multiple classes, which are not being serialized
             //string pathTemplate = "C:\\Users\\r.ajouz\\source\\repos\\KarambaIDEA\\0_IDEA_Templates\\template_plusjoint.contemp";//This template works, contains only CutBeamData
-            KarambaIDEA.IDEA.ConnectionTemplateGenerator con = new KarambaIDEA.IDEA.ConnectionTemplateGenerator(path_1);
-            con.UpdateTemplate();//check if 
-            con.SaveToXmlFile(path_2);
+            //KarambaIDEA.IDEA.ConnectionTemplateGenerator con = new KarambaIDEA.IDEA.ConnectionTemplateGenerator(path_1);
+            //con.UpdateTemplate();//check if 
+            //con.SaveToXmlFile(path_2);
 
             joint.ideaTemplateLocation = path_2;
 

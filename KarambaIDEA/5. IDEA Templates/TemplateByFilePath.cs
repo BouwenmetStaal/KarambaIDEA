@@ -77,9 +77,13 @@ namespace KarambaIDEA.Grasshopper
             DA.GetData<GH_IdeaTemplate>(0, ref ghTemp);
 
             List<GH_IdeaParameter> conParams = new List<GH_IdeaParameter>();
-
+            
             conParams = ghTemp.Value.GetParameters().ConvertAll(x=> new GH_IdeaParameter(x));
-
+            if (conParams.Count == 0)
+            {
+                //throw new ArgumentNullException("No parameters found in template");
+                base.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "No parameters found in template");
+            }
             DA.SetDataList(0, conParams);
         }
 
