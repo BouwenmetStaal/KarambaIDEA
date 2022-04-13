@@ -107,6 +107,7 @@ namespace KarambaIDEA.IDEA
         {
             Name = weldResult.Name;
             CheckStatus = weldResult.CheckStatus;
+            UnityCheck = weldResult.UnityCheck;
             LoadCaseId = weldResult.LoadCaseId;
             Id = weldResult.Id;
             Items = weldResult.Items;

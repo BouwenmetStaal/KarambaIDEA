@@ -148,6 +148,42 @@ namespace KarambaIDEA.Grasshopper
         public override Guid ComponentGuid { get { return new Guid("65D37365-755F-4998-99CD-FDA73C8E2788"); } }
     }
 
+    public class RefConnectionByFilePath : GH_Component
+    {
+        public RefConnectionByFilePath() : base("Reference Connection", "RefCon", "Reference an existing connection which has been created manually by a filepath", "KarambaIDEA", "5. IDEA Templates") { }
+
+        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        {
+            pManager.AddTextParameter("Path", "P", "Filepath of existing connection file to import (.ideaCon)", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Connection", "C", "Referenced connection which can be put into Calculate Component", GH_ParamAccess.item);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            string path = "";
+
+            DA.GetData<string>(0, ref path);
+
+            if (!path.EndsWith(".ideaCon"))
+            {
+                base.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Incorrect filepath extension.");
+                return;
+            }
+
+            IdeaConnectionContainer connectionContainer = new IdeaConnectionContainer(path, -1);
+
+            DA.SetData(0, new GH_IdeaConnection(connectionContainer));
+        }
+
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.TemplateFromFilePath; } }
+        public override Guid ComponentGuid { get { return new Guid("CAF6BB4D-4DB5-4856-BECE-BF744F9E9ED4"); } }
+
+    }
+
 
     public class AssignTemplateByFilePathSS_OBSOLETE : GH_Component
     {

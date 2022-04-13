@@ -3,22 +3,121 @@ using IdeaStatiCa.Plugin;
 using System.Collections.Generic;
 using IdeaRS.OpenModel.Geometry3D;
 
+using Microsoft.Win32;
 using KarambaIDEA.Core;
 using System.Linq;
 using System.Windows.Forms;
 using System;
 using System.IO;
+using System.Globalization;
 
 namespace KarambaIDEA.IDEA
 {
-    
+
+    public class IdeaStatiCaVersion
+    {
+
+        public static string GetLatestVersionPath()
+        {
+            try
+            {
+                //Find most recent version of IDEA StatiCa in registry
+                RegistryKey staticaRoot = Registry.LocalMachine.OpenSubKey("SOFTWARE\\IDEAStatiCa");
+                string[] SubKeyNames = staticaRoot.GetSubKeyNames();
+                Dictionary<double?, string> versions = new Dictionary<double?, string>();
+                foreach (string SubKeyName in SubKeyNames)
+                {
+                    versions.Add(double.Parse(SubKeyName, CultureInfo.InvariantCulture.NumberFormat), SubKeyName);
+                }
+                double[] staticaVersions = staticaRoot.GetSubKeyNames().Select(x => double.Parse(x, CultureInfo.InvariantCulture.NumberFormat)).OrderByDescending(x => x).ToArray();
+                double? lastverion = staticaVersions.FirstOrDefault();
+                string versionString = versions[lastverion];
+                if (lastverion == null) { throw new ArgumentNullException("IDEA StatiCa installation cannot be found"); }
+                string path = $@"{versionString.Replace(",", ".")}\IDEAStatiCa\Designer";
+                
+                
+                return staticaRoot.OpenSubKey(path).GetValue("InstallDir64").ToString();
+            }
+            catch
+            {
+                throw new ArgumentNullException("IDEA StatiCa installation cannot be found");
+            }
+        }
+    }
+
+
     /// <summary>
     /// Main view model of the example
     /// </summary>
     /// //public class HiddenCalculation : INotifyPropertyChanged, IConHiddenCalcModel
     public class HiddenCalculationV20
     {
-        
+        //public static IdeaConnectionResult Calculate(ConnectionHiddenCheckClient client, string pathToFile, List<IIdeaModification> modifications, bool userFeedback)
+        public static IdeaConnectionResult Calculate(string pathToFile, List<IIdeaModification> modifications, bool userFeedback)
+        {
+            ProgressWindow pop = new ProgressWindow();
+            if (userFeedback)
+            {
+                pop.Show();
+                //pop.AddMessage(string.Format("Start calculation '{0}'", joint.Name));
+                pop.AddMessage(string.Format("IDEA StatiCa installation was found in '{0}'", IdeaConnection.ideaStatiCaDir));
+            }
+
+            string path = IdeaStatiCaVersion.GetLatestVersionPath();
+            
+            var calcFactory = new ConnHiddenClientFactory(path);
+            ConnectionResultsData conRes = null;
+            var client = calcFactory.Create();
+
+            try
+            {
+                client.OpenProject(pathToFile);
+
+                try
+                {
+                    // get detail about idea connection project
+                    var projInfo = client.GetProjectInfo();
+
+                    var connection = projInfo.Connections.FirstOrDefault();//Select first connection
+
+                    if (userFeedback)
+                    {
+                        //pop.AddMessage(string.Format("Calculation started: '{0}'", joint.Name));
+                    }
+
+                    //run through modification
+                    foreach (IIdeaModification mod in modifications)
+                    {
+                        mod.ModifyConnection(client, connection.Identifier);
+                    }
+
+                    conRes = client.Calculate(connection.Identifier);
+#if (DEBUG)
+                    client.SaveAsProject(pathToFile);
+#endif
+                }
+                finally
+                {
+                    // Delete temps in case of a crash
+                    client.CloseProject();
+                }
+            }
+            finally
+            {
+                if (client != null)
+                {
+                    client.Close();
+                }
+            }
+            if (userFeedback)
+            {
+                pop.Close();
+            }
+
+            return new IdeaConnectionResult(conRes);
+
+        }
+
         public static void Calculate(Joint joint, bool userFeedback)
         {
             ProgressWindow pop = new ProgressWindow();

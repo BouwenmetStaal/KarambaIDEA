@@ -13,104 +13,87 @@ using Grasshopper.Kernel;
 using Grasshopper.Kernel.Data;
 using KarambaIDEA.Core;
 using KarambaIDEA.IDEA;
+using KarambaIDEA.IDEA.Parameters;
+using KarambaIDEA.Grasshopper;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 
 namespace KarambaIDEA
 {
-    public class CalculateIDEAFile : GH_Component
+    public class CalculateIDEA : GH_Component
     {
-        public CalculateIDEAFile() : base("Calculate IDEA File", "Calculate IDEA File", "Calculate IDEA file", "KarambaIDEA", "6. IDEA utilities")
+        private bool UserFeeback = false; 
+
+        public CalculateIDEA() : base("Calculate Connection", "Calculate IDEA Connection", "Calculate IDEA Connection. This is a connection file that has been saved and referenced", "KarambaIDEA", "6. IDEA utilities")
         {
 
         }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("File paths", "File paths", "File paths of .ideaCon files", GH_ParamAccess.tree);
-            pManager.AddBooleanParameter("RunIDEA", "RunIDEA", "Bool for running IDEA Statica Connection", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Connection", "C", "Connections which have been created on disk and referenced", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Modifications", "M", "List of Modifications to apply to the conneciton file prior to Calculation", GH_ParamAccess.list);
+            pManager.AddBooleanParameter("Run IDEA", "R", "Run the Connection", GH_ParamAccess.item);
+
+            pManager[1].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddNumberParameter("Analysis", "Analysis", "", GH_ParamAccess.tree);
-            pManager.AddNumberParameter("Plates", "Plates", "", GH_ParamAccess.tree);
-            pManager.AddNumberParameter("Bolts", "Bolts", "", GH_ParamAccess.tree);
-            pManager.AddNumberParameter("Welds", "Welds", "", GH_ParamAccess.tree);
-            pManager.AddNumberParameter("Buckling", "Buckling", "", GH_ParamAccess.tree);
-            pManager.AddTextParameter("Summary", "Summary", "", GH_ParamAccess.tree);
+            pManager.AddGenericParameter("Connection", "C", "Calculated Connections with Modification Applied", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-
-            //Input variables
-            GH_Structure<GH_String> filepaths = new GH_Structure<GH_String>();
             bool startIDEA = false;
+            DA.GetData(2, ref startIDEA);
 
-            //Link input
-            DA.GetDataTree(0, out filepaths);
-            DA.GetData(1, ref startIDEA);
-
-            //output variables
-            DataTree<double?> analysis = new DataTree<double?>();
-            DataTree<double?> plates = new DataTree<double?>();
-            DataTree<double?> bolts = new DataTree<double?>();
-            DataTree<double?> welds = new DataTree<double?>();
-            DataTree<double?> buckling = new DataTree<double?>();
-            DataTree<string> summary = new DataTree<string>();
-
-            int index = 0;//TODO assign index based on branch path of filepathstree
-
-            if (startIDEA == true)
+            if (startIDEA)
             {
-                foreach (GH_String filepath in filepaths)
-                {
-                                       
-                    //Run HiddenCalculation
-                    Joint joint = new Joint();
-                    joint.JointFilePath = filepath.ToString();
-                    HiddenCalculationV20.Calculate(joint, false);
-                    //KarambaIDEA.IDEA.HiddenCalculation main = new HiddenCalculation(joint);
+                GH_IdeaConnection ghCon = null;
+                DA.GetData<GH_IdeaConnection>(0, ref ghCon);
 
-                    //Retrieve results
-                    GH_Path path = new GH_Path(index);
-                    analysis.Add(joint.ResultsSummary.analysis, path);
-                    plates.Add(joint.ResultsSummary.plates, path);
-                    bolts.Add(joint.ResultsSummary.bolts, path);
-                    welds.Add(joint.ResultsSummary.welds, path);
-                    buckling.Add(joint.ResultsSummary.buckling, path);
-                    summary.Add(joint.ResultsSummary.summary, path);
+                List<GH_IdeaModification> mods = new List<GH_IdeaModification>();
 
-                    index++;
-                }
-                
-            }
-            //link output
-            DA.SetDataTree(0, analysis);
-            DA.SetDataTree(1, plates);
-            DA.SetDataTree(2, bolts);
-            DA.SetDataTree(3, welds);
-            DA.SetDataTree(4, buckling);
-            DA.SetDataTree(5, summary);
-        }
-        /// <summary>
-        /// Provides an Icon for every component that will be visible in the User Interface.
-        /// Icons need to be 24x24 pixels.
-        /// </summary>
-        protected override System.Drawing.Bitmap Icon
-        {
-            get
-            {
-                return Properties.Resources.IDEAlogo_safe;
+                DA.GetDataList<GH_IdeaModification>(1, mods);
+
+                IdeaConnectionResult results = HiddenCalculationV20.Calculate(ghCon.Value.Filepath, mods.Select(x => x.Value).ToList(), UserFeeback);
+
+                DA.SetData(0, new GH_IdeaConnection(new IdeaConnectionContainer(ghCon.Value, results)));
             }
         }
-        public override Guid ComponentGuid
-        {
-            get { return new Guid("b563fd17-0555-4194-8308-a785e127d406"); }
-        }
 
-
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.IDEAlogo_safe; } }
+        public override Guid ComponentGuid {  get { return new Guid("8036C064-4B56-4AA5-91E8-D54E72605566"); }  }
     }
 
+    public class ConnectionModifyParameters : GH_Component
+    {
+        public ConnectionModifyParameters() : base("Modify Con Parameters", "ModParams", "Provide a list of Parameters to Modify in the Connection Model", "KarambaIDEA", "5. IDEA Templates") { }
+
+        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Parameters", "P", "Parameter", GH_ParamAccess.list);
+        }
+
+        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Modification", "M", "Connection Modification", GH_ParamAccess.item);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            List<GH_IdeaParameter> ghParams = new List<GH_IdeaParameter>();
+
+            if (DA.GetDataList<GH_IdeaParameter>(0, ghParams))
+            {
+                IdeaModifyConnectionParameters conModification = new IdeaModifyConnectionParameters(ghParams.Select(x => x.Value).ToList());
+
+                DA.SetData(0, new GH_IdeaModification(conModification));
+            }
+        }
+
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.TemplateFromFilePath; } }
+        public override Guid ComponentGuid { get { return new Guid("09821E93-72F6-4E04-825D-986858ABD996"); } }
+    }
 }

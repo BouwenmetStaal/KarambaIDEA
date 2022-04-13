@@ -58,6 +58,22 @@ namespace KarambaIDEA.Grasshopper
 
 	}
 
+	public class GH_IdeaModification : GH_Goo<IIdeaModification>
+	{
+		public GH_IdeaModification() : base() { }
+		public GH_IdeaModification(IIdeaModification modification) : base(modification) { }
+		public GH_IdeaModification(GH_IdeaModification ghModification) : base(ghModification.Value) { }
+
+		public override string ToString() { return Value.ToString(); }
+		public override IGH_Goo Duplicate() { return new GH_IdeaModification(); }
+		public override bool IsValid { get { return true; } }
+		public override string TypeDescription { get { return "IdeaModfication"; } }
+		public override string TypeName { get { return "IdeaModification"; } }
+		public override bool Read(GH_IO.Serialization.GH_IReader reader) { return false; }
+		public override bool Write(GH_IO.Serialization.GH_IWriter writer) { return true; }
+
+	}
+
 	public class GH_IdeaItemResult : GH_Goo<IdeaItemResult>
 	{
 		public GH_IdeaItemResult() : base() { }

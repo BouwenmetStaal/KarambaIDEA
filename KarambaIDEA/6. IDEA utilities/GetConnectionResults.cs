@@ -51,28 +51,28 @@ namespace KarambaIDEA.Grasshopper
                 {
                     IdeaConnectionResult result = connection.Value.Results;
 
-                    List<string> summarykeys = null;
+                    List<string> summarykeys = new List<string>();
                     DA.GetDataList(1, summarykeys);
 
-                    List<string> platekeys = null;
+                    List<string> platekeys = new List<string>();
                     DA.GetDataList(2, platekeys);
 
-                    List<string> weldkeys = null;
+                    List<string> weldkeys = new List<string>();
                     DA.GetDataList(3, weldkeys);
 
-                    List<string> boltkeys = null;
+                    List<string> boltkeys = new List<string>();
                     DA.GetDataList(4, boltkeys);
 
-                    List<string> anchorkeys = null;
+                    List<string> anchorkeys = new List<string>();
                     DA.GetDataList(5, anchorkeys);
                     
-                    List<string> concblockkeys = null;
+                    List<string> concblockkeys = new List<string>();
                     DA.GetDataList(6, concblockkeys);
 
                     string name = result.Name;
                     List<GH_IdeaItemResult> summaryList = result.GetSummaryResults(summarykeys).ConvertAll(x => new GH_IdeaItemResult(x));
                     List<GH_IdeaItemResult> plateList = result.GetPlateResults(platekeys).ConvertAll(x => new GH_IdeaItemResult(x));
-                    List<GH_IdeaItemResult> weldList = result.GetWeldResults(platekeys).ConvertAll(x => new GH_IdeaItemResult(x));
+                    List<GH_IdeaItemResult> weldList = result.GetWeldResults(weldkeys).ConvertAll(x => new GH_IdeaItemResult(x));
                     List<GH_IdeaItemResult> boltList = result.GetBoltResults(boltkeys).ConvertAll(x => new GH_IdeaItemResult(x));
                     List<GH_IdeaItemResult> anchorList = result.GetAnchorResults(anchorkeys).ConvertAll(x => new GH_IdeaItemResult(x));
                     List<GH_IdeaItemResult> concblockList = result.GetConcreteBlockResults(concblockkeys).ConvertAll(x => new GH_IdeaItemResult(x));
@@ -120,30 +120,31 @@ namespace KarambaIDEA.Grasshopper
         {
             GH_IdeaItemResult itemResult = null;
 
-            DA.GetData<GH_IdeaItemResult>(0, ref itemResult);
-
-            if (itemResult.Value != null)
+            if (DA.GetData<GH_IdeaItemResult>(0, ref itemResult))
             {
-                IdeaItemResult result = itemResult.Value;
+                if (itemResult.Value != null)
+                {
+                    IdeaItemResult result = itemResult.Value;
 
-                DA.SetData(0, result.Name);
-                DA.SetData(1, result.CheckStatus);
-                DA.SetData(2, result.UnityCheck);
+                    DA.SetData(0, result.Name);
+                    DA.SetData(1, result.CheckStatus);
+                    DA.SetData(2, result.UnityCheck);
 
-                if (result is IdeaPlateResult plResult)
-                {
-                    DA.SetData(3, plResult.MaxStress);
-                    DA.SetData(4, plResult.MaxStrain);
-                    DA.SetDataList(5, plResult.Items);
-                }
-                else if (result is IdeaWeldResult weldResult)
-                {
-                    DA.SetDataList(5, weldResult.Items);
-                    DA.SetData(6, weldResult.Id);
-                }
-                else if(result is IdeaSummaryResult summaryResult)
-                {
-                    DA.SetData(7, summaryResult.UnityCheckMsg);
+                    if (result is IdeaPlateResult plResult)
+                    {
+                        DA.SetData(3, plResult.MaxStress);
+                        DA.SetData(4, plResult.MaxStrain);
+                        DA.SetDataList(5, plResult.Items);
+                    }
+                    else if (result is IdeaWeldResult weldResult)
+                    {
+                        DA.SetDataList(5, weldResult.Items);
+                        DA.SetData(6, weldResult.Id);
+                    }
+                    else if (result is IdeaSummaryResult summaryResult)
+                    {
+                        DA.SetData(7, summaryResult.UnityCheckMsg);
+                    }
                 }
             }
         }

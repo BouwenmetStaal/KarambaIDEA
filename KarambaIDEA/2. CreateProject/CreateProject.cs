@@ -21,9 +21,6 @@ using Grasshopper.Kernel.Parameters;
 
 namespace KarambaIDEA.Grasshopper
 {
-
-
-
     public class CreateProject : GH_Component
     {
         public CreateProject() : base("Create Project", "CP", "Exporting selected joint to IDEA Statica Connection", "KarambaIDEA", "2. CreateProject")
