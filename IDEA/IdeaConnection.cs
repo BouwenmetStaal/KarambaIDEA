@@ -27,10 +27,23 @@ namespace KarambaIDEA.IDEA
 
 		public IdeaConnectionResult Results = null;
 
+        public IdeaConnectionContainer(string refFilePath, int jointId)
+        {
+            JointReference = jointId;
+            Filepath = refFilePath;
+        }
+
         public IdeaConnectionContainer(IdeaConnection connection)
         {
             JointReference = connection.joint.id;
             Filepath = connection.filePath;
+        }
+
+        public IdeaConnectionContainer(IdeaConnectionContainer container, IdeaConnectionResult results)
+        {
+            JointReference = container.JointReference;
+            Filepath = container.Filepath;
+            Results = results;
         }
     }
 

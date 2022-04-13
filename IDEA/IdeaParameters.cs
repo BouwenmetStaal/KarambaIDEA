@@ -35,6 +35,9 @@ namespace KarambaIDEA.IDEA.Parameters
 
     public interface IIdeaParameter : ICloneable
     {
+        string GetIdentifier();
+
+        parameter ExtractParameter();
     }
 
     public abstract class IdeaParameter<T> : IIdeaParameter
@@ -61,6 +64,16 @@ namespace KarambaIDEA.IDEA.Parameters
         public override string ToString()
         {
             return _parameter.ToString();
+        }
+
+        public parameter ExtractParameter()
+        {
+            return (parameter)_parameter.Clone();
+        }
+
+        public string GetIdentifier()
+        {
+            return _parameter.identifier;
         }
     }
 

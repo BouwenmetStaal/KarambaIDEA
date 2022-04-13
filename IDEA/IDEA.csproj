@@ -78,6 +78,7 @@
     <Compile Include="ConnectionTemplateGenerator.cs" />
     <Compile Include="HiddenCalculationV20.cs" />
     <Compile Include="IdeaConnection.cs" />
+    <Compile Include="IdeaModification.cs" />
     <Compile Include="IdeaParameters.cs" />
     <Compile Include="OpenModelGenerator.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
