@@ -4,6 +4,7 @@
 using System;
 using System.Linq;
 using System.Collections.Generic;
+using System.IO;
 
 using Rhino.Geometry;
 
@@ -16,6 +17,80 @@ using Grasshopper.Kernel.Types;
 
 namespace KarambaIDEA
 {
+
+    public class CreateIDEAModelBIM : GH_Component
+    {
+        public CreateIDEAModelBIM() : base("Export ModelBIM", "ModelBIM", "Export a Project to a ModelBIM file XML file which can be imported directly in IDEA Checkbot Application", "KarambaIDEA", "6. IDEA utilities")
+        {
+
+        }
+
+        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
+            pManager.AddTextParameter("Output folder ", "Output folder", "Save location of ModelBIM XML output file. For example: 'C:\\Data'", GH_ParamAccess.item);
+            pManager.AddBooleanParameter("Run IDEA", "Run IDEA", "Bool for Enabling the Creation of the ModelBIM file.", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        {
+            pManager.AddTextParameter("Filepath", "P", "Filepath of ModelBIM file", GH_ParamAccess.list);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            //Input variables
+            Project project = new Project();
+            string outputfolderpath = "";
+            bool startIDEA = false;
+
+            //Link input
+            //Update the project to a goo input.
+            if (DA.GetData(0, ref project))
+            {
+                if (project == null)
+                {
+                    base.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Project is null");
+                    return;
+                }
+                else
+                {
+                    DA.GetData(1, ref outputfolderpath);
+
+                    DA.GetData(2, ref startIDEA);
+
+
+                    string path = "";
+
+                    //Test input folderpath
+                    //TODO if no directory provided wrtie to the GH file directory.
+                    if (Directory.Exists(outputfolderpath))
+                    {
+                        string name = "modelBIMtest";
+                        path = Path.Combine(outputfolderpath, string.Format("{0}.xml",name));
+                    }
+                    else
+                        base.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Directory does not exist");
+
+                    if (startIDEA)
+                    {
+                        try
+                        {
+                            project.ExportToMobelBIM(path);
+                            DA.SetData(0, path);
+                        }
+                        catch (Exception e)
+                        {
+                            base.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, e.Message);
+                        }
+                    }
+                }
+            }
+        }
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.IDEAlogo; } }
+        public override Guid ComponentGuid { get { return new Guid("4DEC0CE9-5B9B-4833-BBC4-0F7CE0C7B6A4"); } }
+    }
+
 
     public class CreateIDEAfile : GH_Component
     {

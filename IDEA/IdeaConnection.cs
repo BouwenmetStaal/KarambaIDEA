@@ -49,7 +49,7 @@ namespace KarambaIDEA.IDEA
 
     public class IdeaConnection
     {
-        public OpenModelGenerator openModelGenerator;
+        public OpenModelGenerator openModelGenerator; //TODO I think the Project should provide the OpenModel. i.e project.ExportJointtoIDEA(int Joint) 
         public Joint joint;
         public string filePath = "";
         public static string ideaStatiCaDir;
@@ -64,6 +64,8 @@ namespace KarambaIDEA.IDEA
         {
             try
             {
+#warning  duplicated code created in IdeaVersion.
+
                 //Find most recent version of IDEA StatiCa in registry
                 RegistryKey staticaRoot = Registry.LocalMachine.OpenSubKey("SOFTWARE\\IDEAStatiCa");
                 string[] SubKeyNames = staticaRoot.GetSubKeyNames();

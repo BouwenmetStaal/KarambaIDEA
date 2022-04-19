@@ -45,7 +45,6 @@ namespace KarambaIDEA.IDEA
         }
     }
 
-
     /// <summary>
     /// Main view model of the example
     /// </summary>

@@ -381,11 +381,6 @@ namespace KarambaIDEA.Core
             clone.CopyPropertiesFromSource(this);
             return clone;
         }
+
     }
-
-
-
-
-
-
 }
