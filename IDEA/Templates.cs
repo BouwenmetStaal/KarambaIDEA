@@ -185,9 +185,22 @@ namespace KarambaIDEA.IDEA
             {
                 Templates.WeldAllMembers(openModel);
             }
+
+            if (joint.template.workshopOperations == Template.WorkshopOperations.AddedMember)
+            {
+                Templates.WeldAllMembers(openModel);
+            }
         }
 
         #region: combined workshop operations
+        static public OpenModel AddedMember(OpenModel openModel, Joint joint)
+        {
+            AddNewMember(openModel, 1);
+
+           
+
+            return openModel;
+        }
         static public OpenModel BoltedEndplateConnection(OpenModel openModel, Joint joint, double tplate)
         {
             double w0 = joint.attachedMembers[0].element.crossSection.width / 1000;
@@ -269,8 +282,24 @@ namespace KarambaIDEA.IDEA
         }
         #endregion
 
-        
+
         #region: Workshop operation commands
+        static public OpenModel AddNewMember(OpenModel openModel, int openModelMemberId)
+        {
+            BeamData addedMemberData = new BeamData();
+
+            //Set the beam data as an Added Member
+            addedMemberData.IsAdded = true;
+
+            //Reference previously created Member1D in the openModel
+            addedMemberData.AddedMember = new ReferenceElement(openModel.Member1D.FirstOrDefault(x => x.Id == openModelMemberId));
+
+            addedMemberData.Id = 1;
+            addedMemberData.OriginalModelId = "9479365E-50D3-4B0B-949B-25EE1C0DBA6Cf";
+            openModel.Connections[0].Beams.Add(addedMemberData);
+            //connectionData.Beams.Add(addedMemberData);
+            return openModel;
+        }
         static public OpenModel CutBeamByBeam(OpenModel openModel, int cuttingobject, int modifiedObject)
         {
 

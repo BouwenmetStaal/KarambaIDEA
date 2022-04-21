@@ -38,10 +38,10 @@ namespace Tester
         {
 
 
-            
 
 
-            TESTCreateAndCalculateTemplate();
+
+            TESTCreateProgrammedTemplate();
 
           
           
@@ -50,6 +50,42 @@ namespace Tester
 
         }
 
+        static void TESTCreateProgrammedTemplate()
+        {
+            Tester.GenerateTestJoint testrun = new GenerateTestJoint();
+
+            //Define testjoint
+            Joint joint = testrun.Testjoint2();
+
+
+            //Set Project folder path
+            string folderpath = @"C:\Data\";
+            joint.project.CreateFolder(folderpath);
+
+            //Set Joint folder path
+            //string filepath = joint.project.projectFolderPath + ".ideaCon";
+            //string fileName = joint.Name + ".ideaCon";
+            //string jointFilePath = Path.Combine(joint.project.projectFolderPath, joint.Name, fileName);
+            //joint.JointFilePath = jointFilePath;
+            joint.JointFilePath = "xx";
+
+            joint.template.workshopOperations = Template.WorkshopOperations.AddedMember;
+
+            // Initialize idea references, before calling code.
+            AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
+            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
+
+            //Create IDEA file
+
+            IdeaConnection ideaConnection = new IdeaConnection(joint, true);
+
+            //Calculate
+            HiddenCalculationV20.Calculate(joint, true);
+
+
+            //Results
+            string results = joint.ResultsSummary.summary;
+        }
 
         static void TESTCreateAndCalculateTemplate()
         {
