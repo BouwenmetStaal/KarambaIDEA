@@ -15,9 +15,9 @@ using KarambaIDEA.IDEA;
 
 namespace KarambaIDEA
 {
-    public class CreateAndCalculateIDEAfile : GH_Component
+    public class CreateAndCalculateIDEAfileSS_OBSOLETE : GH_Component
     {
-        public CreateAndCalculateIDEAfile() : base("Create and Calculate IDEA File", "Create and Calculate IDEA File", "Create and Calculate IDEA file", "KarambaIDEA", "5. IDEA utilities")
+        public CreateAndCalculateIDEAfileSS_OBSOLETE() : base("Create and Calculate IDEA File", "Create and Calculate IDEA File", "Create and Calculate IDEA file", "KarambaIDEA", "5. IDEA utilities")
         {
 
         }
