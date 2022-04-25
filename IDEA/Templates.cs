@@ -188,7 +188,7 @@ namespace KarambaIDEA.IDEA
 
             if (joint.template.workshopOperations == Template.WorkshopOperations.AddedMember)
             {
-                Templates.WeldAllMembers(openModel);
+                Templates.AddedMember(openModel, joint);
             }
         }
 
@@ -293,7 +293,7 @@ namespace KarambaIDEA.IDEA
 
             //Reference previously created Member1D in the openModel
             addedMemberData.AddedMember = new ReferenceElement(openModel.Member1D.FirstOrDefault(x => x.Id == openModelMemberId));
-
+            
             addedMemberData.Id = 1;
             addedMemberData.OriginalModelId = "9479365E-50D3-4B0B-949B-25EE1C0DBA6Cf";
             openModel.Connections[0].Beams.Add(addedMemberData);

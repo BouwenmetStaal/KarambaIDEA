@@ -103,7 +103,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="DispatcherTimerTutorial.xaml.cs">
       <DependentUpon>DispatcherTimerTutorial.xaml</DependentUpon>
     </Compile>

@@ -24,7 +24,6 @@ using Eto;
 using Application = Eto.Forms.Application;
 using System.Xml.Linq;
 using System.Xml.Serialization;
-using IdeaRS.OpenModel.Connection;
 
 namespace Tester
 {
@@ -69,6 +68,7 @@ namespace Tester
             //joint.JointFilePath = jointFilePath;
             joint.JointFilePath = "xx";
 
+            joint.template = new Template();
             joint.template.workshopOperations = Template.WorkshopOperations.AddedMember;
 
             // Initialize idea references, before calling code.
