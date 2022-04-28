@@ -195,7 +195,13 @@ namespace KarambaIDEA.IDEA
         #region: combined workshop operations
         static public OpenModel AddedMember(OpenModel openModel, Joint joint)
         {
-            AddNewMember(openModel, 1);
+            Project project = joint.project;
+            Line line = new Line(new Point(project,0,0,0),new Point(project, 0,0,1));
+            Element element = new Element(project, "AddedMemberTest", 200, line, joint.project.crossSections.FirstOrDefault(), "Groupname", 1, 0, new Vector(0, 0, 0));
+
+            ConnectingMember connectingMember = new ConnectingMember(element, new Vector(0, 0, 0), true, line, 0);
+            
+            AddNewMember(openModel, connectingMember);
 
            
 
@@ -284,19 +290,108 @@ namespace KarambaIDEA.IDEA
 
 
         #region: Workshop operation commands
-        static public OpenModel AddNewMember(OpenModel openModel, int openModelMemberId)
+        static public OpenModel AddNewMember(OpenModel openModel, ConnectingMember attachedMember)
         {
+            PolyLine3D polyLine3D = new PolyLine3D();
+            polyLine3D.Id = openModel.GetMaxId(polyLine3D) + 1;
+            openModel.AddObject(polyLine3D);
+
+            //TODO: 
+
+            Point3D pA = new Point3D();
+            pA.X = 0;
+            pA.Y = 0;
+            pA.Z = 0;
+            pA.Id = 10;//IDEA COUNTs FROM ONE //the ID is a unique ID from the Grasshopper project
+            pA.Name = "N" + pA.Id;
+            openModel.AddObject(pA);
+
+            Point3D pB = new Point3D();
+            pB.X = 0;
+            pB.Y = 0;
+            pB.Z = 1;
+            pB.Id = 11;//IDEA COUNTs FROM ONE //the ID is a unique ID from the Grasshopper project
+            pB.Name = "N" + pB.Id;
+            openModel.AddObject(pB);
+
+            //Point3D pA = openModel.Point3D.First(a => a.Id == attachedMember.element.Line.start.id);
+            //Point3D pB = openModel.Point3D.First(a => a.Id == attachedMember.element.Line.end.id);
+
+            //create line segment
+            LineSegment3D lineSegment = new LineSegment3D();
+            lineSegment.Id = openModel.GetMaxId(lineSegment) + 1;
+            lineSegment.StartPoint = new ReferenceElement(pA);
+            lineSegment.EndPoint = new ReferenceElement(pB);
+            openModel.AddObject(lineSegment);
+            polyLine3D.Segments.Add(new ReferenceElement(lineSegment));
+
+            OpenModelGenerator.SetLCS(attachedMember, lineSegment);
+
+
+            //create element
+            Element1D element1D = new Element1D();
+            //element1D.Id = openModel.GetMaxId(element1D) + 1;
+            
+
+            element1D.Id = openModel.Element1D.Count + 1; //Use of Id from Grasshopper Model + Plus One
+
+            element1D.Name = "Element " + element1D.Id.ToString();
+            element1D.Segment = new ReferenceElement(lineSegment);
+
+            IdeaRS.OpenModel.CrossSection.CrossSection crossSection = openModel.CrossSection.First(a => a.Id == attachedMember.element.crossSection.Id);
+            element1D.CrossSectionBegin = new ReferenceElement(crossSection);
+            element1D.CrossSectionEnd = new ReferenceElement(crossSection);
+            //element1D.RotationRx = attachedMember.ElementRAZ.rotationLCS;
+
+            element1D.EccentricityBeginX = attachedMember.element.eccentrictyVector.X / 1000; //mm to m
+            element1D.EccentricityEndX = attachedMember.element.eccentrictyVector.X / 1000; //mm to m
+            element1D.EccentricityBeginY = attachedMember.element.eccentrictyVector.Y / 1000; //mm to m
+            element1D.EccentricityEndY = attachedMember.element.eccentrictyVector.Y / 1000; //mm to m
+            element1D.EccentricityBeginZ = attachedMember.element.eccentrictyVector.Z / 1000; //mm to m
+            element1D.EccentricityEndZ = attachedMember.element.eccentrictyVector.Z / 1000; //mm to m
+            //TODO: add eccentricy logic data in m or in mm?
+
+            openModel.AddObject(element1D);
+
+            //create member
+            Member1D member1D = new Member1D();
+            member1D.Id = openModel.Member1D.Count + 1;
+            //member1D.Id = openModel.GetMaxId(member1D) + 1;
+            //member1D.Name = "Member " + member1D.Id.ToString();
+            string MemberName = attachedMember.element.name;
+            member1D.Name = MemberName;
+            member1D.Elements1D.Add(new ReferenceElement(element1D));
+            openModel.Member1D.Add(member1D);
+
+            IdeaRS.OpenModel.Connection.BeamData beam1Data = new IdeaRS.OpenModel.Connection.BeamData
+            {
+                Id = member1D.Id,
+                OriginalModelId = member1D.Id.ToString(),
+                IsAdded = true,
+                MirrorY = false,
+                RefLineInCenterOfGravity = false,
+            };
+            beam1Data.Name = MemberName;
+            openModel.Connections[0].Beams.Add(beam1Data);
+
+
+            //create connected member
+            ConnectedMember connectedMember = new ConnectedMember();
+            connectedMember.Id = member1D.Id;
+            connectedMember.MemberId = new ReferenceElement(member1D);
+            //connectionPoint.ConnectedMembers.Add(connectedMember);
+
             BeamData addedMemberData = new BeamData();
 
             //Set the beam data as an Added Member
-            addedMemberData.IsAdded = true;
+            //addedMemberData.IsAdded = true;
 
             //Reference previously created Member1D in the openModel
-            addedMemberData.AddedMember = new ReferenceElement(openModel.Member1D.FirstOrDefault(x => x.Id == openModelMemberId));
+            //addedMemberData.AddedMember = new ReferenceElement(openModel.Member1D.FirstOrDefault(x => x.Id == openModelMemberId));
             
-            addedMemberData.Id = 1;
-            addedMemberData.OriginalModelId = "9479365E-50D3-4B0B-949B-25EE1C0DBA6Cf";
-            openModel.Connections[0].Beams.Add(addedMemberData);
+            //addedMemberData.Id = 1;
+            //addedMemberData.OriginalModelId = "9479365E-50D3-4B0B-949B-25EE1C0DBA6Cf";
+            
             //connectionData.Beams.Add(addedMemberData);
             return openModel;
         }

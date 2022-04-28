@@ -80,11 +80,11 @@ namespace Tester
             IdeaConnection ideaConnection = new IdeaConnection(joint, true);
 
             //Calculate
-            HiddenCalculationV20.Calculate(joint, true);
+            //HiddenCalculationV20.Calculate(joint, true);
 
 
             //Results
-            string results = joint.ResultsSummary.summary;
+            //string results = joint.ResultsSummary.summary;
         }
 
         static void TESTCreateAndCalculateTemplate()

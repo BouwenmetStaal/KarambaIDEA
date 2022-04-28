@@ -540,7 +540,7 @@ namespace KarambaIDEA.IDEA
         /// </summary>
         /// <param name="attachedMember"></param>
         /// <param name="connectionPoint"></param>
-        private void AddConnectedMember(AttachedMember attachedMember, ConnectionPoint connectionPoint)
+        private void AddConnectedMember(AttachedMember attachedMember, ConnectionPoint connectionPoint, bool isAdded=false)
         {
             PolyLine3D polyLine3D = new PolyLine3D();
             polyLine3D.Id = openModel.GetMaxId(polyLine3D) + 1;
@@ -603,7 +603,7 @@ namespace KarambaIDEA.IDEA
 			{
 				Id = member1D.Id,
 				OriginalModelId = member1D.Id.ToString(),
-				IsAdded = false,
+				IsAdded = isAdded,
 				MirrorY = false,
 				RefLineInCenterOfGravity = false,
 			};
@@ -970,7 +970,7 @@ namespace KarambaIDEA.IDEA
 
             resSec.Results.Add(resLoadCase);
         }
-        public void SetLCS(AttachedMember attachedMember, LineSegment3D lineSegment)
+        public static void SetLCS(AttachedMember attachedMember, LineSegment3D lineSegment)
         {
             LocalCoordinateSystem lcs = attachedMember.element.localCoordinateSystem;
 

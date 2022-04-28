@@ -177,7 +177,7 @@ namespace KarambaIDEA.IDEA
                     {
                         pop.AddMessage(string.Format("Template with path applied: '{0}'", joint.ideaTemplateLocation));
                     }
-                    client.AddBoltAssembly(newBoltAssemblyName);//??Here Martin
+                    client.AddBoltAssembly(newBoltAssemblyName);
 
                     client.ApplyTemplate(connection.Identifier, joint.ideaTemplateLocation, null);
                     client.SaveAsProject(fileConnFileNameFromLocal);
