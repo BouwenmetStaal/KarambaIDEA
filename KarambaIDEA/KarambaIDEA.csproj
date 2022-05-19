@@ -111,7 +111,7 @@
     <Compile Include="3. Analytical Templates\ATemplate_MomentResistingConnection.cs" />
     <Compile Include="3. Analytical Templates\ATemplate_PlanarTrussJoint.cs" />
     <Compile Include="3. Analytical Templates\ATemplate_WeldAllMembers.cs" />
-    <Compile Include="4. IDEA Templates\TemplateByFilePath.cs" />
+    <Compile Include="4. IDEA Templates\Template_ByFilePath.cs" />
     <Compile Include="4. IDEA Templates\Template_BoltedEndplate_Optimized.cs" />
     <Compile Include="5. IDEA utilities\CalculateIDEAFile.cs" />
     <Compile Include="5. IDEA utilities\CreateAndCalculateIDEAfile.cs" />

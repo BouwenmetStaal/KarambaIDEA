@@ -47,6 +47,7 @@ namespace KarambaIDEA.IDEA
         }
     }
 
+    //This class is not required.
     public class IdeaConnection
     {
         public OpenModelGenerator openModelGenerator; //TODO I think the Project should provide the OpenModel. i.e project.ExportJointtoIDEA(int Joint) 
@@ -123,8 +124,6 @@ namespace KarambaIDEA.IDEA
                 pop.AddMessage(string.Format("Creating Openmodel and OpenmodelResult for '{0}'", joint.Name));
             }
 
-            //form.AddMessage(string.Format("Creating Openmodel and OpenmodelResult for '{0}'", joint.Name));
-
             if (joint.template!= null)
             {
                 Templates.ApplyProgrammedIDEAtemplate(openModel , joint);
@@ -137,8 +136,6 @@ namespace KarambaIDEA.IDEA
                 pop.AddMessage(string.Format("Saving Openmodel and OpenmodelResult to XML for '{0}'", joint.Name));
             }
 
-            //form.AddMessage(string.Format("Saving Openmodel and OpenmodelResult to XML for '{0}'", joint.Name));
-
             // save to the files
             openModel.SaveToXmlFile(iomFileName);
             openModelResult.SaveToXmlFile(iomResFileName);
@@ -148,16 +145,17 @@ namespace KarambaIDEA.IDEA
                 pop.AddMessage(string.Format("Creating IDEA StatiCa File '{0}'", joint.Name));
             }
 
-            //form.AddMessage(string.Format("Creating IDEA StatiCa File '{0}'", joint.Name));
-
             string filename = joint.Name + ".ideaCon";       
             var fileConnFileNameFromLocal = Path.Combine(folder,joint.Name, filename);
             string filename2 = joint.Name + "2.ideaCon";
             var fileConnFileNameFromLocal2 = Path.Combine(folder, joint.Name, filename2);
 
             var calcFactory = new ConnHiddenClientFactory(ideaStatiCaDir);//V20
+
+
+#warning Need to enable Bolt assembly through IOM.
             //string newBoltAssemblyName = "M16 8.8";
-            
+
             var client = calcFactory.Create();
             try
             {
@@ -186,6 +184,8 @@ namespace KarambaIDEA.IDEA
                     
                 }
             }
+
+
             catch (Exception e)
             {
                 if (userFeedback) { pop.AddMessage(string.Format("Creating of IDEA file Joint '{0}' failed", joint.Name)); }
