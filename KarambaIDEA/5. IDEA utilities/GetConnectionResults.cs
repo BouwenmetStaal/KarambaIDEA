@@ -14,8 +14,9 @@ namespace KarambaIDEA.Grasshopper
 {
     public class ConnectionResults : GH_Component
     {
-        public ConnectionResults() : base("Connection Results", "ConResults", "Retrieve Connection Results from a calculated connection", "KarambaIDEA", "5. IDEA utilities") {}
+        public ConnectionResults() : base("Connection Results", "ConResults", "Retrieve Connection Results from a calculated connection", "KarambaIDEA", "5. IDEA Connection") {}
 
+        public override GH_Exposure Exposure { get { return GH_Exposure.tertiary; } }
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Connection", "C", "Idea Connection which has results avaliable", GH_ParamAccess.item);
@@ -97,8 +98,9 @@ namespace KarambaIDEA.Grasshopper
 
     public class DeconstructItemResult : GH_Component
     {
-        public DeconstructItemResult() : base("Deconstruct Item Result", "DecItemResult", "Deconstruct a Connection Item Result", "KarambaIDEA", "5. IDEA utilities") { }
+        public DeconstructItemResult() : base("Deconstruct Item Result", "DecItemResult", "Deconstruct a Connection Item Result", "KarambaIDEA", "5. IDEA Connection") { }
 
+        public override GH_Exposure Exposure { get { return GH_Exposure.tertiary; } }
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Item Result", "R", "Idea Connection Item result to deconstruct", GH_ParamAccess.item);
@@ -155,7 +157,7 @@ namespace KarambaIDEA.Grasshopper
             }
         }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.IDEAlogo_safe; } }
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Deconstruct_ItemResult; } }
         public override Guid ComponentGuid { get { return new Guid("02BE617E-1BA5-436F-A59E-F3C56E1FDB6F"); } }
     }
 

@@ -219,7 +219,7 @@ namespace KarambaIDEA.IDEA.Parameters
     }
 
     //Weld parameter - To Do
-    public class Weld
+    public class WeldParam
     {
         public int weldType { get; set; }
         public string weldMaterialName { get; set; }

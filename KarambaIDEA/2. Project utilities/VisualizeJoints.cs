@@ -13,7 +13,7 @@ using Grasshopper.Kernel.Data;
 using KarambaIDEA.Core;
 
 
-namespace KarambaIDEA
+namespace KarambaIDEA.Grasshopper
 {
     public class VisualizeJoints: GH_Component
     {
@@ -36,11 +36,12 @@ namespace KarambaIDEA
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            //Input variables
-            Project project = new Project();
+            GH_KarambaIdeaProject ghProject = null;
 
             //Link input
-            DA.GetData(0, ref project);
+            DA.GetData<GH_KarambaIdeaProject>(0, ref ghProject);
+
+            Project project = ghProject.Value;
 
             //output variables
             DataTree<Rhino.Geometry.Line> linetree = new DataTree<Rhino.Geometry.Line>();

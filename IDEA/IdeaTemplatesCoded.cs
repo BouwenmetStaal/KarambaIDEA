@@ -1,7 +1,4 @@
-﻿// Copyright (c) 2019 Rayaan Ajouz, Bouwen met Staal. Please see the LICENSE file	
-// for details. All rights reserved. Use of this source code is governed by a	
-// Apache-2.0 license that can be found in the LICENSE file.	
-using IdeaRS.OpenModel;
+﻿using IdeaRS.OpenModel;
 using IdeaRS.OpenModel.Connection;
 using IdeaRS.OpenModel.CrossSection;
 using IdeaRS.OpenModel.Geometry3D;
@@ -26,132 +23,122 @@ using KarambaIDEA.Core.JointTemplate;
 
 namespace KarambaIDEA.IDEA
 {
-
-    public class IdeaTemplate : Template
+    /// <summary>
+    /// A coded template allows for additional IOM Connection Data to be added to a Joint OpenModel Template. 
+    /// </summary>
+    public abstract class CodedTemplate : Template
     {
-        private readonly string _name = "";
-        private readonly string _filepath = "";
-        private Dictionary<int, IIdeaParameter> _parameterCollection;
-
-
-        //may want to desiaralise more info in the future.
-
-        internal bool IsLoaded = false;
-
-
-        public IdeaTemplate() { }
-        public IdeaTemplate(string filepath)
-        {
-            _filepath = filepath;
-        }
-
-        public string FilePath { get { return _filepath; } }
-
-        public override string ToString()
-        {
-            return "Joint Template: " + _filepath;
-        }
-
-        public void ReadTemplateFile()
-        {
-            using (Stream reader = new FileStream(_filepath, FileMode.Open))
-            {
-                using (XmlReader xmlReader = XmlReader.Create(reader))
-                {
-                    xmlReader.ReadToDescendant("Parameters");
-                    _parameterCollection = new Dictionary<int, IIdeaParameter>();
-                    XmlKeyValueListHelper.ReadKeyValueXml(xmlReader, _parameterCollection);
-                }
-            }
-            IsLoaded = true;
-        }
-
-        public List<IIdeaParameter> GetParameters()
-        {
-            if (!IsLoaded)
-                ReadTemplateFile();
-
-            return _parameterCollection.Select(x => x.Value).ToList();
-        }
+        internal abstract void AddConnectionDataToJoint(KarambaIdeaJoint joint);
     }
 
-    internal class ParameterCollection : System.Collections.Generic.Dictionary<int, IIdeaParameter>, IXmlSerializable
+    public class CodedTemplate_WeldAllMembers : CodedTemplate
     {
-        public XmlSchema GetSchema()
-        {
-            return null;
-        }
+        public CodedTemplate_WeldAllMembers(){}
 
-        public void ReadXml(XmlReader reader)
-        {
-            using (var subReader = reader.ReadSubtree())
-            {
-                XmlKeyValueListHelper.ReadKeyValueXml(subReader, this);
-            }
-        }
-
-        public void WriteXml(System.Xml.XmlWriter writer)
-        {
-            XmlKeyValueListHelper.WriteKeyValueXml(writer, this);
-        }
-    }
-
-
-    internal static class XmlKeyValueListHelper
-    {
-        public static void ReadKeyValueXml(System.Xml.XmlReader reader, ICollection<KeyValuePair<int, IIdeaParameter>> collection)
-        {
-            while (reader.Read())
-            {
-                while (!(String.Compare(reader.Name, "d2p1:KeyValueOfintParameterDatagVyOvWPW") == 0) || (reader.NodeType == XmlNodeType.EndElement))
-                {
-                    reader.Read();
-
-                    //Break after all params are read.
-                    if ((reader.Name == "Parameters") || (reader.Name == "ParametersModelLinks") || reader.ReadState == ReadState.EndOfFile)
-                        return;
-                }
-
-                reader.ReadStartElement();
-
-                if (reader.ReadToNextSibling("d2p1:Key"))
-                {
-                    int key = reader.ReadElementContentAsInt();
-
-                    reader.ReadToDescendant("d2p1:Value");
-                    reader.MoveToContent();
-                    reader.ReadStartElement();
-
-                    parameter param = new parameter();
-
-                    if (reader.ReadToNextSibling("d4p1:Description"))
-                        param.description = reader.ReadElementContentAsString();
-                    if (reader.ReadToNextSibling("d4p1:Id"))
-                        param.id = reader.ReadElementContentAsInt();
-                    if (reader.ReadToNextSibling("d4p1:Identifier"))
-                        param.identifier = reader.ReadElementContentAsString();
-                    if (reader.ReadToNextSibling("d4p1:ParameterType"))
-                        param.parameterType = reader.ReadElementContentAsString();
-                    if (reader.ReadToNextSibling("d4p1:Value"))
-                        param.value = reader.ReadElementContentAsString();
-
-                    collection.Add(new KeyValuePair<int, IIdeaParameter>(key, IdeaParameterFactory.Create(param)));
-                }
-                else
-                    break;
-            }
-        }
-
-        public static void WriteKeyValueXml(System.Xml.XmlWriter writer, ICollection<KeyValuePair<int, IIdeaParameter>> collection)
+        internal override void AddConnectionDataToJoint(KarambaIdeaJoint joint)
         {
             throw new NotImplementedException();
         }
     }
 
-
-    public class Templates
+    public class CodedTemplate_BoltedEndPlate : CodedTemplate
     {
+        public double PlateThickness = 0.012;
+        public double EdgeDistance = 0.03;
+        public string BoltTypeName = "M20";
+        public string BoltSteelGrade = "8.8";
 
+        public CodedTemplate_BoltedEndPlate(double plThickness, double edgeDistance, string boltTypeName = "M20", string boltSteelGrade = "8.8")
+        {
+            PlateThickness = plThickness;
+            EdgeDistance = edgeDistance;
+            BoltTypeName = boltTypeName;
+            BoltSteelGrade = boltSteelGrade;
+        }
+
+        internal override void AddConnectionDataToJoint(KarambaIdeaJoint joint)
+        {
+            double tplate = PlateThickness;
+            double edgedistance = EdgeDistance;
+            string boltsteelgrade = BoltSteelGrade;
+            string bolttypename = BoltTypeName;
+
+            Core.CrossSection beam = joint.attachedMembers.First().element.crossSection;
+            Plate plateA = new Plate("endplateA", beam.height, beam.width, tplate);
+            Plate plateB = new Plate("endplateB", beam.height, beam.width, tplate);
+
+            joint.plates.Add(plateA);
+            joint.plates.Add(plateB);
+
+            List<Bolt> bolts = Bolt.CreateBoltsList(Core.BoltSteelGrade.selectgrade(boltsteelgrade));
+            Bolt bolt = bolts.Single(a => bolttypename == a.Name);
+            double locXp = 0.5 * beam.width - edgedistance;
+            double locY = 0.5 * beam.height - edgedistance;
+
+            List<Coordinate2D> coors = new List<Coordinate2D>();
+            coors.Add(new Coordinate2D(locXp, locY));
+            coors.Add(new Coordinate2D(locXp, -locY));
+            coors.Add(new Coordinate2D(-locXp, locY));
+            coors.Add(new Coordinate2D(-locXp, -locY));
+            Core.BoltGrid boltGrid = new Core.BoltGrid(bolt, coors);
+            joint.boltGrids.Add(boltGrid);
+
+            foreach (AttachedMember at in joint.attachedMembers)
+            {
+                double weldsize = Weld.CalWeldSizeFullStrenth90deg(tplate, beam.thicknessFlange, beam.material, Weld.WeldType.DoubleFillet);
+                joint.welds.Add(new Weld("FlangeweldTop", Weld.WeldType.DoubleFillet, weldsize, beam.width));
+                joint.welds.Add(new Weld("FlangeweldBot", Weld.WeldType.DoubleFillet, weldsize, beam.width));
+                double weldsizeWeb = Weld.CalWeldSizeFullStrenth90deg(tplate, beam.thicknessWeb, beam.material, Weld.WeldType.DoubleFillet);
+                joint.welds.Add(new Weld("Webweld", Weld.WeldType.DoubleFillet, weldsizeWeb, beam.height));
+            }
+        }
+    }
+
+    public class CodedTemplate_BoltedEndPlateOptimizer : CodedTemplate
+    {
+        public double PlateThickness = 0.012;
+        public double PryingForceFactor = 0.5;
+        public bool IncludeStiffeners = false; 
+
+        public CodedTemplate_BoltedEndPlateOptimizer(double plThickness, double pryingForceFactor, bool includeStiffeners)
+        {
+            PlateThickness = plThickness;
+            PryingForceFactor = pryingForceFactor;
+            IncludeStiffeners = includeStiffeners;
+        }
+
+        internal override void AddConnectionDataToJoint(KarambaIdeaJoint joint)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    public class CodedTemplate_AddedMember : CodedTemplate
+    {
+        internal override void AddConnectionDataToJoint(KarambaIdeaJoint joint)
+        {
+            throw new NotImplementedException();
+        }
+    }
+
+    //public WorkshopOperations workshopOperations = WorkshopOperations.NoOperation;
+    //public List<Plate> plates = new List<Plate>();
+    //public List<Weld> welds = new List<Weld>();
+    //public List<BoltGrid> boltGrids = new List<BoltGrid>();
+
+    //public enum WorkshopOperations
+    //{
+    //    NoOperation,
+    //    BoltedEndPlateConnection,
+    //    BoltedEndplateOptimizer,
+    //    WeldAllMembers, 
+    //    TemplateByFile, //not required
+    //    AddedMember
+    //}
+
+
+    public class IdeaTemplates
+    {
         /// <summary>
         /// Predefined programmed idea templates can be added to the OpenModel
         /// </summary>
@@ -160,7 +147,7 @@ namespace KarambaIDEA.IDEA
         public static void ApplyProgrammedIDEAtemplate(OpenModel openModel, Joint joint)
         {
             //TODOL add templatefile location
-            if (joint.template.workshopOperations == Template.WorkshopOperations.NoOperation||joint.template.workshopOperations == Template.WorkshopOperations.TemplateByFile)
+            if (joint.template.workshopOperations == Template.WorkshopOperations.NoOperation || joint.template.workshopOperations == Template.WorkshopOperations.TemplateByFile)
             {
 
             }
@@ -169,7 +156,7 @@ namespace KarambaIDEA.IDEA
                 if (joint.template.plates.First() != null)
                 {
                     double platethickness = joint.template.plates[0].thickness / 1000;
-                    Templates.BoltedEndplateConnection(openModel, joint, platethickness);
+                    IdeaTemplates.BoltedEndplateConnection(openModel, joint, platethickness);
                 }
 
             }
@@ -177,18 +164,18 @@ namespace KarambaIDEA.IDEA
             {
                 if (joint.template.plates.First() != null)
                 {
-                    Templates.BoltedEndplateOptimizer(openModel, joint);
+                    IdeaTemplates.BoltedEndplateOptimizer(openModel, joint);
                 }
 
             }
             if (joint.template.workshopOperations == Template.WorkshopOperations.WeldAllMembers)
             {
-                Templates.WeldAllMembers(openModel);
+                IdeaTemplates.WeldAllMembers(openModel);
             }
 
             if (joint.template.workshopOperations == Template.WorkshopOperations.AddedMember)
             {
-                Templates.AddedMember(openModel, joint);
+                IdeaTemplates.AddedMember(openModel, joint);
             }
         }
 
@@ -196,17 +183,18 @@ namespace KarambaIDEA.IDEA
         static public OpenModel AddedMember(OpenModel openModel, Joint joint)
         {
             Project project = joint.project;
-            Line line = new Line(new Point(project,0,0,0),new Point(project, 0,0,1));
+            Line line = new Line(new Point(project, 0, 0, 0), new Point(project, 0, 0, 1));
             Element element = new Element(project, "AddedMemberTest", 200, line, joint.project.crossSections.FirstOrDefault(), "Groupname", 1, 0, new Vector(0, 0, 0));
 
             ConnectingMember connectingMember = new ConnectingMember(element, new Vector(0, 0, 0), true, line, 0);
-            
+
             AddNewMember(openModel, connectingMember);
 
-           
+
 
             return openModel;
         }
+
         static public OpenModel BoltedEndplateConnection(OpenModel openModel, Joint joint, double tplate)
         {
             double w0 = joint.attachedMembers[0].element.crossSection.width / 1000;
@@ -231,7 +219,7 @@ namespace KarambaIDEA.IDEA
         {
             Plate plate = joint.template.plates.First();
             Core.BoltGrid boltGrid = joint.template.boltGrids.First();
-            
+
             double w = plate.width / 1000;
             double h = plate.length / 1000;
             double t = plate.thickness / 1000;
@@ -245,12 +233,12 @@ namespace KarambaIDEA.IDEA
 
             Core.CrossSection c = joint.attachedMembers.FirstOrDefault().element.crossSection;
 
-            double elh = c.height/1000;
+            double elh = c.height / 1000;
             double wt = c.thicknessWeb / 1000;
-            double wh = ((plate.length-c.height)/2)/ 1000;
+            double wh = ((plate.length - c.height) / 2) / 1000;
             double ww = 2 * wh;
 
-            if(joint.template.plates.Count>2 && h > elh)
+            if (joint.template.plates.Count > 2 && h > elh)
             {
                 CreateWebWidener(openModel, joint, 0, ww, wh, wt, t, elh / 2);
                 CreateWebWidener(openModel, joint, 0, ww, -wh, wt, t, -elh / 2);
@@ -275,7 +263,7 @@ namespace KarambaIDEA.IDEA
 
         static public OpenModel WeldAllMembers(OpenModel openModel)
         {
-            
+
             for (int i = 1; i < openModel.Connections[0].Beams.Count; i++)
             {
                 CutBeamByBeam(openModel, 0, i);
@@ -331,7 +319,7 @@ namespace KarambaIDEA.IDEA
             //create element
             Element1D element1D = new Element1D();
             //element1D.Id = openModel.GetMaxId(element1D) + 1;
-            
+
 
             element1D.Id = openModel.Element1D.Count + 1; //Use of Id from Grasshopper Model + Plus One
 
@@ -388,13 +376,14 @@ namespace KarambaIDEA.IDEA
 
             //Reference previously created Member1D in the openModel
             //addedMemberData.AddedMember = new ReferenceElement(openModel.Member1D.FirstOrDefault(x => x.Id == openModelMemberId));
-            
+
             //addedMemberData.Id = 1;
             //addedMemberData.OriginalModelId = "9479365E-50D3-4B0B-949B-25EE1C0DBA6Cf";
-            
+
             //connectionData.Beams.Add(addedMemberData);
             return openModel;
         }
+
         static public OpenModel CutBeamByBeam(OpenModel openModel, int cuttingobject, int modifiedObject)
         {
 
@@ -410,12 +399,13 @@ namespace KarambaIDEA.IDEA
                 ModifiedObject = new ReferenceElement(openModel.Connections[0].Beams[modifiedObject]),
                 IsWeld = true,
                 WeldType = WeldType.Fillet,
-                 
-                
-                
+
+
+
             });
             return openModel;
         }
+
         static public OpenModel CutBeamByPlate(OpenModel openModel, Joint joint, int cuttingobject, int modifiedObject)
         {
 
@@ -436,10 +426,11 @@ namespace KarambaIDEA.IDEA
             });
 
             IdeaRS.OpenModel.Connection.CutBeamByBeamData dd = new IdeaRS.OpenModel.Connection.CutBeamByBeamData();
-            
-            
+
+
             return openModel;
         }
+
         static public OpenModel CutPlateByBeam(OpenModel openModel, Joint joint, int cuttingobject, int modifiedObject)
         {
 
@@ -460,10 +451,11 @@ namespace KarambaIDEA.IDEA
 
             return openModel;
         }
+
         static public OpenModel CutPlateByPlate(OpenModel openModel, Joint joint, int cuttingobject, int modifiedObject)
         {
 
-            
+
             // add cut
             if (openModel.Connections[0].CutBeamByBeams == null)
             {
@@ -510,10 +502,10 @@ namespace KarambaIDEA.IDEA
             }
             int number = 100 + 1 + openModel.Connections[0].Plates.Count;
             BeamData beam = openModel.Connections[0].Beams[refBeam];
-            Element ele = joint.project.elements.First(a => a.id == (beam.Id-1));
+            Element ele = joint.project.elements.First(a => a.id == (beam.Id - 1));
             AttachedMember at = joint.attachedMembers.First(a => a.element.id == (beam.Id - 1));
 
-            
+
             CoordSystem coor = openModel.LineSegment3D[refBeam].LocalCoordinateSystem;//based on integer of linesegments not of plates
             var LocalCoordinateSystem = new CoordSystemByVector();
 
@@ -522,16 +514,16 @@ namespace KarambaIDEA.IDEA
             {
                 distanceXloc = -distanceXloc;
             }
-            
+
             //TODO: make definition that creates plate based on the LCS of the reference beam
             Point movedPoint = Point.MovePointByVectorandLength(joint.centralNodeOfJoint, ele.Line.Vector, distanceXloc);
 
             openModel.Connections[0].Plates.Add(new IdeaRS.OpenModel.Connection.PlateData
             {
-                Name = "P"+number,
+                Name = "P" + number,
                 Thickness = tplate,
-                
-                
+
+
                 Id = number,
                 //openModel.GetMaxId(openModel.GetMaxId(PlateData ) +1), //unique identificator
                 //openModel.GetMaxId(lineSegment2) + 1
@@ -540,7 +532,7 @@ namespace KarambaIDEA.IDEA
                 Origin = new IdeaRS.OpenModel.Geometry3D.Point3D
                 {
                     //TODO: include movement based on local x-axis. However, not yet available in current API
-                    X =  movedPoint.X,
+                    X = movedPoint.X,
                     Y = movedPoint.Y,
                     Z = movedPoint.Z
                 },
@@ -554,14 +546,14 @@ namespace KarambaIDEA.IDEA
                     X = ele.localCoordinateSystem.Y.X,
                     Y = ele.localCoordinateSystem.Y.Y,
                     Z = ele.localCoordinateSystem.Y.Z
-                    
+
                 },
                 AxisY = new IdeaRS.OpenModel.Geometry3D.Vector3D
                 {
                     X = ele.localCoordinateSystem.Z.X,
                     Y = ele.localCoordinateSystem.Z.Y,
                     Z = ele.localCoordinateSystem.Z.Z
-                   
+
                 },
                 AxisZ = new IdeaRS.OpenModel.Geometry3D.Vector3D
                 {
@@ -569,7 +561,7 @@ namespace KarambaIDEA.IDEA
                     Y = ele.localCoordinateSystem.X.Y,
                     Z = ele.localCoordinateSystem.X.Z
                 },
-                Region = region ,
+                Region = region,
             });
 
             //(openModel.Connections[0].Plates ?? (openModel.Connections[0].Plates = new List<IdeaRS.OpenModel.Connection.PlateData>())).Add(plateData);
@@ -584,7 +576,7 @@ namespace KarambaIDEA.IDEA
             BeamData beam = openModel.Connections[0].Beams[refBeam];
             Element ele = joint.project.elements.First(a => a.id == (beam.Id - 1));
             AttachedMember at = joint.attachedMembers.First(a => a.element.id == (beam.Id - 1));
-            
+
 
             double sign = 1;
             if (at.isStartPoint == false)
@@ -679,7 +671,7 @@ namespace KarambaIDEA.IDEA
             int beamId = refBeam + 1;
             BeamData beamData = openModel.Connections[0].Beams[refBeam];
             PlateData plateData = openModel.Connections[0].Plates[number - 1 - 100];
-            CreateWeld(openModel,  outerPoint, movedPoint, beamData.OriginalModelId, plateData.OriginalModelId);
+            CreateWeld(openModel, outerPoint, movedPoint, beamData.OriginalModelId, plateData.OriginalModelId);
             CreateWeld(openModel, movedPoint, upperPoint, beamData.OriginalModelId, plateData.OriginalModelId);
             //(openModel.Connections[0].Plates ?? (openModel.Connections[0].Plates = new List<IdeaRS.OpenModel.Connection.PlateData>())).Add(plateData);
 
@@ -725,7 +717,7 @@ namespace KarambaIDEA.IDEA
             openModel.Connections[0].Welds.Add(new IdeaRS.OpenModel.Connection.WeldData
             {
                 Id = openModel.Connections[0].Welds.Count + 1,
-                ConnectedPartIds = new List<string>() { beamData.OriginalModelId, plateData.OriginalModelId},
+                ConnectedPartIds = new List<string>() { beamData.OriginalModelId, plateData.OriginalModelId },
                 Start = new IdeaRS.OpenModel.Geometry3D.Point3D()
                 {
                     X = -2,
@@ -743,6 +735,7 @@ namespace KarambaIDEA.IDEA
             });
             return openModel;
         }
+
         static public OpenModel CreatePlate(OpenModel openModel, double height, double width, double moveX)
         {
 
@@ -766,7 +759,7 @@ namespace KarambaIDEA.IDEA
                 Id = number,
                 Material = openModel.MatSteel.First().Name,
                 OriginalModelId = number.ToString(),//inique identificator from original model [string]
-                Origin = new IdeaRS.OpenModel.Geometry3D.Point3D             
+                Origin = new IdeaRS.OpenModel.Geometry3D.Point3D
                 {
                     X = point.X + moveX,
                     Y = point.Y - 0.5 * width,
@@ -794,6 +787,7 @@ namespace KarambaIDEA.IDEA
             });
             return openModel;
         }
+
         static public OpenModel CreateBoltgrid(OpenModel openModel, int firstPlate, int secondPlate, double width, double height)
         {
             PlateData plateData = openModel.Connections[0].Plates[firstPlate];
@@ -816,7 +810,7 @@ namespace KarambaIDEA.IDEA
             //openModel.Connections[0].Plates.Add(new IdeaRS.OpenModel.Connection.PlateData
             IdeaRS.OpenModel.Connection.BoltGrid boltGrid = new IdeaRS.OpenModel.Connection.BoltGrid()
             {
-                Id = number+1,
+                Id = number + 1,
                 ConnectedPartIds = new List<string>(),
                 Diameter = 0.016,
                 HeadDiameter = 0.024,
@@ -875,8 +869,6 @@ namespace KarambaIDEA.IDEA
             PlateData plateData = openModel.Connections[0].Plates[firstPlate];
             PlateData plateTwo = openModel.Connections[0].Plates[secondPlate];
 
-           
-
             int pointId = openModel.ConnectionPoint[0].Id;
             Point3D point = openModel.Point3D.First(a => a.Id == pointId);
 
@@ -895,13 +887,13 @@ namespace KarambaIDEA.IDEA
             {
                 Id = number + 1,
                 ConnectedPartIds = new List<string>(),
-                Diameter = bolt.Diameter/1000,
-                HeadDiameter = bolt.HeadDiameter/1000,
-                DiagonalHeadDiameter = bolt.HeadDiagonalDiameter/1000,
-                HeadHeight = bolt.HeadHeight/1000,
-                BoreHole = bolt.HoleDiameter/1000,
+                Diameter = bolt.Diameter / 1000,
+                HeadDiameter = bolt.HeadDiameter / 1000,
+                DiagonalHeadDiameter = bolt.HeadDiagonalDiameter / 1000,
+                HeadHeight = bolt.HeadHeight / 1000,
+                BoreHole = bolt.HoleDiameter / 1000,
                 TensileStressArea = bolt.CoreArea,
-                NutThickness = bolt.NutThickness/1000,
+                NutThickness = bolt.NutThickness / 1000,
                 AnchorLen = 0.05,
                 Material = bolt.BoltSteelGrade.name,
                 Standard = bolt.Name,
