@@ -23,7 +23,7 @@ namespace KarambaIDEA.Grasshopper
 {
     public class CreateProject : GH_Component
     {
-        public CreateProject() : base("Create Project", "CP", "Exporting selected joint to IDEA Statica Connection", "KarambaIDEA", "1. CreateProject")
+        public CreateProject() : base("Create Project", "CP", "Exporting selected joint to IDEA Statica Connection", "KarambaIDEA", "1. Project")
         {
             //TODO: below code will trow error if idea dlls are not found.
             /*
@@ -32,6 +32,8 @@ namespace KarambaIDEA.Grasshopper
             AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(Utils.IdeaResolveEventHandler);
             */
         }
+
+        public override GH_Exposure Exposure { get { return GH_Exposure.primary; } }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
@@ -329,27 +331,11 @@ namespace KarambaIDEA.Grasshopper
             project.SetBrandNames(project);
 
             //Link output
-            DA.SetData(0, project);
+            DA.SetData(0, new GH_KarambaIdeaProject(project));
         }
 
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.KarambaIDEA_logo; } }
 
-        /// <summary>
-        /// Provides an Icon for every component that will be visible in the User Interface.
-        /// Icons need to be 24x24 pixels.
-        /// </summary>
-        protected override System.Drawing.Bitmap Icon
-        {
-            get
-            {
-                
-                return Properties.Resources.KarambaIDEA_logo;
-                
-            }
-        }
-
-        public override Guid ComponentGuid
-        {
-            get { return new Guid("ca79dc4b-64f2-4627-93b4-066ad7649621"); }
-        }
+        public override Guid ComponentGuid { get { return new Guid("ca79dc4b-64f2-4627-93b4-066ad7649621"); } }
     }
 }

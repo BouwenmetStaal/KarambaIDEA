@@ -17,10 +17,12 @@ namespace KarambaIDEA
 {
     public class CreateAndCalculateIDEAfileSS_OBSOLETE : GH_Component
     {
-        public CreateAndCalculateIDEAfileSS_OBSOLETE() : base("Create and Calculate IDEA File", "Create and Calculate IDEA File", "Create and Calculate IDEA file", "KarambaIDEA", "5. IDEA utilities")
+        public CreateAndCalculateIDEAfileSS_OBSOLETE() : base("Create and Calculate IDEA File", "Create and Calculate IDEA File", "Create and Calculate IDEA file", "KarambaIDEA", "5. IDEA Connection")
         {
 
         }
+
+        public override GH_Exposure Exposure { get { return GH_Exposure.hidden; } }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {

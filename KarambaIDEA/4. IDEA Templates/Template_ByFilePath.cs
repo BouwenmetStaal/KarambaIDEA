@@ -19,9 +19,11 @@ using System.IO;
 
 namespace KarambaIDEA.Grasshopper
 {
-    public class TemplateByFilePath : GH_Component
+    public class IDEATemplateByFilePath : GH_Component
     {
-        public TemplateByFilePath() : base("Template by Filepath", "Template by Filepath", "Template by Filepath", "KarambaIDEA", "4. IDEA Templates") { }
+        public IDEATemplateByFilePath() : base("Import IDEA Template", "ImptIDEATemp", "Import an IDEA Template by Filepath (.ideatemp)", "KarambaIDEA", "4. IDEA Templates") { }
+
+        public override GH_Exposure Exposure { get { return GH_Exposure.primary; } }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
@@ -55,9 +57,11 @@ namespace KarambaIDEA.Grasshopper
 
     }
 
-    public class DeconstructTemplate : GH_Component
+    public class IDEATemplateDeconstruct : GH_Component
     {
-        public DeconstructTemplate() : base("Deconstruct Template", "DecTemplate", "Deconstruct an Imported Template", "KarambaIDEA", "4. IDEA Templates") { }
+        public IDEATemplateDeconstruct() : base("Deconstruct IDEA Template", "DecIDEATemp", "Deconstruct an Imported IDEA Template into its parts", "KarambaIDEA", "4. IDEA Templates") { }
+
+        public override GH_Exposure Exposure { get { return GH_Exposure.primary; } }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
@@ -87,134 +91,97 @@ namespace KarambaIDEA.Grasshopper
             DA.SetDataList(0, conParams);
         }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.TemplateFromFilePath; } }
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.DeconstructTemplate; } }
         public override Guid ComponentGuid { get { return new Guid("947B2E43-DFEC-43FF-8D50-B37E6194F452"); } }
     }
 
-    public class SetParameter : GH_Component
+    public class TemplateAssignIdeaFull : GH_Component
     {
-        public SetParameter() : base("Set Param Value", "SetParam", "Set the Value of a Parameter", "KarambaIDEA", "4. IDEA Templates") { }
+        public TemplateAssignIdeaFull() : base("IDEA Template: Full", "IDEATempAssign", "Assign a Template by referenced IdeaCon (.ideatemp) Template", "KarambaIDEA", "4. IDEA Templates") { }
 
+        public override GH_Exposure Exposure { get { return GH_Exposure.secondary; } }
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddGenericParameter("Parameter", "P", "Parameter", GH_ParamAccess.item);
-            pManager.AddGenericParameter("Value", "V", "Value to Set to Parameter", GH_ParamAccess.item);
+            pManager.AddGenericParameter("IDEA Template", "T", "IDEA Template which has been referenced from a Idea Template file", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Parameter Mod", "P", "A list of IDEA Parameter modifications to be applied to the Connection after the template has been assigned", GH_ParamAccess.item);
+            pManager[1].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Parameter", "P", "Updated Parmater", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Template Assign", "A", "Template Assign which will assign the Template to the applied Joint", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            GH_IdeaParameter ghParam = null;
+            GH_IdeaTemplate IdeaTemplate = null;
 
-            if (DA.GetData<GH_IdeaParameter>(0, ref ghParam))
-            {
-                IGH_Goo value = null;
-                DA.GetData<IGH_Goo>(1, ref value);
+            DA.GetData<GH_IdeaTemplate>(0, ref IdeaTemplate);
 
-                string textvalue = value.ToString();
+            GH_IdeaModification ghMod = null;
 
-                IIdeaParameter param = ghParam.Value;
+            IdeaModifyConnectionParameters paramsMod = new IdeaModifyConnectionParameters(new List<IIdeaParameter>());
 
-                if (param is IdeaParameterInt intparam)
-                {
-                    int id;
-                    GH_Convert.ToInt32(value, out id, GH_Conversion.Both);
-                    IdeaParameterInt clone = new IdeaParameterInt(intparam.Clone() as parameter);
-                    clone.SetValue(id);
-                    DA.SetData(0, new GH_IdeaParameter(clone));
-                    return;
-                }
-                else if (param is IdeaParameterFloat floatparam)
-                {
-                    double number;
-                    GH_Convert.ToDouble(value, out number, GH_Conversion.Both);
-                    IdeaParameterFloat clone = new IdeaParameterFloat(floatparam.Clone() as parameter);
-                    clone.SetValue(number);
-                    DA.SetData(0, new GH_IdeaParameter(clone));
-                    return;
-                }
+            if (DA.GetData<GH_IdeaModification>(1, ref ghMod))
+                if (ghMod.Value is IdeaModifyConnectionParameters pmod)
+                    paramsMod = pmod;
                 else
-                {
-                    IdeaParameterString clone = new IdeaParameterString(param.Clone() as parameter);
-                    clone.SetValue(textvalue);
-                    DA.SetData(0, new GH_IdeaParameter(clone));
-                    return;
-                }
-            }
+                    base.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Only parameter modifications can be provided");
+
+            IdeaTemplateAssignFull template = new IdeaTemplateAssignFull(IdeaTemplate.Value, paramsMod);
+
+            DA.SetData(0, new GH_JointTemplateAssign(template));
         }
 
         protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.TemplateFromFilePath; } }
-        public override Guid ComponentGuid { get { return new Guid("65D37365-755F-4998-99CD-FDA73C8E2788"); } }
+        public override Guid ComponentGuid { get { return new Guid("0FA208EE-B4D9-43F1-8748-61F8723143E0"); } }
+
     }
 
-    public class RefConnectionByFilePath : GH_Component
+    //TO FINISH
+    public class TemplateAssignIdeaPartial : GH_Component
     {
-        public RefConnectionByFilePath() : base("Reference Connection", "RefCon", "Reference an existing connection which has been created manually by a filepath", "KarambaIDEA", "4. IDEA Templates") { }
+        public TemplateAssignIdeaPartial() : base("IDEA Template: Partial", "IdeaPartTempAssign", "Assign a Partial Template by referenced IdeaCon (.ideatemp) Template and Member Indexs", "KarambaIDEA", "4. IDEA Templates") { }
 
+        public override GH_Exposure Exposure { get { return GH_Exposure.secondary; } }
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
-            pManager.AddTextParameter("Path", "P", "Filepath of existing connection file to import (.ideaCon)", GH_ParamAccess.item);
+            pManager.AddGenericParameter("IDEA Template", "T", "IDEA Template which has been referenced from a Idea Template file", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Support Member Id", "S", "The Id of the supporting member in the Template", GH_ParamAccess.item);
+            pManager.AddIntegerParameter("Connecting Member Ids", "C", "List of Id's of connection members int the Template", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Parameter Mod", "P", "A list of IDEA Parameter modifications to be applied to the Connection after the template has been assigned", GH_ParamAccess.item);
+            pManager[3].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddGenericParameter("Connection", "C", "Referenced connection which can be put into Calculate Component", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Template Assign", "A", "Template Assign which will assign the Template to the applied Joint", GH_ParamAccess.item);
         }
 
         protected override void SolveInstance(IGH_DataAccess DA)
         {
-            string path = "";
+            GH_IdeaTemplate IdeaTemplate = null;
 
-            DA.GetData<string>(0, ref path);
+            DA.GetData<GH_IdeaTemplate>(0, ref IdeaTemplate);
 
-            if (!path.EndsWith(".ideaCon"))
-            {
-                base.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Incorrect filepath extension.");
-                return;
-            }
+            GH_IdeaModification ghMod = null;
 
-            IdeaConnectionContainer connectionContainer = new IdeaConnectionContainer(path, -1);
+            IdeaModifyConnectionParameters paramsMod = new IdeaModifyConnectionParameters(new List<IIdeaParameter>());
 
-            DA.SetData(0, new GH_IdeaConnection(connectionContainer));
+            if (DA.GetData<GH_IdeaModification>(1, ref ghMod))
+                if (ghMod.Value is IdeaModifyConnectionParameters pmod)
+                    paramsMod = pmod;
+                else
+                    base.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Only parameter modifications can be provided");
+
+            IdeaTemplateAssignFull template = new IdeaTemplateAssignFull(IdeaTemplate.Value, paramsMod);
+
+            DA.SetData(0, new GH_JointTemplateAssign(template));
         }
 
         protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.TemplateFromFilePath; } }
-        public override Guid ComponentGuid { get { return new Guid("CAF6BB4D-4DB5-4856-BECE-BF744F9E9ED4"); } }
+        public override Guid ComponentGuid { get { return new Guid("E11068BB-B4C3-4FCB-82C7-154633749C94"); } }
 
-    }
-
-    public class ConnectionModifyParameters : GH_Component
-    {
-        public ConnectionModifyParameters() : base("Modify Con Parameters", "ModParams", "Provide a list of Parameters to Modify in the Connection Model", "KarambaIDEA", "4. IDEA Templates") { }
-
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
-        {
-            pManager.AddGenericParameter("Parameters", "P", "Parameter", GH_ParamAccess.list);
-        }
-
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
-        {
-            pManager.AddGenericParameter("Modification", "M", "Connection Modification", GH_ParamAccess.item);
-        }
-
-        protected override void SolveInstance(IGH_DataAccess DA)
-        {
-            List<GH_IdeaParameter> ghParams = new List<GH_IdeaParameter>();
-
-            if (DA.GetDataList<GH_IdeaParameter>(0, ghParams))
-            {
-                IdeaModifyConnectionParameters conModification = new IdeaModifyConnectionParameters(ghParams.Select(x => x.Value).ToList());
-
-                DA.SetData(0, new GH_IdeaModification(conModification));
-            }
-        }
-
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.TemplateFromFilePath; } }
-        public override Guid ComponentGuid { get { return new Guid("09821E93-72F6-4E04-825D-986858ABD996"); } }
     }
 
     public class AssignTemplateByFilePathSS_OBSOLETE : GH_Component
@@ -337,123 +304,4 @@ namespace KarambaIDEA.Grasshopper
 
     }
 
-    public class AssignTemplateByFilePathSS_OBSOLETE : GH_Component
-    {
-        public AssignTemplateByFilePathSS_OBSOLETE() : base("Assign Template by Filepath", "Assign a Template by Filepath", "Template by Filepath", "KarambaIDEA", "4. IDEA Templates")
-        {
-
-        }
-
-        public override GH_Exposure Exposure { get { return GH_Exposure.hidden; } }
-        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
-        {
-            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
-            pManager.AddTextParameter("BrandNames", "BrandNames", "BrandNames to apply template to", GH_ParamAccess.list, "");
-            pManager.AddTextParameter("Template file path", "Template filepath", "", GH_ParamAccess.item);
-        }
-
-        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
-        {
-            pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
-            pManager.AddTextParameter("Message", "Message", "", GH_ParamAccess.list);
-            pManager.AddBrepParameter("Brep", "Brep", "", GH_ParamAccess.list);
-        }
-
-        protected override void SolveInstance(IGH_DataAccess DA)
-        {
-
-            //Input variables      
-            Project sourceProject = new Project();
-            string ideaTemplateLocation = null;
-            List<GH_String> brandNamesDirty = new List<GH_String>();
-            List<string> brandNames = new List<string>();
-
-            //Output variables
-            List<string> messages = new List<string>();
-            List<Brep> breps = new List<Brep>();
-
-            //Link input
-            DA.GetData(0, ref sourceProject);
-            DA.GetDataList(1, brandNamesDirty);
-            DA.GetData(2, ref ideaTemplateLocation);
-
-            //Check if path exists
-            if (!(File.Exists(ideaTemplateLocation)))
-            {
-                throw new ArgumentNullException("Template filepath incorrect");
-            }
-
-            //Clone project
-            Project project = null;
-            if (Project.copyProject == true) { project = sourceProject.Clone(); }
-            else { project = sourceProject; }
-
-            //process
-            if (brandNamesDirty.Where(x => x != null && !string.IsNullOrWhiteSpace(x.Value)).Count() > 0)
-            {
-                List<string> brandNamesDirtyString = brandNamesDirty.Select(x => x.Value.ToString()).ToList();
-                brandNames = ImportGrasshopperUtils.DeleteEnterCommandsInGHStrings(brandNamesDirtyString);
-            }
-            
-            if (brandNames.Count != 0)
-            {
-                foreach (string brandName in brandNames)
-                {
-                    foreach (Joint joint in project.joints)
-                    {
-                        if (brandName == joint.brandName)
-                        {
-                            SetTemplate(ideaTemplateLocation, joint, breps);
-                        }
-                    }
-                }
-            }
-            /*
-            else
-            {
-                foreach (Joint joint in project.joints)
-                {
-                    SetTemplate(ideaTemplateLocation, joint, breps);
-                }
-            }
-            */
-            messages = project.MakeTemplateJointMessage(ideaTemplateLocation);
-
-            //link output
-            DA.SetData(0, project);
-            DA.SetDataList(1, messages);
-            DA.SetDataList(2, breps);
-        }
-
-        private static void SetTemplate(string ideaTemplateLocation, Joint joint, List<Brep> breps)
-        {
-            joint.ideaTemplateLocation = ideaTemplateLocation;
-            joint.template = new Template();
-            joint.template.workshopOperations = Template.WorkshopOperations.TemplateByFile;
-            //BREP add sphere
-            Point3d p = ImportGrasshopperUtils.CastPointToRhino(joint.centralNodeOfJoint);
-            double radius = 200; //radius in mm
-            Rhino.Geometry.Sphere sphere = new Sphere(p, radius/1000);
-            breps.Add(sphere.ToBrep());
-        }
-
-        /// <summary>
-        /// Provides an Icon for every component that will be visible in the User Interface.
-        /// Icons need to be 24x24 pixels.
-        /// </summary>
-        protected override System.Drawing.Bitmap Icon
-        {
-            get
-            {
-
-                return Properties.Resources.TemplateFromFilePath;
-            }
-        }
-        public override Guid ComponentGuid
-        {
-            get { return new Guid("f48591d0-bdb2-45da-b347-2153af24f465"); }
-        }
-
-
-    }
 }

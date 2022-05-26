@@ -252,7 +252,10 @@ namespace KarambaIDEA.Core
             }
         }
 
-        
+        public List<string> GetBrandNames()
+        {
+            return joints.Select(x => x.brandName).Distinct().ToList();
+        }
 
         /// <summary>
         /// Create Folder to save IDEA files on location specified, or on default location
@@ -382,5 +385,16 @@ namespace KarambaIDEA.Core
             return clone;
         }
 
+        public override string ToString()
+        {
+            return "KarambaIDEA Project: " + projectName + "\r\n" +
+                "    Joints: " + joints.Count() + "\r\n" +
+                "    Materials: " + materials.Count() + "\r\n" +
+                "    Cross Sections: " + crossSections.Count() + "\r\n" +
+                "    Elements: " + elements.Count() + "\r\n" +
+                "    Members: " + elements.Count() + "\r\n" +
+                "    Load Cases: " + loadcases.Count() + "\r\n" +
+                "    Load Combinations: " + "0";
+        }
     }
 }

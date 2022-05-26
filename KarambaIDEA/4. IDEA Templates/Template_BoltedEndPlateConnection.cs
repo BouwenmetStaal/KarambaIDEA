@@ -16,14 +16,59 @@ using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 using KarambaIDEA.Core.JointTemplate;
 
-namespace KarambaIDEA
+namespace KarambaIDEA.Grasshopper
 {
+
     public class Template_BoltedEndPlateConnection : GH_Component
     {
-        public Template_BoltedEndPlateConnection() : base("Template: Bolted endplate connection", "Template: Bolted endplate connection", "Template: Bolted endplate connection", "KarambaIDEA", "4. IDEA Templates")
+        public Template_BoltedEndPlateConnection() : base("Coded Template: Bolted Endplate", "CTempBoltedEndplate", "Coded Template: Bolted endplate connection", "KarambaIDEA", "4. IDEA Templates") { }
+
+        public override GH_Exposure Exposure { get { return GH_Exposure.tertiary; } }
+
+        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        {
+            pManager.AddNumberParameter("Thickness endplate [mm]", "Thickness endplate [mm]", "", GH_ParamAccess.item, 10.0);
+            pManager.AddNumberParameter("Edge distance [mm]", "Edge distance [mm]", "", GH_ParamAccess.item, 30);
+            pManager.AddTextParameter("Bolttype", "Bolttype", "", GH_ParamAccess.item, "M20");
+            pManager.AddTextParameter("Boltsteelgrade", "Boltsteelgrade", "", GH_ParamAccess.item, "8.8");
+        }
+
+        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Template Assign", "A", "Template Assign which will assign the Template to the applied Joint", GH_ParamAccess.item);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            double tplate = new double();
+            string boltsteelgrade = "10.9";
+            string bolttypename = "M30";
+            double edgedistance = 50;
+
+            DA.GetData(0, ref tplate);
+            DA.GetData(1, ref edgedistance);
+            DA.GetData(2, ref bolttypename);
+            DA.GetData(3, ref boltsteelgrade);
+
+            CodedTemplate template = new CodedTemplate_BoltedEndPlate(tplate, edgedistance, bolttypename, boltsteelgrade);
+
+            DA.SetData(0, new GH_JointTemplateAssign(new IdeaTemplateAssignCoded(template)));
+
+        }
+
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.TempBoltedEndplateConnection; } }
+        public override Guid ComponentGuid { get { return new Guid("ACABABD1-9349-47D4-9D87-1572E23688AC"); } }
+    }
+
+
+    public class Template_BoltedEndPlateConnectionSS_OBSOLETE : GH_Component
+    {
+        public Template_BoltedEndPlateConnectionSS_OBSOLETE() : base("Coded Template: Bolted Endplate", "CTempBoltedEndplate", "Coded Template: Bolted endplate connection", "KarambaIDEA", "4. IDEA Templates")
         {
 
         }
+
+        public override GH_Exposure Exposure { get { return GH_Exposure.hidden; } }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
@@ -158,7 +203,6 @@ namespace KarambaIDEA
                 joint.template.welds.Add(new Weld("FlangeweldBot", Weld.WeldType.DoubleFillet, weldsize, beam.width));
                 double weldsizeWeb = Weld.CalWeldSizeFullStrenth90deg(tplate, beam.thicknessWeb, beam.material, Weld.WeldType.DoubleFillet);
                 joint.template.welds.Add(new Weld("Webweld", Weld.WeldType.DoubleFillet, weldsizeWeb, beam.height));
-
 
 
                 //Step VI - BREP beam

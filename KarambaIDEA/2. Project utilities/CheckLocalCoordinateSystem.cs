@@ -15,7 +15,7 @@ using KarambaIDEA.IDEA;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 
-namespace KarambaIDEA
+namespace KarambaIDEA.Grasshopper
 {
     public class CheckLocalCoordinateSystem : GH_Component
     {
@@ -41,11 +41,12 @@ namespace KarambaIDEA
         protected override void SolveInstance(IGH_DataAccess DA)
         {
 
-            //Input variables
-            Project project = new Project();
+            GH_KarambaIdeaProject ghProject = null;
 
             //Link input
-            DA.GetData(0, ref project);
+            DA.GetData<GH_KarambaIdeaProject>(0, ref ghProject);
+
+            Project project = ghProject.Value;
 
             //output variables
             List<Vector3d> locXvecs = new List<Vector3d>();

@@ -103,6 +103,8 @@
     <Reference Include="PresentationFramework" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="1. CreateProject\DeconstructProject.cs" />
+    <Compile Include="1. CreateProject\JointComponents.cs" />
     <Compile Include="2. Project utilities\CroSecClass.cs" />
     <Compile Include="2. Project utilities\CheckLocalCoordinateSystem.cs" />
     <Compile Include="2. Project utilities\RetrieveLinesPoints.cs" />
@@ -117,6 +119,8 @@
     <Compile Include="5. IDEA utilities\CreateAndCalculateIDEAfile.cs" />
     <Compile Include="5. IDEA utilities\CreateIDEAfile.cs" />
     <Compile Include="5. IDEA utilities\GetConnectionResults.cs" />
+    <Compile Include="5. IDEA utilities\ModifyComponents.cs" />
+    <Compile Include="5. IDEA utilities\ParameterComponents.cs" />
     <Compile Include="6. Cost calculation\BoltsCosts.cs" />
     <Compile Include="6. Cost calculation\CostCalculator.cs" />
     <Compile Include="6. Cost calculation\TotalWeight.cs" />
@@ -166,6 +170,15 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\SetParameterValue.png" />
+    <None Include="Resources\ModifyLoading.png" />
+    <None Include="Resources\ModifyConParameters.png" />
+    <None Include="Resources\GeneralIcon.png" />
+    <None Include="Resources\ExportIOM.png" />
+    <None Include="Resources\DeconstructTemplate.png" />
+    <None Include="Resources\DeconstructProject.png" />
+    <None Include="Resources\DeconstructJoint.png" />
+    <None Include="Resources\Deconstruct ItemResult.png" />
     <None Include="Resources\TrussJoint-01.png" />
     <None Include="Resources\CroSecClass-01-01.png" />
     <None Include="Resources\CroSecClass-01.png" />
@@ -193,6 +206,7 @@
     <None Include="Resources\bolts-01-01.png" />
     <None Include="Resources\ATempWeldAll-01.png" />
     <None Include="Resources\ATempWeldAll-01-01.png" />
+    <None Include="Resources\AddConnection.png" />
     <Content Include="Resources\continues2members.contemp" />
     <None Include="Resources\TempWeldAllMembers.png" />
     <None Include="Resources\TempBoltedEndplateConnection.png" />

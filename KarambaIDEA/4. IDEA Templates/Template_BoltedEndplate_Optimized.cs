@@ -17,14 +17,59 @@ using Grasshopper.Kernel.Types;
 using KarambaIDEA.Core.JointTemplate;
 using System.Runtime.InteropServices;
 
-namespace KarambaIDEA._5._IDEA_Templates
+namespace KarambaIDEA.Grasshopper
 {
     public class Template_BoltedEndplate_Optimized : GH_Component
     {
-        public Template_BoltedEndplate_Optimized() : base("Template: Bolted endplate optimizer", "T: BEO", "Template: Bolted endplate optimizer", "KarambaIDEA", "4. IDEA Templates")
+        public Template_BoltedEndplate_Optimized() : base("Coded Template: Bolted Endplate Optimizer", "T: BEO", "Template: Bolted endplate optimizer", "KarambaIDEA", "4. IDEA Templates")
         {
 
         }
+
+        public override GH_Exposure Exposure { get { return GH_Exposure.tertiary; } }
+
+        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        {
+            pManager.AddNumberParameter("Thickness endplate [mm]", "Thickness endplate [mm]", "", GH_ParamAccess.item, 10.0);
+            pManager.AddNumberParameter("factor Prying forces", "factor Prying forces", "", GH_ParamAccess.item, 0.5);
+            pManager.AddBooleanParameter("Stiffeners?", "Stiffeners?", "Does the connection include stiffeners?", GH_ParamAccess.item, false);
+        }
+
+        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Template Assign", "A", "Template Assign which will assign the Template to the applied Joint", GH_ParamAccess.item);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+
+            double tplate = new double();
+            List<string> brandNames = new List<string>();
+            double pryingForcesFactor = new double();
+            bool stiffener = new bool();
+
+            DA.GetData(0, ref tplate);
+            DA.GetData(1, ref pryingForcesFactor);
+            DA.GetData(2, ref stiffener);
+
+            CodedTemplate template = new CodedTemplate_BoltedEndPlateOptimizer(tplate, pryingForcesFactor, stiffener);
+
+            DA.SetData(0, new GH_JointTemplateAssign(new IdeaTemplateAssignCoded(template)));
+        }
+
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.TempBoltedEndplateOptimizer2_01; } }
+        public override Guid ComponentGuid { get { return new Guid("A56C195C-6A3E-45D2-BE27-4E12CEC520AA"); } }
+    }
+
+
+    public class Template_BoltedEndplate_OptimizedSS_OBSOLETE : GH_Component
+    {
+        public Template_BoltedEndplate_OptimizedSS_OBSOLETE() : base("Coded Template: Bolted Endplate Optimizer", "T: BEO", "Template: Bolted endplate optimizer", "KarambaIDEA", "4. IDEA Templates")
+        {
+
+        }
+
+        public override GH_Exposure Exposure { get { return GH_Exposure.hidden; } }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {

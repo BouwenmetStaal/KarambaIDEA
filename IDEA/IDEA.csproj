@@ -34,12 +34,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="Google.Protobuf, Version=3.15.0.0, Culture=neutral, PublicKeyToken=a7d26565bac4d604, processorArchitecture=MSIL">
+      <HintPath>..\packages\Google.Protobuf.3.15.0\lib\net45\Google.Protobuf.dll</HintPath>
+    </Reference>
     <Reference Include="IdeaRS.OpenModel, Version=21.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\IdeaStatiCa.OpenModel.21.0.2.289\lib\net48\IdeaRS.OpenModel.dll</HintPath>
+      <HintPath>..\packages\IdeaStatiCa.OpenModel.22.0.0.2960\lib\netstandard2.0\IdeaRS.OpenModel.dll</HintPath>
     </Reference>
     <Reference Include="IdeaStatiCa.Plugin, Version=21.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\IdeaStatiCa.Plugin.21.0.2.289\lib\net48\IdeaStatiCa.Plugin.dll</HintPath>
-      <EmbedInteropTypes>False</EmbedInteropTypes>
+      <HintPath>..\packages\IdeaStatiCa.Plugin.22.0.0.2960\lib\net48\IdeaStatiCa.Plugin.dll</HintPath>
+    </Reference>
+    <Reference Include="IdeaStatiCa.Public, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\IdeaStatiCa.Public.22.0.0.2960\lib\netstandard2.0\IdeaStatiCa.Public.dll</HintPath>
     </Reference>
     <Reference Include="Newtonsoft.Json, Version=13.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
       <HintPath>..\packages\Newtonsoft.Json.13.0.1\lib\net45\Newtonsoft.Json.dll</HintPath>
@@ -53,10 +58,10 @@
     </Reference>
     <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.Drawing" />
     <Reference Include="System.Numerics" />
-    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=4.0.4.1, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
-      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.4.5.3\lib\net461\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
-      <Private>False</Private>
+    <Reference Include="System.Runtime.CompilerServices.Unsafe, Version=5.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
+      <HintPath>..\packages\System.Runtime.CompilerServices.Unsafe.5.0.0\lib\net45\System.Runtime.CompilerServices.Unsafe.dll</HintPath>
     </Reference>
     <Reference Include="System.Runtime.Remoting" />
     <Reference Include="System.Runtime.Serialization" />
@@ -74,12 +79,16 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="IdeaObject.cs" />
+    <Compile Include="IdeaTemplatesCoded.cs" />
     <Compile Include="IdeaConnectionResult.cs" />
     <Compile Include="ConnectionTemplateGenerator.cs" />
     <Compile Include="HiddenCalculationV20.cs" />
     <Compile Include="IdeaConnection.cs" />
+    <Compile Include="IdeaJoint.cs" />
     <Compile Include="IdeaModification.cs" />
     <Compile Include="IdeaParameters.cs" />
+    <Compile Include="IdeaService.cs" />
     <Compile Include="OpenModelGenerator.cs" />
     <Compile Include="ProjectExtensions.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -92,7 +101,7 @@
       <DependentUpon>ProgressWindow.xaml</DependentUpon>
     </Compile>
     <Compile Include="Utils.cs" />
-    <Compile Include="Templates.cs" />
+    <Compile Include="IdeaTemplates.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Core\Core.csproj">
@@ -103,6 +112,7 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="libgrpc_csharp_ext.x64.so" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
       <Generator>SettingsSingleFileGenerator</Generator>

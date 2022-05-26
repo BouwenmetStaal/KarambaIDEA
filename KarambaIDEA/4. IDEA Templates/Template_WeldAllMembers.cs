@@ -15,15 +15,43 @@ using KarambaIDEA.IDEA;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
 
-namespace KarambaIDEA
+namespace KarambaIDEA.Grasshopper
 {
+
     public class Template_WeldAllMembers : GH_Component
     {
-        public Template_WeldAllMembers() : base("Template: Weld all members", "Template: Weld all members", "All members in joint will be connected by weld according to the hierarchy", "KarambaIDEA", "4. IDEA Templates")
+        public Template_WeldAllMembers() : base("Coded Template: Weld all Members", "CTemp:Welded", "All members in joint will be connected by weld according to the hierarchy", "KarambaIDEA", "4. IDEA Templates")
         {
 
         }
 
+        public override GH_Exposure Exposure { get { return GH_Exposure.tertiary; } }
+        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager) { }
+
+        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Template Assign", "A", "Template Assign which will assign the Template to the applied Joint", GH_ParamAccess.item);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            IdeaTemplateAssignCoded templateAssign = new IdeaTemplateAssignCoded(new CodedTemplate_WeldAllMembers());
+
+            DA.SetData(0, new GH_JointTemplateAssign(templateAssign));
+        }
+
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.TempWeldAllMembers; } }
+        public override Guid ComponentGuid { get { return new Guid("4B41B200-2880-4C85-A90E-D4B26E046F63"); } }
+    }
+
+    public class Template_WeldAllMembersSS_OBSOLETE : GH_Component
+    {
+        public Template_WeldAllMembersSS_OBSOLETE() : base("Coded Template: Weld all Members", "CTemp:Welded", "All members in joint will be connected by weld according to the hierarchy", "KarambaIDEA", "4. IDEA Templates")
+        {
+
+        }
+
+        public override GH_Exposure Exposure { get { return GH_Exposure.hidden; } }
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Project", "Project", "Project object of KarambaIdeaCore", GH_ParamAccess.item);
