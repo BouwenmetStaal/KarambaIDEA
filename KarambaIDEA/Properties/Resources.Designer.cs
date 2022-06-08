@@ -153,6 +153,16 @@ namespace KarambaIDEA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap CreateProject {
+            get {
+                object obj = ResourceManager.GetObject("CreateProject", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap CroSecClass_01 {
             get {
                 object obj = ResourceManager.GetObject("CroSecClass_01", resourceCulture);
