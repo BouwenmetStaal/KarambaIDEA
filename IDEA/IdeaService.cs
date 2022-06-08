@@ -20,6 +20,19 @@ namespace KarambaIDEA.IDEA
     {
         public static string GetLatestVersionPath()
         {
+            try
+            {
+                string programsFolder = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
+                string[] ideaInstalls = Directory.GetDirectories(Path.Combine(programsFolder, "IDEA StatiCa"));
+                List<string> orderedInstalls = ideaInstalls.OrderByDescending(x => Double.Parse(Path.GetFileName(x).Split(' ')[1], CultureInfo.InvariantCulture.NumberFormat)).ToList();
+
+                return orderedInstalls[0];
+            }
+            catch
+            {
+                throw new ArgumentNullException("IDEA StatiCa installation could not be found in Program Files Directory");
+            }
+
 #warning Update this to find the version through Programs folder.
             try
             {

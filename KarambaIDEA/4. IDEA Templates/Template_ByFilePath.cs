@@ -44,12 +44,18 @@ namespace KarambaIDEA.Grasshopper
             if (!path.EndsWith(".contemp"))
             {
                 base.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Incorrect filepath extension.");
-                return;
+                DA.SetData(0, null);
             }
-
-            IdeaTemplate template = new IdeaTemplate(path);
-
-            DA.SetData(0, new GH_IdeaTemplate(template));
+            if (File.Exists(path))
+            {
+                IdeaTemplate template = new IdeaTemplate(path);
+                DA.SetData(0, new GH_IdeaTemplate(template));
+            }
+            else
+            {
+                base.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Template filepath does not exist.");
+                DA.SetData(0, null);
+            }
         }
 
         protected override System.Drawing.Bitmap Icon { get {  return Properties.Resources.TemplateFromFilePath; } }

@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using KarambaIDEA.Core;
+using Newtonsoft.Json;
 using IdeaRS.OpenModel;
 using IdeaRS.OpenModel.Result;
 using IdeaRS.OpenModel.Connection;
@@ -29,6 +30,20 @@ namespace KarambaIDEA.IDEA
 
             return results;
         }
+
+        public void AddWithNameCheck(string Name, T result, int repeat)
+        {
+            string name = Name + (repeat == 0 ? "" : "(" + repeat.ToString() + ")");
+            if (this.ContainsKey(name))
+            {
+                repeat++;
+                this.AddWithNameCheck(name, result, repeat);
+            }
+            else
+            {
+                this.Add(name, result);
+            }
+        }
     }
 
     public abstract class IdeaItemResult
@@ -39,6 +54,11 @@ namespace KarambaIDEA.IDEA
         public double UnityCheck;
 
         public IdeaItemResult() { }
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
+        }
     }
 
 
@@ -145,15 +165,15 @@ namespace KarambaIDEA.IDEA
             foreach (CheckResSummary summaryResult in checkResult.CheckResSummary)
                 _summaryResults.Add(summaryResult.Name, new IdeaSummaryResult(summaryResult));
             foreach (CheckResPlate plateResult in checkResult.CheckResPlate)
-                _plateResults.Add(plateResult.Name, new IdeaPlateResult(plateResult));
+                _plateResults.AddWithNameCheck(plateResult.Name, new IdeaPlateResult(plateResult), 0);
             foreach (CheckResBolt boltResult in checkResult.CheckResBolt)
-                _boltResults.Add(boltResult.Name, new IdeaBoltResult(boltResult));
+                _boltResults.AddWithNameCheck(boltResult.Name, new IdeaBoltResult(boltResult), 0);
             foreach (CheckResWeld weldResult in checkResult.CheckResWeld)
-                _weldResults.Add(weldResult.Name, new IdeaWeldResult(weldResult));
+                _weldResults.AddWithNameCheck(weldResult.Name, new IdeaWeldResult(weldResult), 0);
             foreach (CheckResAnchor anchorResult in checkResult.CheckResAnchor)
-                _anchorResults.Add(anchorResult.Name, new IdeaAnchorResult(anchorResult));
+                _anchorResults.AddWithNameCheck(anchorResult.Name, new IdeaAnchorResult(anchorResult), 0);
             foreach (CheckResConcreteBlock concreteBlockResult in checkResult.CheckResConcreteBlock)
-                _concreteBlockResults.Add(concreteBlockResult.Name, new IdeaConcreteBlockResult(concreteBlockResult));
+                _concreteBlockResults.AddWithNameCheck(concreteBlockResult.Name, new IdeaConcreteBlockResult(concreteBlockResult),0);
 
             //To Do: Add Calculation Messages.
         }

@@ -24,7 +24,7 @@ namespace KarambaIDEA.IDEA.Parameters
 
         public override string ToString()
         {
-            return JsonConvert.SerializeObject(this);
+            return JsonConvert.SerializeObject(this, Formatting.Indented);
         }
 
         public object Clone()
@@ -139,6 +139,13 @@ namespace KarambaIDEA.IDEA.Parameters
                 return new IdeaParameterInt(parameter);
             else
                 return new IdeaParameterString(parameter);
+        }
+
+        public static List<IIdeaParameter> CreateFromJSON(string Json)
+        {
+            parameter[] projectParameters = JsonConvert.DeserializeObject<parameter[]>(Json);
+
+            return projectParameters.Select(x => Create(x)).ToList();
         }
     }
 

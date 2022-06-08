@@ -112,6 +112,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
+    <None Include="DefaultCalcCodeSetUp.json">
+      <CopyToOutputDirectory>Always</CopyToOutputDirectory>
+    </None>
     <None Include="libgrpc_csharp_ext.x64.so" />
     <None Include="packages.config" />
     <None Include="Properties\Settings.settings">
