@@ -170,6 +170,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\CreateProject.png" />
     <None Include="Resources\SetParameterValue.png" />
     <None Include="Resources\ModifyLoading.png" />
     <None Include="Resources\ModifyConParameters.png" />

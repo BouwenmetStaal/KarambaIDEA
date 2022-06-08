@@ -216,4 +216,24 @@ namespace KarambaIDEA.Grasshopper
 		public override bool Write(GH_IO.Serialization.GH_IWriter writer) { return true; }
 
 	}
+
+	public class GH_IdeaCodeSetup : GH_Goo<IdeaCodeSetup>
+	{
+		public GH_IdeaCodeSetup() : base() { }
+		public GH_IdeaCodeSetup(IdeaCodeSetup setUp) : base(setUp) { }
+		public GH_IdeaCodeSetup(GH_IdeaCodeSetup ghSetUp) : base(ghSetUp.Value) { }
+
+		public override string ToString() { return Value.ToString(); }
+		public override IGH_Goo Duplicate() { return new GH_IdeaCodeSetup(this); }
+		public override bool IsValid { get { return true; } }
+		public override string TypeDescription { get { return "IdeaItemResult"; } }
+		public override string TypeName { get { return "IdeaItemResult"; } }
+		public override bool Read(GH_IO.Serialization.GH_IReader reader) { return false; }
+		public override bool Write(GH_IO.Serialization.GH_IWriter writer) { return true; }
+
+		public void UpdateValue(IGH_Goo goo)
+		{
+			
+		}
+	}
 }

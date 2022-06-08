@@ -334,7 +334,7 @@ namespace KarambaIDEA.Grasshopper
             DA.SetData(0, new GH_KarambaIdeaProject(project));
         }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.KarambaIDEA_logo; } }
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.CreateProject; } }
 
         public override Guid ComponentGuid { get { return new Guid("ca79dc4b-64f2-4627-93b4-066ad7649621"); } }
     }

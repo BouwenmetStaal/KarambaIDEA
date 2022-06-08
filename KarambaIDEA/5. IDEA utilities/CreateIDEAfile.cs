@@ -20,7 +20,7 @@ namespace KarambaIDEA.Grasshopper
 
     public class CreateIDEAModelBIM : GH_Component
     {
-        public CreateIDEAModelBIM() : base("Export ModelBIM", "ModelBIM", "Export a Project to a ModelBIM file XML file which can be imported directly in IDEA Checkbot Application", "KarambaIDEA", "5. IDEA Connection")
+        public CreateIDEAModelBIM() : base("Export to ModelBIM", "ModelBIM", "Export a Project to a ModelBIM file XML file which can be imported directly in IDEA Checkbot Application", "KarambaIDEA", "1. Project")
         {
 
         }
@@ -98,7 +98,7 @@ namespace KarambaIDEA.Grasshopper
     {
         private bool _userFeedback = false;
 
-        public CreateIDEAfile() : base("Create IDEA File", "Create IDEA File", "Create IDEA file", "KarambaIDEA", "5. IDEA Connection") { }
+        public CreateIDEAfile() : base("Create IDEA Connection", "CreateIDEACon", "Create IDEA Connection file from the KarambaIDEA Project", "KarambaIDEA", "5. IDEA Connection") { }
 
         public override GH_Exposure Exposure { get { return GH_Exposure.primary; } }
 

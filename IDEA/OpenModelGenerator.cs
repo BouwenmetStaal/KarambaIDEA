@@ -109,6 +109,7 @@ namespace KarambaIDEA.IDEA
             openModel.OriginSettings.Author = joint.project.author;
             openModel.OriginSettings.ProjectDescription = joint.project.projectName + "_connection:" + joint.id;
             openModel.OriginSettings.DateOfCreate = DateTime.Now;
+            openModel.OriginSettings.CheckEquilibrium = true;
 
 
 			//NEW INICILI

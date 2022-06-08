@@ -7,6 +7,7 @@ using IdeaRS.OpenModel.Result;
 
 using IdeaStatiCa.Plugin;//V20
 
+using Newtonsoft.Json;
 using System.IO;
 using System.Reflection;
 using KarambaIDEA.Core;
@@ -16,6 +17,7 @@ using System.Globalization;
 using System.Windows.Threading;
 using System.Collections.Generic;
 using IdeaRS.OpenModel.Connection;
+using KarambaIDEA.IDEA.Parameters;
 
 namespace KarambaIDEA.IDEA
 {
@@ -25,16 +27,23 @@ namespace KarambaIDEA.IDEA
         private readonly string _filepath;
         private readonly string _projectName;
 
+        private string _parametersJSON;
         private string _connectionNameRef;
+
         private bool _connectionIdSet = false;
         private string _connectionId;
+
+        public List<IIdeaParameter> Parameters = new List<IIdeaParameter>();
+        
+        public IdeaCodeSetup CodeSetUp;
 
         public IdeaConnectionResult Results = null;
 
         public IdeaServiceModel ServiceModel = KarambaIDEA.IDEA.IdeaServiceModel.Instance;
 
         public string FilePath { get { return _filepath; } }
-        public string ConnectionNameRef { get { return String.IsNullOrEmpty(_connectionNameRef) ? "Default" : _connectionNameRef; } }
+        
+        public string ConnectionNameRef { get { return String.IsNullOrEmpty(_connectionNameRef) ? "Unknown" : _connectionNameRef; } }
 
         public IdeaConnection_2(string refFilePath, int jointId, bool loadInfo, string conItemName = "")
         {
@@ -53,6 +62,7 @@ namespace KarambaIDEA.IDEA
             _connectionNameRef = connection._connectionNameRef;
             _connectionIdSet = connection._connectionIdSet;
             _projectName = connection._projectName;
+            Parameters = connection.Parameters;
         }
 
         public IdeaConnection_2(string folder, KarambaIdeaJoint joint, bool userFeedback)
@@ -68,27 +78,11 @@ namespace KarambaIDEA.IDEA
             string iomFileName = Path.Combine(folder, joint.Name, "IOM.xml");
             string iomResFileName = Path.Combine(folder, joint.Name, "IOMresults.xml");
 
-            if (userFeedback)
-            {
-                pop.AddMessage(string.Format("Saving Openmodel and OpenmodelResult to XML for '{0}'", joint.Name));
-            }
-
             joint.SaveOpenModel(iomFileName);
             joint.SaveOpenModelResult(iomResFileName);
 
-            if (userFeedback)
-            {
-                pop.AddMessage(string.Format("Creating IDEA StatiCa File '{0}'", joint.Name));
-            }
-
             string filename = joint.Name + ".ideaCon";
-            string filenameSaveAs = joint.Name + "_Modified" + ".ideaCon";
             var fileConnFileNameFromLocal = Path.Combine(folder, joint.Name, filename);
-
-            if (userFeedback)
-            {
-                pop.AddMessage(string.Format("Joint '{0}' was saved to:\n {1}", joint.Name, fileConnFileNameFromLocal));
-            }
 
             var client = ServiceModel.GetConnectionService();
 
@@ -97,6 +91,7 @@ namespace KarambaIDEA.IDEA
             _filepath = fileConnFileNameFromLocal;
             JointReference = joint.id;
             SetConnectionId(client);
+            LoadCodeSetUp(client);
 
             if (joint.TemplateAssigns.Count > 0)
             {
@@ -110,24 +105,26 @@ namespace KarambaIDEA.IDEA
                         listMods.Add(new IdeaModifyApplyTemplate_Partial(partial));
                 }
                 ModifyConnection(listMods, client);
+
+                //Save as project ONLY if modifications are apparent
+                string filenameSaveAs = joint.Name + "_Modified" + ".ideaCon";
+                var fileConnFileNameFromLocalSave = Path.Combine(folder, joint.Name, filenameSaveAs);
+                client.SaveAsProject(fileConnFileNameFromLocalSave);
+                _filepath = fileConnFileNameFromLocalSave;
+
+                //Get Parameters to be used downstream.
+                LoadParameters(client);
             }
-
-            var fileConnFileNameFromLocalSave = Path.Combine(folder, joint.Name, filenameSaveAs);
-            client.SaveAsProject(fileConnFileNameFromLocalSave);
-
-            _filepath = fileConnFileNameFromLocalSave;
-
-            //Save(client);
 
             ServiceModel.CloseProject();
 
-            if (userFeedback)                
+            if (userFeedback)
                 pop.Close();
         }
 
         public override string ToString()
         {
-            return "Idea Connection: " + Path.GetFileName(_filepath) + " (" + ConnectionNameRef + ")" ;
+            return "Idea Connection: " + Path.GetFileName(_filepath) + " (" + ConnectionNameRef + ")";
         }
 
         private void SetConnectionId(ConnectionHiddenCheckClient client)
@@ -137,7 +134,10 @@ namespace KarambaIDEA.IDEA
             if (!String.IsNullOrEmpty(_connectionNameRef))
                 _connectionId = projInfo.Connections.Where(x => x.Name == _connectionNameRef).FirstOrDefault().Identifier;
             else
+            {
                 _connectionId = projInfo.Connections.FirstOrDefault().Identifier;
+                _connectionNameRef = projInfo.Connections.FirstOrDefault().Identifier;
+            }
 
             _connectionIdSet = true;
         }
@@ -200,7 +200,6 @@ namespace KarambaIDEA.IDEA
             client.Save();
         }
 
-
         public void ModifyConnection(List<IdeaModification> modifications, ConnectionHiddenCheckClient client)
         {
             //order modifications
@@ -210,7 +209,7 @@ namespace KarambaIDEA.IDEA
                 modification.ModifyConnection(client, _connectionId);
         }
 
-        public void CalculateConnection(List<IdeaModification> modifications, bool userFeedback)
+        public void CalculateConnection(List<IdeaModification> modifications, IdeaCodeSetup calcSetUp, bool userFeedback)
         {
             ProgressWindow pop = new ProgressWindow();
 
@@ -220,6 +219,13 @@ namespace KarambaIDEA.IDEA
 
             Open(client);
 
+            ModifyConnection(modifications, client);
+
+            if (calcSetUp != null)
+            {
+                UpdateCodeSetUp(calcSetUp, client);
+            }
+
             try
             {
                 conRes = client.Calculate(_connectionId);
@@ -227,6 +233,8 @@ namespace KarambaIDEA.IDEA
                 //client.SaveAsProject(pathToFile);
 #endif
                 Results = new IdeaConnectionResult(conRes);
+
+                //client.Save();
             }
             catch (Exception e)
             {
@@ -242,6 +250,50 @@ namespace KarambaIDEA.IDEA
                 client.CloseProject();
             }
         }
+    }
+
+    public class IdeaCodeSetup
+    {
+        private string codeSetUpJson;
+
+        public Dictionary<string, dynamic> CodeSetUpDictionary;
+
+        public IdeaCodeSetup(){}
+        public IdeaCodeSetup(string CodeSetUpJson) 
+        {
+            codeSetUpJson = CodeSetUpJson;
+            CodeSetUpDictionary = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(CodeSetUpJson);
+        }
+
+        public IdeaCodeSetup(Dictionary<string, dynamic> setUpdict)
+        {
+            CodeSetUpDictionary = setUpdict;
+        }
+
+        public static IdeaCodeSetup CreateDefault()
+        {
+            IdeaCodeSetup setup = new IdeaCodeSetup();
+            setup.loadDefaultCodeSetUp();
+            return setup;
+        }
+
+        private void loadDefaultCodeSetUp()
+        {
+            //read from the project JSON.
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            string baseConFileDirectory = Path.GetDirectoryName(assembly.Location);
+            string outputPath = Path.Combine(baseConFileDirectory, "DefaultCalcCodeSetUp.json");
+
+            string json = File.ReadAllText(outputPath);
+
+            CodeSetUpDictionary = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(json);
+        }
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(CodeSetUpDictionary, Formatting.Indented);
+        }
+
     }
 
 #warning This class is no longer required.

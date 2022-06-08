@@ -17,6 +17,8 @@ using KarambaIDEA.IDEA.Parameters;
 using KarambaIDEA.Grasshopper;
 using Grasshopper.Kernel.Parameters;
 using Grasshopper.Kernel.Types;
+using System.Runtime.Remoting;
+using System.ComponentModel;
 
 namespace KarambaIDEA
 {
@@ -32,9 +34,10 @@ namespace KarambaIDEA
         {
             pManager.AddGenericParameter("Connection", "C", "Connections which have been created on disk and referenced", GH_ParamAccess.item);
             pManager.AddGenericParameter("Modifications", "M", "List of Modifications to apply to the conneciton file prior to Calculation", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Code Setup", "S", "Code Setup Settings as JSON string", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Run IDEA", "R", "Run the Connection", GH_ParamAccess.item);
 
-            pManager[1].Optional = true;
+            pManager[1].Optional = pManager[2].Optional = true;
         }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -45,7 +48,7 @@ namespace KarambaIDEA
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             bool startIDEA = false;
-            DA.GetData(2, ref startIDEA);
+            DA.GetData(3, ref startIDEA);
 
             if (startIDEA)
             {
@@ -58,9 +61,14 @@ namespace KarambaIDEA
 
                 IdeaConnection_2 conCopy = new IdeaConnection_2(ghCon.Value);
 
-                //IdeaServiceModel service = new IdeaServiceModel();
+                GH_IdeaCodeSetup setUp = null;
+                IdeaCodeSetup codeSetUp = null;
+                if (DA.GetData<GH_IdeaCodeSetup>(2, ref setUp))
+                {
+                    codeSetUp = setUp.Value;
+                }
 
-                conCopy.CalculateConnection(mods.Select(x => x.Value).ToList(), UserFeeback);
+                conCopy.CalculateConnection(mods.Select(x => x.Value).ToList(), codeSetUp, UserFeeback);
 
                 DA.SetData(0, new GH_IdeaConnection(conCopy));
             }
@@ -68,6 +76,110 @@ namespace KarambaIDEA
 
         protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.IDEAlogo_safe; } }
         public override Guid ComponentGuid {  get { return new Guid("8036C064-4B56-4AA5-91E8-D54E72605566"); }  }
+    }
+
+    public class CalcCodeSetup : GH_Component
+    {
+        public CalcCodeSetup() : base("Code Setup", "CodeSetup", "JSON string representing the defaults for conneciton set-up", "KarambaIDEA", "5. IDEA Connection") { }
+
+        public override GH_Exposure Exposure { get { return GH_Exposure.tertiary; } }
+
+        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Code Setup", "S", "Code Setup that has been loaded from an existing connection. If non Provided the default settings will be loaded", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Key", "K", "Key to Change in Set-up. Key relates to first level only.", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Value", "V", "Value to Change in Set-up. All values are text", GH_ParamAccess.list);
+
+            pManager[0].Optional = pManager[1].Optional = pManager[2].Optional = true;
+        }
+
+        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Code Setup", "S", "Calculation Code Set-up to Apply to Connection Project", GH_ParamAccess.item);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            GH_IdeaCodeSetup ghSetup = null;
+
+            Dictionary<string, dynamic> clone = new Dictionary<string, dynamic>();
+
+            if (DA.GetData<GH_IdeaCodeSetup>(0, ref ghSetup))
+            {
+                if (ghSetup.Value != null)
+                {
+                    clone = new Dictionary<string, dynamic>(ghSetup.Value.CodeSetUpDictionary);
+                }
+            }
+            else
+                clone = IdeaCodeSetup.CreateDefault().CodeSetUpDictionary;
+
+            List<string> keys = new List<string>();
+            List<IGH_Goo> values = new List<IGH_Goo>();
+
+            if (DA.GetDataList<string>(1, keys))
+            {
+                if (DA.GetDataList<IGH_Goo>(2, values))
+                {
+                    if (keys.Count == values.Count)
+                    {
+                        for(int i = 0; i < keys.Count; i++)
+                        {
+                            string stringGoo = values[i].ToString();
+                            dynamic val = clone[keys[i]];
+
+                            if (val is double)
+                            {
+                                double d;
+                                if (GH_Convert.ToDouble(values[i], out d, GH_Conversion.Both))
+                                {
+                                    clone[keys[i]] = d;
+                                }
+                                else
+                                    base.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Could not convert to double");
+
+                            }
+                            else if (val is int)
+                            {
+                                int inte;
+                                if (GH_Convert.ToInt32(values[i], out inte, GH_Conversion.Both))
+                                {
+                                    clone[keys[i]] = inte;
+                                }
+                                else
+                                    base.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Could not convert to Integer");
+                            }
+                            else if (val is bool)
+                            {
+                                bool b;
+                                if (GH_Convert.ToBoolean(values[i], out b, GH_Conversion.Both))
+                                {
+                                    clone[keys[i]] = b;
+                                }
+                                else
+                                    base.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Could not convert to Integer");
+                            }
+                            else
+                            {
+                                clone[keys[i]] = stringGoo;
+                            }
+                        }
+                    }
+                    else
+                    {
+                        base.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Keys and Values do not match");
+                        return;
+                    }
+                }
+            }
+
+            IdeaCodeSetup setUp = new IdeaCodeSetup(clone);
+
+            DA.SetData(0, new GH_IdeaCodeSetup(setUp));
+        }
+
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.IDEAlogo_safe; } }
+        public override Guid ComponentGuid { get { return new Guid("5CC6E7B0-9EB2-413D-9775-C43BD805F08B"); } }
     }
 
     public class RefConnectionByFilePath : GH_Component
@@ -122,4 +234,53 @@ namespace KarambaIDEA
         protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.TemplateFromFilePath; } }
         public override Guid ComponentGuid { get { return new Guid("CAF6BB4D-4DB5-4856-BECE-BF744F9E9ED4"); } }
     }
+
+    public class DeconstructConnection : GH_Component
+    {
+        public DeconstructConnection() : base("Deconstruct Connection", "ConDeconstruct", "Decosntruct Information avaliable from an IDEA Connection Project", "KarambaIDEA", "5. IDEA Connection") { }
+
+        public override GH_Exposure Exposure { get { return GH_Exposure.secondary; } }
+        protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
+        {
+            pManager.AddGenericParameter("Connection", "C", "Idea Connection", GH_ParamAccess.item);
+        }
+
+        protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
+        {
+            pManager.AddTextParameter("Name", "N", "Name of Connection in IDEA Connection Project", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Load Effects", "L", "XX NOT IMPLEMENTED. Load Effects on Connection.", GH_ParamAccess.item);
+            pManager.AddGenericParameter("Parameters", "P", "Parameters Avaliable in Connection", GH_ParamAccess.list);
+            pManager.AddGenericParameter("Code Setup", "S", "Code Setup in Connection Project", GH_ParamAccess.list);
+            pManager.AddTextParameter("Filepath", "P", "Filepath of the IDEA Connection Project", GH_ParamAccess.item);
+        }
+
+        protected override void SolveInstance(IGH_DataAccess DA)
+        {
+            GH_IdeaConnection ghConnection = null;
+
+            if (DA.GetData<GH_IdeaConnection>(0, ref ghConnection))
+            {
+                IdeaConnection_2 connection = ghConnection.Value;
+
+                if (connection != null)
+                {
+                    DA.SetData(0, connection.ConnectionNameRef);
+                    //DA.SetDataList(1, summaryList);
+                    List<GH_IdeaParameter> ghParams = connection.Parameters.Select(x => new GH_IdeaParameter(x)).ToList();
+                    DA.SetDataList(2, ghParams);
+                    
+                    if(connection.CodeSetUp != null)
+                    {
+                        DA.SetData(3, new GH_IdeaCodeSetup(connection.CodeSetUp));
+                    }
+                    
+                    DA.SetData(4, connection.FilePath);
+                }
+            }
+        }
+
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.IDEAlogo; } }
+        public override Guid ComponentGuid { get { return new Guid("689C58C5-0AD0-4EDE-93C4-FE6A60503AEC"); } }
+    }
+
 }
