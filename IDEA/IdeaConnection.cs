@@ -39,6 +39,8 @@ namespace KarambaIDEA.IDEA
 
         public IdeaConnectionResult Results = null;
 
+        public IdeaConnectionProductionCost ProductionCosts = null;
+
         public IdeaServiceModel ServiceModel = KarambaIDEA.IDEA.IdeaServiceModel.Instance;
 
         public string FilePath { get { return _filepath; } }
@@ -92,7 +94,7 @@ namespace KarambaIDEA.IDEA
             JointReference = joint.id;
             SetConnectionId(client);
             LoadCodeSetUp(client);
-
+            
             if (joint.TemplateAssigns.Count > 0)
             {
                 List<IdeaModification> listMods = new List<IdeaModification>();
@@ -200,6 +202,37 @@ namespace KarambaIDEA.IDEA
             client.Save();
         }
 
+        public void LoadParameters(ConnectionHiddenCheckClient client)
+        {
+
+            string paramJSON = client.GetParametersJSON(_connectionId);
+#if (DEBUG)
+            _parametersJSON = paramJSON;
+#endif      
+            if (!String.IsNullOrEmpty(paramJSON))
+                Parameters = IdeaParameterFactory.CreateFromJSON(paramJSON);
+        }
+
+        public void LoadCodeSetUp(ConnectionHiddenCheckClient client)
+        {
+            string codeSetupJSON = client.GetCodeSetupJSON();
+
+            CodeSetUp = new IdeaCodeSetup(codeSetupJSON);
+        }
+
+        private void UpdateCodeSetUp(IdeaCodeSetup setUp, ConnectionHiddenCheckClient client)
+        {
+            try
+            {
+                client.UpdateCodeSetupJSON(setUp.ToString());
+            }
+            catch (Exception e)
+            {
+                throw new Exception(string.Format("Error '{0}'", e.Message));
+            }
+        }
+
+        //TODO Add Save/Save As/Dont Save on Modifications
         public void ModifyConnection(List<IdeaModification> modifications, ConnectionHiddenCheckClient client)
         {
             //order modifications
@@ -207,6 +240,8 @@ namespace KarambaIDEA.IDEA
 
             foreach (var modification in modifications)
                 modification.ModifyConnection(client, _connectionId);
+
+            LoadConnectionCost(client);
         }
 
         public void CalculateConnection(List<IdeaModification> modifications, IdeaCodeSetup calcSetUp, bool userFeedback)
@@ -217,8 +252,11 @@ namespace KarambaIDEA.IDEA
 
             Open(client);
 
-            ModifyConnection(modifications, client);
-
+            if (modifications.Count > 1)
+            {
+                ModifyConnection(modifications, client);
+            }
+            
             if (calcSetUp != null)
             {
                 UpdateCodeSetUp(calcSetUp, client);
@@ -230,8 +268,6 @@ namespace KarambaIDEA.IDEA
 #if (DEBUG)
                 //client.SaveAsProject(pathToFile);
 #endif
-                
-                
                 Results = new IdeaConnectionResult(conRes);
 
                 client.Save();
@@ -245,6 +281,15 @@ namespace KarambaIDEA.IDEA
                 // Delete temps in case of a crash
                 client.CloseProject();
             }
+        }
+
+        private void LoadConnectionCost(ConnectionHiddenCheckClient client)
+        {
+            string productionCostJSON = client.GetConnectionCost(_connectionId);
+
+            ProductionCost productionCost = JsonConvert.DeserializeObject<ProductionCost>(productionCostJSON);
+
+            ProductionCosts = new IdeaConnectionProductionCost(productionCost);
         }
     }
 

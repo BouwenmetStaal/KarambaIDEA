@@ -12,9 +12,9 @@ using IdeaRS.OpenModel.Connection;
 namespace KarambaIDEA.IDEA
 {
 
-    public class IdeaItemResultSet<T> : Dictionary<string, T>
+    public class IdeaItemSet<T> : Dictionary<string, T>
     {
-        public IdeaItemResultSet() { }
+        public IdeaItemSet() { }
 
         public List<T> GetResults(List<string> keys)
         {
@@ -147,12 +147,12 @@ namespace KarambaIDEA.IDEA
     public class IdeaConnectionResult
     {
         private readonly string _name;
-        private readonly IdeaItemResultSet<IdeaSummaryResult> _summaryResults = new IdeaItemResultSet<IdeaSummaryResult>();
-        private readonly IdeaItemResultSet<IdeaPlateResult> _plateResults = new IdeaItemResultSet<IdeaPlateResult>();
-        private readonly IdeaItemResultSet<IdeaBoltResult> _boltResults = new IdeaItemResultSet<IdeaBoltResult>();
-        private readonly IdeaItemResultSet<IdeaWeldResult> _weldResults = new IdeaItemResultSet<IdeaWeldResult>();
-        private readonly IdeaItemResultSet<IdeaAnchorResult> _anchorResults = new IdeaItemResultSet<IdeaAnchorResult>();
-        private readonly IdeaItemResultSet<IdeaConcreteBlockResult> _concreteBlockResults = new IdeaItemResultSet<IdeaConcreteBlockResult>();
+        private readonly IdeaItemSet<IdeaSummaryResult> _summaryResults = new IdeaItemSet<IdeaSummaryResult>();
+        private readonly IdeaItemSet<IdeaPlateResult> _plateResults = new IdeaItemSet<IdeaPlateResult>();
+        private readonly IdeaItemSet<IdeaBoltResult> _boltResults = new IdeaItemSet<IdeaBoltResult>();
+        private readonly IdeaItemSet<IdeaWeldResult> _weldResults = new IdeaItemSet<IdeaWeldResult>();
+        private readonly IdeaItemSet<IdeaAnchorResult> _anchorResults = new IdeaItemSet<IdeaAnchorResult>();
+        private readonly IdeaItemSet<IdeaConcreteBlockResult> _concreteBlockResults = new IdeaItemSet<IdeaConcreteBlockResult>();
 
         public IdeaConnectionResult(ConnectionResultsData connectionResult)
         {
