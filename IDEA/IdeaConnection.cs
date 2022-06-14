@@ -241,8 +241,6 @@ namespace KarambaIDEA.IDEA
 
         public void CalculateConnection(List<IdeaModification> modifications, IdeaCodeSetup calcSetUp, bool userFeedback)
         {
-            ProgressWindow pop = new ProgressWindow();
-
             var client = ServiceModel.GetConnectionService();
 
             ConnectionResultsData conRes = null;
@@ -262,16 +260,14 @@ namespace KarambaIDEA.IDEA
 #if (DEBUG)
                 //client.SaveAsProject(pathToFile);
 #endif
+                
+                
                 Results = new IdeaConnectionResult(conRes);
 
-                //client.Save();
+                client.Save();
             }
             catch (Exception e)
             {
-                if (userFeedback)
-                {
-                    pop.Close();
-                }
                 throw new Exception(string.Format("Error '{0}'", e.Message));
             }
             finally

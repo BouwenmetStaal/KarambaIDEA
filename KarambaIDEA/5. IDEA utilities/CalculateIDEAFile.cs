@@ -74,13 +74,13 @@ namespace KarambaIDEA
             }
         }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.IDEAlogo_safe; } }
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Calculate; } }
         public override Guid ComponentGuid {  get { return new Guid("8036C064-4B56-4AA5-91E8-D54E72605566"); }  }
     }
 
     public class CalcCodeSetup : GH_Component
     {
-        public CalcCodeSetup() : base("Code Setup", "CodeSetup", "JSON string representing the defaults for conneciton set-up", "KarambaIDEA", "5. IDEA Connection") { }
+        public CalcCodeSetup() : base("Connection Code Setup", "ConCodeSetup", "JSON string representing the defaults for conneciton set-up", "KarambaIDEA", "5. IDEA Connection") { }
 
         public override GH_Exposure Exposure { get { return GH_Exposure.tertiary; } }
 
@@ -178,7 +178,7 @@ namespace KarambaIDEA
             DA.SetData(0, new GH_IdeaCodeSetup(setUp));
         }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.IDEAlogo_safe; } }
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.CodeSetup; } }
         public override Guid ComponentGuid { get { return new Guid("5CC6E7B0-9EB2-413D-9775-C43BD805F08B"); } }
     }
 
@@ -231,7 +231,7 @@ namespace KarambaIDEA
             DA.SetDataList(0, ghCons);
         }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.TemplateFromFilePath; } }
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.ReferenceConnection; } }
         public override Guid ComponentGuid { get { return new Guid("CAF6BB4D-4DB5-4856-BECE-BF744F9E9ED4"); } }
     }
 
@@ -279,7 +279,7 @@ namespace KarambaIDEA
             }
         }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.IDEAlogo; } }
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.DeconstructJoint; } }
         public override Guid ComponentGuid { get { return new Guid("689C58C5-0AD0-4EDE-93C4-FE6A60503AEC"); } }
     }
 

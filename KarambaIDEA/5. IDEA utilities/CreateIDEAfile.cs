@@ -42,21 +42,25 @@ namespace KarambaIDEA.Grasshopper
         protected override void SolveInstance(IGH_DataAccess DA)
         {
             //Input variables
-            Project project = new Project();
+            GH_KarambaIdeaProject ghProject = null;
+
+            //Project project = new Project();
             string outputfolderpath = "";
             bool startIDEA = false;
 
             //Link input
             //Update the project to a goo input.
-            if (DA.GetData(0, ref project))
+            if (DA.GetData(0, ref ghProject))
             {
-                if (project == null)
+                if (ghProject.Value == null)
                 {
                     base.AddRuntimeMessage(GH_RuntimeMessageLevel.Error, "Project is null");
                     return;
                 }
                 else
                 {
+                    Project project = ghProject.Value;
+
                     DA.GetData(1, ref outputfolderpath);
 
                     DA.GetData(2, ref startIDEA);
@@ -141,7 +145,7 @@ namespace KarambaIDEA.Grasshopper
             }
         }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.IDEAlogo; } }
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.CreateConnection; } }
         public override Guid ComponentGuid { get { return new Guid("D2CA03EA-424C-4278-81E8-605F6E4D10C3"); } }
     }
 

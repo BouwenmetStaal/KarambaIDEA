@@ -61,7 +61,6 @@ namespace KarambaIDEA.IDEA
         }
     }
 
-
     public class IdeaSummaryResult : IdeaItemResult
     {
         public double CheckValue;
@@ -144,7 +143,6 @@ namespace KarambaIDEA.IDEA
             UnityCheck = concreteBlockResult.UnityCheck;
         }
     }
-
 
     public class IdeaConnectionResult
     {

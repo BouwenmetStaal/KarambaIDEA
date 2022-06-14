@@ -58,7 +58,7 @@ namespace KarambaIDEA.Grasshopper
             }
         }
 
-        protected override System.Drawing.Bitmap Icon { get {  return Properties.Resources.TemplateFromFilePath; } }
+        protected override System.Drawing.Bitmap Icon { get {  return Properties.Resources.TemplateByFilepath; } }
         public override Guid ComponentGuid { get { return new Guid("CC4A4623-5D4E-48C0-8E48-9D13BB44BD78"); } }
 
     }
@@ -139,7 +139,7 @@ namespace KarambaIDEA.Grasshopper
             DA.SetData(0, new GH_JointTemplateAssign(template));
         }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.TemplateFromFilePath; } }
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.TemplateAssign; } }
         public override Guid ComponentGuid { get { return new Guid("0FA208EE-B4D9-43F1-8748-61F8723143E0"); } }
 
     }
@@ -185,7 +185,7 @@ namespace KarambaIDEA.Grasshopper
             DA.SetData(0, new GH_JointTemplateAssign(template));
         }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.TemplateFromFilePath; } }
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.TemplateAssign; } }
         public override Guid ComponentGuid { get { return new Guid("E11068BB-B4C3-4FCB-82C7-154633749C94"); } }
 
     }

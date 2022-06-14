@@ -91,14 +91,14 @@ namespace KarambaIDEA.Grasshopper
                 base.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Connection does not have any results available. Calculate Connection using Calculate Component.");
         }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.IDEAlogo; } }
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.ConnectionResults; } }
         public override Guid ComponentGuid { get { return new Guid("3AD39EF3-4C78-4A4E-9FE2-C1C7C76C7A97"); } }
     }
 
 
     public class DeconstructItemResult : GH_Component
     {
-        public DeconstructItemResult() : base("Deconstruct Item Result", "DecItemResult", "Deconstruct a Connection Item Result", "KarambaIDEA", "5. IDEA Connection") { }
+        public DeconstructItemResult() : base("Deconstruct Result Item", "DecResultItem", "Deconstruct a Connection Item Result", "KarambaIDEA", "5. IDEA Connection") { }
 
         public override GH_Exposure Exposure { get { return GH_Exposure.tertiary; } }
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
@@ -157,7 +157,7 @@ namespace KarambaIDEA.Grasshopper
             }
         }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.Deconstruct_ItemResult; } }
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.DeconstructItemResult; } }
         public override Guid ComponentGuid { get { return new Guid("02BE617E-1BA5-436F-A59E-F3C56E1FDB6F"); } }
     }
 
