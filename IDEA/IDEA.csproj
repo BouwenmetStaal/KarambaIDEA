@@ -80,6 +80,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="IdeaObject.cs" />
+    <Compile Include="IdeaProductionCost.cs" />
     <Compile Include="IdeaTemplatesCoded.cs" />
     <Compile Include="IdeaConnectionResult.cs" />
     <Compile Include="ConnectionTemplateGenerator.cs" />

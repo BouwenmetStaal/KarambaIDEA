@@ -118,7 +118,7 @@
     <Compile Include="5. IDEA utilities\CalculateIDEAFile.cs" />
     <Compile Include="5. IDEA utilities\CreateAndCalculateIDEAfile.cs" />
     <Compile Include="5. IDEA utilities\CreateIDEAfile.cs" />
-    <Compile Include="5. IDEA utilities\GetConnectionResults.cs" />
+    <Compile Include="5. IDEA utilities\ConnectionResults.cs" />
     <Compile Include="5. IDEA utilities\ModifyComponents.cs" />
     <Compile Include="5. IDEA utilities\ParameterComponents.cs" />
     <Compile Include="6. Cost calculation\BoltsCosts.cs" />
@@ -130,16 +130,16 @@
     <Compile Include="1. CreateProject\CreateProject.cs" />
     <Compile Include="2. Project utilities\JointVector.cs" />
     <Compile Include="LoadingForm.cs" />
-    <Compile Include="Properties\Resources.Designer.cs">
-      <AutoGen>True</AutoGen>
-      <DesignTime>True</DesignTime>
-      <DependentUpon>Resources.resx</DependentUpon>
-    </Compile>
     <Compile Include="6. Cost calculation\TransportElements.cs" />
     <Compile Include="2. Project utilities\VisualizeJoints.cs" />
     <Compile Include="6. Cost calculation\WeldVolumeGenerator.cs" />
     <Compile Include="4. IDEA Templates\Template_BoltedEndPlateConnection.cs" />
     <Compile Include="4. IDEA Templates\Template_WeldAllMembers.cs" />
+    <Compile Include="Properties\Resources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>Resources.resx</DependentUpon>
+    </Compile>
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Properties\AssemblyInfo.cs">
@@ -170,16 +170,23 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
-    <None Include="Resources\CreateProject.png" />
+    <None Include="Resources\TemplateByFilepath.png" />
+    <None Include="Resources\TemplateAssign.png" />
     <None Include="Resources\SetParameterValue.png" />
+    <None Include="Resources\ReferenceConnection.png" />
     <None Include="Resources\ModifyLoading.png" />
     <None Include="Resources\ModifyConParameters.png" />
+    <None Include="Resources\ModifyJoint.png" />
+    <None Include="Resources\ImportSAF.png" />
     <None Include="Resources\GeneralIcon.png" />
     <None Include="Resources\ExportIOM.png" />
     <None Include="Resources\DeconstructTemplate.png" />
     <None Include="Resources\DeconstructProject.png" />
     <None Include="Resources\DeconstructJoint.png" />
-    <None Include="Resources\Deconstruct ItemResult.png" />
+    <None Include="Resources\DeconstructItemResult.png" />
+    <None Include="Resources\CreateProject.png" />
+    <None Include="Resources\CreateParameter.png" />
+    <None Include="Resources\CreateConnection.png" />
     <None Include="Resources\TrussJoint-01.png" />
     <None Include="Resources\CroSecClass-01-01.png" />
     <None Include="Resources\CroSecClass-01.png" />
@@ -207,7 +214,9 @@
     <None Include="Resources\bolts-01-01.png" />
     <None Include="Resources\ATempWeldAll-01.png" />
     <None Include="Resources\ATempWeldAll-01-01.png" />
-    <None Include="Resources\AddConnection.png" />
+    <None Include="Resources\Calculate.png" />
+    <None Include="Resources\CodeSetup.png" />
+    <None Include="Resources\ConnectionResults.png" />
     <Content Include="Resources\continues2members.contemp" />
     <None Include="Resources\TempWeldAllMembers.png" />
     <None Include="Resources\TempBoltedEndplateConnection.png" />

@@ -56,7 +56,7 @@ namespace KarambaIDEA.Grasshopper
             DA.SetData(0, new GH_KarambaIdeaJoint(jointCopy));
         }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.KarambaIDEA_logo; } }
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.ModifyJoint; } }
 
         public override Guid ComponentGuid { get { return new Guid("5E8D5189-ECC4-4232-A613-FA209F3034E6"); } }
     }
@@ -134,7 +134,7 @@ namespace KarambaIDEA.Grasshopper
             DA.SetData(0, xmlOutput);
         }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.KarambaIDEA_logo; } }
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.GeneralIcon; } }
 
         public override Guid ComponentGuid { get { return new Guid("A50A8974-509F-4281-96E2-508FC46F502C"); } }
     }
