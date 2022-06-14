@@ -217,6 +217,22 @@ namespace KarambaIDEA.Grasshopper
 
 	}
 
+	public class GH_IdeaItemCost : GH_Goo<IdeaItemCost>
+	{
+		public GH_IdeaItemCost() : base() { }
+		public GH_IdeaItemCost(IdeaItemCost itemCost) : base(itemCost) { }
+		public GH_IdeaItemCost(GH_IdeaItemCost ghItemCost) : base(ghItemCost.Value) { }
+
+		public override string ToString() { return Value.ToString(); }
+		public override IGH_Goo Duplicate() { return new GH_IdeaItemCost(this); }
+		public override bool IsValid { get { return true; } }
+		public override string TypeDescription { get { return "IdeaItemCost"; } }
+		public override string TypeName { get { return "IdeaItemCost"; } }
+		public override bool Read(GH_IO.Serialization.GH_IReader reader) { return false; }
+		public override bool Write(GH_IO.Serialization.GH_IWriter writer) { return true; }
+
+	}
+
 	public class GH_IdeaCodeSetup : GH_Goo<IdeaCodeSetup>
 	{
 		public GH_IdeaCodeSetup() : base() { }

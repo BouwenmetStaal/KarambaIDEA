@@ -108,7 +108,7 @@ namespace KarambaIDEA.Grasshopper
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {
-            pManager.AddTextParameter("Name", "N", "Name of Connection", GH_ParamAccess.item);
+            pManager.AddTextParameter("Name", "N", "Name of Item", GH_ParamAccess.item);
             pManager.AddBooleanParameter("Check Status", "S", "Check Status of Item Result (true/false)", GH_ParamAccess.item);
             pManager.AddNumberParameter("Unity Check", "U", "Unity Check of Result. This is the Check Value for Summary Result Items", GH_ParamAccess.item);
             pManager.AddNumberParameter("Pl Max Stress", "Pl S", "Plate Stress for plate result items", GH_ParamAccess.item);

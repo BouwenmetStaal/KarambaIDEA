@@ -116,6 +116,7 @@
     <Compile Include="4. IDEA Templates\Template_ByFilePath.cs" />
     <Compile Include="4. IDEA Templates\Template_BoltedEndplate_Optimized.cs" />
     <Compile Include="5. IDEA utilities\CalculateIDEAFile.cs" />
+    <Compile Include="5. IDEA utilities\ConnectionProdutionCost.cs" />
     <Compile Include="5. IDEA utilities\CreateAndCalculateIDEAfile.cs" />
     <Compile Include="5. IDEA utilities\CreateIDEAfile.cs" />
     <Compile Include="5. IDEA utilities\ConnectionResults.cs" />
