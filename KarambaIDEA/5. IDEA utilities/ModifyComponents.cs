@@ -18,9 +18,9 @@ namespace KarambaIDEA.Grasshopper
 {
     public class ConnectionModifyParameters : GH_Component
     {
-        public ConnectionModifyParameters() : base("Modify Con Parameters", "ModParams", "Provide a list of Parameters to Modify in the Connection Model", "KarambaIDEA", "5. IDEA Connection") { }
+        public ConnectionModifyParameters() : base("Modify Con Parameters", "ModParams", "Provide a list of Parameters to Modify in the Connection Model", "KarambaIDEA", "6. IDEA Connection") { }
 
-        public override GH_Exposure Exposure { get { return GH_Exposure.quarternary; } }
+        public override GH_Exposure Exposure { get { return GH_Exposure.quarternary | GH_Exposure.obscure; } }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {

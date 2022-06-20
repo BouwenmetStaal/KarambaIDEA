@@ -21,9 +21,9 @@ namespace KarambaIDEA.Grasshopper
 
     public class Template_BoltedEndPlateConnection : GH_Component
     {
-        public Template_BoltedEndPlateConnection() : base("Coded Template: Bolted Endplate", "CTempBoltedEndplate", "Coded Template: Bolted endplate connection", "KarambaIDEA", "4. IDEA Templates") { }
+        public Template_BoltedEndPlateConnection() : base("Coded Template: Bolted Endplate", "CTempBoltedEndplate", "Coded Template: Bolted endplate connection", "KarambaIDEA", "5. IDEA Templates") { }
 
-        public override GH_Exposure Exposure { get { return GH_Exposure.tertiary; } }
+        public override GH_Exposure Exposure { get { return GH_Exposure.tertiary | GH_Exposure.obscure; } }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
@@ -63,7 +63,7 @@ namespace KarambaIDEA.Grasshopper
 
     public class Template_BoltedEndPlateConnectionSS_OBSOLETE : GH_Component
     {
-        public Template_BoltedEndPlateConnectionSS_OBSOLETE() : base("Coded Template: Bolted Endplate", "CTempBoltedEndplate", "Coded Template: Bolted endplate connection", "KarambaIDEA", "4. IDEA Templates")
+        public Template_BoltedEndPlateConnectionSS_OBSOLETE() : base("Coded Template: Bolted Endplate", "CTempBoltedEndplate", "Coded Template: Bolted endplate connection", "KarambaIDEA", "5. IDEA Templates")
         {
 
         }

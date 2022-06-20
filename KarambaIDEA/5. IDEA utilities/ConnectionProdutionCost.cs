@@ -14,7 +14,7 @@ namespace KarambaIDEA.Grasshopper
 {
     public class ConnectionProductionCost : GH_Component
     {
-        public ConnectionProductionCost() : base("Connection Costs", "ConCosts", "Retrieve Connection Productions costs from a connection", "KarambaIDEA", "5. IDEA Connection") { }
+        public ConnectionProductionCost() : base("Connection Costs", "ConCosts", "Retrieve Connection Productions costs from a connection", "KarambaIDEA", "6. IDEA Connection") { }
 
         public override GH_Exposure Exposure { get { return GH_Exposure.tertiary; } }
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
@@ -79,15 +79,15 @@ namespace KarambaIDEA.Grasshopper
                 base.AddRuntimeMessage(GH_RuntimeMessageLevel.Warning, "Connection Production Cost is not Loaded.");
         }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.GeneralIcon; } }
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.ConnectionCost; } }
         public override Guid ComponentGuid { get { return new Guid("B17A7402-F481-4E75-8886-BBA5C1DFF9A4"); } }
     }
 
     public class DeconstructCostItem : GH_Component
     {
-        public DeconstructCostItem() : base("Deconstruct Cost Item", "DecCostItem", "Deconstruct a Connection Cost Item", "KarambaIDEA", "5. IDEA Connection") { }
+        public DeconstructCostItem() : base("Deconstruct Cost Item", "DecCostItem", "Deconstruct a Connection Cost Item", "KarambaIDEA", "6. IDEA Connection") { }
 
-        public override GH_Exposure Exposure { get { return GH_Exposure.tertiary; } }
+        public override GH_Exposure Exposure { get { return GH_Exposure.tertiary | GH_Exposure.obscure; } }
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Cost Item", "C", "Idea Connection Cost Item to deconstruct", GH_ParamAccess.item);
@@ -139,8 +139,7 @@ namespace KarambaIDEA.Grasshopper
             }
         }
 
-        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.GeneralIcon; } }
+        protected override System.Drawing.Bitmap Icon { get { return Properties.Resources.DeconstructCostItem; } }
         public override Guid ComponentGuid { get { return new Guid("4073470B-76E0-4720-BB30-125750061924"); } }
     }
-
 }

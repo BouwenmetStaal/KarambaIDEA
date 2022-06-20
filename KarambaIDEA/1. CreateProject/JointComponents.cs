@@ -114,7 +114,7 @@ namespace KarambaIDEA.Grasshopper
             pManager.AddGenericParameter("Item", "I", "Item which Can be represented as IOM Xml string", GH_ParamAccess.item);
         }
 
-        public override GH_Exposure Exposure { get { return GH_Exposure.tertiary; } }
+        public override GH_Exposure Exposure { get { return GH_Exposure.tertiary | GH_Exposure.obscure; } }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {

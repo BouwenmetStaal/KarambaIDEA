@@ -17,7 +17,7 @@ namespace KarambaIDEA
 {
     public class CreateAndCalculateIDEAfileSS_OBSOLETE : GH_Component
     {
-        public CreateAndCalculateIDEAfileSS_OBSOLETE() : base("Create and Calculate IDEA File", "Create and Calculate IDEA File", "Create and Calculate IDEA file", "KarambaIDEA", "5. IDEA Connection")
+        public CreateAndCalculateIDEAfileSS_OBSOLETE() : base("Create and Calculate IDEA File", "Create and Calculate IDEA File", "Create and Calculate IDEA file", "KarambaIDEA", "6. IDEA Connection")
         {
 
         }

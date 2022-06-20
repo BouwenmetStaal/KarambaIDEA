@@ -102,7 +102,7 @@ namespace KarambaIDEA.Grasshopper
     {
         private bool _userFeedback = false;
 
-        public CreateIDEAfile() : base("Create IDEA Connection", "CreateIDEACon", "Create IDEA Connection file from the KarambaIDEA Project", "KarambaIDEA", "5. IDEA Connection") { }
+        public CreateIDEAfile() : base("Create IDEA Connection", "CreateIDEACon", "Create IDEA Connection file from the KarambaIDEA Project", "KarambaIDEA", "6. IDEA Connection") { }
 
         public override GH_Exposure Exposure { get { return GH_Exposure.primary; } }
 
@@ -152,7 +152,7 @@ namespace KarambaIDEA.Grasshopper
 
     public class CreateIDEAfileSS_OBSOLETE : GH_Component
     {
-        public CreateIDEAfileSS_OBSOLETE() : base("Create IDEA File", "Create IDEA File", "Create IDEA file", "KarambaIDEA", "5. IDEA Connection")
+        public CreateIDEAfileSS_OBSOLETE() : base("Create IDEA File", "Create IDEA File", "Create IDEA file", "KarambaIDEA", "6. IDEA Connection")
         {
 
         }

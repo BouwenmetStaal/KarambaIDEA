@@ -20,12 +20,12 @@ namespace KarambaIDEA.Grasshopper
 
     public class Template_WeldAllMembers : GH_Component
     {
-        public Template_WeldAllMembers() : base("Coded Template: Weld all Members", "CTemp:Welded", "All members in joint will be connected by weld according to the hierarchy", "KarambaIDEA", "4. IDEA Templates")
+        public Template_WeldAllMembers() : base("Coded Template: Weld all Members", "CTemp:Welded", "All members in joint will be connected by weld according to the hierarchy", "KarambaIDEA", "5. IDEA Templates")
         {
 
         }
 
-        public override GH_Exposure Exposure { get { return GH_Exposure.tertiary; } }
+        public override GH_Exposure Exposure { get { return GH_Exposure.tertiary | GH_Exposure.obscure; } }
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager) { }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
@@ -46,7 +46,7 @@ namespace KarambaIDEA.Grasshopper
 
     public class Template_WeldAllMembersSS_OBSOLETE : GH_Component
     {
-        public Template_WeldAllMembersSS_OBSOLETE() : base("Coded Template: Weld all Members", "CTemp:Welded", "All members in joint will be connected by weld according to the hierarchy", "KarambaIDEA", "4. IDEA Templates")
+        public Template_WeldAllMembersSS_OBSOLETE() : base("Coded Template: Weld all Members", "CTemp:Welded", "All members in joint will be connected by weld according to the hierarchy", "KarambaIDEA", "5. IDEA Templates")
         {
 
         }

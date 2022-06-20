@@ -17,7 +17,7 @@ namespace KarambaIDEA
 {
     public class TotalWeight : GH_Component
     {
-        public TotalWeight() : base("Total Weight", "Total Weight", "Generate total weight of elements and plates", "KarambaIDEA", "6. Cost calculation")
+        public TotalWeight() : base("Total Weight", "Total Weight", "Generate total weight of elements and plates", "KarambaIDEA", "4. Cost calculation")
         {
 
         }

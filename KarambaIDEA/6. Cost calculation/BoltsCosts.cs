@@ -17,7 +17,7 @@ namespace KarambaIDEA._7._Cost_calculation
 {
     public class BoltsCosts : GH_Component
     {
-        public BoltsCosts() : base("Bolt costs", "Bolt costs", "Retrieve bolt costs per joint for cost analysis", "KarambaIDEA", "6. Cost calculation")
+        public BoltsCosts() : base("Bolt costs", "Bolt costs", "Retrieve bolt costs per joint for cost analysis", "KarambaIDEA", "4. Cost calculation")
         {
 
         }

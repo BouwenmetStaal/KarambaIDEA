@@ -17,7 +17,7 @@ namespace KarambaIDEA
 {
     public class CostCalculator : GH_Component
     {
-        public CostCalculator() : base("CostCalculator", "CostCalculator", "Calculate total costs", "KarambaIDEA", "6. Cost calculation")
+        public CostCalculator() : base("CostCalculator", "CostCalculator", "Calculate total costs", "KarambaIDEA", "4. Cost calculation")
         {
 
         }

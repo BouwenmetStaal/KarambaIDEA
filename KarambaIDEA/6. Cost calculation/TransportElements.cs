@@ -13,7 +13,7 @@ namespace KarambaIDEA
 {
     public class TransportElements : GH_Component
     {
-        public TransportElements() : base("Transport Elements Generator", "Transport Elements generator", "Generate 1D internal transport elements", "KarambaIDEA", "6. Cost calculation")
+        public TransportElements() : base("Transport Elements Generator", "Transport Elements generator", "Generate 1D internal transport elements", "KarambaIDEA", "4. Cost calculation")
         {
 
         }

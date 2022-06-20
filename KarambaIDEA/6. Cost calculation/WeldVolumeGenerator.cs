@@ -17,7 +17,7 @@ namespace KarambaIDEA
 {
     public class WeldVolumeGenerator : GH_Component
     {
-        public WeldVolumeGenerator() : base("Weld volume", "Weld volume", "Retrieve weld volume per joint for cost analysis", "KarambaIDEA", "6. Cost calculation")
+        public WeldVolumeGenerator() : base("Weld volume", "Weld volume", "Retrieve weld volume per joint for cost analysis", "KarambaIDEA", "4. Cost calculation")
         {
 
         }

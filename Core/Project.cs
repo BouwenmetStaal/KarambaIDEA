@@ -78,7 +78,7 @@ namespace KarambaIDEA.Core
             //iterate over all the points that represent centerpoints of the joint
             for (int i = 0; i < points.Count; i++)
             {
-                string jointName = "C"+i;
+                string jointName = "C"+ (i+1);
                 if (jointnames.Count != 0)
                 {
                     if (points.Count != jointnames.Count)
