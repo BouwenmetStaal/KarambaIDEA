@@ -21,12 +21,12 @@ namespace KarambaIDEA.Grasshopper
 {
     public class Template_BoltedEndplate_Optimized : GH_Component
     {
-        public Template_BoltedEndplate_Optimized() : base("Coded Template: Bolted Endplate Optimizer", "T: BEO", "Template: Bolted endplate optimizer", "KarambaIDEA", "4. IDEA Templates")
+        public Template_BoltedEndplate_Optimized() : base("Coded Template: Bolted Endplate Optimizer", "T: BEO", "Template: Bolted endplate optimizer", "KarambaIDEA", "5. IDEA Templates")
         {
 
         }
 
-        public override GH_Exposure Exposure { get { return GH_Exposure.tertiary; } }
+        public override GH_Exposure Exposure { get { return GH_Exposure.tertiary | GH_Exposure.obscure; } }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
@@ -64,7 +64,7 @@ namespace KarambaIDEA.Grasshopper
 
     public class Template_BoltedEndplate_OptimizedSS_OBSOLETE : GH_Component
     {
-        public Template_BoltedEndplate_OptimizedSS_OBSOLETE() : base("Coded Template: Bolted Endplate Optimizer", "T: BEO", "Template: Bolted endplate optimizer", "KarambaIDEA", "4. IDEA Templates")
+        public Template_BoltedEndplate_OptimizedSS_OBSOLETE() : base("Coded Template: Bolted Endplate Optimizer", "T: BEO", "Template: Bolted endplate optimizer", "KarambaIDEA", "5. IDEA Templates")
         {
 
         }

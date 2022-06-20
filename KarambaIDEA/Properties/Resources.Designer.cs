@@ -143,6 +143,16 @@ namespace KarambaIDEA.Properties {
         /// <summary>
         ///   Looks up a localized resource of type System.Drawing.Bitmap.
         /// </summary>
+        internal static System.Drawing.Bitmap ConnectionCost {
+            get {
+                object obj = ResourceManager.GetObject("ConnectionCost", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
         internal static System.Drawing.Bitmap ConnectionResults {
             get {
                 object obj = ResourceManager.GetObject("ConnectionResults", resourceCulture);
@@ -216,6 +226,16 @@ namespace KarambaIDEA.Properties {
         internal static System.Drawing.Bitmap CroSecClass_01_01 {
             get {
                 object obj = ResourceManager.GetObject("CroSecClass_01_01", resourceCulture);
+                return ((System.Drawing.Bitmap)(obj));
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized resource of type System.Drawing.Bitmap.
+        /// </summary>
+        internal static System.Drawing.Bitmap DeconstructCostItem {
+            get {
+                object obj = ResourceManager.GetObject("DeconstructCostItem", resourceCulture);
                 return ((System.Drawing.Bitmap)(obj));
             }
         }

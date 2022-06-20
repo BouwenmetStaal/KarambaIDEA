@@ -33,7 +33,11 @@ namespace KarambaIDEA.IDEA
             {
                 IdeaRS.OpenModel.Connection.ApplyConnTemplateSetting settings = new IdeaRS.OpenModel.Connection.ApplyConnTemplateSetting();
 
-                settings.UseMatFromOrigin = true;
+                settings.DefaultBoltAssemblyID = 1;
+                settings.DefaultCleatCrossSectionID = 1;
+                settings.DefaultConcreteMaterialID = 1;
+                settings.DefaultStiffMemberCrossSectionID = 1;
+                settings.UseMatFromOrigin = false;
 
                 client.ApplyTemplate(connectionIdentifier, ((IdeaTemplate)_templateAssign.Template).FilePath, settings);
 

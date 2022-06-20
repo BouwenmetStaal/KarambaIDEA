@@ -171,6 +171,7 @@
     </BootstrapperPackage>
   </ItemGroup>
   <ItemGroup>
+    <None Include="Resources\DeconstructCostItem.png" />
     <None Include="Resources\TemplateByFilepath.png" />
     <None Include="Resources\TemplateAssign.png" />
     <None Include="Resources\SetParameterValue.png" />
@@ -218,6 +219,8 @@
     <None Include="Resources\Calculate.png" />
     <None Include="Resources\CodeSetup.png" />
     <None Include="Resources\ConnectionResults.png" />
+    <None Include="Resources\Connection Cost.png" />
+    <None Include="Resources\ConnectionCost.png" />
     <Content Include="Resources\continues2members.contemp" />
     <None Include="Resources\TempWeldAllMembers.png" />
     <None Include="Resources\TempBoltedEndplateConnection.png" />

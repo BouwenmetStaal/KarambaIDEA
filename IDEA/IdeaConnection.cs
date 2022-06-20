@@ -138,7 +138,7 @@ namespace KarambaIDEA.IDEA
             else
             {
                 _connectionId = projInfo.Connections.FirstOrDefault().Identifier;
-                _connectionNameRef = projInfo.Connections.FirstOrDefault().Identifier;
+                _connectionNameRef = projInfo.Connections.FirstOrDefault().Name;
             }
 
             _connectionIdSet = true;
@@ -252,7 +252,7 @@ namespace KarambaIDEA.IDEA
 
             Open(client);
 
-            if (modifications.Count > 1)
+            if (modifications.Count > 0)
             {
                 ModifyConnection(modifications, client);
             }

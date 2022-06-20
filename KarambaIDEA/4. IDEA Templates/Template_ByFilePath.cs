@@ -21,7 +21,7 @@ namespace KarambaIDEA.Grasshopper
 {
     public class IDEATemplateByFilePath : GH_Component
     {
-        public IDEATemplateByFilePath() : base("Import IDEA Template", "ImptIDEATemp", "Import an IDEA Template by Filepath (.ideatemp)", "KarambaIDEA", "4. IDEA Templates") { }
+        public IDEATemplateByFilePath() : base("Import IDEA Template", "ImptIDEATemp", "Import an IDEA Template by Filepath (.ideatemp)", "KarambaIDEA", "5. IDEA Templates") { }
 
         public override GH_Exposure Exposure { get { return GH_Exposure.primary; } }
 
@@ -65,7 +65,7 @@ namespace KarambaIDEA.Grasshopper
 
     public class IDEATemplateDeconstruct : GH_Component
     {
-        public IDEATemplateDeconstruct() : base("Deconstruct IDEA Template", "DecIDEATemp", "Deconstruct an Imported IDEA Template into its parts", "KarambaIDEA", "4. IDEA Templates") { }
+        public IDEATemplateDeconstruct() : base("Deconstruct IDEA Template", "DecIDEATemp", "Deconstruct an Imported IDEA Template into its parts", "KarambaIDEA", "5. IDEA Templates") { }
 
         public override GH_Exposure Exposure { get { return GH_Exposure.primary; } }
 
@@ -103,7 +103,7 @@ namespace KarambaIDEA.Grasshopper
 
     public class TemplateAssignIdeaFull : GH_Component
     {
-        public TemplateAssignIdeaFull() : base("IDEA Template: Full", "IDEATempAssign", "Assign a Template by referenced IdeaCon (.ideatemp) Template", "KarambaIDEA", "4. IDEA Templates") { }
+        public TemplateAssignIdeaFull() : base("IDEA Template: Full", "IDEATempAssign", "Assign a Template by referenced IdeaCon (.ideatemp) Template", "KarambaIDEA", "5. IDEA Templates") { }
 
         public override GH_Exposure Exposure { get { return GH_Exposure.secondary; } }
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
@@ -147,7 +147,7 @@ namespace KarambaIDEA.Grasshopper
     //TO FINISH
     public class TemplateAssignIdeaPartial : GH_Component
     {
-        public TemplateAssignIdeaPartial() : base("IDEA Template: Partial", "IdeaPartTempAssign", "Assign a Partial Template by referenced IdeaCon (.ideatemp) Template and Member Indexs", "KarambaIDEA", "4. IDEA Templates") { }
+        public TemplateAssignIdeaPartial() : base("IDEA Template: Partial", "IdeaPartTempAssign", "Assign a Partial Template by referenced IdeaCon (.ideatemp) Template and Member Indexs", "KarambaIDEA", "5. IDEA Templates") { }
 
         public override GH_Exposure Exposure { get { return GH_Exposure.secondary; } }
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
@@ -192,7 +192,7 @@ namespace KarambaIDEA.Grasshopper
 
     public class AssignTemplateByFilePathSS_OBSOLETE : GH_Component
     {
-        public AssignTemplateByFilePathSS_OBSOLETE() : base("Assign Template", "Assign a Template by Filepath", "Template by Filepath", "KarambaIDEA", "4. IDEA Templates")
+        public AssignTemplateByFilePathSS_OBSOLETE() : base("Assign Template", "Assign a Template by Filepath", "Template by Filepath", "KarambaIDEA", "5. IDEA Templates")
         {
 
         }

@@ -22,7 +22,7 @@ namespace KarambaIDEA.Grasshopper
             pManager.AddGenericParameter("Project", "P", "KarambaIDEA Project to Deconstruct", GH_ParamAccess.item);
         }
 
-        public override GH_Exposure Exposure { get { return GH_Exposure.primary | GH_Exposure.obscure; } }
+        public override GH_Exposure Exposure { get { return GH_Exposure.primary; } }
 
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)

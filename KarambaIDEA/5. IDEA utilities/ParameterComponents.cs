@@ -18,7 +18,7 @@ namespace KarambaIDEA.Grasshopper
 {
     public class SetParameter : GH_Component
     {
-        public SetParameter() : base("Set Param Value", "SetParam", "Set the Value of a Parameter", "KarambaIDEA", "5. IDEA Connection") { }
+        public SetParameter() : base("Set Param Value", "SetParam", "Set the Value of a Parameter", "KarambaIDEA", "6. IDEA Connection") { }
 
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
@@ -26,7 +26,7 @@ namespace KarambaIDEA.Grasshopper
             pManager.AddGenericParameter("Value", "V", "Value to Set to Parameter", GH_ParamAccess.item);
         }
 
-        public override GH_Exposure Exposure { get { return GH_Exposure.quinary; } }
+        public override GH_Exposure Exposure { get { return GH_Exposure.quinary | GH_Exposure.obscure; } }
 
         protected override void RegisterOutputParams(GH_Component.GH_OutputParamManager pManager)
         {

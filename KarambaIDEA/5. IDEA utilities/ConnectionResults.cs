@@ -14,9 +14,9 @@ namespace KarambaIDEA.Grasshopper
 {
     public class ConnectionResults : GH_Component
     {
-        public ConnectionResults() : base("Connection Results", "ConResults", "Retrieve Connection Results from a calculated connection", "KarambaIDEA", "5. IDEA Connection") {}
+        public ConnectionResults() : base("Connection Results", "ConResults", "Retrieve Connection Results from a calculated connection", "KarambaIDEA", "6. IDEA Connection") {}
 
-        public override GH_Exposure Exposure { get { return GH_Exposure.tertiary; } }
+        public override GH_Exposure Exposure { get { return GH_Exposure.tertiary | GH_Exposure.obscure; } }
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
         {
             pManager.AddGenericParameter("Connection", "C", "Idea Connection which has results avaliable", GH_ParamAccess.item);
@@ -95,10 +95,9 @@ namespace KarambaIDEA.Grasshopper
         public override Guid ComponentGuid { get { return new Guid("3AD39EF3-4C78-4A4E-9FE2-C1C7C76C7A97"); } }
     }
 
-
     public class DeconstructItemResult : GH_Component
     {
-        public DeconstructItemResult() : base("Deconstruct Result Item", "DecResultItem", "Deconstruct a Connection Item Result", "KarambaIDEA", "5. IDEA Connection") { }
+        public DeconstructItemResult() : base("Deconstruct Result Item", "DecResultItem", "Deconstruct a Connection Item Result", "KarambaIDEA", "6. IDEA Connection") { }
 
         public override GH_Exposure Exposure { get { return GH_Exposure.tertiary; } }
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)

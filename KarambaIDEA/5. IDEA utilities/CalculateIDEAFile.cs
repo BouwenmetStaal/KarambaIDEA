@@ -26,7 +26,7 @@ namespace KarambaIDEA
     {
         private bool UserFeeback = false; 
 
-        public CalculateIDEA() : base("Calculate Connection", "Calculate IDEA Connection", "Calculate IDEA Connection. This is a connection file that has been saved and referenced", "KarambaIDEA", "5. IDEA Connection") {}
+        public CalculateIDEA() : base("Calculate Connection", "Calculate IDEA Connection", "Calculate IDEA Connection. This is a connection file that has been saved and referenced", "KarambaIDEA", "6. IDEA Connection") {}
 
         public override GH_Exposure Exposure { get { return GH_Exposure.tertiary; } }
 
@@ -80,7 +80,7 @@ namespace KarambaIDEA
 
     public class CalcCodeSetup : GH_Component
     {
-        public CalcCodeSetup() : base("Connection Code Setup", "ConCodeSetup", "JSON string representing the defaults for conneciton set-up", "KarambaIDEA", "5. IDEA Connection") { }
+        public CalcCodeSetup() : base("Connection Code Setup", "ConCodeSetup", "JSON string representing the defaults for conneciton set-up", "KarambaIDEA", "6. IDEA Connection") { }
 
         public override GH_Exposure Exposure { get { return GH_Exposure.tertiary; } }
 
@@ -184,7 +184,7 @@ namespace KarambaIDEA
 
     public class RefConnectionByFilePath : GH_Component
     {
-        public RefConnectionByFilePath() : base("Reference Connection", "RefCon", "Reference an existing connection which has been created manually by a filepath", "KarambaIDEA", "5. IDEA Connection") { }
+        public RefConnectionByFilePath() : base("Reference Connection", "RefCon", "Reference an existing connection which has been created manually by a filepath", "KarambaIDEA", "6. IDEA Connection") { }
 
         public override GH_Exposure Exposure { get { return GH_Exposure.secondary; } }
 
@@ -237,7 +237,7 @@ namespace KarambaIDEA
 
     public class DeconstructConnection : GH_Component
     {
-        public DeconstructConnection() : base("Deconstruct Connection", "ConDeconstruct", "Decosntruct Information avaliable from an IDEA Connection Project", "KarambaIDEA", "5. IDEA Connection") { }
+        public DeconstructConnection() : base("Deconstruct Connection", "ConDeconstruct", "Decosntruct Information avaliable from an IDEA Connection Project", "KarambaIDEA", "6. IDEA Connection") { }
 
         public override GH_Exposure Exposure { get { return GH_Exposure.secondary; } }
         protected override void RegisterInputParams(GH_Component.GH_InputParamManager pManager)
