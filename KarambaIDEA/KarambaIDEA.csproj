@@ -273,7 +273,7 @@ Copy "$(SolutionDir)LICENSE"
 Copy "$(SolutionDir)README.MD"
 
 mkdir "$(TargetDir)example_files" 
-Copy "$(SolutionDir)0_Grasshopper_Files" "$(TargetDir)example_files" 
+XCOPY "$(SolutionDir)0_Grasshopper_Files" "$(TargetDir)example_files"  /S /Y
 cd "$(TargetDir)example_files"
 del *.zip
 
