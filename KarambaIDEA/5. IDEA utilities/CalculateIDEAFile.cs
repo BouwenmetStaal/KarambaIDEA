@@ -52,6 +52,9 @@ namespace KarambaIDEA
 
             if (startIDEA)
             {
+                LoadingForm form = new LoadingForm("IDEA StatiCa: calculating Joint");
+                form.Show();
+
                 GH_IdeaConnection ghCon = null;
                 DA.GetData<GH_IdeaConnection>(0, ref ghCon);
 
@@ -71,6 +74,8 @@ namespace KarambaIDEA
                 conCopy.CalculateConnection(mods.Select(x => x.Value).ToList(), codeSetUp, UserFeeback);
 
                 DA.SetData(0, new GH_IdeaConnection(conCopy));
+
+                form.Close();
             }
         }
 

@@ -93,7 +93,7 @@ namespace KarambaIDEA
             
             if (startIDEA == true)
             {
-                var form = new LoadingForm("Running IDEA StatiCa");
+                var form = new LoadingForm("IDEA StatiCa: creating joint");
                 form.Show();
                 project.CreateFolder(outputfolderpath);
                 if (createAllJoints == true)

@@ -133,8 +133,7 @@ namespace KarambaIDEA.Grasshopper
 
             if (startIDEA == true)
             {
-                LoadingForm form = new LoadingForm("Running IDEA StatiCa");
-                //form.Location = form.Parent.Location;
+                LoadingForm form = new LoadingForm("IDEA StatiCa: creating Joint");
                 form.Show();
 
                 IdeaConnection_2 ideaConnection = new IdeaConnection_2(outputfolderpath, joint, _userFeedback);
