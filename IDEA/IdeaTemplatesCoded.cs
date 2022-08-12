@@ -383,7 +383,6 @@ namespace KarambaIDEA.IDEA
             //connectionData.Beams.Add(addedMemberData);
             return openModel;
         }
-
         static public OpenModel CutBeamByBeam(OpenModel openModel, int cuttingobject, int modifiedObject)
         {
 

@@ -58,29 +58,35 @@ namespace Tester
 
 
             //Set Project folder path
-            string folderpath = @"C:\Data\";
-            joint.project.CreateFolder(folderpath);
+            string folderpath = @"C:\Data\Tester";
+            //joint.project.CreateFolder(folderpath);
 
             //Set Joint folder path
             //string filepath = joint.project.projectFolderPath + ".ideaCon";
             //string fileName = joint.Name + ".ideaCon";
             //string jointFilePath = Path.Combine(joint.project.projectFolderPath, joint.Name, fileName);
             //joint.JointFilePath = jointFilePath;
-            joint.JointFilePath = "xx";
+            //joint.JointFilePath = "xx";
 
-            joint.template = new Template();
-            joint.template.workshopOperations = Template.WorkshopOperations.AddedMember;
+            //joint.template = new Template();
+            //joint.template.workshopOperations = Template.WorkshopOperations.AddedMember;
 
             // Initialize idea references, before calling code.
-            AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
-            AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
+            //AppDomain.CurrentDomain.AssemblyResolve -= new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
+            //AppDomain.CurrentDomain.AssemblyResolve += new ResolveEventHandler(KarambaIDEA.IDEA.Utils.IdeaResolveEventHandler);
+
+            KarambaIdeaJoint karambaIdeaJoint = new KarambaIdeaJoint(joint);
+            
 
             //Create IDEA file
-
-            IdeaConnection ideaConnection = new IdeaConnection(joint, true);
+            IdeaConnection_2 ideaConnection_2 = new IdeaConnection_2(folderpath, karambaIdeaJoint, true);
+            //IdeaConnection ideaConnection = new IdeaConnection(joint, true);
 
             //Calculate
             //HiddenCalculationV20.Calculate(joint, true);
+            List<IdeaModification> mods = new List<IdeaModification>();
+            IdeaCodeSetup codeSetUp = null;
+            ideaConnection_2.CalculateConnection(mods, codeSetUp, true);
 
 
             //Results

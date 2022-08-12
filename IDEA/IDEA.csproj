@@ -83,7 +83,6 @@
     <Compile Include="IdeaProductionCost.cs" />
     <Compile Include="IdeaTemplatesCoded.cs" />
     <Compile Include="IdeaConnectionResult.cs" />
-    <Compile Include="ConnectionTemplateGenerator.cs" />
     <Compile Include="HiddenCalculationV20.cs" />
     <Compile Include="IdeaConnection.cs" />
     <Compile Include="IdeaJoint.cs" />
