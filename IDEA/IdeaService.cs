@@ -23,7 +23,10 @@ namespace KarambaIDEA.IDEA
             try
             {
                 string programsFolder = Environment.GetFolderPath(Environment.SpecialFolder.ProgramFiles);
-                string[] ideaInstalls = Directory.GetDirectories(Path.Combine(programsFolder, "IDEA StatiCa"));
+                string[] ideaInstalls = Directory.GetDirectories(Path.Combine(programsFolder, "IDEA StatiCa")).ToArray();
+
+                ideaInstalls = ideaInstalls.TakeWhile(x => Path.GetFileName(x).StartsWith("StatiCa")).ToArray();
+
                 List<string> orderedInstalls = ideaInstalls.OrderByDescending(x => Double.Parse(Path.GetFileName(x).Split(' ')[1], CultureInfo.InvariantCulture.NumberFormat)).ToList();
 
                 return orderedInstalls[0];
