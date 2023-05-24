@@ -83,8 +83,8 @@ namespace Tester
             Point puntA = new Point(project2, -2, 0, 0);
             Point puntB = new Point(project2, 0, 0, 0);
             Point puntC = new Point(project2, 2, 0, 0);
-            Point puntD = new Point(project2, 0, 0, 2);
-            Point puntE = new Point(project2, 0, 0, -2);
+            Point puntD = new Point(project2, 0, 2, 0);
+            Point puntE = new Point(project2, 0, -1, 0);
 
 
 

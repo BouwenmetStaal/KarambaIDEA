@@ -67,6 +67,18 @@ namespace KarambaIDEA.Core
 
         }
 
+        public Joint(Joint joint)
+        {
+            this.project = joint.project;
+            this.id = joint.id;
+            this.name = joint.name;
+            this.attachedMembers = joint.attachedMembers;
+            this.beamIDs = joint.beamIDs;
+            this.centralNodeOfJoint = joint.centralNodeOfJoint;
+            this.IsContinuous = joint.IsContinuous;
+            this.brandName = joint.brandName;
+        }
+
         public Joint(Project _project, int _id, string _name, List<int> _beamIDs, List<AttachedMember> _attachedMembers, Point _centralNodeOfJoint, bool _IsContinues)
         {
             this.project = _project;

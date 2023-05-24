@@ -7,6 +7,7 @@ using IdeaRS.OpenModel.Result;
 
 using IdeaStatiCa.Plugin;//V20
 
+using Newtonsoft.Json;
 using System.IO;
 using System.Reflection;
 using KarambaIDEA.Core;
@@ -16,12 +17,330 @@ using System.Globalization;
 using System.Windows.Threading;
 using System.Collections.Generic;
 using IdeaRS.OpenModel.Connection;
+using KarambaIDEA.IDEA.Parameters;
 
 namespace KarambaIDEA.IDEA
 {
+    public class IdeaConnection_2
+    {
+        public int JointReference;
+        private readonly string _filepath;
+        private readonly string _projectName;
+
+        private string _parametersJSON;
+        private string _connectionNameRef;
+
+        private bool _connectionIdSet = false;
+        private string _connectionId;
+
+        public List<IIdeaParameter> Parameters = new List<IIdeaParameter>();
+        
+        public IdeaCodeSetup CodeSetUp;
+
+        public IdeaConnectionResult Results = null;
+
+        public IdeaConnectionProductionCost ProductionCosts = null;
+
+        public IdeaServiceModel ServiceModel = KarambaIDEA.IDEA.IdeaServiceModel.Instance;
+
+        public string FilePath { get { return _filepath; } }
+        
+        public string ConnectionNameRef { get { return String.IsNullOrEmpty(_connectionNameRef) ? "Unknown" : _connectionNameRef; } }
+
+        public IdeaConnection_2(string refFilePath, int jointId, bool loadInfo, string conItemName = "")
+        {
+            JointReference = jointId;
+            _filepath = refFilePath;
+            _connectionNameRef = conItemName;
+
+#warning implement loadInfo
+        }
+
+        public IdeaConnection_2(IdeaConnection_2 connection)
+        {
+            JointReference = connection.JointReference;
+            _filepath = connection._filepath;
+            _connectionId = connection._connectionId;
+            _connectionNameRef = connection._connectionNameRef;
+            _connectionIdSet = connection._connectionIdSet;
+            _projectName = connection._projectName;
+            Parameters = connection.Parameters;
+        }
+
+        public IdeaConnection_2(string folder, KarambaIdeaJoint joint, bool userFeedback)
+        {
+            ProgressWindow pop = new ProgressWindow();
+
+            string filePath = Path.Combine(folder, joint.Name);
+            if (!Directory.Exists(filePath))
+            {
+                Directory.CreateDirectory(filePath);
+            }
+
+            string iomFileName = Path.Combine(folder, joint.Name, "IOM.xml");
+            string iomResFileName = Path.Combine(folder, joint.Name, "IOMresults.xml");
+
+            joint.SaveOpenModel(iomFileName);
+            joint.SaveOpenModelResult(iomResFileName);
+
+            string filename = joint.Name + ".ideaCon";
+            var fileConnFileNameFromLocal = Path.Combine(folder, joint.Name, filename);
+
+            var client = ServiceModel.GetConnectionService();
+
+            ConnectionFromIOM(iomFileName, iomResFileName, fileConnFileNameFromLocal, true, client);
+
+            _filepath = fileConnFileNameFromLocal;
+            JointReference = joint.id;
+            SetConnectionId(client);
+            LoadCodeSetUp(client);
+            
+            if (joint.TemplateAssigns.Count > 0)
+            {
+                List<IdeaModification> listMods = new List<IdeaModification>();
+
+                foreach (var templateAssign in joint.TemplateAssigns)
+                {
+                    if (templateAssign is IdeaTemplateAssignFull full)
+                        listMods.Add(new IdeaModifyApplyTemplate_Full(full));
+                    else if (templateAssign is IdeaTemplateAssignPartial partial)
+                        listMods.Add(new IdeaModifyApplyTemplate_Partial(partial));
+                }
+                ModifyConnection(listMods, client);
+
+                //Save as project ONLY if modifications are apparent
+                string filenameSaveAs = joint.Name + "_Modified" + ".ideaCon";
+                var fileConnFileNameFromLocalSave = Path.Combine(folder, joint.Name, filenameSaveAs);
+                client.SaveAsProject(fileConnFileNameFromLocalSave);
+                _filepath = fileConnFileNameFromLocalSave;
+
+                //Get Parameters to be used downstream.
+                LoadParameters(client);
+            }
+
+            ServiceModel.CloseProject();
+
+            if (userFeedback)
+                pop.Close();
+        }
+
+        public override string ToString()
+        {
+            return "Idea Connection: " + Path.GetFileName(_filepath) + " (" + ConnectionNameRef + ")";
+        }
+
+        private void SetConnectionId(ConnectionHiddenCheckClient client)
+        {
+            var projInfo = client.GetProjectInfo();
+
+            if (!String.IsNullOrEmpty(_connectionNameRef))
+                _connectionId = projInfo.Connections.Where(x => x.Name == _connectionNameRef).FirstOrDefault().Identifier;
+            else
+            {
+                _connectionId = projInfo.Connections.FirstOrDefault().Identifier;
+                _connectionNameRef = projInfo.Connections.FirstOrDefault().Name;
+            }
+
+            _connectionIdSet = true;
+        }
+
+        private static string ConnectionFromIOM(string iomModelPath, string IomResultPath, string conFilePath, bool keepOpen, ConnectionHiddenCheckClient client)
+        {
+            try
+            {
+                client.CreateConProjFromIOM(iomModelPath, IomResultPath, conFilePath);
+
+                if (keepOpen)
+                {
+                    client.OpenProject(conFilePath);
+                }
+            }
+            catch (Exception e)
+            {
+                throw new Exception(string.Format("Error '{0}'", e.Message));
+            }
+            return conFilePath;
+        }
+
+        /// <summary>
+        /// Opens the current Connection in the Conneciton HiddenCheckClient. If already open does nothing
+        /// </summary>
+        public void Open(ConnectionHiddenCheckClient client)
+        {
+            if (isOpen(client))
+                return;
+            else
+                client.OpenProject(_filepath);
+
+            if (!_connectionIdSet)
+                SetConnectionId(client);
+        }
+
+        public void CloseProject(ConnectionHiddenCheckClient client)
+        {
+            client.CloseProject();
+        }
+
+        /// <summary>
+        /// Checks whether the current connection is already open in the client.
+        /// </summary>
+        /// <returns></returns>
+        private bool isOpen(ConnectionHiddenCheckClient client)
+        {
+#warning need to beable to see whether a project file is already opened. Need to ask if this is possible.
+            //if (client.State == System.ServiceModel.CommunicationState.Opened)
+            //{
+            //    ConProjectInfo info = client.GetProjectInfo();
+            //    if (info.Name == _projectName)
+            //        return true;
+            //}
+            return false;
+        }
+
+        public void Save(ConnectionHiddenCheckClient client)
+        {
+            client.Save();
+        }
+
+        public void LoadParameters(ConnectionHiddenCheckClient client)
+        {
+
+            string paramJSON = client.GetParametersJSON(_connectionId);
+#if (DEBUG)
+            _parametersJSON = paramJSON;
+#endif      
+            if (!String.IsNullOrEmpty(paramJSON))
+                Parameters = IdeaParameterFactory.CreateFromJSON(paramJSON);
+        }
+
+        public void LoadCodeSetUp(ConnectionHiddenCheckClient client)
+        {
+            string codeSetupJSON = client.GetCodeSetupJSON();
+
+            CodeSetUp = new IdeaCodeSetup(codeSetupJSON);
+        }
+
+        private void UpdateCodeSetUp(IdeaCodeSetup setUp, ConnectionHiddenCheckClient client)
+        {
+            try
+            {
+                client.UpdateCodeSetupJSON(setUp.ToString());
+            }
+            catch (Exception e)
+            {
+                throw new Exception(string.Format("Error '{0}'", e.Message));
+            }
+        }
+
+        //TODO Add Save/Save As/Dont Save on Modifications
+        public void ModifyConnection(List<IdeaModification> modifications, ConnectionHiddenCheckClient client)
+        {
+            //order modifications
+            modifications.OrderBy(x => x.ModifyHeirachy);
+
+            foreach (var modification in modifications)
+                modification.ModifyConnection(client, _connectionId);
+
+            LoadConnectionCost(client);
+        }
+
+        public void CalculateConnection(List<IdeaModification> modifications, IdeaCodeSetup calcSetUp, bool userFeedback)
+        {
+            var client = ServiceModel.GetConnectionService();
+
+            ConnectionResultsData conRes = null;
+
+            Open(client);
+
+            if (modifications.Count > 0)
+            {
+                ModifyConnection(modifications, client);
+            }
+            
+            if (calcSetUp != null)
+            {
+                UpdateCodeSetUp(calcSetUp, client);
+            }
+
+            try
+            {
+                conRes = client.Calculate(_connectionId);
+#if (DEBUG)
+                //client.SaveAsProject(pathToFile);
+#endif
+                Results = new IdeaConnectionResult(conRes);
+
+                client.Save();
+            }
+            catch (Exception e)
+            {
+                throw new Exception(string.Format("Error '{0}'", e.Message));
+            }
+            finally
+            {
+                // Delete temps in case of a crash
+                client.CloseProject();
+            }
+        }
+
+        private void LoadConnectionCost(ConnectionHiddenCheckClient client)
+        {
+            string productionCostJSON = client.GetConnectionCost(_connectionId);
+
+            ProductionCost productionCost = JsonConvert.DeserializeObject<ProductionCost>(productionCostJSON);
+
+            ProductionCosts = new IdeaConnectionProductionCost(productionCost);
+        }
+    }
+
+    public class IdeaCodeSetup
+    {
+        private string codeSetUpJson;
+
+        public Dictionary<string, dynamic> CodeSetUpDictionary;
+
+        public IdeaCodeSetup(){}
+        public IdeaCodeSetup(string CodeSetUpJson) 
+        {
+            codeSetUpJson = CodeSetUpJson;
+            CodeSetUpDictionary = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(CodeSetUpJson);
+        }
+
+        public IdeaCodeSetup(Dictionary<string, dynamic> setUpdict)
+        {
+            CodeSetUpDictionary = setUpdict;
+        }
+
+        public static IdeaCodeSetup CreateDefault()
+        {
+            IdeaCodeSetup setup = new IdeaCodeSetup();
+            setup.loadDefaultCodeSetUp();
+            return setup;
+        }
+
+        private void loadDefaultCodeSetUp()
+        {
+            //read from the project JSON.
+            Assembly assembly = Assembly.GetExecutingAssembly();
+            string baseConFileDirectory = Path.GetDirectoryName(assembly.Location);
+            string outputPath = Path.Combine(baseConFileDirectory, "DefaultCalcCodeSetUp.json");
+
+            string json = File.ReadAllText(outputPath);
+
+            CodeSetUpDictionary = JsonConvert.DeserializeObject<Dictionary<string, dynamic>>(json);
+        }
+
+        public override string ToString()
+        {
+            return JsonConvert.SerializeObject(CodeSetUpDictionary, Formatting.Indented);
+        }
+
+    }
+
+#warning This class is no longer required.
     public class IdeaConnection
     {
-        public OpenModelGenerator openModelGenerator;
+        public OpenModelGenerator openModelGenerator; //TODO I think the Project should provide the OpenModel. i.e project.ExportJointtoIDEA(int Joint) 
         public Joint joint;
         public string filePath = "";
         public static string ideaStatiCaDir;
@@ -36,6 +355,8 @@ namespace KarambaIDEA.IDEA
         {
             try
             {
+#warning  duplicated code created in IdeaVersion.
+
                 //Find most recent version of IDEA StatiCa in registry
                 RegistryKey staticaRoot = Registry.LocalMachine.OpenSubKey("SOFTWARE\\IDEAStatiCa");
                 string[] SubKeyNames = staticaRoot.GetSubKeyNames();
@@ -77,7 +398,7 @@ namespace KarambaIDEA.IDEA
             {
                 Directory.CreateDirectory(this.filePath);
             }
-            
+
 
             AppDomain currentDomain = AppDomain.CurrentDomain;
             currentDomain.AssemblyResolve += new ResolveEventHandler(IdeaResolveEventHandler);
@@ -93,11 +414,9 @@ namespace KarambaIDEA.IDEA
                 pop.AddMessage(string.Format("Creating Openmodel and OpenmodelResult for '{0}'", joint.Name));
             }
 
-            //form.AddMessage(string.Format("Creating Openmodel and OpenmodelResult for '{0}'", joint.Name));
-
-            if (joint.template!= null)
+            if (joint.template != null)
             {
-                Templates.ApplyProgrammedIDEAtemplate(openModel , joint);
+                IdeaTemplates.ApplyProgrammedIDEAtemplate(openModel, joint);
             }
 
             string iomFileName = Path.Combine(folder, joint.Name, "IOM.xml");
@@ -106,8 +425,6 @@ namespace KarambaIDEA.IDEA
             {
                 pop.AddMessage(string.Format("Saving Openmodel and OpenmodelResult to XML for '{0}'", joint.Name));
             }
-
-            //form.AddMessage(string.Format("Saving Openmodel and OpenmodelResult to XML for '{0}'", joint.Name));
 
             // save to the files
             openModel.SaveToXmlFile(iomFileName);
@@ -118,27 +435,29 @@ namespace KarambaIDEA.IDEA
                 pop.AddMessage(string.Format("Creating IDEA StatiCa File '{0}'", joint.Name));
             }
 
-            //form.AddMessage(string.Format("Creating IDEA StatiCa File '{0}'", joint.Name));
+            string filename = joint.Name + ".ideaCon";
+            var fileConnFileNameFromLocal = Path.Combine(folder, joint.Name, filename);
+            string filename2 = joint.Name + "2.ideaCon";
+            var fileConnFileNameFromLocal2 = Path.Combine(folder, joint.Name, filename2);
 
-            string filename = joint.Name + ".ideaCon";       
-            var fileConnFileNameFromLocal = Path.Combine(folder,joint.Name, filename);
-            
             var calcFactory = new ConnHiddenClientFactory(ideaStatiCaDir);//V20
+
+
+#warning Need to enable Bolt assembly through IOM.
             //string newBoltAssemblyName = "M16 8.8";
-            
+
             var client = calcFactory.Create();
             try
             {
                 // it creates connection project from IOM 
-                if (userFeedback){pop.AddMessage(string.Format("Joint '{0}' was saved to:\n {1}", joint.Name, fileConnFileNameFromLocal));}
+                if (userFeedback) { pop.AddMessage(string.Format("Joint '{0}' was saved to:\n {1}", joint.Name, fileConnFileNameFromLocal)); }
                 client.CreateConProjFromIOM(iomFileName, iomResFileName, fileConnFileNameFromLocal);
-               
 
-                /*
-                //TEST 28-05-2021 Does not work "The server was unable to process the request"
-                //TEST 22-07-2021 Does not work "Communication is in Faulted state"
+
+                //Apply template if template location is defined
                 if (joint.ideaTemplateLocation != null)
                 {
+                    client.OpenProject(fileConnFileNameFromLocal);
                     var projInfo = client.GetProjectInfo();
                     string newBoltAssemblyName = "M16 8.8";
                     var connection = projInfo.Connections.FirstOrDefault();//Select first connection
@@ -146,15 +465,17 @@ namespace KarambaIDEA.IDEA
                     {
                         pop.AddMessage(string.Format("Template with path applied: '{0}'", joint.ideaTemplateLocation));
                     }
-                    client.AddBoltAssembly(newBoltAssemblyName);//??Here Martin
+                    client.AddBoltAssembly(newBoltAssemblyName);
 
                     client.ApplyTemplate(connection.Identifier, joint.ideaTemplateLocation, null);
                     client.SaveAsProject(fileConnFileNameFromLocal);
-                }
-                */
-                
 
+
+
+                }
             }
+
+
             catch (Exception e)
             {
                 if (userFeedback) { pop.AddMessage(string.Format("Creating of IDEA file Joint '{0}' failed", joint.Name)); }
@@ -175,11 +496,10 @@ namespace KarambaIDEA.IDEA
             {
                 pop.Close();
             }
-            //form.Close();
-
+            return;
         }
 
-        
+
 
         private static Assembly IdeaResolveEventHandler(object sender, ResolveEventArgs args)
         {
@@ -191,8 +511,6 @@ namespace KarambaIDEA.IDEA
             }
             return args.RequestingAssembly;
         }
-
-        
     }
 }
         

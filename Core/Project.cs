@@ -78,7 +78,7 @@ namespace KarambaIDEA.Core
             //iterate over all the points that represent centerpoints of the joint
             for (int i = 0; i < points.Count; i++)
             {
-                string jointName = "C"+i;
+                string jointName = "C"+ (i+1);
                 if (jointnames.Count != 0)
                 {
                     if (points.Count != jointnames.Count)
@@ -252,7 +252,10 @@ namespace KarambaIDEA.Core
             }
         }
 
-        
+        public List<string> GetBrandNames()
+        {
+            return joints.Select(x => x.brandName).Distinct().ToList();
+        }
 
         /// <summary>
         /// Create Folder to save IDEA files on location specified, or on default location
@@ -381,11 +384,17 @@ namespace KarambaIDEA.Core
             clone.CopyPropertiesFromSource(this);
             return clone;
         }
+
+        public override string ToString()
+        {
+            return "KarambaIDEA Project: " + projectName + "\r\n" +
+                "    Joints: " + joints.Count() + "\r\n" +
+                "    Materials: " + materials.Count() + "\r\n" +
+                "    Cross Sections: " + crossSections.Count() + "\r\n" +
+                "    Elements: " + elements.Count() + "\r\n" +
+                "    Members: " + elements.Count() + "\r\n" +
+                "    Load Cases: " + loadcases.Count() + "\r\n" +
+                "    Load Combinations: " + "0";
+        }
     }
-
-
-
-
-
-
 }

@@ -3,22 +3,92 @@ using IdeaStatiCa.Plugin;
 using System.Collections.Generic;
 using IdeaRS.OpenModel.Geometry3D;
 
+using Microsoft.Win32;
 using KarambaIDEA.Core;
 using System.Linq;
 using System.Windows.Forms;
 using System;
 using System.IO;
+using System.Globalization;
 
 namespace KarambaIDEA.IDEA
 {
-    
+
+#warning this class is now not required.
+
     /// <summary>
     /// Main view model of the example
     /// </summary>
     /// //public class HiddenCalculation : INotifyPropertyChanged, IConHiddenCalcModel
+    /// 
     public class HiddenCalculationV20
     {
-        
+        //public static IdeaConnectionResult Calculate(ConnectionHiddenCheckClient client, string pathToFile, List<IIdeaModification> modifications, bool userFeedback)
+        public static IdeaConnectionResult Calculate(string pathToFile, List<IdeaModification> modifications, bool userFeedback)
+        {
+            ProgressWindow pop = new ProgressWindow();
+            if (userFeedback)
+            {
+                pop.Show();
+                //pop.AddMessage(string.Format("Start calculation '{0}'", joint.Name));
+                pop.AddMessage(string.Format("IDEA StatiCa installation was found in '{0}'", IdeaConnection.ideaStatiCaDir));
+            }
+
+            string path = IdeaStatiCaVersion.GetLatestVersionPath();
+            
+            var calcFactory = new ConnHiddenClientFactory(path);
+            ConnectionResultsData conRes = null;
+            var client = calcFactory.Create();
+
+            try
+            {
+                client.OpenProject(pathToFile);
+
+                try
+                {
+                    // get detail about idea connection project
+                    var projInfo = client.GetProjectInfo();
+
+                    var connection = projInfo.Connections.FirstOrDefault();//Select first connection
+
+                    if (userFeedback)
+                    {
+                        //pop.AddMessage(string.Format("Calculation started: '{0}'", joint.Name));
+                    }
+
+                    //run through modification
+                    foreach (IdeaModification mod in modifications)
+                    {
+                        mod.ModifyConnection(client, connection.Identifier);
+                    }
+
+                    conRes = client.Calculate(connection.Identifier);
+#if (DEBUG)
+                    client.SaveAsProject(pathToFile);
+#endif
+                }
+                finally
+                {
+                    // Delete temps in case of a crash
+                    client.CloseProject();
+                }
+            }
+            finally
+            {
+                if (client != null)
+                {
+                    client.Close();
+                }
+            }
+            if (userFeedback)
+            {
+                pop.Close();
+            }
+
+            return new IdeaConnectionResult(conRes);
+
+        }
+
         public static void Calculate(Joint joint, bool userFeedback)
         {
             ProgressWindow pop = new ProgressWindow();
@@ -47,37 +117,6 @@ namespace KarambaIDEA.IDEA
                     var projInfo = client.GetProjectInfo();
 
                     var connection = projInfo.Connections.FirstOrDefault();//Select first connection
-                    if (joint.ideaTemplateLocation != null)
-                    {
-                        if (File.Exists(joint.ideaTemplateLocation))
-                        {
-                            if (userFeedback)
-                            {
-                                pop.AddMessage(string.Format("Template with path applied:\r '{0}'", joint.ideaTemplateLocation));
-                            }
-                            client.AddBoltAssembly(newBoltAssemblyName);//??Here Martin
-
-                            client.ApplyTemplate(connection.Identifier, joint.ideaTemplateLocation, null);
-                            client.SaveAsProject(pathToFile);
-                        }
-                        else
-                        {
-                            pop.AddMessage(string.Format("Template file does not exist:\r '{0}'", joint.ideaTemplateLocation));
-                        }
-                        
-                        
-                    }
-
-                    //ConnectionData cd = client.GetConnectionModel(connection.Identifier);
-                    /*
-                    ConnectionData cd = client.GetConnectionModel(connection.Identifier);//needed to map weld IDs
-                    foreach (WeldData w in cd.Welds)
-                    {
-                        double thicknessWeld = w.Thickness;//Link unique thickness with connectionTemplate
-                        int uniqueIDweld = w.Id;//Store Id to connectionTemplate, to find results
-                        
-                    }
-                    */
 
                     if (userFeedback)
                     {
@@ -85,18 +124,16 @@ namespace KarambaIDEA.IDEA
                     }
                     conRes = client.Calculate(connection.Identifier);
                     client.SaveAsProject(pathToFile);
+
+                    //Export template file
                     string templatePath = Path.Combine(joint.project.projectFolderPath, joint.Name, "Template.xml");
                     client.ExportToTemplate(connection.Identifier, templatePath);//store template to location
 
-                   
-
                     //ConnectionTemplateGenerator connectionTemplateGenerator = new ConnectionTemplateGenerator(templatePath);
+                                      
+                                      
 
-                    
-                    
-                    
-
-                    //projInfo.Connections.Count()
+                    //example code for running multiple connectioin files
                     if (projInfo != null && projInfo.Connections != null)
                     {
 
@@ -180,7 +217,6 @@ namespace KarambaIDEA.IDEA
             }
             double o1 = 0;
         }
-
 
     }
     

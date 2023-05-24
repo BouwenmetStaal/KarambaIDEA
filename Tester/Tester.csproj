@@ -66,21 +66,7 @@
     <Reference Include="Eto, Version=2.6.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\Eto.Forms.2.6.0\lib\netstandard2.0\Eto.dll</HintPath>
     </Reference>
-    <Reference Include="IdeaRS.Connections">
-      <HintPath>..\..\..\..\..\..\Program Files\IDEA StatiCa\StatiCa 21.0\IdeaRS.Connections.dll</HintPath>
-    </Reference>
-    <Reference Include="IdeaRS.OpenModel, Version=21.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files\IDEA StatiCa\StatiCa 21.0\IdeaRS.OpenModel.dll</HintPath>
-    </Reference>
-    <Reference Include="IdeaStatiCa.Plugin, Version=21.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\..\..\..\..\Program Files\IDEA StatiCa\StatiCa 21.0\IdeaStatiCa.Plugin.dll</HintPath>
-    </Reference>
     <Reference Include="Microsoft.CSharp" />
-    <Reference Include="Newtonsoft.Json, Version=12.0.0.0, Culture=neutral, PublicKeyToken=30ad4fe6b2a6aeed, processorArchitecture=MSIL">
-      <HintPath>..\packages\Newtonsoft.Json.12.0.3\lib\net45\Newtonsoft.Json.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.ComponentModel.Annotations, Version=4.2.1.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL">
       <HintPath>..\packages\System.ComponentModel.Annotations.5.0.0\lib\net461\System.ComponentModel.Annotations.dll</HintPath>
@@ -103,7 +89,6 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Class1.cs" />
     <Compile Include="DispatcherTimerTutorial.xaml.cs">
       <DependentUpon>DispatcherTimerTutorial.xaml</DependentUpon>
     </Compile>

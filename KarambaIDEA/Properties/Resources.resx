@@ -223,4 +223,70 @@
   <data name="TrussJoint_01" type="System.Resources.ResXFileRef, System.Windows.Forms">
     <value>..\Resources\TrussJoint-01.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
   </data>
+  <data name="Calculate" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\Calculate.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CodeSetup" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CodeSetup.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ConnectionResults" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ConnectionResults.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateConnection" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CreateConnection.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateParameter" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CreateParameter.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="CreateProject" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\CreateProject.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeconstructItemResult" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DeconstructItemResult.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeconstructJoint" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DeconstructJoint.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeconstructProject" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DeconstructProject.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeconstructTemplate" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DeconstructTemplate.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ExportIOM" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ExportIOM.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="GeneralIcon" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\GeneralIcon.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ImportSAF" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ImportSAF.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ModifyConParameters" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ModifyConParameters.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ModifyJoint" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ModifyJoint.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ModifyLoading" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ModifyLoading.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ReferenceConnection" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ReferenceConnection.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="SetParameterValue" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\SetParameterValue.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TemplateAssign" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TemplateAssign.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="TemplateByFilepath" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\TemplateByFilepath.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="ConnectionCost" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\ConnectionCost.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
+  <data name="DeconstructCostItem" type="System.Resources.ResXFileRef, System.Windows.Forms">
+    <value>..\Resources\DeconstructCostItem.png;System.Drawing.Bitmap, System.Drawing, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a</value>
+  </data>
 </root>

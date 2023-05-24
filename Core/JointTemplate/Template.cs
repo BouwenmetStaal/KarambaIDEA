@@ -19,7 +19,8 @@ namespace KarambaIDEA.Core
             BoltedEndPlateConnection,
             BoltedEndplateOptimizer,
             WeldAllMembers,
-            TemplateByFile
+            TemplateByFile,
+            AddedMember
         }
     }
 }
